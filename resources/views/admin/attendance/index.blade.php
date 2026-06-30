@@ -22,11 +22,11 @@
             <i data-lucide="plus" class="w-4 h-4"></i>
             Manual Entry
         </button>
-        <a href="{{ route('admin.attendance.export', $tenant) }}?from={{ $date->startOfMonth()->toDateString() }}&to={{ $date->endOfMonth()->toDateString() }}"
-           class="lmt-btn-secondary lmt-btn-sm">
-            <i data-lucide="download" class="w-4 h-4"></i>
-            Export CSV
-        </a>
+        @include('exports.buttons', [
+            'route'  => 'admin.attendance.export',
+            'params' => [$tenant],
+            'extra'  => ['from' => $date->copy()->startOfMonth()->toDateString(), 'to' => $date->copy()->endOfMonth()->toDateString()]
+        ])
     </div>
 </div>
 

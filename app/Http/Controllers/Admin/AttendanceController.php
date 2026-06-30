@@ -7,6 +7,7 @@ use App\Models\Tenant\Attendance;
 use App\Models\Tenant\Department;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Location;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -141,35 +142,37 @@ class AttendanceController extends Controller
     /* ================================================================
      | EXPORT
      |================================================================*/
-    public function export(string $tenant, Request $request)
+    public function export(string $tenant, Request $request, ExportService $exporter)
     {
-        $from = $request->get('from', now()->startOfMonth()->toDateString());
-        $to   = $request->get('to', now()->toDateString());
+        $from   = $request->get('from', now()->startOfMonth()->toDateString());
+        $to     = $request->get('to', now()->toDateString());
+        $format = $request->get('format', 'excel');
 
         $records = Attendance::with(['employee.department'])
             ->whereBetween('work_date', [$from, $to])
-            ->orderBy('work_date')
-            ->orderBy('employee_id')
+            ->orderBy('work_date')->orderBy('employee_id')
             ->get();
 
-        $csv = "Employee Code,Name,Department,Date,Clock In,Clock Out,Total Hours,Status,Late\n";
-        foreach ($records as $r) {
-            $csv .= implode(',', [
-                $r->employee->employee_code ?? '',
-                '"'.($r->employee->full_name ?? '').'"',
-                '"'.($r->employee->department?->name ?? '').'"',
-                $r->work_date->format('Y-m-d'),
-                $r->clock_in_at?->format('H:i') ?? '',
-                $r->clock_out_at?->format('H:i') ?? '',
-                $r->total_hours,
-                $r->status,
-                $r->is_late ? 'Yes' : 'No',
-            ])."\n";
+        $columns = ['Emp Code', 'Name', 'Department', 'Date', 'Clock In', 'Clock Out', 'Hours', 'Status', 'Late'];
+
+        $rows = $records->map(fn($r) => [
+            $r->employee->employee_code ?? '-',
+            $r->employee->full_name ?? '-',
+            $r->employee->department?->name ?? '-',
+            $r->work_date->format('Y-m-d'),
+            $r->clock_in_at?->format('H:i') ?? '-',
+            $r->clock_out_at?->format('H:i') ?? '-',
+            $r->total_hours ?? '0',
+            ucfirst($r->status),
+            $r->is_late ? 'Yes' : 'No',
+        ]);
+
+        $filename = "attendance-{$from}-{$to}";
+
+        if ($format === 'pdf') {
+            return $exporter->pdf("Attendance Report ({$from} to {$to})", $columns, $rows, $filename.'.pdf', 'landscape');
         }
 
-        return response($csv, 200, [
-            'Content-Type'        => 'text/csv',
-            'Content-Disposition' => "attachment; filename=attendance-{$from}-{$to}.csv",
-        ]);
+        return $exporter->excel($columns, $rows, $filename.'.xlsx');
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Tenant\Employee;
 use App\Models\Tenant\Payslip;
 use App\Models\Tenant\PayrollRun;
 use App\Models\Tenant\SalaryComponent;
+use App\Services\ExportService;
 use App\Services\NotificationService;
 use App\Services\PayrollService;
 use Carbon\Carbon;
@@ -197,5 +198,34 @@ public function createRun(string $tenant, Request $request)
 
         SalaryComponent::create(array_merge($data, ['is_active' => true]));
         return back()->with('success', 'Salary component created.');
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $runs = PayrollRun::latest()->get();
+
+        $columns = ['Period', 'Pay Date', 'Frequency', 'Employees', 'Gross Pay', 'Deductions', 'Net Pay', 'Status'];
+
+        $rows = $runs->map(fn($r) => [
+            $r->period_start->format('M d') . ' – ' . $r->period_end->format('M d, Y'),
+            $r->pay_date->format('Y-m-d'),
+            ucfirst(str_replace('_', ' ', $r->frequency)),
+            $r->total_employees ?? '-',
+            number_format($r->total_gross, 2),
+            number_format($r->total_deductions, 2),
+            number_format($r->total_net, 2),
+            ucfirst(str_replace('_', ' ', $r->status)),
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Payroll Runs Report', $columns, $rows, 'payroll-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'payroll-'.now()->format('Y-m-d').'.xlsx');
     }
 }

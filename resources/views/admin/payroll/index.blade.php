@@ -33,11 +33,14 @@
                 <h3 class="font-black text-gray-900">Payroll Spend</h3>
                 <p class="text-xs text-gray-400">Net salary paid last 6 months</p>
             </div>
-            <a href="{{ route('admin.payroll.components', $tenant) }}"
-               class="lmt-btn-secondary lmt-btn-sm">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                Salary Components
-            </a>
+            <div class="flex items-center gap-2">
+                @include('exports.buttons', ['route' => 'admin.payroll.export', 'params' => [$tenant]])
+                <a href="{{ route('admin.payroll.components', $tenant) }}"
+                   class="lmt-btn-secondary lmt-btn-sm">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    Salary Components
+                </a>
+            </div>
         </div>
         <div class="flex items-end gap-3 h-36">
             @php $max = $chart->max('amount') ?: 1; @endphp

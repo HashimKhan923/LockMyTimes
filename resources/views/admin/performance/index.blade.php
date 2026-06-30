@@ -46,10 +46,13 @@
 
 <div class="flex items-center justify-between mb-4">
     <h3 class="font-black text-gray-900">Performance Reviews</h3>
-    <button onclick="openModal('add-review-modal')" class="lmt-btn-primary lmt-btn-sm">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        New Review
-    </button>
+    <div class="flex items-center gap-2">
+        @include('exports.buttons', ['route' => 'admin.performance.export', 'params' => [$tenant]])
+        <button onclick="openModal('add-review-modal')" class="lmt-btn-primary lmt-btn-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            New Review
+        </button>
+    </div>
 </div>
 
 <div class="lmt-card p-0 overflow-hidden">

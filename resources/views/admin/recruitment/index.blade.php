@@ -38,10 +38,13 @@
         </a>
         @endforeach
     </div>
-    <button onclick="openModal('add-job-modal')" class="lmt-btn-primary lmt-btn-sm">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        Post a Job
-    </button>
+    <div class="flex items-center gap-2">
+        @include('exports.buttons', ['route' => 'admin.recruitment.export', 'params' => [$tenant]])
+        <button onclick="openModal('add-job-modal')" class="lmt-btn-primary lmt-btn-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Post a Job
+        </button>
+    </div>
 </div>
 
 {{-- Job Cards --}}

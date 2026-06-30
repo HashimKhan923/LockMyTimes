@@ -51,10 +51,13 @@
         <input type="text" name="search" value="{{ request('search') }}"
                placeholder="Search courses…" class="lmt-input py-2 text-sm w-44"/>
     </form>
-    <button onclick="openModal('add-training-modal')" class="lmt-btn-primary lmt-btn-sm">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        New Course
-    </button>
+    <div class="flex items-center gap-2">
+        @include('exports.buttons', ['route' => 'admin.training.export', 'params' => [$tenant]])
+        <button onclick="openModal('add-training-modal')" class="lmt-btn-primary lmt-btn-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            New Course
+        </button>
+    </div>
 </div>
 
 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">

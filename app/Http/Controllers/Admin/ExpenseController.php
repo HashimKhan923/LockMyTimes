@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Expense;
 use App\Models\Tenant\ExpenseCategory;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -207,5 +208,33 @@ class ExpenseController extends Controller
 
         $expenseCategory->update($data);
         return back()->with('success', 'Category updated.');
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $expenses = Expense::with(['employee.department', 'category'])->latest()->get();
+
+        $columns = ['Employee', 'Department', 'Category', 'Description', 'Date', 'Amount', 'Status'];
+
+        $rows = $expenses->map(fn($e) => [
+            $e->employee->full_name ?? '-',
+            $e->employee->department?->name ?? '-',
+            $e->category->name ?? '-',
+            $e->description ?? '-',
+            $e->expense_date->format('Y-m-d'),
+            number_format($e->amount, 2),
+            ucfirst($e->status),
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Expenses Report', $columns, $rows, 'expenses-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'expenses-'.now()->format('Y-m-d').'.xlsx');
     }
 }

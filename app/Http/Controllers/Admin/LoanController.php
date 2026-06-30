@@ -8,6 +8,7 @@ use App\Models\Tenant\Loan;
 use App\Models\Tenant\LoanRepayment;
 use App\Models\Tenant\LoanType;
 use App\Models\Tenant\SalaryAdvance;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -353,5 +354,34 @@ public function storeAdvance(string $tenant, Request $request)
 
             $date->addMonth();
         }
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $loans = Loan::with(['employee', 'loanType'])->latest()->get();
+
+        $columns = ['Employee', 'Loan Type', 'Amount', 'Balance', 'Installment', 'Start Date', 'End Date', 'Status'];
+
+        $rows = $loans->map(fn($l) => [
+            $l->employee->full_name ?? '-',
+            $l->loanType->name ?? '-',
+            number_format($l->amount, 2),
+            number_format($l->balance ?? $l->amount, 2),
+            number_format($l->installment_amount ?? 0, 2),
+            $l->start_date?->format('Y-m-d') ?? '-',
+            $l->end_date?->format('Y-m-d') ?? '-',
+            ucfirst($l->status),
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Loans Report', $columns, $rows, 'loans-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'loans-'.now()->format('Y-m-d').'.xlsx');
     }
 }

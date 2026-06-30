@@ -50,6 +50,7 @@
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Search assets…" class="lmt-input py-2 text-sm w-44"/>
         </form>
+        @include('exports.buttons', ['route' => 'admin.assets.export', 'params' => [$tenant]])
         <a href="{{ route('admin.assets.categories', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
             <i data-lucide="tag" class="w-4 h-4"></i>
             Categories

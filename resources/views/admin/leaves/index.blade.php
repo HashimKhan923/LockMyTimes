@@ -76,6 +76,7 @@
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         Add Leave
                     </button>
+                    @include('exports.buttons', ['route' => 'admin.leaves.export', 'params' => [$tenant]])
                 </form>
             </div>
 

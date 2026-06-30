@@ -10,6 +10,7 @@ use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\LeaveType;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\User;
+use App\Services\ExportService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -525,5 +526,35 @@ class LeaveController extends Controller
         }
 
         return $days;
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $leaves = LeaveRequest::with(['employee.department', 'leaveType'])
+            ->latest()->get();
+
+        $columns = ['Employee', 'Department', 'Leave Type', 'From', 'To', 'Days', 'Status', 'Requested On'];
+
+        $rows = $leaves->map(fn($l) => [
+            $l->employee->full_name ?? '-',
+            $l->employee->department?->name ?? '-',
+            $l->leaveType->name ?? '-',
+            $l->start_date->format('Y-m-d'),
+            $l->end_date->format('Y-m-d'),
+            $l->total_days ?? '-',
+            ucfirst($l->status),
+            $l->created_at->format('Y-m-d'),
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Leave Requests Report', $columns, $rows, 'leaves-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'leaves-'.now()->format('Y-m-d').'.xlsx');
     }
 }

@@ -34,6 +34,7 @@
                 <p class="text-xs text-gray-400">Approved expenses last 6 months</p>
             </div>
             <div class="flex items-center gap-2">
+                @include('exports.buttons', ['route' => 'admin.expenses.export', 'params' => [$tenant]])
                 <a href="{{ route('admin.expenses.categories', $tenant) }}"
                    class="lmt-btn-secondary lmt-btn-sm">
                     <i data-lucide="tag" class="w-4 h-4"></i>

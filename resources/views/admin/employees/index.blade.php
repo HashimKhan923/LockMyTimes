@@ -16,6 +16,7 @@
             <i data-lucide="upload" class="w-4 h-4"></i>
             Import CSV
         </button>
+        @include('exports.buttons', ['route' => 'admin.employees.export', 'params' => [$tenant]])
         <a href="{{ route('admin.employees.org-chart', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
             <i data-lucide="git-branch" class="w-4 h-4"></i>
             Org Chart

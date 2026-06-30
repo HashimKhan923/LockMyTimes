@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\QrCodeController;
+use App\Http\Controllers\Admin\UpgradeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +34,9 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     /* Dashboard */
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
+    /* Upgrade / Plan page */
+    Route::get('/upgrade', [UpgradeController::class, 'index'])->name('upgrade');
+
     /* ---- Employees ---- */
     Route::prefix('employees')->name('employees.')->group(function () {
         Route::get('/',                       [EmployeeController::class, 'index'])->name('index')->middleware('permission:employees.view');
@@ -40,6 +44,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::post('/',                      [EmployeeController::class, 'store'])->name('store')->middleware('permission:employees.create');
         Route::get('/org-chart',              [EmployeeController::class, 'orgChart'])->name('org-chart')->middleware('permission:employees.view');
         Route::post('/import',                [EmployeeController::class, 'import'])->name('import')->middleware('permission:employees.create');
+        Route::get('/export',                 [EmployeeController::class, 'export'])->name('export')->middleware('permission:employees.export');
         Route::get('/{employee}',             [EmployeeController::class, 'show'])->name('show')->middleware('permission:employees.view');
         Route::get('/{employee}/edit',        [EmployeeController::class, 'edit'])->name('edit')->middleware('permission:employees.edit');
         Route::put('/{employee}',             [EmployeeController::class, 'update'])->name('update')->middleware('permission:employees.edit');
@@ -71,12 +76,36 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Attendance ---- */
-    Route::prefix('attendance')->name('attendance.')->group(function () {
+    Route::prefix('attendance')->name('attendance.')->middleware('module:attendance')->group(function () {
         Route::get('/',                          [AttendanceController::class, 'index'])->name('index')->middleware('permission:attendance.view');
         Route::post('/manual',                   [AttendanceController::class, 'manualEntry'])->name('manual')->middleware('permission:attendance.create');
         Route::get('/export',                    [AttendanceController::class, 'export'])->name('export')->middleware('permission:attendance.export');
         Route::get('/employee/{employee}/sheet', [AttendanceController::class, 'employeeSheet'])->name('employee-sheet')->middleware('permission:attendance.view');
     });
+
+    /* ---- Leave exports ---- */
+    Route::get('/leaves/export', [\App\Http\Controllers\Admin\LeaveController::class, 'export'])->name('leaves.export')->middleware('permission:leaves.view');
+
+    /* ---- Payroll exports ---- */
+    Route::get('/payroll/export', [\App\Http\Controllers\Admin\PayrollController::class, 'export'])->name('payroll.export')->middleware('permission:payroll.view');
+
+    /* ---- Expense exports ---- */
+    Route::get('/expenses/export', [\App\Http\Controllers\Admin\ExpenseController::class, 'export'])->name('expenses.export')->middleware('permission:expenses.view');
+
+    /* ---- Asset exports ---- */
+    Route::get('/assets/export', [\App\Http\Controllers\Admin\AssetController::class, 'export'])->name('assets.export')->middleware('permission:assets.view');
+
+    /* ---- Loan exports ---- */
+    Route::get('/loans/export', [\App\Http\Controllers\Admin\LoanController::class, 'export'])->name('loans.export')->middleware('permission:loans.view');
+
+    /* ---- Training exports ---- */
+    Route::get('/training/export', [\App\Http\Controllers\Admin\TrainingController::class, 'export'])->name('training.export')->middleware('permission:training.view');
+
+    /* ---- Recruitment exports ---- */
+    Route::get('/recruitment/export', [\App\Http\Controllers\Admin\RecruitmentController::class, 'export'])->name('recruitment.export')->middleware('permission:recruitment.view');
+
+    /* ---- Performance exports ---- */
+    Route::get('/performance/export', [\App\Http\Controllers\Admin\PerformanceController::class, 'export'])->name('performance.export')->middleware('permission:performance.view');
 
     /* ---- QR Codes ---- */
     Route::prefix('qrcodes')->name('qrcodes.')->group(function () {
@@ -106,7 +135,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Leave Management ---- */
-    Route::prefix('leaves')->name('leaves.')->group(function () {
+    Route::prefix('leaves')->name('leaves.')->middleware('module:attendance')->group(function () {
         Route::get('/',                      [\App\Http\Controllers\Admin\LeaveController::class, 'index'])->name('index')->middleware('permission:leaves.view');
         Route::post('/',                     [\App\Http\Controllers\Admin\LeaveController::class, 'store'])->name('store')->middleware('permission:leaves.create');
         Route::patch('/{leave}/approve',     [\App\Http\Controllers\Admin\LeaveController::class, 'approve'])->name('approve')->middleware('permission:leaves.approve');
@@ -125,7 +154,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Payroll ---- */
-    Route::prefix('payroll')->name('payroll.')->group(function () {
+    Route::prefix('payroll')->name('payroll.')->middleware('module:payroll')->group(function () {
         Route::get('/',                          [\App\Http\Controllers\Admin\PayrollController::class, 'index'])->name('index')->middleware('permission:payroll.view');
         Route::post('/run',                      [\App\Http\Controllers\Admin\PayrollController::class, 'createRun'])->name('run')->middleware('permission:payroll.create');
         Route::get('/{payrollRun}',              [\App\Http\Controllers\Admin\PayrollController::class, 'show'])->name('show')->middleware('permission:payroll.view');
@@ -138,7 +167,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Expenses ---- */
-    Route::prefix('expenses')->name('expenses.')->group(function () {
+    Route::prefix('expenses')->name('expenses.')->middleware('module:expenses')->group(function () {
         Route::get('/',                             [\App\Http\Controllers\Admin\ExpenseController::class, 'index'])->name('index')->middleware('permission:expenses.view');
         Route::post('/',                            [\App\Http\Controllers\Admin\ExpenseController::class, 'store'])->name('store')->middleware('permission:expenses.create');
         Route::patch('/{expense}/approve',          [\App\Http\Controllers\Admin\ExpenseController::class, 'approve'])->name('approve')->middleware('permission:expenses.approve');
@@ -167,7 +196,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Performance Management ---- */
-    Route::prefix('performance')->name('performance.')->group(function () {
+    Route::prefix('performance')->name('performance.')->middleware('module:performance')->group(function () {
         Route::get('/',                             [\App\Http\Controllers\Admin\PerformanceController::class, 'index'])->name('index')->middleware('permission:performance.view');
         Route::post('/cycles',                      [\App\Http\Controllers\Admin\PerformanceController::class, 'storeCycle'])->name('cycles.store')->middleware('permission:reviews.create');
         Route::post('/reviews',                     [\App\Http\Controllers\Admin\PerformanceController::class, 'storeReview'])->name('reviews.store')->middleware('permission:reviews.create');
@@ -206,7 +235,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Assets ---- */
-    Route::prefix('assets')->name('assets.')->group(function () {
+    Route::prefix('assets')->name('assets.')->middleware('module:assets')->group(function () {
         Route::get('/',                    [\App\Http\Controllers\Admin\AssetController::class, 'index'])->name('index')->middleware('permission:assets.view');
         Route::post('/',                   [\App\Http\Controllers\Admin\AssetController::class, 'store'])->name('store')->middleware('permission:assets.create');
         Route::get('/{asset}',             [\App\Http\Controllers\Admin\AssetController::class, 'show'])->name('show')->middleware('permission:assets.view');
@@ -219,7 +248,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Training & LMS ---- */
-    Route::prefix('training')->name('training.')->group(function () {
+    Route::prefix('training')->name('training.')->middleware('module:training')->group(function () {
         Route::get('/',                              [\App\Http\Controllers\Admin\TrainingController::class, 'index'])->name('index')->middleware('permission:training.view');
         Route::post('/',                             [\App\Http\Controllers\Admin\TrainingController::class, 'store'])->name('store')->middleware('permission:training.create');
         Route::get('/{training}',                    [\App\Http\Controllers\Admin\TrainingController::class, 'show'])->name('show')->middleware('permission:training.view');
@@ -232,7 +261,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Documents ---- */
-    Route::prefix('documents')->name('documents.')->group(function () {
+    Route::prefix('documents')->name('documents.')->middleware('module:documents')->group(function () {
         Route::get('/',                        [\App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('index')->middleware('permission:documents.view');
         Route::post('/',                       [\App\Http\Controllers\Admin\DocumentController::class, 'store'])->name('store')->middleware('permission:documents.create');
         Route::get('/{document}/download',     [\App\Http\Controllers\Admin\DocumentController::class, 'download'])->name('download')->middleware('permission:documents.view');
@@ -244,7 +273,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     });
 
     /* ---- Recruitment & ATS ---- */
-    Route::prefix('recruitment')->name('recruitment.')->group(function () {
+    Route::prefix('recruitment')->name('recruitment.')->middleware('module:recruitment')->group(function () {
         Route::get('/',                                    [\App\Http\Controllers\Admin\RecruitmentController::class, 'index'])->name('index')->middleware('permission:recruitment.view');
         Route::post('/',                                   [\App\Http\Controllers\Admin\RecruitmentController::class, 'store'])->name('store')->middleware('permission:recruitment.create');
         Route::get('/{job}',                               [\App\Http\Controllers\Admin\RecruitmentController::class, 'show'])->name('show')->middleware('permission:recruitment.view');

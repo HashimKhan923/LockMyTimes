@@ -11,6 +11,7 @@ use App\Models\Tenant\Interview;
 use App\Models\Tenant\JobPosting;
 use App\Models\Tenant\Location;
 use App\Models\Tenant\Position;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -269,5 +270,35 @@ class RecruitmentController extends Controller
 
         $interview->update($data);
         return back()->with('success', 'Interview feedback saved.');
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $candidates = Candidate::with(['jobPosting.department'])->latest()->get();
+
+        $columns = ['Name', 'Email', 'Phone', 'Job Title', 'Department', 'Stage', 'Source', 'Applied On', 'Status'];
+
+        $rows = $candidates->map(fn($c) => [
+            $c->full_name ?? $c->first_name . ' ' . $c->last_name,
+            $c->email ?? '-',
+            $c->phone ?? '-',
+            $c->jobPosting?->title ?? '-',
+            $c->jobPosting?->department?->name ?? '-',
+            ucfirst(str_replace('_', ' ', $c->current_stage ?? '-')),
+            ucfirst($c->source ?? '-'),
+            $c->created_at->format('Y-m-d'),
+            ucfirst($c->status ?? 'active'),
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Recruitment Report', $columns, $rows, 'recruitment-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'recruitment-'.now()->format('Y-m-d').'.xlsx');
     }
 }

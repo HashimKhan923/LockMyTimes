@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Main\Tenant;
 use App\Models\Tenant\Document;
 use App\Models\Tenant\DocumentFolder;
 use App\Models\Tenant\DocumentSignature;
@@ -94,7 +95,16 @@ class DocumentController extends Controller
             'file'                    => 'required|file|max:51200', // 50MB
         ]);
 
-        $file = $request->file('file');
+        $file     = $request->file('file');
+        $fileSize = $file->getSize();
+
+        // Enforce plan storage limit
+        $currentTenant = Tenant::where('slug', $tenant)->first();
+        if ($currentTenant && ! $currentTenant->canUploadBytes($fileSize)) {
+            $maxGb = $currentTenant->getPlanLimit('max_storage_gb');
+            return back()->withInput()->with('error',
+                "You have reached your {$maxGb}GB storage limit. Please upgrade your plan or delete existing files.");
+        }
 
         $path = $file->store('documents', 'public');
 
@@ -106,7 +116,7 @@ class DocumentController extends Controller
             'file_path'               => $path,
             'file_name'               => $file->getClientOriginalName(),
             'mime_type'               => $file->getMimeType(),
-            'file_size'               => $file->getSize(),
+            'file_size'               => $fileSize,
             'version'                 => '1.0',
             'category'                => $data['category'],
             'visibility'              => $data['visibility'],
@@ -115,6 +125,11 @@ class DocumentController extends Controller
             'requires_signature'      => $data['requires_signature'] ?? false,
             'download_count'          => 0,
         ]);
+
+        // Track storage usage on main tenant record
+        if ($currentTenant) {
+            $currentTenant->incrementStorage($fileSize);
+        }
 
         return back()->with('success', 'Document uploaded successfully.');
     }
@@ -141,8 +156,13 @@ class DocumentController extends Controller
      |================================================================*/
     public function destroy(string $tenant, Document $document)
     {
+        $fileSize      = $document->file_size;
+        $currentTenant = Tenant::where('slug', $tenant)->first();
+
         Storage::disk('public')->delete($document->file_path);
         $document->delete();
+
+        $currentTenant?->decrementStorage($fileSize);
 
         return back()->with('success', 'Document deleted.');
     }

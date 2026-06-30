@@ -8,6 +8,7 @@ use App\Models\Tenant\AssetAssignment;
 use App\Models\Tenant\AssetCategory;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Location;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -230,5 +231,36 @@ class AssetController extends Controller
 
         AssetCategory::create(array_merge($data, ['is_active' => true]));
         return back()->with('success', 'Category created.');
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $assets = Asset::with(['category', 'currentAssignment.employee'])->latest()->get();
+
+        $columns = ['Asset Tag', 'Name', 'Category', 'Brand', 'Model', 'Serial No.', 'Status', 'Assigned To', 'Purchase Date', 'Value'];
+
+        $rows = $assets->map(fn($a) => [
+            $a->asset_tag ?? '-',
+            $a->name,
+            $a->category?->name ?? '-',
+            $a->brand ?? '-',
+            $a->model ?? '-',
+            $a->serial_number ?? '-',
+            ucfirst($a->status),
+            $a->currentAssignment?->employee?->full_name ?? 'Unassigned',
+            $a->purchase_date?->format('Y-m-d') ?? '-',
+            $a->purchase_price ? number_format($a->purchase_price, 2) : '-',
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Assets Report', $columns, $rows, 'assets-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'assets-'.now()->format('Y-m-d').'.xlsx');
     }
 }

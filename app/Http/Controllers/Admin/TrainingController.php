@@ -7,6 +7,7 @@ use App\Models\Tenant\Certification;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Training;
 use App\Models\Tenant\TrainingEnrollment;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -244,5 +245,34 @@ class TrainingController extends Controller
         }
         $certification->delete();
         return back()->with('success', 'Certification removed.');
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $trainings = Training::withCount('enrollments')->latest()->get();
+
+        $columns = ['Title', 'Type', 'Instructor', 'Start Date', 'End Date', 'Duration (hrs)', 'Enrolled', 'Status'];
+
+        $rows = $trainings->map(fn($t) => [
+            $t->title,
+            ucfirst(str_replace('_', ' ', $t->type ?? 'internal')),
+            $t->instructor ?? '-',
+            $t->start_date?->format('Y-m-d') ?? '-',
+            $t->end_date?->format('Y-m-d') ?? '-',
+            $t->duration_hours ?? '-',
+            $t->enrollments_count,
+            ucfirst($t->status ?? 'scheduled'),
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Training Report', $columns, $rows, 'training-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'training-'.now()->format('Y-m-d').'.xlsx');
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Tenant extends Model
 {
@@ -145,6 +146,56 @@ class Tenant extends Model
     public static function generateDatabaseName(string $slug): string
     {
         return config('tenancy.db_prefix', 'lockmytimes_tenant_').preg_replace('/[^a-z0-9_]/', '', strtolower($slug));
+    }
+
+    /* =====================================================
+     | Plan Limit Helpers
+     |====================================================*/
+
+    public function getPlanLimit(string $key, mixed $default = null): mixed
+    {
+        return $this->settings['plan_limits'][$key] ?? $default;
+    }
+
+    public function hasModule(string $module): bool
+    {
+        $flags = $this->feature_flags ?? [];
+        return (bool) ($flags["has_{$module}"] ?? true); // default true if no plan applied yet
+    }
+
+    public function canAddEmployee(): bool
+    {
+        $max = $this->getPlanLimit('max_employees');
+        if ($max === null) return true;
+        return $this->employees_count < $max;
+    }
+
+    public function canAddAdmin(): bool
+    {
+        $max = $this->getPlanLimit('max_admins');
+        if ($max === null) return true;
+        return $this->admins_count < $max;
+    }
+
+    public function canUploadBytes(int $bytes): bool
+    {
+        $maxGb = $this->getPlanLimit('max_storage_gb');
+        if ($maxGb === null) return true;
+        $maxBytes = $maxGb * 1024 * 1024 * 1024;
+        return ($this->storage_used_bytes + $bytes) <= $maxBytes;
+    }
+
+    public function incrementStorage(int $bytes): void
+    {
+        $this->increment('storage_used_bytes', $bytes);
+    }
+
+    public function decrementStorage(int $bytes): void
+    {
+        // Use GREATEST to prevent storage_used_bytes going below 0
+        $this->newQuery()->where('id', $this->id)->update([
+            'storage_used_bytes' => \Illuminate\Support\Facades\DB::raw("GREATEST(0, storage_used_bytes - {$bytes})"),
+        ]);
     }
 
     /**

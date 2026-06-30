@@ -8,6 +8,7 @@ use App\Models\Tenant\Goal;
 use App\Models\Tenant\Kudo;
 use App\Models\Tenant\PerformanceReview;
 use App\Models\Tenant\ReviewCycle;
+use App\Services\ExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -210,5 +211,33 @@ class PerformanceController extends Controller
     {
         $kudo->delete();
         return back()->with('success', 'Kudos removed.');
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $reviews = PerformanceReview::with(['employee.department', 'reviewer', 'cycle'])->latest()->get();
+
+        $columns = ['Employee', 'Department', 'Reviewer', 'Cycle', 'Rating', 'Status', 'Review Date'];
+
+        $rows = $reviews->map(fn($r) => [
+            $r->employee->full_name ?? '-',
+            $r->employee->department?->name ?? '-',
+            $r->reviewer->name ?? '-',
+            $r->cycle?->name ?? '-',
+            $r->overall_rating ?? '-',
+            ucfirst(str_replace('_', ' ', $r->status)),
+            $r->review_date?->format('Y-m-d') ?? $r->created_at->format('Y-m-d'),
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Performance Reviews Report', $columns, $rows, 'performance-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'performance-'.now()->format('Y-m-d').'.xlsx');
     }
 }

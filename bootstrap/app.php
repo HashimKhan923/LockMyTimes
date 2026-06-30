@@ -63,6 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'employee.auth'       => \App\Http\Middleware\EnsureEmployeeAuth::class,
             'role'                => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission'          => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'module'              => \App\Http\Middleware\CheckModuleAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

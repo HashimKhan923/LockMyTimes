@@ -8,6 +8,7 @@ use App\Models\Tenant\Employee;
 use App\Models\Tenant\Location;
 use App\Models\Tenant\Position;
 use App\Models\Tenant\User;
+use App\Services\ExportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -97,6 +98,14 @@ class EmployeeController extends Controller
             'salary_frequency'  => 'nullable|in:hourly,weekly,bi_weekly,semi_monthly,monthly,annually',
             'avatar'            => 'nullable|image|max:2048',
         ]);
+
+        // Enforce plan employee limit
+        $currentTenant = \App\Models\Main\Tenant::where('slug', $tenant)->first();
+        if ($currentTenant && ! $currentTenant->canAddEmployee()) {
+            $max = $currentTenant->getPlanLimit('max_employees');
+            return back()->withInput()->with('error',
+                "You have reached your plan limit of {$max} employees. Please upgrade your plan to add more.");
+        }
 
         DB::beginTransaction();
         try {
@@ -300,5 +309,39 @@ class EmployeeController extends Controller
         if ($errors) $msg .= ' '.count($errors).' rows failed.';
 
         return back()->with('success', $msg);
+    }
+
+    /* ================================================================
+     | EXPORT
+     |================================================================*/
+    public function export(string $tenant, Request $request, ExportService $exporter)
+    {
+        $format = $request->get('format', 'excel');
+
+        $employees = Employee::with(['department', 'position', 'location'])
+            ->orderBy('first_name')
+            ->get();
+
+        $columns = ['Code', 'First Name', 'Last Name', 'Email', 'Department', 'Position', 'Location', 'Type', 'Status', 'Hire Date', 'Salary'];
+
+        $rows = $employees->map(fn($e) => [
+            $e->employee_code,
+            $e->first_name,
+            $e->last_name,
+            $e->email,
+            $e->department?->name ?? '-',
+            $e->position?->title ?? '-',
+            $e->location?->name ?? '-',
+            ucfirst(str_replace('_', ' ', $e->employment_type)),
+            ucfirst($e->employment_status),
+            $e->hire_date?->format('Y-m-d') ?? '-',
+            $e->base_salary ? number_format($e->base_salary, 2) : '-',
+        ]);
+
+        if ($format === 'pdf') {
+            return $exporter->pdf('Employee Report', $columns, $rows, 'employees-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'employees-'.now()->format('Y-m-d').'.xlsx');
     }
 }
