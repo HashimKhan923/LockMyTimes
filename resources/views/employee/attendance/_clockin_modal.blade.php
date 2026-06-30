@@ -1,0 +1,120 @@
+<div x-show="clockOpen" x-cloak class="lmt-modal-backdrop" @keydown.escape.window="closeClockModal()">
+    <div class="lmt-modal" style="max-width:560px;" @click.outside="closeClockModal()"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100">
+
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
+                <span x-text="clockMode === 'in' ? 'Clock In' : 'Clock Out'"></span>
+            </h3>
+            <button @click="closeClockModal()" class="text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        {{-- Method tabs --}}
+        <div class="inline-flex p-1 bg-gray-100 dark:bg-slate-800 rounded-xl text-xs font-bold mb-5">
+            <button @click="clockTab='web'; stopCamera();"
+                    :class="clockTab==='web' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
+                    class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+                <i data-lucide="laptop" class="w-3.5 h-3.5"></i> Web
+            </button>
+            <button @click="clockTab='qr'; stopCamera();"
+                    :class="clockTab==='qr' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
+                    class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> QR Code
+            </button>
+            <button @click="clockTab='selfie'; startCamera();"
+                    :class="clockTab==='selfie' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
+                    class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+                <i data-lucide="camera" class="w-3.5 h-3.5"></i> Selfie
+            </button>
+        </div>
+
+        {{-- Geo banner --}}
+        <div class="mb-4 p-3 rounded-xl flex items-start gap-3 text-xs"
+             :class="clockGeo.err ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 dark:bg-slate-800 text-gray-600 dark:text-slate-300'">
+            <i :data-lucide="clockGeo.err ? 'map-pin-off' : (clockGeo.lat ? 'map-pin' : 'loader')"
+               class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+            <div class="flex-1">
+                <p class="font-bold" x-show="!clockGeo.lat && !clockGeo.err">Getting your location…</p>
+                <p class="font-bold" x-show="clockGeo.lat && !clockGeo.err">
+                    Location captured
+                    <span class="font-mono text-[10px] ml-1 text-gray-400" x-text="`(±${clockGeo.accuracy}m)`"></span>
+                </p>
+                <p class="font-bold" x-show="clockGeo.err" x-text="clockGeo.err"></p>
+            </div>
+            <button @click="captureGeo()" type="button" class="text-xs font-bold hover:underline" style="color:var(--brand-500);">
+                Retry
+            </button>
+        </div>
+
+        {{-- Web tab --}}
+        <div x-show="clockTab === 'web'">
+            <label class="lmt-label">Location</label>
+            <select class="lmt-input" x-model="clockLocationId">
+                <option value="">Pick a location…</option>
+                @foreach($assignedLocs as $loc)
+                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                @endforeach
+            </select>
+            <p class="lmt-help">Your assigned location is selected by default.</p>
+        </div>
+
+        {{-- QR tab --}}
+        <div x-show="clockTab === 'qr'">
+            <label class="lmt-label">Scan or paste QR code</label>
+            <input type="text" class="lmt-input font-mono" x-model="clockQrToken"
+                   placeholder="Paste QR token here or scan with your camera"/>
+            <p class="lmt-help">Ask your admin for a printed QR code. Scanner support via camera is coming soon.</p>
+        </div>
+
+        {{-- Selfie tab --}}
+        <div x-show="clockTab === 'selfie'">
+            <div class="rounded-2xl overflow-hidden bg-gray-900 aspect-square relative">
+                <video x-ref="video" autoplay playsinline muted x-show="!clockSelfie"
+                       class="w-full h-full object-cover transform scale-x-[-1]"></video>
+                <img :src="clockSelfie" x-show="clockSelfie" alt="" class="w-full h-full object-cover"/>
+
+                <button x-show="!clockSelfie" @click="snapSelfie()"
+                        class="absolute bottom-4 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-white flex items-center justify-center hover:scale-110 transition-transform">
+                    <i data-lucide="camera" class="w-6 h-6 text-gray-900"></i>
+                </button>
+
+                <button x-show="clockSelfie" @click="retakeSelfie()"
+                        class="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/90 backdrop-blur text-sm font-bold text-gray-900 hover:bg-white transition-colors">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 inline -mt-0.5"></i> Retake
+                </button>
+            </div>
+            <p class="lmt-help mt-2">Selfie verification helps confirm it's really you.</p>
+        </div>
+
+        {{-- Notes --}}
+        <div class="mt-4">
+            <label class="lmt-label">Notes <span class="text-gray-400 font-normal">(optional)</span></label>
+            <input type="text" class="lmt-input" x-model="clockNotes" maxlength="255"
+                   placeholder="e.g. Working from client site today"/>
+        </div>
+
+        {{-- Footer --}}
+        <div class="flex justify-end gap-2 mt-6">
+            <button @click="closeClockModal()" class="lmt-btn-secondary">Cancel</button>
+            <button @click="submitClock()" class="lmt-btn-primary" :disabled="clockSubmitting">
+                <template x-if="!clockSubmitting">
+                    <span class="flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span x-text="clockMode === 'in' ? 'Clock In Now' : 'Clock Out Now'"></span>
+                    </span>
+                </template>
+                <span x-show="clockSubmitting" class="flex items-center gap-2">
+                    <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                    </svg>
+                    Submitting…
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
