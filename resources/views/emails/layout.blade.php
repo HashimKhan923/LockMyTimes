@@ -32,9 +32,8 @@
         <img src="{{ $companyLogo }}" alt="{{ $companyName }}" height="52"
              style="max-height:52px; max-width:180px; object-fit:contain; border-radius:8px; margin-bottom:14px; display:block; margin-left:auto; margin-right:auto;"/>
       @else
-        <div style="width:60px; height:60px; border-radius:16px; background:rgba(255,255,255,0.2); display:inline-flex; align-items:center; justify-content:center; margin-bottom:14px; font-size:22px; font-weight:800; color:#fff; letter-spacing:-1px; line-height:60px; text-align:center;">
-          {{ strtoupper(substr($companyName, 0, 2)) }}
-        </div>
+        <img src="{{ url('images/logo.png') }}" alt="Lockmytimes" height="56"
+             style="max-height:56px; max-width:56px; object-fit:contain; margin-bottom:14px; display:block; margin-left:auto; margin-right:auto;"/>
       @endif
       <div style="color:#fff; font-size:20px; font-weight:700; letter-spacing:-0.3px;">{{ $companyName }}</div>
       <div style="color:rgba(255,255,255,0.65); font-size:12px; margin-top:3px; letter-spacing:0.5px; text-transform:uppercase;">HR Platform</div>

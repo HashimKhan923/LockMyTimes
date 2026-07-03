@@ -215,9 +215,9 @@
             <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-white text-sm overflow-hidden"
                  style="background:linear-gradient(135deg,var(--brand-500),var(--brand-600));box-shadow:0 4px 12px var(--brand-shadow-35);">
                 @if(isset($currentTenant) && $currentTenant->logo)
-                    <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-cover" alt=""/>
+                    <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-cover" alt="Logo"/>
                 @else
-                    {{ substr($currentTenant->company_name ?? 'L', 0, 1) }}
+                    <img src="{{ asset('images/logo.png') }}" class="w-full h-full object-contain p-1" alt="Lockmytimes"/>
                 @endif
             </div>
             <div class="brand-text overflow-hidden flex-1 min-w-0">

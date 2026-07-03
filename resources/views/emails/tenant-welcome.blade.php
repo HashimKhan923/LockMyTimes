@@ -38,8 +38,8 @@
 
   {{-- Header --}}
   <div class="header">
-    <div style="width:48px;height:48px;background:rgba(255,255,255,.2);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <div style="width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;padding:8px;">
+      <img src="{{ url('images/logo.png') }}" alt="Lockmytimes" style="width:40px;height:40px;object-fit:contain;"/>
     </div>
     <h1>Your workspace is ready! 🎉</h1>
     <p>Welcome to Lockmytimes, {{ $adminName }}</p>

@@ -66,9 +66,9 @@
 
         {{-- Brand --}}
         <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-100 flex-shrink-0">
-            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center"
-                 style="background:linear-gradient(135deg,#6C7DF7,#4A5BE8);box-shadow:0 4px 12px rgba(108,125,247,0.4);">
-                <i data-lucide="clock" class="w-4 h-4 text-white"></i>
+            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden"
+                 style="background:#EEF0FE;box-shadow:0 4px 12px rgba(108,125,247,0.4);">
+                <img src="{{ asset('images/logo.png') }}" class="w-full h-full object-contain p-1" alt="Lockmytimes"/>
             </div>
             <div class="logo-text overflow-hidden">
                 <p class="font-black text-gray-900 text-sm leading-none" style="font-family:'Nunito',sans-serif;">Lockmytimes</p>
