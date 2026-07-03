@@ -12,7 +12,7 @@
 
     <h1 class="text-4xl font-black text-ink mb-4">You're all set! 🎉</h1>
 
-    @if($tenant)
+    @if($ready ?? false)
       <p class="text-lg text-ink-soft mb-8">
         Your <strong class="text-ink">{{ $tenant->company_name }}</strong> workspace is ready.
         We've sent your login details to <strong class="text-ink">{{ $email }}</strong>.

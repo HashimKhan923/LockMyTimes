@@ -99,56 +99,69 @@ class SubscriptionController extends Controller
         $email  = $checkoutSession->customer_email;
         $tenant = Tenant::where('contact_email', $email)->first();
 
-        // Tenant not provisioned yet — do it synchronously here as a fallback.
-        // This covers: slow webhook delivery, QUEUE_CONNECTION=database with no worker, etc.
-        if (! $tenant && $email) {
-            $meta = (array) $checkoutSession->metadata;
+        $meta = (array) $checkoutSession->metadata;
 
+        // Case 1: tenant record exists but is still pending (webhook fired, job queued but not run)
+        // Case 2: tenant doesn't exist at all (webhook hasn't fired yet)
+        $needsProvisioning = $email && (
+            ! $tenant ||
+            ($tenant && in_array($tenant->status, ['pending', 'provisioning']))
+        );
+
+        if ($needsProvisioning) {
             $plan = SubscriptionPlan::where('slug', $meta['plan_slug'] ?? '')->first();
 
             if ($plan) {
-                $companyName = $meta['company_name'] ?? 'Company';
-                $slug        = $this->generateUniqueSlug($companyName);
+                // Create tenant record if it doesn't exist yet
+                if (! $tenant) {
+                    $companyName = $meta['company_name'] ?? 'Company';
+                    $slug        = $this->generateUniqueSlug($companyName);
 
-                $tenant = Tenant::create([
-                    'company_name'       => $companyName,
-                    'slug'               => $slug,
-                    'contact_name'       => $meta['contact_name'] ?? '',
-                    'contact_email'      => $email,
-                    'database_name'      => Tenant::generateDatabaseName($slug),
-                    'status'             => 'trial',
-                    'trial_ends_at'      => now()->addDays($plan->trial_days),
-                    'stripe_customer_id' => $checkoutSession->customer,
-                    'country'            => 'US',
-                    'timezone'           => 'America/New_York',
-                ]);
+                    $tenant = Tenant::create([
+                        'company_name'       => $companyName,
+                        'slug'               => $slug,
+                        'contact_name'       => $meta['contact_name'] ?? '',
+                        'contact_email'      => $email,
+                        'database_name'      => Tenant::generateDatabaseName($slug),
+                        'status'             => 'pending',
+                        'trial_ends_at'      => now()->addDays($plan->trial_days),
+                        'stripe_customer_id' => $checkoutSession->customer,
+                        'country'            => 'US',
+                        'timezone'           => 'America/New_York',
+                    ]);
 
-                $subId = is_string($checkoutSession->subscription)
-                    ? $checkoutSession->subscription
-                    : ($checkoutSession->subscription?->id ?? null);
+                    $subId = is_string($checkoutSession->subscription)
+                        ? $checkoutSession->subscription
+                        : ($checkoutSession->subscription?->id ?? null);
 
-                if ($subId) {
-                    $this->createOrUpdateSubscription($tenant, $plan, $subId, $meta['billing_cycle'] ?? 'monthly');
+                    if ($subId) {
+                        $this->createOrUpdateSubscription($tenant, $plan, $subId, $meta['billing_cycle'] ?? 'monthly');
+                    }
+
+                    $tenant->applyPlan($plan);
                 }
 
-                $tenant->applyPlan($plan);
-
-                // Run provisioning synchronously (no queue needed)
+                // Run provisioning synchronously right here
                 try {
                     \App\Jobs\ProvisionTenantJob::dispatchSync(
-                        $tenant,
-                        $meta['contact_name'] ?? 'Admin'
+                        $tenant->fresh(),
+                        $meta['contact_name'] ?? ($tenant->contact_name ?: 'Admin')
                     );
                 } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::error('Sync provisioning failed on success page: ' . $e->getMessage());
-                    // Don't crash — tenant record exists, admin can re-provision manually
+                    \Illuminate\Support\Facades\Log::error('Sync provisioning failed on success page: ' . $e->getMessage(), [
+                        'tenant' => $tenant->slug,
+                        'error'  => $e->getMessage(),
+                    ]);
                 }
 
                 $tenant = $tenant->fresh();
             }
         }
 
-        return view('public.checkout-success', compact('tenant', 'email'));
+        // Only show "ready" if tenant is fully provisioned (not pending/provisioning)
+        $ready = $tenant && ! in_array($tenant->status, ['pending', 'provisioning']);
+
+        return view('public.checkout-success', compact('tenant', 'email', 'ready'));
     }
 
     /* ====================================================================
@@ -251,7 +264,11 @@ class SubscriptionController extends Controller
         $this->createOrUpdateSubscription($tenant, $plan, $session->subscription, $meta['billing_cycle'] ?? 'monthly');
         $tenant->applyPlan($plan);
 
-        ProvisionTenantJob::dispatch($tenant, $meta['contact_name'] ?? 'Admin')->onQueue('default');
+        // Mark as pending — the success page will provision synchronously as a fallback,
+        // or a queue worker will pick it up if available.
+        $tenant->update(['status' => 'pending']);
+
+        ProvisionTenantJob::dispatch($tenant, $meta['contact_name'] ?? 'Admin');
 
         Log::info("Tenant provisioning dispatched for: {$email}");
     }
