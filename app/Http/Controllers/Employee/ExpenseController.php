@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tenant\Expense;
 use App\Models\Tenant\ExpenseApproval;
 use App\Models\Tenant\ExpenseCategory;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -224,6 +225,10 @@ class ExpenseController extends Controller
             $expense = Expense::create($payload);
 
             DB::connection('tenant')->commit();
+
+            if ($action !== 'draft') {
+                app(MailService::class)->sendExpenseSubmitted($expense->load(['employee', 'category']));
+            }
         } catch (\Throwable $e) {
             DB::connection('tenant')->rollBack();
             \Log::error('Expense store failed: '.$e->getMessage().' | '.$e->getFile().':'.$e->getLine());

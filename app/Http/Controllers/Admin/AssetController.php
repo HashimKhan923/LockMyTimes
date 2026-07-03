@@ -9,6 +9,7 @@ use App\Models\Tenant\AssetCategory;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Location;
 use App\Services\ExportService;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -166,7 +167,7 @@ class AssetController extends Controller
             return back()->with('error', 'This asset is already assigned. Return it first.');
         }
 
-        AssetAssignment::create([
+        $assignment = AssetAssignment::create([
             'asset_id'                => $asset->id,
             'employee_id'             => $data['employee_id'],
             'assigned_by'             => auth()->id(),
@@ -178,6 +179,7 @@ class AssetController extends Controller
         $asset->update(['status' => 'assigned']);
 
         $employee = Employee::find($data['employee_id']);
+        app(MailService::class)->sendAssetAssigned($assignment->load(['employee', 'asset.category']));
         return back()->with('success', "Asset assigned to {$employee->full_name}.");
     }
 

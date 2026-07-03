@@ -8,6 +8,7 @@ use App\Models\Tenant\Employee;
 use App\Models\Tenant\Training;
 use App\Models\Tenant\TrainingEnrollment;
 use App\Services\ExportService;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -171,12 +172,17 @@ class TrainingController extends Controller
         ]);
 
         $enrolled = 0;
+        $mailer   = app(MailService::class);
         foreach ($data['employee_ids'] as $empId) {
             $created = TrainingEnrollment::firstOrCreate(
                 ['training_id' => $training->id, 'employee_id' => $empId],
                 ['enrolled_at' => now(), 'status' => 'enrolled', 'progress' => 0]
             );
-            if ($created->wasRecentlyCreated) $enrolled++;
+            if ($created->wasRecentlyCreated) {
+                $enrolled++;
+                $employee = Employee::find($empId);
+                if ($employee) $mailer->sendTrainingEnrolled($employee, $training);
+            }
         }
 
         return back()->with('success', "{$enrolled} employee(s) enrolled.");

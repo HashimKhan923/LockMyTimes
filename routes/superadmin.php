@@ -58,8 +58,9 @@ Route::middleware('superadmin')->group(function () {
         Route::post('/',              [PlanController::class, 'store'])->name('store');
         Route::get('/{plan}/edit',    [PlanController::class, 'edit'])->name('edit');
         Route::put('/{plan}',         [PlanController::class, 'update'])->name('update');
-        Route::patch('/{plan}/toggle',[PlanController::class, 'toggle'])->name('toggle');
-        Route::delete('/{plan}',      [PlanController::class, 'destroy'])->name('destroy');
+        Route::patch('/{plan}/toggle',       [PlanController::class, 'toggle'])->name('toggle');
+        Route::post('/{plan}/sync-stripe',   [PlanController::class, 'syncStripe'])->name('sync-stripe');
+        Route::delete('/{plan}',             [PlanController::class, 'destroy'])->name('destroy');
     });
 
     // Payments

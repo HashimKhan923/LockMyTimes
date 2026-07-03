@@ -9,7 +9,9 @@ use App\Models\Tenant\TaskAssignee;
 use App\Models\Tenant\TaskChecklist;
 use App\Models\Tenant\TaskAttachment;
 use App\Models\Tenant\TaskComment;
+use App\Models\Tenant\Employee;
 use App\Models\Tenant\TaskList;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -87,6 +89,8 @@ class TaskController extends Controller
 
         // Assign employees
         if (! empty($data['assignee_ids'])) {
+            $mailer = app(MailService::class);
+            $task->load('project');
             foreach ($data['assignee_ids'] as $i => $empId) {
                 TaskAssignee::create([
                     'task_id'     => $task->id,
@@ -94,6 +98,8 @@ class TaskController extends Controller
                     'is_primary'  => $i === 0,
                     'assigned_by' => auth()->id(),
                 ]);
+                $employee = Employee::find($empId);
+                if ($employee) $mailer->sendTaskAssigned($employee, $task);
             }
         }
 

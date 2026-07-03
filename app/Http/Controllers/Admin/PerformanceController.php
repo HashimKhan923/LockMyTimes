@@ -9,6 +9,7 @@ use App\Models\Tenant\Kudo;
 use App\Models\Tenant\PerformanceReview;
 use App\Models\Tenant\ReviewCycle;
 use App\Services\ExportService;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -95,7 +96,8 @@ class PerformanceController extends Controller
             // due_date not in review_cycles table
         ]);
 
-        PerformanceReview::create(array_merge($data, ['status' => 'pending']));
+        $review = PerformanceReview::create(array_merge($data, ['status' => 'pending']));
+        app(MailService::class)->sendReviewAssigned($review->load(['employee', 'reviewer', 'cycle']));
         return back()->with('success', 'Performance review created.');
     }
 
@@ -195,7 +197,7 @@ class PerformanceController extends Controller
             'is_public'        => 'boolean',
         ]);
 
-        Kudo::create([
+        $kudo = Kudo::create([
             'from_employee_id' => $request->from_employee_id,
             'to_employee_id'   => $request->to_employee_id,
             'message'          => $request->message,
@@ -204,7 +206,9 @@ class PerformanceController extends Controller
             'reactions_count'  => 0,
         ]);
 
-        return back()->with('success', 'Kudos sent! 🎉');
+        app(MailService::class)->sendKudoReceived($kudo->load(['toEmployee', 'fromEmployee']));
+
+        return back()->with('success', 'Kudos sent!');
     }
 
     public function destroyKudo(string $tenant, Kudo $kudo)

@@ -9,6 +9,7 @@ use App\Models\Tenant\Location;
 use App\Models\Tenant\Position;
 use App\Models\Tenant\User;
 use App\Services\ExportService;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -143,6 +144,11 @@ class EmployeeController extends Controller
                 ->increment('employees_count');
 
             DB::commit();
+
+            app(MailService::class)->sendEmployeeWelcome(
+                $employee->load(['department', 'position']),
+                $tempPassword
+            );
 
             return redirect()
                 ->route('admin.employees.show', [$tenant, $employee->id])

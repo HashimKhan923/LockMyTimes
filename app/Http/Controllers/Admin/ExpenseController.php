@@ -7,6 +7,7 @@ use App\Models\Tenant\Employee;
 use App\Models\Tenant\Expense;
 use App\Models\Tenant\ExpenseCategory;
 use App\Services\ExportService;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -97,6 +98,8 @@ class ExpenseController extends Controller
             'approved_at' => now(),
         ]);
 
+        app(MailService::class)->sendExpenseApproved($expense->fresh(['employee', 'category']));
+
         return back()->with('success', "Expense approved — \${$expense->amount}.");
     }
 
@@ -113,6 +116,8 @@ class ExpenseController extends Controller
             'rejection_reason' => $request->reason,
         ]);
 
+        app(MailService::class)->sendExpenseRejected($expense->fresh(['employee', 'category']));
+
         return back()->with('success', 'Expense rejected.');
     }
 
@@ -126,6 +131,8 @@ class ExpenseController extends Controller
             'status'  => 'paid',
             'paid_at' => now(),
         ]);
+
+        app(MailService::class)->sendExpensePaid($expense->fresh(['employee', 'category']));
 
         return back()->with('success', 'Expense marked as paid.');
     }
@@ -155,7 +162,9 @@ class ExpenseController extends Controller
         $data['currency']       = $data['currency'] ?? 'USD';
         $data['submitted_at']   = now();
 
-        Expense::create($data);
+        $expense = Expense::create($data);
+
+        app(MailService::class)->sendExpenseSubmitted($expense->load(['employee', 'category']));
 
         return back()->with('success', 'Expense submitted successfully.');
     }

@@ -11,6 +11,7 @@ use App\Models\Tenant\LeaveType;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\User;
 use App\Services\ExportService;
+use App\Services\MailService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -161,6 +162,8 @@ class LeaveController extends Controller
                 route('admin.leaves.index', $tenant));
         }
 
+        app(MailService::class)->sendLeaveApproved($leave->fresh(['employee', 'leaveType', 'approver']));
+
         return back()->with('success', "{$leave->employee->full_name}'s leave approved.");
     }
 
@@ -230,6 +233,8 @@ class LeaveController extends Controller
                 route('admin.leaves.index', $tenant));
         }
 
+        app(MailService::class)->sendLeaveRejected($leave->fresh(['employee', 'leaveType']));
+
         return back()->with('success', "Leave request rejected.");
     }
 
@@ -257,6 +262,8 @@ class LeaveController extends Controller
                 $balance->decrement('used', (float) $leave->total_days);
             }
         }
+
+        app(MailService::class)->sendLeaveCancelled($leave->fresh(['employee', 'leaveType']));
 
         return back()->with('success', 'Leave cancelled and balance restored.');
     }

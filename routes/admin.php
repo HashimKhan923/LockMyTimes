@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\QrCodeController;
+use App\Http\Controllers\Admin\BillingController;
 use App\Http\Controllers\Admin\UpgradeController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,15 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
 
     /* Upgrade / Plan page */
     Route::get('/upgrade', [UpgradeController::class, 'index'])->name('upgrade');
+
+    /* Billing & Subscription */
+    Route::prefix('billing')->name('billing.')->group(function () {
+        Route::get('/',        [BillingController::class, 'index'])->name('index');
+        Route::post('/checkout', [BillingController::class, 'checkout'])->name('checkout');
+        Route::get('/portal',  [BillingController::class, 'portal'])->name('portal');
+        Route::post('/cancel', [BillingController::class, 'cancel'])->name('cancel');
+        Route::post('/resume', [BillingController::class, 'resume'])->name('resume');
+    });
 
     /* ---- Employees ---- */
     Route::prefix('employees')->name('employees.')->group(function () {

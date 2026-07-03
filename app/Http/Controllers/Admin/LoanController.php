@@ -9,6 +9,7 @@ use App\Models\Tenant\LoanRepayment;
 use App\Models\Tenant\LoanType;
 use App\Models\Tenant\SalaryAdvance;
 use App\Services\ExportService;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -149,6 +150,8 @@ class LoanController extends Controller
             'approved_at' => now(),
         ]);
 
+        app(MailService::class)->sendLoanApproved($loan->fresh(['employee', 'loanType']));
+
         return back()->with('success', "Loan {$loan->loan_number} approved.");
     }
 
@@ -177,6 +180,8 @@ class LoanController extends Controller
         // Generate repayment schedule
         $this->generateRepaymentSchedule($loan);
 
+        app(MailService::class)->sendLoanDisbursed($loan->fresh(['employee', 'loanType']));
+
         return back()->with('success', "Loan disbursed. Repayment schedule generated.");
     }
 
@@ -193,6 +198,8 @@ class LoanController extends Controller
             'approved_at'      => now(),
             'rejection_reason' => $request->reason,
         ]);
+
+        app(MailService::class)->sendLoanRejected($loan->fresh(['employee', 'loanType']));
 
         return back()->with('success', 'Loan rejected.');
     }

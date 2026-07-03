@@ -7,6 +7,8 @@ use App\Models\Tenant\Announcement;
 use App\Models\Tenant\AnnouncementRead;
 use App\Models\Tenant\Poll;
 use App\Models\Tenant\PollVote;
+use App\Models\Tenant\User;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -73,7 +75,13 @@ class AnnouncementController extends Controller
             $data['status'] = 'scheduled';
         }
 
-        Announcement::create($data);
+        $announcement = Announcement::create($data);
+
+        if ($announcement->status === 'published') {
+            $emails = User::where('is_active', true)->pluck('email')->filter()->unique()->values()->toArray();
+            app(MailService::class)->sendAnnouncement($announcement, $emails);
+        }
+
         return back()->with('success', 'Announcement created.');
     }
 

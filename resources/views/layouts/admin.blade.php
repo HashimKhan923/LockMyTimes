@@ -227,6 +227,9 @@
                     ['route'=>'admin.announcements.index','icon'=>'megaphone',       'label'=>'Announcements'],
                     ['route'=>'admin.reports.index',     'icon'=>'bar-chart-2',      'label'=>'Reports'],
                 ],
+                'Account' => [
+                    ['route'=>'admin.billing.index',     'icon'=>'credit-card',      'label'=>'Billing & Plan'],
+                ],
                 'System' => [
                     ['route'=>'admin.roles.index',       'icon'=>'shield',           'label'=>'Roles'],
                     ['route'=>'admin.settings.index',    'icon'=>'settings',         'label'=>'Settings'],

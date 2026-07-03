@@ -12,6 +12,7 @@ use App\Models\Tenant\JobPosting;
 use App\Models\Tenant\Location;
 use App\Models\Tenant\Position;
 use App\Services\ExportService;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -201,6 +202,14 @@ class RecruitmentController extends Controller
             $candidate->jobPosting->increment('applications_count');
         }
 
+        $mailer = app(MailService::class);
+        $candidate->load(['jobPosting.department']);
+        if ($request->stage === 'hired') {
+            $mailer->sendCandidateHired($candidate);
+        } elseif ($request->stage === 'rejected') {
+            $mailer->sendCandidateRejected($candidate);
+        }
+
         if (request()->expectsJson()) {
             return response()->json(['success' => true, 'stage' => $request->stage]);
         }
@@ -237,10 +246,12 @@ class RecruitmentController extends Controller
             'interviewer_ids'  => 'nullable|array',
         ]);
 
-        Interview::create(array_merge($data, [
+        $interview = Interview::create(array_merge($data, [
             'candidate_id' => $candidate->id,
             'status'       => 'scheduled',
         ]));
+
+        app(MailService::class)->sendInterviewScheduled($interview->load(['candidate.jobPosting', 'interviewer']));
 
         // Move to interview stage if not already
         if (! in_array($candidate->stage, ['interview','assessment','offer','hired'])) {

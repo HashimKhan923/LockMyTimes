@@ -131,6 +131,45 @@
         </div>
         @endif
 
+        {{-- Stripe Sync Status --}}
+        <div class="rounded-xl p-3 mb-4 {{ $plan->stripe_product_id ? 'bg-emerald-50 border border-emerald-100' : 'bg-amber-50 border border-amber-100' }}">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full flex-shrink-0 {{ $plan->stripe_product_id ? 'bg-emerald-500' : 'bg-amber-400' }}"></div>
+                    <span class="text-xs font-semibold {{ $plan->stripe_product_id ? 'text-emerald-700' : 'text-amber-700' }}">
+                        {{ $plan->stripe_product_id ? 'Synced with Stripe' : 'Not synced to Stripe' }}
+                    </span>
+                </div>
+                <form action="{{ route('superadmin.plans.sync-stripe', $plan) }}" method="POST">
+                    @csrf
+                    <button type="submit" title="Sync to Stripe"
+                            class="text-xs font-semibold px-2 py-1 rounded-lg border
+                                   {{ $plan->stripe_product_id ? 'border-emerald-200 text-emerald-700 hover:bg-emerald-100' : 'border-amber-300 text-amber-700 hover:bg-amber-100' }}
+                                   transition-colors">
+                        <i data-lucide="refresh-cw" class="w-3 h-3 inline-block mr-0.5"></i>
+                        Sync
+                    </button>
+                </form>
+            </div>
+            @if($plan->stripe_product_id)
+            <div class="mt-2 space-y-0.5">
+                <p class="text-xs text-emerald-600 font-mono truncate" title="{{ $plan->stripe_product_id }}">
+                    prod: {{ $plan->stripe_product_id }}
+                </p>
+                @if($plan->stripe_monthly_price_id)
+                <p class="text-xs text-emerald-600 font-mono truncate" title="{{ $plan->stripe_monthly_price_id }}">
+                    mo: {{ $plan->stripe_monthly_price_id }}
+                </p>
+                @endif
+                @if($plan->stripe_yearly_price_id)
+                <p class="text-xs text-emerald-600 font-mono truncate" title="{{ $plan->stripe_yearly_price_id }}">
+                    yr: {{ $plan->stripe_yearly_price_id }}
+                </p>
+                @endif
+            </div>
+            @endif
+        </div>
+
         {{-- Footer actions --}}
         <div class="flex items-center gap-2 pt-4 border-t border-gray-100 mt-auto">
             <a href="{{ route('superadmin.plans.edit', $plan) }}"

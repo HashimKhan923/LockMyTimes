@@ -8,6 +8,7 @@ use App\Models\Tenant\Payslip;
 use App\Models\Tenant\PayrollRun;
 use App\Models\Tenant\SalaryComponent;
 use App\Services\ExportService;
+use App\Services\MailService;
 use App\Services\NotificationService;
 use App\Services\PayrollService;
 use Carbon\Carbon;
@@ -147,6 +148,9 @@ public function createRun(string $tenant, Request $request)
 
         $payrollRun->update(['status' => 'paid']);  // remove paid_at — not in migration
         $payrollRun->payslips()->update(['status' => 'paid']);
+
+        $mailer = app(MailService::class);
+        $payrollRun->payslips()->with('employee')->get()->each(fn ($slip) => $mailer->sendPayslipAvailable($slip));
 
         return back()->with('success', "Payroll marked as paid.");
     }

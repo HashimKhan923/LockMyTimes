@@ -8,6 +8,7 @@ use App\Models\Tenant\LeaveBalance;
 use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\LeaveType;
 use App\Models\Tenant\Setting;
+use App\Services\MailService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -312,6 +313,10 @@ class LeaveController extends Controller
             }
 
             DB::connection('tenant')->commit();
+
+            if ($needsApproval) {
+                app(MailService::class)->sendLeaveRequested($lr->load(['employee', 'leaveType']));
+            }
         } catch (\Throwable $e) {
             DB::connection('tenant')->rollBack();
             \Log::error('Leave store failed: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
