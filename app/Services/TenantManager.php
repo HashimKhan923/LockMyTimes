@@ -89,7 +89,7 @@ public function connect(Tenant $tenant): void
             $this->runMigrations();
             $this->seedDefaults($tenant);
 
-            $tenant->update(['database_provisioned' => true]);
+            $tenant->update(['database_provisioned' => true, 'status' => 'trial']);
         } catch (Throwable $e) {
             $this->disconnect();
             throw $e;

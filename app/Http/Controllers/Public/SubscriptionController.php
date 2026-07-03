@@ -105,7 +105,7 @@ class SubscriptionController extends Controller
         // Case 2: tenant doesn't exist at all (webhook hasn't fired yet)
         $needsProvisioning = $email && (
             ! $tenant ||
-            ($tenant && in_array($tenant->status, ['pending', 'provisioning']))
+            ($tenant && ! $tenant->database_provisioned)
         );
 
         if ($needsProvisioning) {
@@ -158,8 +158,8 @@ class SubscriptionController extends Controller
             }
         }
 
-        // Only show "ready" if tenant is fully provisioned (not pending/provisioning)
-        $ready = $tenant && ! in_array($tenant->status, ['pending', 'provisioning']);
+        // Only show "ready" if database has been provisioned
+        $ready = $tenant && $tenant->database_provisioned;
 
         return view('public.checkout-success', compact('tenant', 'email', 'ready'));
     }
