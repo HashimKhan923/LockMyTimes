@@ -77,6 +77,11 @@ class SubscriptionController extends Controller
 
     /* ====================================================================
      | SUCCESS PAGE
+     | Stripe redirects here after the user completes checkout.
+     | The webhook (checkout.session.completed) may fire before or after
+     | this page loads. We handle both cases:
+     |  - Tenant already provisioned → show "ready" state
+     |  - Tenant not yet provisioned → provision synchronously here
      |====================================================================*/
     public function success(Request $request)
     {
@@ -87,10 +92,61 @@ class SubscriptionController extends Controller
         }
 
         $stripe          = new StripeClient(config('services.stripe.secret'));
-        $checkoutSession = $stripe->checkout->sessions->retrieve($sessionId);
+        $checkoutSession = $stripe->checkout->sessions->retrieve($sessionId, [
+            'expand' => ['subscription'],
+        ]);
 
         $email  = $checkoutSession->customer_email;
         $tenant = Tenant::where('contact_email', $email)->first();
+
+        // Tenant not provisioned yet — do it synchronously here as a fallback.
+        // This covers: slow webhook delivery, QUEUE_CONNECTION=database with no worker, etc.
+        if (! $tenant && $email) {
+            $meta = (array) $checkoutSession->metadata;
+
+            $plan = SubscriptionPlan::where('slug', $meta['plan_slug'] ?? '')->first();
+
+            if ($plan) {
+                $companyName = $meta['company_name'] ?? 'Company';
+                $slug        = $this->generateUniqueSlug($companyName);
+
+                $tenant = Tenant::create([
+                    'company_name'       => $companyName,
+                    'slug'               => $slug,
+                    'contact_name'       => $meta['contact_name'] ?? '',
+                    'contact_email'      => $email,
+                    'database_name'      => Tenant::generateDatabaseName($slug),
+                    'status'             => 'trial',
+                    'trial_ends_at'      => now()->addDays($plan->trial_days),
+                    'stripe_customer_id' => $checkoutSession->customer,
+                    'country'            => 'US',
+                    'timezone'           => 'America/New_York',
+                ]);
+
+                $subId = is_string($checkoutSession->subscription)
+                    ? $checkoutSession->subscription
+                    : ($checkoutSession->subscription?->id ?? null);
+
+                if ($subId) {
+                    $this->createOrUpdateSubscription($tenant, $plan, $subId, $meta['billing_cycle'] ?? 'monthly');
+                }
+
+                $tenant->applyPlan($plan);
+
+                // Run provisioning synchronously (no queue needed)
+                try {
+                    \App\Jobs\ProvisionTenantJob::dispatchSync(
+                        $tenant,
+                        $meta['contact_name'] ?? 'Admin'
+                    );
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('Sync provisioning failed on success page: ' . $e->getMessage());
+                    // Don't crash — tenant record exists, admin can re-provision manually
+                }
+
+                $tenant = $tenant->fresh();
+            }
+        }
 
         return view('public.checkout-success', compact('tenant', 'email'));
     }
