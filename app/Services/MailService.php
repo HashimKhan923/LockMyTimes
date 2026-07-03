@@ -263,8 +263,9 @@ class MailService
         $ctx   = $this->ctx();
         $email = $interview->candidate->email ?? null;
         if (! $email) return;
+        $jobTitle = $interview->candidate->jobPosting?->title ?? 'Open Position';
         $this->send($email, 'emails.interview-scheduled', array_merge($ctx, [
-            'subject'   => "Interview Invitation — {$interview->candidate->jobPosting?->title ?? 'Open Position'}",
+            'subject'   => "Interview Invitation — {$jobTitle}",
             'interview' => $interview,
             'candidate' => $interview->candidate,
             'portalUrl' => null,
