@@ -58,10 +58,18 @@
         </div>
       </div>
 
-      {{-- Auto-refresh every 5 seconds to check if ready --}}
-      <meta http-equiv="refresh" content="5">
+      <p class="text-sm text-ink-soft" id="refresh-msg">This page will refresh automatically.</p>
 
-      <p class="text-sm text-ink-soft">This page will refresh automatically.</p>
+      <script>
+        // Refresh up to 12 times (1 minute max), then stop
+        var count = parseInt(sessionStorage.getItem('lmt_refresh') || '0');
+        if (count < 12) {
+          sessionStorage.setItem('lmt_refresh', count + 1);
+          setTimeout(function(){ location.reload(); }, 5000);
+        } else {
+          document.getElementById('refresh-msg').textContent = 'Setup is taking longer than expected. Please check your email or contact support.';
+        }
+      </script>
     @endif
 
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
