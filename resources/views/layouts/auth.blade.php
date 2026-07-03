@@ -27,7 +27,11 @@
         <div class="relative z-10">
             <a href="{{ route('home') }}" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center p-1.5">
-                    <img src="{{ asset('images/logo.png') }}" alt="Lockmytimes" class="w-full h-full object-contain"/>
+                    @if(request()->routeIs('superadmin.*'))
+                        <img src="{{ asset('images/logo.png') }}" alt="Lockmytimes" class="w-full h-full object-contain"/>
+                    @else
+                        <i data-lucide="clock" class="w-5 h-5 text-white"></i>
+                    @endif
                 </div>
                 <span class="text-white text-xl font-bold" style="font-family:'Nunito',sans-serif">Lockmytimes</span>
             </a>
@@ -67,7 +71,11 @@
         <div class="lg:hidden mb-8">
             <a href="{{ route('home') }}" class="flex items-center gap-2.5">
                 <div class="w-9 h-9 rounded-xl lmt-gradient-bg flex items-center justify-center p-1.5">
-                    <img src="{{ asset('images/logo.png') }}" alt="Lockmytimes" class="w-full h-full object-contain"/>
+                    @if(request()->routeIs('superadmin.*'))
+                        <img src="{{ asset('images/logo.png') }}" alt="Lockmytimes" class="w-full h-full object-contain"/>
+                    @else
+                        <i data-lucide="clock" class="w-4 h-4 text-white"></i>
+                    @endif
                 </div>
                 <span class="text-xl font-bold text-ink" style="font-family:'Nunito',sans-serif">Lockmytimes</span>
             </a>

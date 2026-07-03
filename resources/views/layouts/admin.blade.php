@@ -173,7 +173,7 @@
                 @if(isset($currentTenant) && $currentTenant->logo)
                     <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-cover" alt="Logo"/>
                 @else
-                    <img src="{{ asset('images/logo.png') }}" class="w-full h-full object-contain p-1" alt="Lockmytimes"/>
+                    {{ substr($currentTenant->company_name ?? 'L', 0, 1) }}
                 @endif
             </div>
             <div class="brand-text overflow-hidden flex-1 min-w-0">
