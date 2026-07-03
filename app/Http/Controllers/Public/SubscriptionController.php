@@ -86,80 +86,103 @@ class SubscriptionController extends Controller
     public function success(Request $request)
     {
         $sessionId = $request->get('session_id');
+        $debug     = [];
 
         if (! $sessionId) {
             return redirect()->route('home')->with('error', 'Invalid checkout session.');
         }
 
-        $stripe          = new StripeClient(config('services.stripe.secret'));
-        $checkoutSession = $stripe->checkout->sessions->retrieve($sessionId, [
-            'expand' => ['subscription'],
-        ]);
+        $debug[] = "session_id: {$sessionId}";
+
+        try {
+            $stripe          = new StripeClient(config('services.stripe.secret'));
+            $checkoutSession = $stripe->checkout->sessions->retrieve($sessionId, [
+                'expand' => ['subscription'],
+            ]);
+            $debug[] = "Stripe session retrieved OK. Status: {$checkoutSession->status}";
+        } catch (\Throwable $e) {
+            $debug[] = "STRIPE ERROR: " . $e->getMessage();
+            return response("DEBUG:\n" . implode("\n", $debug), 500)->header('Content-Type', 'text/plain');
+        }
 
         $email  = $checkoutSession->customer_email;
         $tenant = Tenant::where('contact_email', $email)->first();
+        $meta   = (array) $checkoutSession->metadata;
 
-        $meta = (array) $checkoutSession->metadata;
+        $debug[] = "Email: {$email}";
+        $debug[] = "Tenant found: " . ($tenant ? "YES (id={$tenant->id}, status={$tenant->status}, db_provisioned={$tenant->database_provisioned})" : "NO");
+        $debug[] = "Meta plan_slug: " . ($meta['plan_slug'] ?? 'MISSING');
 
-        // Case 1: tenant record exists but is still pending (webhook fired, job queued but not run)
-        // Case 2: tenant doesn't exist at all (webhook hasn't fired yet)
-        $needsProvisioning = $email && (
-            ! $tenant ||
-            ($tenant && ! $tenant->database_provisioned)
-        );
+        $needsProvisioning = $email && (! $tenant || ! $tenant->database_provisioned);
+        $debug[] = "Needs provisioning: " . ($needsProvisioning ? 'YES' : 'NO');
 
         if ($needsProvisioning) {
             $plan = SubscriptionPlan::where('slug', $meta['plan_slug'] ?? '')->first();
+            $debug[] = "Plan found: " . ($plan ? "YES ({$plan->name})" : "NO - slug='" . ($meta['plan_slug'] ?? '') . "'");
 
             if ($plan) {
-                // Create tenant record if it doesn't exist yet
                 if (! $tenant) {
-                    $companyName = $meta['company_name'] ?? 'Company';
-                    $slug        = $this->generateUniqueSlug($companyName);
+                    $debug[] = "Creating tenant record...";
+                    try {
+                        $companyName = $meta['company_name'] ?? 'Company';
+                        $slug        = $this->generateUniqueSlug($companyName);
 
-                    $tenant = Tenant::create([
-                        'company_name'       => $companyName,
-                        'slug'               => $slug,
-                        'contact_name'       => $meta['contact_name'] ?? '',
-                        'contact_email'      => $email,
-                        'database_name'      => Tenant::generateDatabaseName($slug),
-                        'status'             => 'pending',
-                        'trial_ends_at'      => now()->addDays($plan->trial_days),
-                        'stripe_customer_id' => $checkoutSession->customer,
-                        'country'            => 'US',
-                        'timezone'           => 'America/New_York',
-                    ]);
+                        $tenant = Tenant::create([
+                            'company_name'       => $companyName,
+                            'slug'               => $slug,
+                            'contact_name'       => $meta['contact_name'] ?? '',
+                            'contact_email'      => $email,
+                            'database_name'      => Tenant::generateDatabaseName($slug),
+                            'status'             => 'pending',
+                            'trial_ends_at'      => now()->addDays($plan->trial_days),
+                            'stripe_customer_id' => $checkoutSession->customer,
+                            'country'            => 'US',
+                            'timezone'           => 'America/New_York',
+                        ]);
+                        $debug[] = "Tenant created: id={$tenant->id}, slug={$tenant->slug}, db={$tenant->database_name}";
 
-                    $subId = is_string($checkoutSession->subscription)
-                        ? $checkoutSession->subscription
-                        : ($checkoutSession->subscription?->id ?? null);
+                        $subId = is_string($checkoutSession->subscription)
+                            ? $checkoutSession->subscription
+                            : ($checkoutSession->subscription?->id ?? null);
 
-                    if ($subId) {
-                        $this->createOrUpdateSubscription($tenant, $plan, $subId, $meta['billing_cycle'] ?? 'monthly');
+                        if ($subId) {
+                            $this->createOrUpdateSubscription($tenant, $plan, $subId, $meta['billing_cycle'] ?? 'monthly');
+                            $debug[] = "Subscription record created.";
+                        }
+
+                        $tenant->applyPlan($plan);
+                        $debug[] = "Plan applied.";
+                    } catch (\Throwable $e) {
+                        $debug[] = "TENANT CREATE ERROR: " . $e->getMessage();
+                        return response("DEBUG:\n" . implode("\n", $debug), 500)->header('Content-Type', 'text/plain');
                     }
-
-                    $tenant->applyPlan($plan);
                 }
 
-                // Run provisioning synchronously right here
+                $debug[] = "Starting ProvisionTenantJob::dispatchSync for tenant {$tenant->slug} (db: {$tenant->database_name})...";
                 try {
                     \App\Jobs\ProvisionTenantJob::dispatchSync(
                         $tenant->fresh(),
                         $meta['contact_name'] ?? ($tenant->contact_name ?: 'Admin')
                     );
+                    $debug[] = "Provisioning COMPLETED successfully.";
                 } catch (\Throwable $e) {
-                    \Illuminate\Support\Facades\Log::error('Sync provisioning failed on success page: ' . $e->getMessage(), [
-                        'tenant' => $tenant->slug,
-                        'error'  => $e->getMessage(),
-                    ]);
+                    $debug[] = "PROVISIONING ERROR: " . $e->getMessage();
+                    $debug[] = "Trace: " . $e->getTraceAsString();
+                    return response("DEBUG:\n" . implode("\n", $debug), 500)->header('Content-Type', 'text/plain');
                 }
 
                 $tenant = $tenant->fresh();
+                $debug[] = "After provisioning: status={$tenant->status}, db_provisioned={$tenant->database_provisioned}";
             }
         }
 
-        // Only show "ready" if database has been provisioned
         $ready = $tenant && $tenant->database_provisioned;
+        $debug[] = "Ready: " . ($ready ? 'YES' : 'NO');
+
+        // TEMP DEBUG — remove after diagnosing
+        return response("DEBUG:\n" . implode("\n", $debug), 200)->header('Content-Type', 'text/plain');
+
+        \Illuminate\Support\Facades\Log::info('Checkout success page debug', $debug);
 
         return view('public.checkout-success', compact('tenant', 'email', 'ready'));
     }
