@@ -13,15 +13,19 @@ class HrMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(
-        public readonly string $viewName,
-        public readonly array  $viewData,
-    ) {}
+    private string $viewName;
+    private array  $mailData;
+
+    public function __construct(string $viewName, array $viewData)
+    {
+        $this->viewName = $viewName;
+        $this->mailData = $viewData;
+    }
 
     public function envelope(): Envelope
     {
-        $companyName = $this->viewData['companyName'] ?? 'HR Platform';
-        $subject     = $this->viewData['subject'] ?? 'HR Notification';
+        $companyName = $this->mailData['companyName'] ?? 'HR Platform';
+        $subject     = $this->mailData['subject'] ?? 'HR Notification';
 
         return new Envelope(
             from:    new Address('info@lockmytimes.com', $companyName . ' HR'),
@@ -34,7 +38,7 @@ class HrMail extends Mailable
     {
         return new Content(
             view: $this->viewName,
-            with: $this->viewData,
+            with: $this->mailData,
         );
     }
 }

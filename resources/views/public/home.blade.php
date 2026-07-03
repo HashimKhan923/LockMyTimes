@@ -13,9 +13,7 @@
 
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-                <div class="w-8 h-8 rounded-xl lmt-gradient-bg flex items-center justify-center shadow-pop group-hover:scale-110 transition-transform">
-                    <i data-lucide="clock" class="w-4 h-4 text-white"></i>
-                </div>
+                <img src="{{ asset('images/logo.png') }}" alt="Lockmytimes" class="w-8 h-8 object-contain group-hover:scale-110 transition-transform"/>
                 <span class="text-xl font-bold text-ink" style="font-family:'Syne',sans-serif">Lockmytimes</span>
             </a>
 
@@ -712,9 +710,7 @@
             {{-- Brand --}}
             <div class="md:col-span-2">
                 <div class="flex items-center gap-2.5 mb-4">
-                    <div class="w-8 h-8 rounded-xl lmt-gradient-bg flex items-center justify-center">
-                        <i data-lucide="clock" class="w-4 h-4 text-white"></i>
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="Lockmytimes" class="w-8 h-8 object-contain"/>
                     <span class="text-white text-xl font-bold" style="font-family:'Syne',sans-serif">Lockmytimes</span>
                 </div>
                 <p class="text-sm leading-relaxed mb-4">
