@@ -107,7 +107,7 @@ class SubscriptionController extends Controller
 
         $email  = $checkoutSession->customer_email;
         $tenant = Tenant::where('contact_email', $email)->first();
-        $meta   = (array) $checkoutSession->metadata;
+        $meta   = $checkoutSession->metadata ? $checkoutSession->metadata->toArray() : [];
 
         $debug[] = "Email: {$email}";
         $debug[] = "Tenant found: " . ($tenant ? "YES (id={$tenant->id}, status={$tenant->status}, db_provisioned={$tenant->database_provisioned})" : "NO");
@@ -225,7 +225,7 @@ class SubscriptionController extends Controller
      |====================================================================*/
     protected function handleCheckoutCompleted(object $session): void
     {
-        $meta = (array) $session->metadata;
+        $meta = $session->metadata ? $session->metadata->toArray() : [];
 
         $email   = $meta['email'] ?? $session->customer_email;
         $context = $meta['context'] ?? 'new_signup';
@@ -310,7 +310,7 @@ class SubscriptionController extends Controller
         if ($existing) return; // already created by checkout.completed handler
 
         // Resolve plan from Stripe price metadata or subscription metadata
-        $meta     = (array) ($subscription->metadata ?? []);
+        $meta     = $subscription->metadata ? $subscription->metadata->toArray() : [];
         $planSlug = $meta['plan_slug'] ?? null;
         $plan     = $planSlug ? SubscriptionPlan::where('slug', $planSlug)->first() : null;
 
