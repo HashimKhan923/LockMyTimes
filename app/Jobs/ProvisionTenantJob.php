@@ -50,14 +50,17 @@ class ProvisionTenantJob implements ShouldQueue
                     'email'             => $this->tenant->contact_email,
                     'password'          => Hash::make($this->password),
                     'is_active'         => true,
-                    'must_change_password' => true,   // force password change on first login
+                    'must_change_password' => true,
                     'email_verified_at' => now(),
                 ])->assignRole('Tenant Admin');
             });
 
+            // Disconnect from tenant DB back to main before sending email
+            $manager->disconnect();
+
             // Send welcome email
             Mail::to($this->tenant->contact_email)->send(
-                new TenantWelcomeMail($this->tenant, $this->adminName, $this->password)
+                new TenantWelcomeMail($this->tenant->fresh(), $this->adminName, $this->password)
             );
 
             Log::info("Tenant provisioned successfully: {$this->tenant->slug}");
