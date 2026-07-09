@@ -35,7 +35,7 @@ class TenantMigrateCommand extends Command
                 $manager->connect($tenant);
 
                 if ($this->option('fresh')) {
-                    $this->warn("  ⚠ Dropping all tables for {$tenant->slug}...");
+                    $this->warn(" Dropping all tables for {$tenant->slug}...");
                     $this->dropAllTables();
                 }
 
@@ -54,10 +54,10 @@ class TenantMigrateCommand extends Command
                     ]);
                 }
 
-                $this->info("  ✅ Done: {$tenant->slug}");
+                $this->info(" Done: {$tenant->slug}");
 
             } catch (\Throwable $e) {
-                $this->error("  ❌ Failed for {$tenant->slug}: " . $e->getMessage());
+                $this->error(" Failed for {$tenant->slug}: " . $e->getMessage());
             }
         }
 

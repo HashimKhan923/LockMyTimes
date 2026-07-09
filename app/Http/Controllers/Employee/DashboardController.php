@@ -55,10 +55,10 @@ class DashboardController extends Controller
             : null;
 
         /* ───────── Compute clock status ─────────
-         * not_clocked_in  → no record yet
-         * clocked_in      → record with clock_in but no clock_out
-         * on_break        → clocked_in AND active break exists
-         * clocked_out     → record with clock_out set
+         * not_clocked_in no record yet
+         * clocked_in record with clock_in but no clock_out
+         * on_break clocked_in AND active break exists
+         * clocked_out record with clock_out set
          */
         $clockStatus = 'not_clocked_in';
         if ($attendance) {

@@ -181,7 +181,7 @@
                         @if($interview->meeting_url)
                         <a href="{{ $interview->meeting_url }}" target="_blank"
                            class="text-xs text-brand-600 hover:underline mt-1 block">
-                            🔗 Join Meeting
+                             Join Meeting
                         </a>
                         @endif
                         @if($interview->feedback)
@@ -226,7 +226,7 @@
               method="POST" class="space-y-4">
             @csrf @method('PATCH')
             <div class="grid grid-cols-2 gap-2">
-                @foreach(['applied'=>['#94A3B8','Applied'],'screening'=>['#3B82F6','Screening'],'interview'=>['#6C7DF7','Interview'],'assessment'=>['#8B5CF6','Assessment'],'offer'=>['#F59E0B','Offer'],'hired'=>['#10B981','Hired ✓'],'rejected'=>['#EF4444','Rejected'],'withdrawn'=>['#94A3B8','Withdrawn']] as $val=>[$color,$label])
+                @foreach(['applied'=>['#94A3B8','Applied'],'screening'=>['#3B82F6','Screening'],'interview'=>['#6C7DF7','Interview'],'assessment'=>['#8B5CF6','Assessment'],'offer'=>['#F59E0B','Offer'],'hired'=>['#10B981','Hired '],'rejected'=>['#EF4444','Rejected'],'withdrawn'=>['#94A3B8','Withdrawn']] as $val=>[$color,$label])
                 <label class="cursor-pointer">
                     <input type="radio" name="stage" value="{{ $val }}" class="sr-only peer"
                            {{ $candidate->stage === $val ? 'checked' : '' }}/>
@@ -331,7 +331,7 @@
                 <label class="lmt-label">Rating (1–5)</label>
                 <select name="rating" class="lmt-select">
                     <option value="">— No Rating —</option>
-                    @foreach([1=>'⭐ 1',2=>'⭐⭐ 2',3=>'⭐⭐⭐ 3',4=>'⭐⭐⭐⭐ 4',5=>'⭐⭐⭐⭐⭐ 5'] as $v=>$l)
+                    @foreach([1=>' 1',2=>' 2',3=>' 3',4=>' 4',5=>' 5'] as $v=>$l)
                     <option value="{{ $v }}">{{ $l }}</option>
                     @endforeach
                 </select>
@@ -340,7 +340,7 @@
                 <label class="lmt-label">Recommendation</label>
                 <select name="recommendation" class="lmt-select">
                     <option value="">— None —</option>
-                    @foreach(['strong_yes'=>'Strong Yes ✅','yes'=>'Yes','maybe'=>'Maybe','no'=>'No','strong_no'=>'Strong No ❌'] as $v=>$l)
+                    @foreach(['strong_yes'=>'Strong Yes ','yes'=>'Yes','maybe'=>'Maybe','no'=>'No','strong_no'=>'Strong No '] as $v=>$l)
                     <option value="{{ $v }}">{{ $l }}</option>
                     @endforeach
                 </select>

@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Expense Approved ✅";
+  $headerTitle = "Expense Approved ";
   $headerSubtitle = "Your expense claim has been approved";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View in Portal";
@@ -13,7 +13,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4; border-radius:12px; border:1px solid #A7F3D0; margin:20px 0; overflow:hidden;">
   <tr>
     <td style="background:linear-gradient(135deg,#059669,#10B981); padding:14px 24px;">
-      <span style="color:#fff; font-weight:700; font-size:15px;">✓ Approved Expense</span>
+      <span style="color:#fff; font-weight:700; font-size:15px;"> Approved Expense</span>
     </td>
   </tr>
   <tr>

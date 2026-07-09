@@ -135,7 +135,7 @@
                                 @if(! $t->_eligible)
                                     <div class="mt-2 pt-2 border-t border-gray-100 dark:border-slate-700">
                                         @foreach($t->_block_reasons as $reason)
-                                            <p class="text-[10px] text-red-500 font-bold">⚠ {{ $reason }}</p>
+                                            <p class="text-[10px] text-red-500 font-bold"> {{ $reason }}</p>
                                         @endforeach
                                     </div>
                                 @endif

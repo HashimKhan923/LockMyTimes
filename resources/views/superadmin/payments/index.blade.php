@@ -58,7 +58,7 @@
             </div>
             <div>
                 <select name="tenant_id" class="lmt-select text-sm py-2">
-                    <option value="">All Tenants</option>
+                    <option value="">All Organizations</option>
                     @foreach($tenants as $t)
                     <option value="{{ $t->id }}" {{ request('tenant_id')==$t->id?'selected':'' }}>{{ $t->company_name }}</option>
                     @endforeach

@@ -12,12 +12,12 @@
         Platform Control Center
     </h2>
     <p class="text-white/75 mb-8 leading-relaxed">
-        Manage all tenants, subscriptions, and platform settings from one place.
+        Manage all organizations, subscriptions, and platform settings from one place.
     </p>
 
     <div class="space-y-4">
         @foreach([
-            ['icon'=>'building-2','label'=>'Manage all tenants'],
+            ['icon'=>'building-2','label'=>'Manage all organizations'],
             ['icon'=>'credit-card','label'=>'Subscription & billing oversight'],
             ['icon'=>'bar-chart-2','label'=>'Platform analytics'],
         ] as $item)

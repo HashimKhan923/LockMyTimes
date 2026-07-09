@@ -94,7 +94,7 @@
                 @foreach([
                     ['Purchase Cost',  $asset->purchase_cost ? '$'.number_format($asset->purchase_cost,2) : '—'],
                     ['Purchase Date',  $asset->purchase_date?->format('M j, Y') ?? '—'],
-                    ['Warranty Until', $asset->warranty_until ? $asset->warranty_until->format('M j, Y').($asset->is_under_warranty ? ' ✅' : ' ⚠️') : '—'],
+                    ['Warranty Until', $asset->warranty_until ? $asset->warranty_until->format('M j, Y').($asset->is_under_warranty ? ' ' : ' ️') : '—'],
                     ['Vendor',         $asset->vendor ?? '—'],
                     ['Invoice #',      $asset->invoice_number ?? '—'],
                 ] as [$k,$v])
@@ -162,10 +162,10 @@
                                 <p class="text-xs text-gray-400">
                                     {{ $assignment->assigned_at->format('M j, Y') }}
                                     @if($assignment->returned_at)
-                                    → {{ $assignment->returned_at->format('M j, Y') }}
+                                     {{ $assignment->returned_at->format('M j, Y') }}
                                     <span class="text-gray-300">({{ $assignment->assigned_at->diffInDays($assignment->returned_at) }} days)</span>
                                     @else
-                                    <span class="text-amber-600 font-semibold">→ Present</span>
+                                    <span class="text-amber-600 font-semibold"> Present</span>
                                     @endif
                                 </p>
                             </div>

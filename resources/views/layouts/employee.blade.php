@@ -4,7 +4,12 @@
           sidebarOpen: localStorage.getItem('emp-sidebar') !== 'false',
           mobileOpen: false,
           darkMode: (function() {
-              var t = '{{ $userTheme ?? 'system' }}';
+              @if(session('theme_saved'))
+              localStorage.removeItem('emp-dark-override');
+              @endif
+              var override = localStorage.getItem('emp-dark-override');
+              if (override !== null) return override === 'true';
+              var t = '{{ $userTheme ?? 'light' }}';
               if (t === 'dark')   return true;
               if (t === 'light')  return false;
               return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -13,8 +18,10 @@
       :class="{ 'dark': darkMode }"
       x-init="
           $watch('sidebarOpen', v => localStorage.setItem('emp-sidebar', v));
-          @if(($userTheme ?? 'system') === 'system')
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => { darkMode = e.matches; });
+          @if(($userTheme ?? 'light') === 'system')
+          if (localStorage.getItem('emp-dark-override') === null) {
+              window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => { darkMode = e.matches; });
+          }
           @endif
       ">
 <head>
@@ -30,19 +37,20 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
 
     @php
-        /* Resolve tenant brand colors from settings (mirrors admin layout) */
+        /* Resolve tenant brand color from settings (mirrors admin layout) */
         $brandPrimary   = \App\Models\Tenant\Setting::get('theme.primary_color')
                        ?? $currentTenant->primary_color
                        ?? '#6C7DF7';
-        $brandSecondary = \App\Models\Tenant\Setting::get('theme.secondary_color')
-                       ?? $currentTenant->secondary_color
-                       ?? '#4A5BE8';
 
+        /* Derive tints/shades from the primary color only — --brand-600 must stay in the
+           brand family (used for hover states, gradients, shadows), not the tenant's
+           separate accent/secondary color setting. */
         $hex = ltrim($brandPrimary, '#');
         $r = hexdec(substr($hex,0,2)); $g = hexdec(substr($hex,2,2)); $b = hexdec(substr($hex,4,2));
         $brand50  = sprintf('#%02x%02x%02x', 230+round(($r-230)*.15), 230+round(($g-230)*.15), 245+round(($b-245)*.15));
         $brand100 = sprintf('#%02x%02x%02x', 215+round(($r-215)*.2),  215+round(($g-215)*.2),  240+round(($b-240)*.2));
         $brand200 = sprintf('#%02x%02x%02x', 180+round(($r-180)*.3),  185+round(($g-185)*.3),  250+round(($b-250)*.3));
+        $brand600 = sprintf('#%02x%02x%02x', max(0,round($r*.78)), max(0,round($g*.78)), max(0,round($b*.78)));
         $brand700 = sprintf('#%02x%02x%02x', max(0,round($r*.55)), max(0,round($g*.55)), max(0,round($b*.55)));
 
         $tenantSlug = $currentTenant->slug ?? request()->route('tenant');
@@ -52,7 +60,7 @@
     <style>
         :root {
             --brand-500: {{ $brandPrimary }};
-            --brand-600: {{ $brandSecondary }};
+            --brand-600: {{ $brand600 }};
             --brand-700: {{ $brand700 }};
             --brand-50:  {{ $brand50 }};
             --brand-100: {{ $brand100 }};
@@ -384,7 +392,7 @@
                 @endif
 
                 {{-- Dark mode --}}
-                <button @click="darkMode=!darkMode"
+                <button @click="darkMode=!darkMode; localStorage.setItem('emp-dark-override', darkMode)"
                         class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors">
                     <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-500"></i>
                 </button>
@@ -468,7 +476,7 @@
                         <div class="px-4 py-2.5 border-t border-gray-100 dark:border-slate-700">
                             <a href="{{ route('employee.notifications.index', $tenantSlug) }}"
                                class="text-xs font-semibold hover:underline" style="color:var(--brand-500)">
-                                View all notifications →
+                                View all notifications
                             </a>
                         </div>
                         @endif

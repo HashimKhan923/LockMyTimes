@@ -16,7 +16,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
 {{-- Page header --}}
 <div class="flex items-start justify-between mb-6">
     <div class="flex items-center gap-4">
-        <a href="{{ route('superadmin.tenants.index') }}"
+        <a href="{{ route('superadmin.organizations.index') }}"
            class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4 text-gray-500"></i>
         </a>
@@ -44,19 +44,19 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
     </div>
 
     <div class="flex items-center gap-2 flex-wrap">
-        <a href="{{ route('superadmin.tenants.edit', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
+        <a href="{{ route('superadmin.organizations.edit', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
             <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Edit
         </a>
         @if($tenant->database_provisioned)
         <a href="{{ $tenant->adminUrl() }}" target="_blank" class="lmt-btn-secondary lmt-btn-sm">
             <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open Portal
         </a>
-        <a href="{{ route('superadmin.tenants.impersonate', $tenant) }}" class="lmt-btn-primary lmt-btn-sm">
+        <a href="{{ route('superadmin.organizations.impersonate', $tenant) }}" class="lmt-btn-primary lmt-btn-sm">
             <i data-lucide="user-check" class="w-3.5 h-3.5"></i> Impersonate
         </a>
         @endif
         @if($tenant->status === 'suspended')
-        <form action="{{ route('superadmin.tenants.unsuspend', $tenant) }}" method="POST">
+        <form action="{{ route('superadmin.organizations.unsuspend', $tenant) }}" method="POST">
             @csrf @method('PATCH')
             <button type="submit" class="lmt-btn-sm" style="background:#10B981;color:#fff;display:inline-flex;align-items:center;gap:.5rem;padding:.375rem .75rem;border-radius:.75rem;font-weight:600;font-size:.75rem;border:none;cursor:pointer;">
                 <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Reactivate
@@ -131,7 +131,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                         <div class="h-2.5 rounded-full {{ $barColor }} transition-all duration-700"
                              style="width: {{ $pct }}%"></div>
                         @else
-                        <div class="h-2.5 rounded-full bg-gray-200 rounded-full"></div>
+                        <div class="h-2.5 rounded-full bg-gray-200"></div>
                         @endif
                     </div>
                     @if($meter['max'] && $pct >= 90)
@@ -246,14 +246,14 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                     <i data-lucide="sticky-note" class="w-4 h-4 text-amber-500"></i>
                     <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Internal Notes</h3>
                 </div>
-                <span class="text-xs text-ink-soft">Staff-only · not visible to tenant</span>
+                <span class="text-xs text-ink-soft">Staff-only · not visible to organization</span>
             </div>
 
             {{-- Add note --}}
-            <form action="{{ route('superadmin.tenants.notes.add', $tenant) }}" method="POST" class="mb-4">
+            <form action="{{ route('superadmin.organizations.notes.add', $tenant) }}" method="POST" class="mb-4">
                 @csrf
                 <textarea name="note" rows="2" class="lmt-textarea mb-2 text-sm"
-                          placeholder="Add an internal note about this tenant…" required></textarea>
+                          placeholder="Add an internal note about this organization…" required></textarea>
                 <button type="submit" class="lmt-btn-primary lmt-btn-sm">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Note
                 </button>
@@ -274,7 +274,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                             <span class="font-semibold">{{ $note['by'] }}</span> · {{ \Carbon\Carbon::parse($note['at'])->format('M j, Y H:i') }}
                         </p>
                     </div>
-                    <form action="{{ route('superadmin.tenants.notes.delete', $tenant) }}" method="POST" class="flex-shrink-0">
+                    <form action="{{ route('superadmin.organizations.notes.delete', $tenant) }}" method="POST" class="flex-shrink-0">
                         @csrf @method('DELETE')
                         <input type="hidden" name="index" value="{{ $i }}">
                         <button type="submit" class="w-7 h-7 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors">
@@ -294,8 +294,8 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
         {{-- Company details --}}
         <div class="lmt-card">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Company Details</h3>
-                <a href="{{ route('superadmin.tenants.edit', $tenant) }}"
+                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Organization Details</h3>
+                <a href="{{ route('superadmin.organizations.edit', $tenant) }}"
                    class="text-xs text-brand-500 hover:text-brand-700 font-semibold flex items-center gap-1">
                     <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
                 </a>
@@ -336,7 +336,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                     @endif
                 </p>
             </div>
-            <form action="{{ route('superadmin.tenants.extend-trial', $tenant) }}" method="POST">
+            <form action="{{ route('superadmin.organizations.extend-trial', $tenant) }}" method="POST">
                 @csrf @method('PATCH')
                 <label class="lmt-label text-xs">Extend by (days)</label>
                 <div class="flex gap-2 mt-1">
@@ -371,7 +371,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                     <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
                         <i data-lucide="pause-circle" class="w-4 h-4"></i>
                     </div>
-                    <span class="text-sm font-medium text-ink">Suspend Tenant</span>
+                    <span class="text-sm font-medium text-ink">Suspend Organization</span>
                 </button>
             </div>
         </div>
@@ -409,9 +409,9 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                 <i data-lucide="alert-triangle" class="w-4 h-4 text-red-500"></i>
                 <h3 class="font-bold text-red-600 text-sm" style="font-family:'Nunito',sans-serif">Danger Zone</h3>
             </div>
-            <p class="text-xs text-ink-soft mb-3">Permanently drops the tenant database. Cannot be undone.</p>
+            <p class="text-xs text-ink-soft mb-3">Permanently drops the organization database. Cannot be undone.</p>
             <button onclick="openModal('delete-modal')" class="lmt-btn-danger lmt-btn-sm w-full justify-center">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete Tenant
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete Organization
             </button>
         </div>
     </div>
@@ -431,7 +431,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                 <p class="text-sm text-ink-soft">{{ $tenant->company_name }}</p>
             </div>
         </div>
-        <form action="{{ route('superadmin.tenants.change-plan', $tenant) }}" method="POST">
+        <form action="{{ route('superadmin.organizations.change-plan', $tenant) }}" method="POST">
             @csrf @method('PATCH')
             <div class="mb-4">
                 <label class="lmt-label">Select Plan <span class="text-red-500">*</span></label>
@@ -470,16 +470,16 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                 <i data-lucide="pause-circle" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Suspend Tenant</h3>
+                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Suspend Organization</h3>
                 <p class="text-sm text-ink-soft">{{ $tenant->company_name }}</p>
             </div>
         </div>
-        <form action="{{ route('superadmin.tenants.suspend', $tenant) }}" method="POST">
+        <form action="{{ route('superadmin.organizations.suspend', $tenant) }}" method="POST">
             @csrf @method('PATCH')
             <div class="mb-4">
                 <label class="lmt-label">Reason <span class="text-red-500">*</span></label>
                 <textarea name="reason" required class="lmt-textarea" rows="3"
-                          placeholder="Explain why this tenant is being suspended…"></textarea>
+                          placeholder="Explain why this organization is being suspended…"></textarea>
             </div>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-danger flex-1">Suspend</button>
@@ -496,10 +496,10 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
             <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-3">
                 <i data-lucide="alert-triangle" class="w-7 h-7"></i>
             </div>
-            <h3 class="font-black text-ink text-lg" style="font-family:'Nunito',sans-serif">Delete Tenant</h3>
+            <h3 class="font-black text-ink text-lg" style="font-family:'Nunito',sans-serif">Delete Organization</h3>
             <p class="text-sm text-ink-soft mt-1">This will permanently drop <strong>{{ $tenant->database_name }}</strong> and all data.</p>
         </div>
-        <form action="{{ route('superadmin.tenants.destroy', $tenant) }}" method="POST">
+        <form action="{{ route('superadmin.organizations.destroy', $tenant) }}" method="POST">
             @csrf @method('DELETE')
             <div class="mb-4">
                 <label class="lmt-label">Type <strong>{{ $tenant->company_name }}</strong> to confirm</label>

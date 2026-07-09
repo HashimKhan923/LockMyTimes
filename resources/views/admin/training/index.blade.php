@@ -27,7 +27,7 @@
 
 {{-- Tabs --}}
 <div class="flex items-center gap-1 mb-6 border-b border-gray-200">
-    @foreach(['courses'=>'📚 Courses','enrollments'=>'👥 Enrollments','certifications'=>'🏆 Certifications'] as $t=>$label)
+    @foreach(['courses'=>' Courses','enrollments'=>' Enrollments','certifications'=>' Certifications'] as $t=>$label)
     <a href="{{ route('admin.training.index', $tenant) }}?tab={{ $t }}"
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
               {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
@@ -356,7 +356,7 @@
                         <span class="lmt-badge-green text-xs">Active</span>
                         @endif
                         @if($cert->is_verified)
-                        <span class="block lmt-badge-brand text-xs mt-0.5">Verified ✓</span>
+                        <span class="block lmt-badge-brand text-xs mt-0.5">Verified </span>
                         @endif
                     </td>
                     <td>
@@ -547,7 +547,7 @@
                 <label class="lmt-label">Rating (1–5)</label>
                 <select name="rating" class="lmt-select">
                     <option value="">— No Rating —</option>
-                    @foreach([1=>'⭐ 1 - Poor',2=>'⭐⭐ 2 - Fair',3=>'⭐⭐⭐ 3 - Good',4=>'⭐⭐⭐⭐ 4 - Very Good',5=>'⭐⭐⭐⭐⭐ 5 - Excellent'] as $v=>$l)
+                    @foreach([1=>' 1 - Poor',2=>' 2 - Fair',3=>' 3 - Good',4=>' 4 - Very Good',5=>' 5 - Excellent'] as $v=>$l)
                     <option value="{{ $v }}">{{ $l }}</option>
                     @endforeach
                 </select>

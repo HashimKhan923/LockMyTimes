@@ -218,7 +218,7 @@
                         <span class="font-medium" style="color:{{ $swap->requesterShift->color ?? '#6C7DF7' }}">
                             {{ $swap->requesterShift->name ?? 'Shift' }}
                         </span>
-                        ↔
+                        
                         <span class="font-medium" style="color:{{ $swap->targetShift->color ?? '#10B981' }}">
                             {{ $swap->targetShift->name ?? 'Shift' }}
                         </span>

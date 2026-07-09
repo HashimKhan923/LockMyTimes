@@ -261,7 +261,7 @@
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-sm font-bold text-ink">Payment History</h3>
             @if($currentTenant->stripe_customer_id)
-            <a href="{{ route('admin.billing.portal', $tenant) }}" class="text-xs text-brand-500 hover:underline">All invoices →</a>
+            <a href="{{ route('admin.billing.portal', $tenant) }}" class="text-xs text-brand-500 hover:underline">All invoices </a>
             @endif
         </div>
 

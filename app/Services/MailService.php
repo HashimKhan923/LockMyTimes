@@ -358,7 +358,7 @@ class MailService
         $email = $kudo->toEmployee->email ?? null;
         if (! $email) return;
         $this->send($email, 'emails.kudo-received', array_merge($ctx, [
-            'subject'   => "{$kudo->fromEmployee->first_name} sent you a kudos! 🌟",
+            'subject' => "{$kudo->fromEmployee->first_name} sent you a kudos! ",
             'kudo'      => $kudo,
             'portalUrl' => $ctx['portalUrl'],
         ]));

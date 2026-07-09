@@ -18,7 +18,7 @@
 
     $curDateFmt = $user->date_format ?? 'DMY';
     $curTimeFmt = $user->time_format ?? '12';
-    $curTheme   = $user->theme      ?? 'system';
+    $curTheme   = $user->theme      ?? 'light';
 @endphp
 
 <div x-data="{

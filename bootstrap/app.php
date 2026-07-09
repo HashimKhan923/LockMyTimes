@@ -38,8 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \App\Http\Middleware\IdentifyTenant::class,                 // ← tenant DB connects first
-        \Illuminate\Routing\Middleware\SubstituteBindings::class,   // ← THEN model binding runs
+        \App\Http\Middleware\IdentifyTenant::class, // tenant DB connects first
+        \Illuminate\Routing\Middleware\SubstituteBindings::class, // THEN model binding runs
         \App\Http\Middleware\EnsureSubscriptionActive::class,
         \App\Http\Middleware\EnsureAdminAuth::class,
         \App\Http\Middleware\EnsureEmployeeAuth::class,

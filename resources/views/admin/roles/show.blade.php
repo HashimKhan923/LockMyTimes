@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', $role->name)
-@section('page-title', 'Role: ' . $role->name)
+@section('title', str_replace('Tenant Admin', 'Organization Admin', $role->name))
+@section('page-title', 'Role: ' . str_replace('Tenant Admin', 'Organization Admin', $role->name))
 
 @section('content')
 
@@ -26,7 +26,7 @@
                 <i data-lucide="shield" class="w-7 h-7"></i>
             </div>
             <div>
-                <h2 class="text-xl font-black text-gray-900">{{ $role->name }}</h2>
+                <h2 class="text-xl font-black text-gray-900">{{ str_replace('Tenant Admin', 'Organization Admin', $role->name) }}</h2>
                 <p class="text-sm text-gray-400">
                     {{ count($rolePermissions) }} permission{{ count($rolePermissions) !== 1 ? 's' : '' }} ·
                     {{ $users->count() }} user{{ $users->count() !== 1 ? 's' : '' }} assigned
@@ -198,7 +198,7 @@
 <div id="assign-user-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
         <div class="flex items-center justify-between mb-5">
-            <h3 class="font-black text-gray-900">Assign User to {{ $role->name }}</h3>
+            <h3 class="font-black text-gray-900">Assign User to {{ str_replace('Tenant Admin', 'Organization Admin', $role->name) }}</h3>
             <button onclick="closeModal('assign-user-modal')"
                     class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
@@ -215,7 +215,7 @@
                     <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
                     @endforeach
                 </select>
-                <p class="lmt-help">This will replace the user's current role with "{{ $role->name }}".</p>
+                <p class="lmt-help">This will replace the user's current role with "{{ str_replace('Tenant Admin', 'Organization Admin', $role->name) }}".</p>
             </div>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Assign Role</button>

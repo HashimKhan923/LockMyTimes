@@ -33,8 +33,8 @@ Route::middleware('superadmin')->group(function () {
     // Analytics
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
-    // Tenants
-    Route::prefix('tenants')->name('tenants.')->group(function () {
+    // Organizations
+    Route::prefix('organizations')->name('organizations.')->group(function () {
         Route::get('/',                             [TenantController::class, 'index'])->name('index');
         Route::get('/create',                       [TenantController::class, 'create'])->name('create');
         Route::post('/',                            [TenantController::class, 'store'])->name('store');

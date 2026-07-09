@@ -19,8 +19,8 @@
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
     @foreach([
         ['label'=>'ARR',              'value'=>'$'.number_format($summary['arr'],0),              'sub'=>'Annual recurring revenue',  'icon'=>'trending-up',    'bg'=>'bg-emerald-50','text'=>'text-emerald-600'],
-        ['label'=>'ARPU',             'value'=>'$'.number_format($summary['arpu'],2),             'sub'=>'Per paying tenant / mo',    'icon'=>'user-check',     'bg'=>'bg-brand-50',  'text'=>'text-brand-600'],
-        ['label'=>'Conversion Rate',  'value'=>$summary['conversionRate'].'%',                   'sub'=>'Trial → paid',              'icon'=>'percent',        'bg'=>'bg-amber-50',  'text'=>'text-amber-600'],
+        ['label'=>'ARPU',             'value'=>'$'.number_format($summary['arpu'],2),             'sub'=>'Per paying organization / mo',    'icon'=>'user-check',     'bg'=>'bg-brand-50',  'text'=>'text-brand-600'],
+        ['label'=>'Conversion Rate', 'value'=>$summary['conversionRate'].'%', 'sub'=>'Trial paid', 'icon'=>'percent', 'bg'=>'bg-amber-50', 'text'=>'text-amber-600'],
         ['label'=>'Churn Rate',       'value'=>$summary['churnRate'].'%',                        'sub'=>$summary['churnedThisMonth'].' lost this month','icon'=>'user-minus','bg'=>'bg-red-50','text'=>'text-red-500'],
     ] as $kpi)
     <div class="lmt-stat">
@@ -39,7 +39,7 @@
 {{-- Secondary KPIs --}}
 <div class="grid grid-cols-3 gap-4 mb-8">
     @foreach([
-        ['label'=>'Paying Tenants',     'value'=>number_format($summary['payingTenants']),     'icon'=>'building-2'],
+        ['label'=>'Paying Organizations',     'value'=>number_format($summary['payingTenants']),     'icon'=>'building-2'],
         ['label'=>'New This Month',     'value'=>number_format($summary['newThisMonth']),       'icon'=>'plus-circle'],
         ['label'=>'Payment Success',    'value'=>$summary['paymentSuccessRate'].'%',            'icon'=>'check-circle'],
     ] as $s)
@@ -70,8 +70,8 @@
     <div class="lmt-card">
         <div class="flex items-center justify-between mb-5">
             <div>
-                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Tenant Growth</h3>
-                <p class="text-xs text-ink-soft mt-0.5">Cumulative tenants over 12 months</p>
+                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Organization Growth</h3>
+                <p class="text-xs text-ink-soft mt-0.5">Cumulative organizations over 12 months</p>
             </div>
         </div>
         <canvas id="tenantChart" height="150"></canvas>
@@ -118,7 +118,7 @@
     {{-- Top tenants by LTV --}}
     <div class="lmt-card">
         <div class="flex items-center justify-between mb-5">
-            <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Top Tenants by Revenue</h3>
+            <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Top Organizations by Revenue</h3>
             <span class="text-xs text-ink-soft">Lifetime value</span>
         </div>
         @forelse($topTenants as $i => $tenant)
@@ -128,7 +128,7 @@
                 {{ substr($tenant->company_name, 0, 1) }}
             </div>
             <div class="flex-1 min-w-0">
-                <a href="{{ route('superadmin.tenants.show', $tenant) }}"
+                <a href="{{ route('superadmin.organizations.show', $tenant) }}"
                    class="text-sm font-semibold text-ink hover:text-brand-600 transition-colors truncate block">
                     {{ $tenant->company_name }}
                 </a>
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: @json($tenantGrowth['labels']),
                 datasets: [{
-                    label: 'Total Tenants',
+                    label: 'Total Organizations',
                     data: @json($tenantGrowth['data']),
                     borderColor: emeraldColor,
                     backgroundColor: 'rgba(16,185,129,0.08)',

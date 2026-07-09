@@ -41,14 +41,14 @@
     <div style="width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;padding:8px;">
       <img src="{{ url('images/logo.png') }}" alt="Lockmytimes" style="width:40px;height:40px;object-fit:contain;"/>
     </div>
-    <h1>Your workspace is ready! 🎉</h1>
+    <h1>Your workspace is ready! </h1>
     <p>Welcome to Lockmytimes, {{ $adminName }}</p>
   </div>
 
   {{-- Body --}}
   <div class="body">
 
-    <span class="trial-badge">🚀 {{ config('tenancy.trial_days', 14) }}-Day Free Trial — No charges until {{ $trialEnds }}</span>
+    <span class="trial-badge"> {{ config('tenancy.trial_days', 14) }}-Day Free Trial — No charges until {{ $trialEnds }}</span>
 
     <h2>Hi {{ $adminName }},</h2>
     <p>
@@ -73,10 +73,10 @@
     </div>
 
     <div class="warning">
-      ⚠️ <strong>Please change your password</strong> after your first login. You will be prompted automatically.
+      ️ <strong>Please change your password</strong> after your first login. You will be prompted automatically.
     </div>
 
-    <a href="{{ $adminUrl }}" class="btn">Open My Workspace →</a>
+    <a href="{{ $adminUrl }}" class="btn">Open My Workspace </a>
 
     {{-- Getting started steps --}}
     <h2 style="margin-bottom:16px;">Get started in 3 steps</h2>
@@ -99,7 +99,7 @@
         <div class="step-num">3</div>
         <div class="step-text">
           <h4>Generate your first QR code</h4>
-          <p>Go to Attendance → Locations → Generate QR. Print and post it.</p>
+          <p>Go to Attendance Locations Generate QR. Print and post it.</p>
         </div>
       </div>
     </div>

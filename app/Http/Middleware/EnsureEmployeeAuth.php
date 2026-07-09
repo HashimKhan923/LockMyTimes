@@ -53,7 +53,7 @@ class EnsureEmployeeAuth
         // Share date/time format preferences with all views
         view()->share('userDateFormat', $user->date_format ?? 'DMY');
         view()->share('userTimeFormat', $user->time_format ?? '12');
-        view()->share('userTheme',      $user->theme      ?? 'system');
+        view()->share('userTheme',      $user->theme      ?? 'light');
 
         return $next($request);
     }

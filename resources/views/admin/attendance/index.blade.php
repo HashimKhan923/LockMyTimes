@@ -89,7 +89,7 @@
 {{-- Filters + Table --}}
 <div class="lmt-card p-0 overflow-hidden">
     <div class="p-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
-        <form action="{{ route('admin.attendance.index', $tenant) }}" method="GET" class="flex flex-wrap items-center gap-3 flex-1">
+        <form action="{{ route('admin.attendance.index', $tenant) }}" method="GET" class="flex flex-wrap gap-3 flex-1 mb-0">
             <input type="hidden" name="date" value="{{ $date->toDateString() }}"/>
             <div class="relative flex-1 min-w-48 max-w-xs">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -190,7 +190,7 @@
                             {{ str_replace('_',' ',$rec->status) }}
                         </span>
                         @if($rec->is_geofence_breach)
-                        <span class="block lmt-badge-red text-xs mt-1">⚠ Geo breach</span>
+                        <span class="block lmt-badge-red text-xs mt-1"> Geo breach</span>
                         @endif
                     </td>
                     <td>

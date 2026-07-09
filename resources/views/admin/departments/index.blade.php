@@ -22,7 +22,7 @@
                 <div class="flex items-center gap-3">
                     <div class="w-3 h-3 rounded-full" style="background:{{ $dept->color }}"></div>
                     <span class="font-semibold text-gray-900 text-sm">{{ $dept->name }}</span>
-                    @if($dept->parent) <span class="lmt-badge-gray text-xs">↑ {{ $dept->parent->name }}</span> @endif
+                    @if($dept->parent) <span class="lmt-badge-gray text-xs"> {{ $dept->parent->name }}</span> @endif
                 </div>
             </td>
             <td><code class="text-xs bg-gray-100 px-2 py-1 rounded font-mono">{{ $dept->code ?? '—' }}</code></td>

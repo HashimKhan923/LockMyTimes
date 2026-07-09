@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Application Received ✉️";
+  $headerTitle = "Application Received ️";
   $headerSubtitle = "Thank you for applying at " . $companyName;
   $ctaUrl         = null;
   $ctaText        = null;
@@ -38,7 +38,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4; border-radius:8px; border-left:4px solid #10B981; margin-bottom:20px;">
   <tr>
     <td style="padding:14px 18px;">
-      <span style="font-size:13px; color:#065F46;">✅ <strong>What happens next?</strong> Our HR team will review your application and reach out if you are shortlisted for an interview.</span>
+      <span style="font-size:13px; color:#065F46;"> <strong>What happens next?</strong> Our HR team will review your application and reach out if you are shortlisted for an interview.</span>
     </td>
   </tr>
 </table>

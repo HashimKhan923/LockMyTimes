@@ -45,7 +45,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">General Settings</h2>
-                    <p class="text-xs text-gray-400">Company information, regional, and date/time preferences</p>
+                    <p class="text-xs text-gray-400">Organization information, regional, and date/time preferences</p>
                 </div>
             </div>
 
@@ -53,7 +53,7 @@
                 @csrf @method('PATCH')
                 <div class="grid grid-cols-2 gap-5">
                     <div class="col-span-2">
-                        <label class="lmt-label">Company Name</label>
+                        <label class="lmt-label">Organization Name</label>
                         <input type="text" name="name" class="lmt-input" value="{{ $general['name'] ?? '' }}"/>
                     </div>
                     <div>

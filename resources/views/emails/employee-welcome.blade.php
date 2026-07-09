@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Welcome aboard, {$employee->first_name}! 🎉";
+  $headerTitle = "Welcome aboard, {$employee->first_name}! ";
   $headerSubtitle = "Your employee account has been created";
   $ctaUrl         = $loginUrl;
   $ctaText        = "Log In to Your Account";
@@ -54,7 +54,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF7ED; border-radius:8px; border-left: 4px solid #F59E0B; margin-bottom:20px;">
   <tr>
     <td style="padding: 14px 18px;">
-      <span style="font-size:13px; color:#92400E;">⚠️ &nbsp;<strong>Security tip:</strong> You will be asked to change your password upon first login. Please keep your credentials confidential.</span>
+      <span style="font-size:13px; color:#92400E;">️ &nbsp;<strong>Security tip:</strong> You will be asked to change your password upon first login. Please keep your credentials confidential.</span>
     </td>
   </tr>
 </table>

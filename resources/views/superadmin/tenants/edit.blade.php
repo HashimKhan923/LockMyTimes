@@ -1,21 +1,21 @@
 @extends('layouts.superadmin')
 @section('title','Edit — '.$tenant->company_name)
-@section('page-title','Edit Tenant')
+@section('page-title','Edit Organization')
 
 @section('content')
 
 <div class="flex items-center gap-3 mb-6">
-    <a href="{{ route('superadmin.tenants.show', $tenant) }}"
+    <a href="{{ route('superadmin.organizations.show', $tenant) }}"
        class="w-9 h-9 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4 text-ink-soft"></i>
     </a>
     <div>
-        <h2 class="text-xl font-black text-ink" style="font-family:'Plus Jakarta Sans',sans-serif">Edit Tenant</h2>
+        <h2 class="text-xl font-black text-ink" style="font-family:'Plus Jakarta Sans',sans-serif">Edit Organization</h2>
         <p class="text-sm text-ink-soft">{{ $tenant->company_name }}</p>
     </div>
 </div>
 
-<form action="{{ route('superadmin.tenants.update', $tenant) }}" method="POST">
+<form action="{{ route('superadmin.organizations.update', $tenant) }}" method="POST">
     @csrf @method('PUT')
 
     <div class="grid lg:grid-cols-3 gap-6">
@@ -23,10 +23,10 @@
 
             {{-- Company info --}}
             <div class="lmt-card">
-                <h3 class="font-bold text-ink mb-5" style="font-family:'Nunito',sans-serif">Company Information</h3>
+                <h3 class="font-bold text-ink mb-5" style="font-family:'Nunito',sans-serif">Organization Information</h3>
                 <div class="grid sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
-                        <label class="lmt-label">Company Name <span class="text-red-500">*</span></label>
+                        <label class="lmt-label">Organization Name <span class="text-red-500">*</span></label>
                         <input type="text" name="company_name" value="{{ old('company_name', $tenant->company_name) }}"
                                class="lmt-input" required>
                         @error('company_name')<p class="lmt-error">{{ $message }}</p>@enderror
@@ -152,7 +152,7 @@
                 <button type="submit" class="lmt-btn-primary w-full justify-center">
                     <i data-lucide="save" class="w-4 h-4"></i> Save Changes
                 </button>
-                <a href="{{ route('superadmin.tenants.show', $tenant) }}" class="lmt-btn-secondary w-full justify-center">
+                <a href="{{ route('superadmin.organizations.show', $tenant) }}" class="lmt-btn-secondary w-full justify-center">
                     Cancel
                 </a>
             </div>

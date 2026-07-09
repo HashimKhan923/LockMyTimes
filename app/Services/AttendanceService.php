@@ -115,7 +115,7 @@ class AttendanceService
             'success'    => true,
             'message'    => $isLate
                 ? "Clocked in at {$now->format('h:i A')} (late by {$lateMinutes} mins)"
-                : "Clocked in at {$now->format('h:i A')} ✓",
+                : "Clocked in at {$now->format('h:i A')} ",
             'attendance' => $attendance,
             'is_late'    => $isLate,
             'distance'   => $geo['distance'],
@@ -206,8 +206,8 @@ class AttendanceService
      * or null if clock-in is allowed.
      *
      * Rules:
-     *  1. If no shift assigned → allow (don't block unscheduled employees).
-     *  2. If shift_window_strict is disabled in settings → skip.
+     * 1. If no shift assigned allow (don't block unscheduled employees).
+     * 2. If shift_window_strict is disabled in settings skip.
      *  3. Today must be a working day for the shift.
      *  4. Current time must be within [shift_start - early_buffer, shift_end].
      */
@@ -246,7 +246,7 @@ class AttendanceService
         $shiftEnd    = Carbon::createFromFormat('H:i:s', $shift->end_time,   $tz);
         $nowInTz     = $now->copy()->setTimezone($tz);
 
-        // Handle overnight shifts (e.g. 22:00 → 06:00)
+        // Handle overnight shifts (e.g. 22:00 06:00)
         if ($shift->crosses_midnight || $shiftEnd->lte($shiftStart)) {
             if ($nowInTz->lt($shiftStart)) {
                 // We are in the early-morning portion — compare against yesterday's start

@@ -10,7 +10,7 @@
       <i data-lucide="check" class="w-12 h-12 text-white"></i>
     </div>
 
-    <h1 class="text-4xl font-black text-ink mb-4">You're all set! 🎉</h1>
+    <h1 class="text-4xl font-black text-ink mb-4">You're all set! </h1>
 
     @if($ready ?? false)
       <p class="text-lg text-ink-soft mb-8">

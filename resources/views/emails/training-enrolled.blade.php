@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "You've Been Enrolled in Training 🎓";
+  $headerTitle = "You've Been Enrolled in Training ";
   $headerSubtitle = "A new training session has been assigned to you";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View Training Details";

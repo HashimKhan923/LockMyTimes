@@ -1,34 +1,34 @@
 @extends('layouts.superadmin')
-@section('title','Create Tenant')
-@section('page-title','Create Tenant')
+@section('title','Create Organization')
+@section('page-title','Create Organization')
 
 @section('content')
 
 {{-- Header --}}
 <div class="flex items-center gap-4 mb-6">
-    <a href="{{ route('superadmin.tenants.index') }}"
+    <a href="{{ route('superadmin.organizations.index') }}"
        class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4 text-gray-500"></i>
     </a>
     <div>
-        <h2 class="text-xl font-black text-ink">Create New Tenant</h2>
-        <p class="text-sm text-ink-soft mt-0.5">Provision a new company account and its dedicated database.</p>
+        <h2 class="text-xl font-black text-ink">Create New Organization</h2>
+        <p class="text-sm text-ink-soft mt-0.5">Provision a new organization account and its dedicated database.</p>
     </div>
 </div>
 
-<form action="{{ route('superadmin.tenants.store') }}" method="POST" class="space-y-6 max-w-3xl">
+<form action="{{ route('superadmin.organizations.store') }}" method="POST" class="space-y-6 max-w-3xl">
     @csrf
 
     {{-- Company Info --}}
     <div class="lmt-card space-y-4">
         <h3 class="font-semibold text-ink flex items-center gap-2">
             <i data-lucide="building-2" class="w-4 h-4 text-brand-500"></i>
-            Company Information
+            Organization Information
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="md:col-span-2">
-                <label class="lmt-label">Company Name <span class="text-red-400">*</span></label>
+                <label class="lmt-label">Organization Name <span class="text-red-400">*</span></label>
                 <input type="text" name="company_name" value="{{ old('company_name') }}"
                        class="lmt-input @error('company_name') border-red-400 @enderror"
                        placeholder="Acme Corp" required autofocus>
@@ -158,7 +158,7 @@
         </h3>
 
         @if($plans->isEmpty())
-        <p class="text-sm text-ink-soft">No active plans found. The tenant will be created without a subscription.</p>
+        <p class="text-sm text-ink-soft">No active plans found. The organization will be created without a subscription.</p>
         @else
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="md:col-span-3">
@@ -219,7 +219,7 @@
             <label class="lmt-label">Password <span class="text-red-400">*</span></label>
             <input type="password" name="admin_password" class="lmt-input @error('admin_password') border-red-400 @enderror"
                    placeholder="Min 8 characters" required>
-            <p class="lmt-help">The tenant admin will use the contact email + this password to log in.</p>
+            <p class="lmt-help">The organization admin will use the contact email + this password to log in.</p>
             @error('admin_password')<p class="lmt-err">{{ $message }}</p>@enderror
         </div>
     </div>
@@ -228,9 +228,9 @@
     <div class="flex items-center gap-3">
         <button type="submit" class="lmt-btn-primary lmt-btn-lg">
             <i data-lucide="plus-circle" class="w-5 h-5"></i>
-            Create Tenant & Provision Database
+            Create Organization & Provision Database
         </button>
-        <a href="{{ route('superadmin.tenants.index') }}" class="lmt-btn-secondary lmt-btn-lg">
+        <a href="{{ route('superadmin.organizations.index') }}" class="lmt-btn-secondary lmt-btn-lg">
             Cancel
         </a>
     </div>

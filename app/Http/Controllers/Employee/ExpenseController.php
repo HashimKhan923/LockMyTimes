@@ -279,7 +279,7 @@ class ExpenseController extends Controller
     }
 
     /* ================================================================
-     | SUBMIT — Move draft → submitted
+     | SUBMIT — Move draft submitted
      |================================================================*/
     public function submit(string $tenant, int $expense)
     {

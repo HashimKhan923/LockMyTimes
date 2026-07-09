@@ -33,7 +33,7 @@ class AttendanceController extends Controller
         $emp = auth()->user()->employee;
         abort_unless($emp, 403, 'No employee profile linked.');
 
-        $view  = $request->get('view', 'calendar'); // 'calendar' | 'list'
+        $view  = $request->get('view', 'list'); // 'calendar' | 'list'
         $month = $request->get('month')
             ? Carbon::parse($request->get('month').'-01')
             : Carbon::today()->startOfMonth();
@@ -448,7 +448,7 @@ class AttendanceController extends Controller
             return $qr;
         }
 
-        // 2) Web clock-in → pick the QR for the assigned/selected location
+        // 2) Web clock-in pick the QR for the assigned/selected location
         $locId = $data['location_id']
             ?? $emp->location_id
             ?? null;

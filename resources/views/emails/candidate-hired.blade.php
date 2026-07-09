@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Congratulations — You're Hired! 🎉";
+  $headerTitle = "Congratulations — You're Hired! ";
   $headerSubtitle = "Welcome to the " . $companyName . " family!";
   $ctaUrl         = null;
   $ctaText        = null;
@@ -13,7 +13,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4; border-radius:12px; border:1px solid #A7F3D0; margin:20px 0; overflow:hidden;">
   <tr>
     <td style="background:linear-gradient(135deg,#059669,#10B981); padding:14px 24px;">
-      <span style="color:#fff; font-weight:700; font-size:15px;">🎊 Offer Details</span>
+      <span style="color:#fff; font-weight:700; font-size:15px;"> Offer Details</span>
     </td>
   </tr>
   <tr>
@@ -37,7 +37,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2FF; border-radius:8px; border-left:4px solid #6D28D9; margin-bottom:20px;">
   <tr>
     <td style="padding:14px 18px;">
-      <span style="font-size:13px; color:#3730A3;">📋 <strong>Next steps:</strong> Our HR team will contact you shortly with the formal offer letter, joining date, and onboarding information. Please keep an eye on your inbox.</span>
+      <span style="font-size:13px; color:#3730A3;"> <strong>Next steps:</strong> Our HR team will contact you shortly with the formal offer letter, joining date, and onboarding information. Please keep an eye on your inbox.</span>
     </td>
   </tr>
 </table>

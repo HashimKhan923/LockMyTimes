@@ -19,7 +19,7 @@ class AnalyticsController extends Controller
         // ── Tenant growth (12 months cumulative) ────────────────────────────
         $tenantGrowth = $this->buildTenantGrowth(12);
 
-        // ── Conversion: trial → paid ─────────────────────────────────────────
+        // ── Conversion: trial paid ─────────────────────────────────────────
         $totalTrials    = Tenant::whereIn('status', ['trial', 'active', 'past_due', 'suspended', 'cancelled'])->count();
         $convertedCount = Tenant::where('status', 'active')->count();
         $conversionRate = $totalTrials > 0 ? round(($convertedCount / $totalTrials) * 100, 1) : 0;

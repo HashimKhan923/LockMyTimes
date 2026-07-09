@@ -17,7 +17,7 @@ return new class extends Migration
 
             // Company identity
             $table->string('company_name');
-            $table->string('slug')->unique();            // URL slug → /t/{slug}/...
+            $table->string('slug')->unique(); // URL slug /t/{slug}/...
             $table->string('subdomain')->nullable()->unique();  // optional future use
             $table->string('logo')->nullable();
             $table->string('favicon')->nullable();

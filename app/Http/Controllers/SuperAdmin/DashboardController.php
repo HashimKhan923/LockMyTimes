@@ -96,7 +96,7 @@ class DashboardController extends Controller
                 'type'    => 'warning',
                 'icon'    => 'clock',
                 'message' => "<strong>{$t->company_name}</strong> trial expires " . $t->trial_ends_at->diffForHumans(),
-                'action'  => route('superadmin.tenants.show', $t),
+                'action'  => route('superadmin.organizations.show', $t),
                 'label'   => 'Extend',
             ];
         }
@@ -108,7 +108,7 @@ class DashboardController extends Controller
                 'type'    => 'danger',
                 'icon'    => 'alert-circle',
                 'message' => "<strong>{$t->company_name}</strong> is past due",
-                'action'  => route('superadmin.tenants.show', $t),
+                'action'  => route('superadmin.organizations.show', $t),
                 'label'   => 'View',
             ];
         }

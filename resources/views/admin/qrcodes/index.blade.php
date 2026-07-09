@@ -17,7 +17,7 @@
 </div>
 
 {{-- How it works banner --}}
-<div class="lmt-card mb-6 lmt-gradient-bg text-white">
+<div class="lmt-card mb-6 bg-brand-500 text-white">
     <div class="flex items-start gap-4">
         <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
             <i data-lucide="info" class="w-5 h-5 text-white"></i>

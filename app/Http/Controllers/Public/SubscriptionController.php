@@ -18,7 +18,7 @@ use Stripe\Webhook;
 class SubscriptionController extends Controller
 {
     /* ====================================================================
-     | CHECKOUT — public pricing page → Stripe Checkout (new tenants)
+     | CHECKOUT — public pricing page Stripe Checkout (new tenants)
      |====================================================================*/
     public function checkout(Request $request)
     {
@@ -80,8 +80,8 @@ class SubscriptionController extends Controller
      | Stripe redirects here after the user completes checkout.
      | The webhook (checkout.session.completed) may fire before or after
      | this page loads. We handle both cases:
-     |  - Tenant already provisioned → show "ready" state
-     |  - Tenant not yet provisioned → provision synchronously here
+     | - Tenant already provisioned show "ready" state
+     | - Tenant not yet provisioned provision synchronously here
      |====================================================================*/
     public function success(Request $request)
     {

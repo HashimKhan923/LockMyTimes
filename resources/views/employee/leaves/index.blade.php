@@ -236,7 +236,7 @@
                                     <div class="text-sm text-gray-900 dark:text-slate-100">
                                         {{ $start->format('M j') }}
                                         @if($start->ne($end))
-                                            <span class="text-gray-400">→</span> {{ $end->format('M j') }}
+                                            <span class="text-gray-400"></span> {{ $end->format('M j') }}
                                         @endif
                                     </div>
                                     @if($r->day_part && $r->day_part !== 'full')

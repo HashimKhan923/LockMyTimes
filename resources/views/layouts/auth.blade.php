@@ -28,9 +28,9 @@
             <a href="{{ route('home') }}" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center p-1.5">
                     @if(request()->routeIs('superadmin.*'))
-                        <img src="{{ asset('images/logo.png') }}" alt="Lockmytimes" class="w-full h-full object-contain"/>
+                        <img src="{{ asset('images/white_logo.png') }}" alt="Lockmytimes" class="w-full h-full object-contain"/>
                     @else
-                        <i data-lucide="clock" class="w-5 h-5 text-white"></i>
+                        <img src="{{ asset('images/white_logo.png') }}" alt="Lockmytimes" class="w-full h-full object-contain"/>
                     @endif
                 </div>
                 <span class="text-white text-xl font-bold" style="font-family:'Nunito',sans-serif">Lockmytimes</span>
@@ -43,7 +43,7 @@
         </div>
 
         {{-- Bottom testimonial --}}
-        <div class="relative z-10">
+        <!-- <div class="relative z-10">
             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
                 <div class="flex mb-3">
                     @for($i=0;$i<5;$i++)
@@ -61,7 +61,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     {{-- Right panel — form --}}

@@ -53,9 +53,9 @@
 {{-- Filters + Table --}}
 <div class="lmt-card p-0 overflow-hidden">
     <div class="p-4 border-b border-gray-100 bg-gray-50/50">
-        <form action="{{ route('superadmin.tickets.index') }}" method="GET" class="flex flex-wrap items-end gap-3">
+        <form action="{{ route('superadmin.tickets.index') }}" method="GET" class="flex gap-3 mb-0 md:flex-nowrap flex-wrap">
             @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
-            <div class="relative flex-1 min-w-48">
+            <div class="relative flex-1 min-w-80">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
                 </div>

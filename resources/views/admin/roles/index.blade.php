@@ -62,7 +62,7 @@
                     <i data-lucide="{{ $rc['icon'] }}" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h3 class="font-black text-gray-900">{{ $role->name }}</h3>
+                    <h3 class="font-black text-gray-900">{{ str_replace('Tenant Admin', 'Organization Admin', $role->name) }}</h3>
                     @if($isProtected)
                     <span class="lmt-badge-red text-xs">Full Access</span>
                     @elseif($isSystem)

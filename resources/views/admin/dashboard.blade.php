@@ -21,7 +21,7 @@
             </p>
             <h1 class="text-white text-2xl font-black mt-1">
                 {{ now()->hour < 12 ? 'Good morning' : (now()->hour < 17 ? 'Good afternoon' : 'Good evening') }},
-                {{ Auth::user()->name ?? 'Admin' }} 👋
+                {{ Auth::user()->name ?? 'Admin' }}
             </h1>
             <p class="text-white/65 text-sm mt-1">
                 @if($totalPending > 0)
@@ -34,7 +34,7 @@
         <div class="flex items-center gap-3 flex-shrink-0">
             @if($birthdaysToday->count() > 0)
             <div class="bg-white/15 border border-white/25 rounded-xl px-4 py-2.5 text-center">
-                <p class="text-2xl">🎂</p>
+                <p class="text-2xl"></p>
                 <p class="text-white text-xs font-bold mt-1">{{ $birthdaysToday->count() }} birthday{{ $birthdaysToday->count() > 1 ? 's' : '' }}</p>
             </div>
             @endif
@@ -97,7 +97,7 @@
                 <span class="lmt-badge-red text-xs">{{ $pendingLoans }} loan</span>
                 @endif
                 @if($totalPending === 0)
-                <span class="lmt-badge-green text-xs">All clear ✓</span>
+                <span class="lmt-badge-green text-xs">All clear </span>
                 @endif
             </div>
         </div>
@@ -340,13 +340,13 @@
         <h3 class="font-black text-gray-900 text-base mb-4">Today's Celebrations</h3>
         @if($birthdaysToday->isEmpty() && $anniversariesToday->isEmpty())
         <div class="text-center py-8">
-            <p class="text-3xl mb-2">🎉</p>
+            <p class="text-3xl mb-2"></p>
             <p class="text-sm text-gray-400">No celebrations today</p>
         </div>
         @else
             @foreach($birthdaysToday as $emp)
             <div class="flex items-center gap-3 py-2.5 border-b border-gray-50 last:border-none">
-                <div class="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-lg">🎂</div>
+                <div class="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-lg"></div>
                 <div>
                     <p class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</p>
                     <p class="text-xs text-gray-400">Birthday today!</p>
@@ -356,7 +356,7 @@
             @foreach($anniversariesToday as $emp)
             @php $years = $emp->hire_date->diffInYears(today()); @endphp
             <div class="flex items-center gap-3 py-2.5 border-b border-gray-50 last:border-none">
-                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">⭐</div>
+                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg"></div>
                 <div>
                     <p class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</p>
                     <p class="text-xs text-gray-400">{{ $years }}-year work anniversary!</p>
@@ -368,7 +368,7 @@
 
     {{-- Kudos wall --}}
     <div class="lmt-card" data-lmt-anim="fade-up" data-lmt-delay="0.08">
-        <h3 class="font-black text-gray-900 text-base mb-4">Kudos Wall ✨</h3>
+        <h3 class="font-black text-gray-900 text-base mb-4">Kudos Wall </h3>
         @forelse($recentKudos as $kudo)
         <div class="p-3 rounded-xl bg-gray-50 mb-2.5">
             <div class="flex items-center gap-2 mb-1.5">
@@ -386,7 +386,7 @@
         </div>
         @empty
         <div class="text-center py-8">
-            <p class="text-3xl mb-2">✨</p>
+            <p class="text-3xl mb-2"></p>
             <p class="text-sm text-gray-400">No kudos yet</p>
             <p class="text-xs text-gray-300 mt-1">Start recognising your team!</p>
         </div>

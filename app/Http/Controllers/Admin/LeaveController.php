@@ -153,7 +153,7 @@ class LeaveController extends Controller
             'approver_comments'=> $request->get('note'),
         ]);
 
-        // Move from pending → used
+        // Move from pending used
         $this->movePendingToUsed($leave, $balance);
 
         $employeeUser = User::where('employee_id', $leave->employee_id)->first();

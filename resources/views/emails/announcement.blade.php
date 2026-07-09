@@ -12,7 +12,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8F9FF; border-radius:12px; border:1px solid #E0E7FF; margin:20px 0; overflow:hidden;">
   <tr>
     <td style="background:linear-gradient(135deg,#4F46E5,#7C3AED); padding:14px 24px;">
-      <span style="color:#fff; font-weight:700; font-size:15px;">📢 {{ $announcement->title }}</span>
+      <span style="color:#fff; font-weight:700; font-size:15px;"> {{ $announcement->title }}</span>
     </td>
   </tr>
   @if($announcement->category ?? false)

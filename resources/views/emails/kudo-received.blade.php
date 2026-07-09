@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "You Received a Kudos! 🌟";
+  $headerTitle = "You Received a Kudos! ";
   $headerSubtitle = "Someone appreciates your great work";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View in Portal";
@@ -21,7 +21,7 @@
   <tr>
     <td style="padding:24px;">
       <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-size:48px; line-height:1;">🏆</div>
+        <div style="font-size:48px; line-height:1;"></div>
         <div style="font-size:13px; color:#9CA3AF; margin-top:6px; text-transform:uppercase; letter-spacing:1px;">
           From: <strong style="color:#4F46E5;">{{ $kudo->fromEmployee->full_name }}</strong>
         </div>
@@ -44,7 +44,7 @@
   </tr>
 </table>
 
-<p style="color:#374151; font-size:14px; text-align:center;">Keep up the amazing work — you make <strong>{{ $companyName }}</strong> a better place! 🎉</p>
+<p style="color:#374151; font-size:14px; text-align:center;">Keep up the amazing work — you make <strong>{{ $companyName }}</strong> a better place! </p>
 <p style="color:#374151; font-size:14px;">Regards,<br/><strong>{{ $companyName }} HR Team</strong></p>
 
 @endsection

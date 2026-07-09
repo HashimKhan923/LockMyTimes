@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Expense Reimbursement Paid 💸";
+  $headerTitle = "Expense Reimbursement Paid ";
   $headerSubtitle = "Your reimbursement has been processed";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View in Portal";

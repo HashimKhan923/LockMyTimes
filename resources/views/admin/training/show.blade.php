@@ -68,7 +68,7 @@
 
                 @if($training->start_date)
                 <div class="mt-4 p-3 bg-brand-50 rounded-xl">
-                    <p class="text-xs font-bold text-brand-700 mb-1">📅 Schedule</p>
+                    <p class="text-xs font-bold text-brand-700 mb-1"> Schedule</p>
                     <p class="text-sm text-brand-600">
                         {{ $training->start_date->format('M j, Y') }}
                         @if($training->start_time) at {{ \Carbon\Carbon::parse($training->start_time)->format('h:i A') }} @endif
@@ -79,12 +79,12 @@
                     </p>
                     @endif
                     @if($training->location)
-                    <p class="text-xs text-brand-500 mt-0.5">📍 {{ $training->location }}</p>
+                    <p class="text-xs text-brand-500 mt-0.5"> {{ $training->location }}</p>
                     @endif
                     @if($training->online_url)
                     <a href="{{ $training->online_url }}" target="_blank"
                        class="text-xs text-brand-600 hover:underline mt-0.5 block">
-                        🔗 Join Online
+                         Join Online
                     </a>
                     @endif
                 </div>

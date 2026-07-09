@@ -241,7 +241,7 @@
                                 <td>
                                     <div class="text-sm text-gray-900 dark:text-slate-100">
                                         {{ $p->period_start->format('M j') }}
-                                        <span class="text-gray-400">→</span>
+                                        <span class="text-gray-400"></span>
                                         {{ $p->period_end->format('M j, Y') }}
                                     </div>
                                     @if($p->payrollRun?->pay_schedule)

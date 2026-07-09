@@ -27,7 +27,7 @@ class TenantRemoveCommand extends Command
         $manager->deprovision($tenant);
         $tenant->forceDelete();
 
-        $this->info("✅ Tenant '{$tenant->slug}' removed.");
+        $this->info(" Tenant '{$tenant->slug}' removed.");
         return self::SUCCESS;
     }
 }

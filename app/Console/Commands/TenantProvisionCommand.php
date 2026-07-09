@@ -34,12 +34,12 @@ class TenantProvisionCommand extends Command
         $password     = $this->option('password') ?: 'password';
         $planSlug     = $this->option('plan')     ?: 'professional';
 
-        $this->info("📦 Provisioning tenant '{$slug}'…");
+        $this->info(" Provisioning tenant '{$slug}'…");
 
         // 1) Find plan
         $plan = SubscriptionPlan::where('slug', $planSlug)->first();
         if (! $plan) {
-            $this->error("❌ Plan '{$planSlug}' not found. Run `php artisan db:seed` first.");
+            $this->error(" Plan '{$planSlug}' not found. Run `php artisan db:seed` first.");
             return self::FAILURE;
         }
 
@@ -47,7 +47,7 @@ class TenantProvisionCommand extends Command
         $databaseName = Tenant::generateDatabaseName($slug);
 
         if ($this->option('fresh')) {
-            $this->warn("⚠️  --fresh: dropping database '{$databaseName}' if it exists…");
+            $this->warn("️ --fresh: dropping database '{$databaseName}' if it exists…");
             DB::connection('main')->statement("DROP DATABASE IF EXISTS `{$databaseName}`;");
 
             Tenant::where('slug', $slug)->forceDelete();
@@ -69,14 +69,14 @@ class TenantProvisionCommand extends Command
 
         // 3) Provision the DB
         try {
-            $this->info("🗄️  Creating database '{$databaseName}'…");
-            $this->info("⚙️  Running migrations…");
-            $this->info("🌱 Seeding defaults…");
+            $this->info("️ Creating database '{$databaseName}'…");
+            $this->info("️ Running migrations…");
+            $this->info(" Seeding defaults…");
 
             $manager->provision($tenant);
 
             // 4) Create initial admin user inside the tenant DB
-            $this->info("👤 Creating tenant admin user…");
+            $this->info(" Creating tenant admin user…");
             $manager->runFor($tenant, function () use ($contactName, $contactEmail, $password) {
                 $user = \App\Models\Tenant\User::firstOrCreate(
                     ['email' => $contactEmail],
@@ -107,7 +107,7 @@ class TenantProvisionCommand extends Command
             );
 
             $this->newLine();
-            $this->info("✅ Tenant provisioned successfully!");
+            $this->info(" Tenant provisioned successfully!");
             $this->newLine();
 
             $this->table(
@@ -127,7 +127,7 @@ class TenantProvisionCommand extends Command
 
             return self::SUCCESS;
         } catch (Throwable $e) {
-            $this->error("❌ Failed: ".$e->getMessage());
+            $this->error(" Failed: ".$e->getMessage());
             $this->error($e->getTraceAsString());
             return self::FAILURE;
         }

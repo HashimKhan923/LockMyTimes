@@ -29,14 +29,14 @@ class Kudo extends TenantModel
     public static function badges(): array
     {
         return [
-            'star'         => '⭐ Star Performer',
-            'teamwork'     => '🤝 Team Player',
-            'innovation'   => '💡 Innovator',
-            'leadership'   => '🚀 Leader',
-            'customer'     => '❤️ Customer Hero',
-            'above_beyond' => '🏆 Above & Beyond',
-            'mentor'       => '📚 Mentor',
-            'problem_solver'=> '🔧 Problem Solver',
+            'star' => ' Star Performer',
+            'teamwork' => ' Team Player',
+            'innovation' => ' Innovator',
+            'leadership' => ' Leader',
+            'customer' => '️ Customer Hero',
+            'above_beyond' => ' Above & Beyond',
+            'mentor' => ' Mentor',
+            'problem_solver'=> ' Problem Solver',
         ];
     }
 }
