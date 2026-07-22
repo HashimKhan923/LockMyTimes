@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Interview Scheduled 📅";
+  $headerTitle = "Interview Scheduled ";
   $headerSubtitle = "You have an upcoming interview at " . $companyName;
   $ctaUrl         = $portalUrl ?? '#';
   $ctaText        = "View Interview Details";
@@ -50,7 +50,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF7ED; border-radius:8px; border-left:4px solid #F59E0B; margin-bottom:20px;">
   <tr>
     <td style="padding:14px 18px;">
-      <span style="font-size:13px; color:#92400E;">💡 <strong>Tip:</strong> Please arrive or join 5 minutes early. Bring any required documents or portfolio items relevant to the role.</span>
+      <span style="font-size:13px; color:#92400E;"> <strong>Tip:</strong> Please arrive or join 5 minutes early. Bring any required documents or portfolio items relevant to the role.</span>
     </td>
   </tr>
 </table>

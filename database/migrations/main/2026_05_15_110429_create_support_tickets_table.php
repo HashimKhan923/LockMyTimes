@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Support Tickets — tenants → SaaS owner support channel.
+     * Support Tickets — tenants SaaS owner support channel.
      */
     public function up(): void
     {

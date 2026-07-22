@@ -16,7 +16,7 @@
             <p class="text-sm text-gray-400">{{ $user->email }}</p>
             <p class="text-xs text-gray-400 mt-0.5">
                 @foreach($user->getRoleNames() as $role)
-                    <span class="lmt-badge-brand mr-1">{{ $role }}</span>
+                    <span class="lmt-badge-brand mr-1">{{ str_replace('Tenant Admin', 'Organization Admin', $role) }}</span>
                 @endforeach
             </p>
         </div>

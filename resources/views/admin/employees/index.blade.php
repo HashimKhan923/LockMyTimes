@@ -52,7 +52,7 @@
 <div class="lmt-card p-0 overflow-hidden">
     {{-- Filter bar --}}
     <div class="p-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
-        <form action="{{ route('admin.employees.index', $tenant) }}" method="GET" class="flex flex-wrap items-center gap-3 flex-1">
+        <form action="{{ route('admin.employees.index', $tenant) }}" method="GET" class="flex flex-wrap gap-3 flex-1 mb-0 ">
             <div class="relative flex-1 min-w-48 max-w-sm">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                     <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>

@@ -23,7 +23,7 @@
         <i data-lucide="layers" class="w-8 h-8 text-brand-500"></i>
     </div>
     <h3 class="font-bold text-ink text-lg mb-1">No Plans Yet</h3>
-    <p class="text-ink-soft text-sm mb-6">Create your first subscription plan to start onboarding tenants.</p>
+    <p class="text-ink-soft text-sm mb-6">Create your first subscription plan to start onboarding organizations.</p>
     <a href="{{ route('superadmin.plans.create') }}" class="lmt-btn-primary">
         <i data-lucide="plus" class="w-4 h-4"></i>
         Create First Plan

@@ -26,7 +26,7 @@
 
 {{-- Tabs --}}
 <div class="flex items-center gap-1 mb-6 border-b border-gray-200">
-    @foreach(['announcements'=>'📢 Announcements','polls'=>'📊 Polls'] as $t=>$label)
+    @foreach(['announcements'=>' Announcements','polls'=>' Polls'] as $t=>$label)
     <a href="{{ route('admin.announcements.index', $tenant) }}?tab={{ $t }}"
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
               {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">

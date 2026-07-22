@@ -15,7 +15,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F9FAFB; border-radius:12px; border:1px solid #E5E7EB; margin:20px 0;">
   <tr>
     <td style="padding:20px 24px; text-align:center;">
-      <div style="font-size:32px; margin-bottom:8px;">🙏</div>
+      <div style="font-size:32px; margin-bottom:8px;"></div>
       <div style="font-size:15px; font-weight:600; color:#374151;">We appreciate your effort and time</div>
       <div style="font-size:13px; color:#9CA3AF; margin-top:6px; line-height:1.6;">We encourage you to apply for future openings that match your skills and experience.</div>
     </td>

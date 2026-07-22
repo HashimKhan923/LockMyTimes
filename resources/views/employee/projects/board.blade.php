@@ -827,7 +827,7 @@ function renderTaskModal(task) {
     youBadge.classList.toggle('hidden', !MY_TASKS.has(task.id));
 
     // Lock fields based on role & ownership
-    const readOnly    = !currentTaskMine;           // non-mine tasks → fully read-only
+    const readOnly = !currentTaskMine; // non-mine tasks fully read-only
     const mgrReserved = !IS_MGR;                    // only managers can change these
 
     // Title & description — editable on own tasks
@@ -1007,7 +1007,7 @@ async function saveTaskEdits() {
             if (titleEl) titleEl.textContent = payload.title;
         }
         const btn = document.getElementById('tmd-save-btn');
-        if (btn) { btn.textContent = '✓ Saved'; setTimeout(() => { btn.innerHTML = '<i data-lucide="save" class="w-3.5 h-3.5 inline-block mr-1"></i>Save Changes'; if(window.lucide) lucide.createIcons(); }, 1500); }
+        if (btn) { btn.textContent = ' Saved'; setTimeout(() => { btn.innerHTML = '<i data-lucide="save" class="w-3.5 h-3.5 inline-block mr-1"></i>Save Changes'; if(window.lucide) lucide.createIcons(); }, 1500); }
     }
 }
 

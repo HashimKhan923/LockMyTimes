@@ -28,7 +28,7 @@ class StripeSetupCommand extends Command
             // Create or retrieve Stripe product
             if ($plan->stripe_product_id) {
                 $product = $stripe->products->retrieve($plan->stripe_product_id);
-                $this->line("  ✓ Product exists: {$product->id}");
+                $this->line(" Product exists: {$product->id}");
             } else {
                 $product = $stripe->products->create([
                     'name'        => 'Lockmytimes '.$plan->name,
@@ -40,7 +40,7 @@ class StripeSetupCommand extends Command
 
             // Monthly price
             if ($plan->stripe_monthly_price_id) {
-                $this->line("  ✓ Monthly price exists: {$plan->stripe_monthly_price_id}");
+                $this->line(" Monthly price exists: {$plan->stripe_monthly_price_id}");
             } else {
                 $monthly = $stripe->prices->create([
                     'product'       => $product->id,
@@ -55,7 +55,7 @@ class StripeSetupCommand extends Command
 
             // Yearly price
             if ($plan->stripe_yearly_price_id) {
-                $this->line("  ✓ Yearly price exists: {$plan->stripe_yearly_price_id}");
+                $this->line(" Yearly price exists: {$plan->stripe_yearly_price_id}");
             } else {
                 $yearly = $stripe->prices->create([
                     'product'       => $product->id,
@@ -71,11 +71,11 @@ class StripeSetupCommand extends Command
             $plan->stripe_product_id = $product->id;
             $plan->save();
 
-            $this->info("  ✅ Done: {$plan->name}");
+            $this->info(" Done: {$plan->name}");
         }
 
         $this->newLine();
-        $this->info('✅ All Stripe products and prices are set up!');
+        $this->info(' All Stripe products and prices are set up!');
         $this->line('Next: add your webhook endpoint in the Stripe dashboard:');
         $this->line('  URL: '.url('/stripe/webhook'));
         $this->line('  Events: checkout.session.completed, customer.subscription.updated,');

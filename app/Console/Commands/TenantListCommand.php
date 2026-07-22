@@ -27,7 +27,7 @@ class TenantListCommand extends Command
                 $t->slug,
                 $t->status,
                 $t->database_name,
-                $t->database_provisioned ? '✓' : '✗',
+                $t->database_provisioned ? '' : '',
                 $t->trial_ends_at?->format('M j, Y') ?? '—',
             ])->toArray()
         );

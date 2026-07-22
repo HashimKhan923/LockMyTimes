@@ -24,26 +24,26 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
 
     @php
-        /* Resolve tenant brand colors from settings (falls back to main tenant record, then defaults) */
+        /* Resolve tenant brand color from settings (falls back to main tenant record, then defaults) */
         $brandPrimary   = \App\Models\Tenant\Setting::get('theme.primary_color')
                        ?? $currentTenant->primary_color
                        ?? '#6C7DF7';
-        $brandSecondary = \App\Models\Tenant\Setting::get('theme.secondary_color')
-                       ?? $currentTenant->secondary_color
-                       ?? '#4A5BE8';
 
-        /* Derive tints: lighten primary by mixing with white at different levels */
+        /* Derive tints/shades from the primary color only — --brand-600 must stay in the
+           brand family (used for hover states, gradients, shadows), not the tenant's
+           separate accent/secondary color setting. */
         $hex = ltrim($brandPrimary, '#');
         $r = hexdec(substr($hex,0,2)); $g = hexdec(substr($hex,2,2)); $b = hexdec(substr($hex,4,2));
         $brand50  = sprintf('#%02x%02x%02x', 230+round(($r-230)*.15), 230+round(($g-230)*.15), 245+round(($b-245)*.15));
         $brand100 = sprintf('#%02x%02x%02x', 215+round(($r-215)*.2),  215+round(($g-215)*.2),  240+round(($b-240)*.2));
         $brand200 = sprintf('#%02x%02x%02x', 180+round(($r-180)*.3),  185+round(($g-185)*.3),  250+round(($b-250)*.3));
+        $brand600 = sprintf('#%02x%02x%02x', max(0,round($r*.78)), max(0,round($g*.78)), max(0,round($b*.78)));
         $brand700 = sprintf('#%02x%02x%02x', max(0,round($r*.55)), max(0,round($g*.55)), max(0,round($b*.55)));
     @endphp
     <style>
         :root {
             --brand-500: {{ $brandPrimary }};
-            --brand-600: {{ $brandSecondary }};
+            --brand-600: {{ $brand600 }};
             --brand-700: {{ $brand700 }};
             --brand-50:  {{ $brand50 }};
             --brand-100: {{ $brand100 }};
@@ -185,7 +185,7 @@
         </div>
 
         {{-- Scrollable nav --}}
-        <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+        <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5 overflow-x-hidden">
 
             @php
             $tenantSlug = $currentTenant->slug ?? request()->route('tenant');
@@ -316,14 +316,14 @@
             <div class="flex items-center gap-2">
 
                 {{-- Quick Search --}}
-                <div x-data="quickSearch('{{ route('admin.search', $tenantSlug) }}')" @keydown.window="onKey($event)">
+                <!-- <div x-data="quickSearch('{{ route('admin.search', $tenantSlug) }}')" @keydown.window="onKey($event)">
                     {{-- Trigger button --}}
-                    <button @click="open=true; $nextTick(()=>$refs.input.focus())"
+                  <button @click="open=true; $nextTick(()=>$refs.input.focus())"
                             class="hidden md:flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-sm text-gray-400 cursor-pointer hover:border-brand-300 transition-colors">
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span class="text-xs">Quick search…</span>
                         <kbd class="text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded font-mono ml-2">⌘K</kbd>
-                    </button>
+                    </button> 
 
                     {{-- Mobile trigger --}}
                     <button @click="open=true; $nextTick(()=>$refs.input.focus())"
@@ -397,13 +397,13 @@
 
                             {{-- Footer --}}
                             <div class="px-4 py-2 border-t border-gray-100 dark:border-slate-700 flex items-center gap-4 text-[11px] text-gray-400">
-                                <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded">↑↓</kbd> navigate</span>
-                                <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded">↵</kbd> open</span>
+                                <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded"></kbd> navigate</span>
+                                <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded"></kbd> open</span>
                                 <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded">ESC</kbd> close</span>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 {{-- Dark mode --}}
                 <button @click="darkMode=!darkMode"
@@ -483,7 +483,7 @@
                         <div class="px-4 py-2.5 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between">
                             <a href="{{ route('admin.notifications.index', $tenantSlug) }}"
                                class="text-xs font-semibold hover:underline" style="color:var(--brand-500)">
-                                View all notifications →
+                                View all notifications
                             </a>
                         </div>
                     </div>

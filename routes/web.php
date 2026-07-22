@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 // Marketing home page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Policy pages
+Route::view('/terms', 'public.terms')->name('terms');
+Route::view('/privacy', 'public.privacy')->name('privacy');
+
 // Checkout flow
 Route::post('/checkout', [SubscriptionController::class, 'checkout'])->name('checkout');
 Route::get('/checkout/success', [SubscriptionController::class, 'success'])->name('checkout.success');

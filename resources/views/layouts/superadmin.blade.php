@@ -21,7 +21,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     @vite(['resources/css/app.css','resources/js/app.js'])
     <style>
-        body { font-family: 'Nunito Sans', sans-serif; }
+        body { font-family: 'Nunito Sans', sans-serif; background: #F4F6FB; }
         h1,h2,h3,h4,h5,h6 { font-family: 'Nunito', sans-serif; }
 
         /* Sidebar transitions */
@@ -52,15 +52,28 @@
         /* Notification dropdown */
         .notif-dropdown { animation: slideDown 0.15s ease; }
         @keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+        /* ===== Dark mode overrides ===== */
+        .dark body { background: #0F172A; color: #E2E8F0; }
+        .dark .sa-sidebar { background: #1E293B !important; border-right-color: #334155 !important; }
+        .dark .sa-sidebar > div:first-child { border-bottom-color: #334155 !important; }
+        .dark .sa-sidebar > div:last-child  { border-top-color: #334155 !important; }
+        .dark .sa-nav-link { color: #94A3B8; }
+        .dark .sa-nav-link:hover  { background: #334155; color: #818CF8; }
+        .dark .sa-nav-link.active { background: #6C7DF7; color: #fff; box-shadow: 0 4px 14px rgba(108,125,247,.35); }
+        .dark .nav-section-label { color: #475569; }
+        .dark .sa-main { background: #0F172A; }
+        .dark .sa-main > header { background: rgba(15,23,42,.9) !important; border-bottom-color: #334155 !important; }
+        .dark .notif-dropdown { background: #1E293B !important; border-color: #334155 !important; }
     </style>
     @stack('head')
 </head>
-<body class="h-full" style="background:#F4F6FB;">
+<body class="h-full">
 
 <div class="flex h-screen overflow-hidden">
 
     {{-- ═══════════════════════════ SIDEBAR ════════════════════════════ --}}
-    <aside class="sa-sidebar flex-shrink-0 bg-white border-r border-gray-100 flex flex-col h-screen overflow-y-auto"
+    <aside class="sa-sidebar flex-shrink-0 bg-white border-r border-gray-100 flex flex-col h-screen overflow-hidden"
            :class="{ 'collapsed': !sidebarOpen }"
            style="box-shadow:2px 0 20px rgba(108,125,247,0.06);">
 
@@ -71,20 +84,20 @@
                 <img src="{{ asset('images/logo.png') }}" class="w-full h-full object-contain p-1" alt="Lockmytimes"/>
             </div>
             <div class="logo-text overflow-hidden">
-                <p class="font-black text-gray-900 text-sm leading-none" style="font-family:'Nunito',sans-serif;">Lockmytimes</p>
+                <p class="font-black text-brand-500 text-sm leading-none" style="font-family:'Nunito',sans-serif;">Lockmytimes</p>
                 <p class="text-xs font-semibold mt-0.5" style="color:#6C7DF7;letter-spacing:.05em;">CONTROL CENTER</p>
             </div>
         </div>
 
         {{-- Nav --}}
-        <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+        <nav class="flex-1 p-3 space-y-1 overflow-y-auto overflow-x-hidden">
 
             {{-- Main --}}
             <p class="nav-section-label text-xs font-bold text-gray-400 uppercase tracking-widest px-3 py-2">Main</p>
             @php
             $nav = [
                 ['route'=>'superadmin.dashboard',       'icon'=>'layout-dashboard', 'label'=>'Dashboard'],
-                ['route'=>'superadmin.tenants.index',   'icon'=>'building-2',       'label'=>'Tenants'],
+                ['route'=>'superadmin.organizations.index',   'icon'=>'building-2',       'label'=>'Organizations'],
                 ['route'=>'superadmin.analytics.index', 'icon'=>'bar-chart-2',      'label'=>'Analytics'],
             ];
             @endphp
@@ -211,7 +224,7 @@
                     ->orderBy('trial_ends_at')
                     ->limit(5)->get(['id','company_name','trial_ends_at','slug']);
                 foreach($expiringTrials as $t) {
-                    $notifItems[] = ['type'=>'warning','icon'=>'clock','msg'=>$t->company_name.' trial expires '.$t->trial_ends_at->diffForHumans(),'url'=>route('superadmin.tenants.show',$t)];
+                    $notifItems[] = ['type'=>'warning','icon'=>'clock','msg'=>$t->company_name.' trial expires '.$t->trial_ends_at->diffForHumans(),'url'=>route('superadmin.organizations.show',$t)];
                 }
                 $failedPayments = \App\Models\Main\Payment::where('status','failed')->where('created_at','>=',now()->subDays(7))->count();
                 if($failedPayments) {
@@ -277,7 +290,7 @@
 
                         <div class="px-4 py-2.5 border-t border-gray-100 bg-gray-50/50">
                             <a href="{{ route('superadmin.dashboard') }}" class="text-xs text-brand-500 hover:text-brand-700 font-semibold"
-                               @click="open=false">View all alerts on dashboard →</a>
+                               @click="open=false">View all alerts on dashboard </a>
                         </div>
                     </div>
                 </div>

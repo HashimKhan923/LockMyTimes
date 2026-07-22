@@ -182,7 +182,7 @@
                 <div class="px-5 py-3 border-t border-gray-100 dark:border-slate-700">
                     <a href="{{ route('employee.team.approvals.leaves', $tenantSlug) }}"
                        class="text-xs font-bold hover:underline" style="color:var(--brand-500);">
-                        Review {{ $pendingLeaves }} pending →
+                        Review {{ $pendingLeaves }} pending
                     </a>
                 </div>
             @endif
@@ -233,7 +233,7 @@
                 <div class="px-5 py-3 border-t border-gray-100 dark:border-slate-700">
                     <a href="{{ route('employee.team.approvals.expenses', $tenantSlug) }}"
                        class="text-xs font-bold hover:underline" style="color:var(--brand-500);">
-                        Review {{ $pendingExpenses }} pending →
+                        Review {{ $pendingExpenses }} pending
                     </a>
                 </div>
             @endif

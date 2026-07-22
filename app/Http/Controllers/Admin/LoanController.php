@@ -267,8 +267,8 @@ public function storeAdvance(string $tenant, Request $request)
         'amount'                 => $amount,
         'amount_remaining'       => $amount,
         'amount_repaid'          => 0,
-        'per_installment_amount' => $perMonth,       // ← correct column
-        'installments_count'     => $months,          // ← correct column
+        'per_installment_amount' => $perMonth, // correct column
+        'installments_count' => $months, // correct column
         'installments_paid'      => 0,
         'first_deduction_date'   => Carbon::parse($data['requested_date'])
                                         ->addMonth()->startOfMonth(),

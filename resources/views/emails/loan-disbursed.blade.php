@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Loan Disbursed 💳";
+  $headerTitle = "Loan Disbursed ";
   $headerSubtitle = "Your loan amount has been released";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View Loan Schedule";

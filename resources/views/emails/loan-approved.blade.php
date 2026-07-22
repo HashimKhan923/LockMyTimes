@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Loan Request Approved ✅";
+  $headerTitle = "Loan Request Approved ";
   $headerSubtitle = "Your loan application has been approved";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View Loan Details";
@@ -13,7 +13,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4; border-radius:12px; border:1px solid #A7F3D0; margin:20px 0; overflow:hidden;">
   <tr>
     <td style="background:linear-gradient(135deg,#059669,#10B981); padding:14px 24px;">
-      <span style="color:#fff; font-weight:700; font-size:15px;">✓ Loan Approved</span>
+      <span style="color:#fff; font-weight:700; font-size:15px;"> Loan Approved</span>
     </td>
   </tr>
   <tr>

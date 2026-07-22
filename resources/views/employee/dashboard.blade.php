@@ -67,7 +67,7 @@
                 {{ now()->format('l, F j, Y') }}
             </div>
             <h1 class="text-white text-2xl lg:text-3xl font-black leading-tight">
-                {{ $greeting }}, {{ $firstName }} 👋
+                {{ $greeting }}, {{ $firstName }}
             </h1>
             <p class="text-white/70 text-sm mt-1.5 italic">"{{ $quote }}"</p>
 
@@ -243,7 +243,7 @@
                 @if(\Route::has('employee.attendance.index'))
                     <a href="{{ route('employee.attendance.index', $tenantSlug) }}"
                        class="text-xs font-bold transition-colors" style="color:var(--brand-500);">
-                        View all →
+                        View all
                     </a>
                 @endif
             </div>
@@ -353,7 +353,7 @@
                         @if(\Route::has('employee.leaves.index'))
                             <a href="{{ route('employee.leaves.index', $tenantSlug) }}"
                                class="text-xs font-bold text-amber-700 dark:text-amber-300 hover:underline whitespace-nowrap">
-                                View →
+                                View
                             </a>
                         @endif
                     </div>
@@ -372,7 +372,7 @@
                     @if(\Route::has('employee.tasks.index'))
                         <a href="{{ route('employee.tasks.index', $tenantSlug) }}"
                            class="text-xs font-bold transition-colors" style="color:var(--brand-500);">
-                            View board →
+                            View board
                         </a>
                     @endif
                 </div>
@@ -430,7 +430,7 @@
                 @if(\Route::has('employee.announcements.index'))
                     <a href="{{ route('employee.announcements.index', $tenantSlug) }}"
                        class="text-xs font-bold transition-colors" style="color:var(--brand-500);">
-                        All →
+                        All
                     </a>
                 @endif
             </div>
@@ -487,7 +487,7 @@
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $lr->leaveType?->name ?? 'Leave' }}</p>
                                 <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
-                                    {{ $start->format('M j') }} {{ $start->ne($end) ? '→ '.$end->format('M j') : '' }}
+                                    {{ $start->format('M j') }} {{ $start->ne($end) ? ' '.$end->format('M j') : '' }}
                                     · {{ $lr->total_days }} day{{ $lr->total_days > 1 ? 's' : '' }}
                                 </p>
                                 <p class="text-[10px] text-gray-400 mt-1 font-semibold uppercase tracking-wide">
@@ -504,7 +504,7 @@
         @if($birthdaysThisWeek->isNotEmpty())
             <div class="lmt-card" data-lmt-anim="fade-up">
                 <h3 class="text-base font-black text-gray-900 mb-4 flex items-center gap-2">
-                    🎂 <span>Birthdays This Week</span>
+                     <span>Birthdays This Week</span>
                 </h3>
                 <div class="space-y-2.5">
                     @foreach($birthdaysThisWeek as $bd)

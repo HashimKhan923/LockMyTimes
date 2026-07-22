@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Your Payslip Is Ready 📄";
+  $headerTitle = "Your Payslip Is Ready ";
   $headerSubtitle = "Your salary for " . ($payslip->period_label ?? $payslip->payroll->period_label ?? 'this period') . " has been processed";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View My Payslip";

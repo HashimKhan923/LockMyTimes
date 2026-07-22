@@ -44,7 +44,7 @@ class SettingsController extends Controller
 
         $user->update($validated);
 
-        return back()->with('success', 'Preferences saved successfully.');
+        return back()->with('success', 'Preferences saved successfully.')->with('theme_saved', true);
     }
 
     /* ================================================================

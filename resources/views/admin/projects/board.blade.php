@@ -1000,7 +1000,7 @@ async function saveTaskEdits() {
         // Refresh assignee pills on card
         renderCardAssignees(card, res.task?.assignees || []);
         const btn = document.querySelector('#task-modal-content button[onclick="saveTaskEdits()"]');
-        if (btn) { btn.textContent = '✓ Saved'; setTimeout(() => { btn.innerHTML = '<i data-lucide="save" class="w-3.5 h-3.5 inline-block mr-1"></i>Save Changes'; if(window.lucide) lucide.createIcons(); }, 1500); }
+        if (btn) { btn.textContent = ' Saved'; setTimeout(() => { btn.innerHTML = '<i data-lucide="save" class="w-3.5 h-3.5 inline-block mr-1"></i>Save Changes'; if(window.lucide) lucide.createIcons(); }, 1500); }
     }
 }
 

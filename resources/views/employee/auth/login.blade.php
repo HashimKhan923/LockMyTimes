@@ -103,7 +103,7 @@
         Are you an HR manager or admin?
         <a href="{{ route('admin.login', $tenantModel->slug) }}"
            class="font-semibold text-brand-600 hover:text-brand-700 transition-colors">
-            Use the Admin Portal →
+            Use the Admin Portal
         </a>
     </p>
 </div>

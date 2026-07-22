@@ -136,8 +136,8 @@ class TenantController extends Controller
         }
 
         return redirect()
-            ->route('superadmin.tenants.show', $tenant)
-            ->with('success', "Tenant \"{$tenant->company_name}\" created and database provisioned successfully.");
+            ->route('superadmin.organizations.show', $tenant)
+            ->with('success', "Organization \"{$tenant->company_name}\" created and database provisioned successfully.");
     }
 
     public function show(Tenant $tenant)
@@ -183,8 +183,8 @@ class TenantController extends Controller
 
         $tenant->update($data);
 
-        return redirect()->route('superadmin.tenants.show', $tenant)
-            ->with('success', 'Tenant details updated successfully.');
+        return redirect()->route('superadmin.organizations.show', $tenant)
+            ->with('success', 'Organization details updated successfully.');
     }
 
     public function extendTrial(Request $request, Tenant $tenant)
@@ -282,7 +282,7 @@ class TenantController extends Controller
             'suspension_reason'  => $request->reason,
         ]);
 
-        return back()->with('success', "Tenant \"{$tenant->company_name}\" has been suspended.");
+        return back()->with('success', "Organization \"{$tenant->company_name}\" has been suspended.");
     }
 
     public function unsuspend(Tenant $tenant)
@@ -293,13 +293,13 @@ class TenantController extends Controller
             'suspension_reason' => null,
         ]);
 
-        return back()->with('success', "Tenant \"{$tenant->company_name}\" has been reactivated.");
+        return back()->with('success', "Organization \"{$tenant->company_name}\" has been reactivated.");
     }
 
     public function impersonate(Tenant $tenant)
     {
         if (! $tenant->database_provisioned) {
-            return back()->with('error', 'This tenant database is not yet provisioned.');
+            return back()->with('error', 'This organization\'s database is not yet provisioned.');
         }
 
         // Store impersonation data in session
@@ -318,7 +318,7 @@ class TenantController extends Controller
         $request->validate(['confirm_name' => 'required|string']);
 
         if ($request->confirm_name !== $tenant->company_name) {
-            return back()->with('error', 'Company name confirmation did not match.');
+            return back()->with('error', 'Organization name confirmation did not match.');
         }
 
         $manager->deprovision($tenant);
@@ -326,7 +326,7 @@ class TenantController extends Controller
         $tenant->forceDelete();
 
         return redirect()
-            ->route('superadmin.tenants.index')
-            ->with('success', "Tenant \"{$name}\" and all their data has been permanently deleted.");
+            ->route('superadmin.organizations.index')
+            ->with('success', "Organization \"{$name}\" and all their data has been permanently deleted.");
     }
 }

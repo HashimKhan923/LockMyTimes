@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Performance Review Assigned 📊";
+  $headerTitle = "Performance Review Assigned ";
   $headerSubtitle = "A performance review has been scheduled for you";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View Review";
@@ -50,7 +50,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2FF; border-radius:8px; border-left:4px solid #6D28D9; margin-bottom:20px;">
   <tr>
     <td style="padding:14px 18px;">
-      <span style="font-size:13px; color:#3730A3;">💡 <strong>Tip:</strong> Review your recent work, achievements, and any challenges you've faced. This helps you have a productive and meaningful conversation with your reviewer.</span>
+      <span style="font-size:13px; color:#3730A3;"> <strong>Tip:</strong> Review your recent work, achievements, and any challenges you've faced. This helps you have a productive and meaningful conversation with your reviewer.</span>
     </td>
   </tr>
 </table>

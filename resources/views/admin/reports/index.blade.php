@@ -13,15 +13,15 @@
             <label class="lmt-label text-xs">Report Type</label>
             <select name="report" class="lmt-select" onchange="this.form.submit()">
                 @foreach([
-                    'overview'    => '📊 Executive Overview',
-                    'headcount'   => '👥 Headcount & Workforce',
+                    'overview' => ' Executive Overview',
+                    'headcount' => ' Headcount & Workforce',
                     'attendance'  => '⏰ Attendance',
-                    'payroll'     => '💰 Payroll',
-                    'leave'       => '🗓️ Leave',
-                    'performance' => '⭐ Performance',
-                    'recruitment' => '🎯 Recruitment',
-                    'expenses'    => '🧾 Expenses',
-                    'training'    => '📚 Training',
+                    'payroll' => ' Payroll',
+                    'leave' => '️ Leave',
+                    'performance' => ' Performance',
+                    'recruitment' => ' Recruitment',
+                    'expenses' => ' Expenses',
+                    'training' => ' Training',
                 ] as $val => $label)
                 <option value="{{ $val }}" {{ $report === $val ? 'selected' : '' }}>
                     {{ $label }}
@@ -69,7 +69,7 @@
                 ['This Year',   now()->startOfYear()->toDateString(), now()->toDateString()],
             ] as [$label, $f, $t])
             <a href="{{ route('admin.reports.index', $tenant) }}?report={{ $report }}&from={{ $f }}&to={{ $t }}"
-               class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-gray-200 text-gray-600
+               class="px-2.5 py-3 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
                       hover:border-brand-400 hover:text-brand-600 transition-colors whitespace-nowrap">
                 {{ $label }}
             </a>

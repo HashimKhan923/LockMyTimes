@@ -334,7 +334,7 @@ class TeamController extends Controller
                 'approver_comments' => $data['note'] ?? null,
             ]);
 
-            // Move from pending → used on the balance row
+            // Move from pending used on the balance row
             $this->movePendingToUsed($leaveReq, $balance);
 
             DB::connection('tenant')->commit();

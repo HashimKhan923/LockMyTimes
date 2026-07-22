@@ -1,18 +1,18 @@
 @extends('layouts.superadmin')
-@section('title','Tenants')
-@section('page-title','Tenants')
+@section('title','Organizations')
+@section('page-title','Organizations')
 
 @section('content')
 
 {{-- Header --}}
 <div class="flex items-center justify-between mb-6">
     <div>
-        <h2 class="text-xl font-black text-ink" style="font-family:'Plus Jakarta Sans',sans-serif">All Tenants</h2>
-        <p class="text-sm text-ink-soft mt-0.5">{{ $tenants->total() }} total companies</p>
+        <h2 class="text-xl font-black text-ink" style="font-family:'Plus Jakarta Sans',sans-serif">All Organizations</h2>
+        <p class="text-sm text-ink-soft mt-0.5">{{ $tenants->total() }} total organizations</p>
     </div>
-    <a href="{{ route('superadmin.tenants.create') }}" class="lmt-btn-primary">
+    <a href="{{ route('superadmin.organizations.create') }}" class="lmt-btn-primary">
         <i data-lucide="plus" class="w-4 h-4"></i>
-        Create Tenant
+        Create Organization
     </a>
 </div>
 
@@ -23,7 +23,7 @@
     $currentStatus = request('status', 'all');
     @endphp
     @foreach($statuses as $val => $label)
-    <a href="{{ route('superadmin.tenants.index', array_merge(request()->except('status','page'), $val !== 'all' ? ['status'=>$val] : [])) }}"
+    <a href="{{ route('superadmin.organizations.index', array_merge(request()->except('status','page'), $val !== 'all' ? ['status'=>$val] : [])) }}"
        class="px-4 py-2 rounded-xl text-sm font-medium transition-all
               {{ ($currentStatus === $val || ($val === 'all' && !request('status'))) ? 'bg-brand-500 text-white shadow-pop' : 'bg-white text-ink-soft border border-gray-200 hover:border-brand-300' }}">
         {{ $label }}
@@ -40,7 +40,7 @@
 <div class="lmt-card p-0 overflow-hidden">
     {{-- Search bar --}}
     <div class="p-4 border-b border-gray-100">
-        <form action="{{ route('superadmin.tenants.index') }}" method="GET" class="flex items-center gap-3">
+        <form action="{{ route('superadmin.organizations.index') }}" method="GET" class="flex gap-3 mb-0 ">
             @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
             <div class="relative flex-1 max-w-sm">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -52,7 +52,7 @@
             </div>
             <button type="submit" class="lmt-btn-primary lmt-btn-sm">Search</button>
             @if(request('search'))
-            <a href="{{ route('superadmin.tenants.index', request()->except('search','page')) }}"
+            <a href="{{ route('superadmin.organizations.index', request()->except('search','page')) }}"
                class="lmt-btn-ghost lmt-btn-sm">Clear</a>
             @endif
         </form>
@@ -123,20 +123,20 @@
                     </td>
                     <td>
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('superadmin.tenants.show', $tenant) }}"
+                            <a href="{{ route('superadmin.organizations.show', $tenant) }}"
                                class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white flex items-center justify-center transition-colors"
                                title="View">
                                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                             </a>
                             @if($tenant->database_provisioned)
-                            <a href="{{ route('superadmin.tenants.impersonate', $tenant) }}"
+                            <a href="{{ route('superadmin.organizations.impersonate', $tenant) }}"
                                class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-500 hover:text-white flex items-center justify-center transition-colors"
                                title="Impersonate">
                                 <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
                             </a>
                             @endif
                             @if($tenant->status === 'suspended')
-                            <form action="{{ route('superadmin.tenants.unsuspend', $tenant) }}" method="POST">
+                            <form action="{{ route('superadmin.organizations.unsuspend', $tenant) }}" method="POST">
                                 @csrf @method('PATCH')
                                 <button type="submit"
                                         class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-colors"
@@ -158,7 +158,7 @@
                 <tr>
                     <td colspan="8" class="text-center py-12 text-ink-soft">
                         <i data-lucide="building-2" class="w-8 h-8 mx-auto mb-3 text-gray-300"></i>
-                        <p class="font-medium">No tenants found</p>
+                        <p class="font-medium">No organizations found</p>
                         <p class="text-sm mt-1">Try adjusting your search or filters</p>
                     </td>
                 </tr>
@@ -183,7 +183,7 @@
                 <i data-lucide="pause-circle" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Suspend Tenant</h3>
+                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Suspend Organization</h3>
                 <p class="text-sm text-ink-soft" id="suspend-company-name"></p>
             </div>
         </div>
@@ -191,10 +191,10 @@
             @csrf
             <div class="mb-4">
                 <label class="lmt-label">Reason for suspension <span class="text-red-500">*</span></label>
-                <textarea name="reason" required class="lmt-textarea" placeholder="Explain why this tenant is being suspended…"></textarea>
+                <textarea name="reason" required class="lmt-textarea" placeholder="Explain why this organization is being suspended…"></textarea>
             </div>
             <div class="flex gap-3">
-                <button type="submit" class="lmt-btn-danger flex-1">Suspend Tenant</button>
+                <button type="submit" class="lmt-btn-danger flex-1">Suspend Organization</button>
                 <button type="button" onclick="closeSuspendModal()" class="lmt-btn-secondary flex-1">Cancel</button>
             </div>
         </form>

@@ -304,7 +304,7 @@ function initLocationMap() {
     // Sync radius from existing inputs
     updateRadiusCircle();
 
-    // Radius slider → input → circle
+    // Radius slider input circle
     const slider = document.getElementById('radius-slider');
     const radiusInput = document.getElementById('radius-input');
 
@@ -325,7 +325,7 @@ function initLocationMap() {
 
     updateSliderFill(slider);
 
-    // Manual lat/lng → move map
+    // Manual lat/lng move map
     document.getElementById('lat-input').addEventListener('change', syncFromInputs);
     document.getElementById('lng-input').addEventListener('change', syncFromInputs);
 

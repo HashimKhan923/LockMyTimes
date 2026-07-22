@@ -27,7 +27,7 @@
 
 {{-- Tabs --}}
 <div class="flex items-center gap-1 mb-6 border-b border-gray-200">
-    @foreach(['reviews'=>'📋 Reviews','goals'=>'🎯 Goals','kudos'=>'⭐ Kudos Wall','cycles'=>'🔄 Cycles'] as $t=>$label)
+    @foreach(['reviews'=>' Reviews','goals'=>' Goals','kudos'=>' Kudos Wall','cycles'=>' Cycles'] as $t=>$label)
     <a href="{{ route('admin.performance.index', $tenant) }}?tab={{ $t }}"
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
               {{ $tab === $t
@@ -249,7 +249,7 @@
 @elseif($tab === 'kudos')
 
 <div class="flex items-center justify-between mb-4">
-    <h3 class="font-black text-gray-900">Kudos Wall ✨</h3>
+    <h3 class="font-black text-gray-900">Kudos Wall </h3>
     <button onclick="openModal('add-kudo-modal')" class="lmt-btn-primary lmt-btn-sm">
         <i data-lucide="star" class="w-4 h-4"></i>
         Give Kudos
@@ -281,7 +281,7 @@
         {{-- Message --}}
         <p class="text-sm text-gray-700 italic mb-4 leading-relaxed">"{{ $kudo->message }}"</p>
 
-        {{-- From → To --}}
+        {{-- From To --}}
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <div class="lmt-avatar-sm font-bold text-xs">
@@ -301,7 +301,7 @@
     </div>
     @empty
     <div class="lmt-card text-center py-14 md:col-span-3">
-        <p class="text-4xl mb-3">✨</p>
+        <p class="text-4xl mb-3"></p>
         <p class="font-semibold text-gray-400">No kudos yet</p>
         <p class="text-sm text-gray-300 mt-1">Be the first to recognise a team member!</p>
         <button onclick="openModal('add-kudo-modal')"
@@ -346,7 +346,7 @@
             </div>
         </div>
         <div class="text-xs text-gray-400 space-y-1">
-            <p>📅 {{ $cycle->start_date?->format('M j') }} – {{ $cycle->end_date?->format('M j, Y') }}</p>
+            <p> {{ $cycle->start_date?->format('M j') }} – {{ $cycle->end_date?->format('M j, Y') }}</p>
             <p>⏰ Due: {{ $cycle->due_date?->format('M j, Y') }}</p>
         </div>
         @if($cycle->description)
@@ -520,7 +520,7 @@
 {{-- Give Kudos --}}
 <div id="add-kudo-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
-        <h3 class="font-black text-gray-900 mb-1">Give Kudos ✨</h3>
+        <h3 class="font-black text-gray-900 mb-1">Give Kudos </h3>
         <p class="text-sm text-gray-400 mb-5">Recognise a team member's great work</p>
         <form action="{{ route('admin.performance.kudos.store', $tenant) }}" method="POST" class="space-y-4">
             @csrf
@@ -561,7 +561,7 @@
                 <span class="text-sm font-medium text-gray-700">Show on Kudos Wall</span>
             </label>
             <div class="flex gap-3">
-                <button type="submit" class="lmt-btn-primary flex-1">Send Kudos 🎉</button>
+                <button type="submit" class="lmt-btn-primary flex-1">Send Kudos </button>
                 <button type="button" onclick="closeModal('add-kudo-modal')" class="lmt-btn-secondary flex-1">Cancel</button>
             </div>
         </form>

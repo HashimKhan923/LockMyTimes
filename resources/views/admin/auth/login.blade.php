@@ -114,7 +114,7 @@
         Employee?
         <a href="{{ route('employee.login', $tenantModel->slug) }}"
            class="font-semibold text-brand-600 hover:text-brand-700 transition-colors">
-            Use the Employee Portal →
+            Use the Employee Portal
         </a>
     </p>
 </div>

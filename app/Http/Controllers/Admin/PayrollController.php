@@ -72,7 +72,7 @@ public function createRun(string $tenant, Request $request)
 
     $run = PayrollRun::create([
         'run_number'   => 'PR-' . now()->format('Ym') . '-' . str_pad(PayrollRun::count() + 1, 3, '0', STR_PAD_LEFT),
-        'pay_schedule' => $data['frequency'],   // ← map to correct column
+        'pay_schedule' => $data['frequency'], // map to correct column
         'period_start' => $data['period_start'],
         'period_end'   => $data['period_end'],
         'pay_date'     => $data['pay_date'],

@@ -12,7 +12,7 @@
         <div>
             <p class="text-white/70 text-sm font-medium mb-1">Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }},</p>
             <h1 class="text-white text-2xl font-black" style="font-family:'Nunito',sans-serif">
-                {{ Auth::guard('superadmin')->user()->name }} 👋
+                {{ Auth::guard('superadmin')->user()->name }}
             </h1>
             <p class="text-white/70 text-sm mt-1">Here's what's happening on your platform today.</p>
         </div>
@@ -22,10 +22,10 @@
                 <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
                 Analytics
             </a>
-            <a href="{{ route('superadmin.tenants.create') }}"
+            <a href="{{ route('superadmin.organizations.create') }}"
                class="bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 border border-white/20">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                New Tenant
+                New Organization
             </a>
         </div>
     </div>
@@ -71,7 +71,7 @@
 
     $kpis = [
         [
-            'label' => 'Total Tenants',
+            'label' => 'Total Organizations',
             'value' => number_format($stats['total_tenants']),
             'icon'  => 'building-2',
             'bg'    => 'bg-brand-50',
@@ -104,7 +104,7 @@
             'up'    => ($revDelta ?? 1) >= 0,
         ],
         [
-            'label' => 'Trial Tenants',
+            'label' => 'Trial Organizations',
             'value' => number_format($stats['trial_tenants']),
             'icon'  => 'clock',
             'bg'    => 'bg-purple-50',
@@ -189,7 +189,7 @@
     <div class="lmt-card">
         <div class="flex items-center justify-between mb-6">
             <div>
-                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Tenant Status</h3>
+                <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Organization Status</h3>
                 <p class="text-xs text-ink-soft mt-0.5">Current breakdown</p>
             </div>
         </div>
@@ -220,7 +220,7 @@
     <div class="lg:col-span-2 lmt-card">
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-bold text-ink" style="font-family:'Nunito',sans-serif">Recent Signups</h3>
-            <a href="{{ route('superadmin.tenants.index') }}"
+            <a href="{{ route('superadmin.organizations.index') }}"
                class="text-xs font-semibold text-brand-500 hover:text-brand-600 transition-colors flex items-center gap-1">
                 View all <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
             </a>
@@ -230,7 +230,7 @@
             <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
                 <i data-lucide="building-2" class="w-6 h-6 text-gray-400"></i>
             </div>
-            <p class="text-sm text-ink-soft">No tenants yet</p>
+            <p class="text-sm text-ink-soft">No organizations yet</p>
         </div>
         @else
         <div class="overflow-x-auto">
@@ -257,7 +257,7 @@
                         <td><span class="{{ $statusClasses[$tenant->status] ?? 'lmt-badge-gray' }} text-xs">{{ ucfirst(str_replace('_',' ',$tenant->status)) }}</span></td>
                         <td class="text-sm text-ink-soft">{{ $tenant->created_at->diffForHumans() }}</td>
                         <td>
-                            <a href="{{ route('superadmin.tenants.show', $tenant) }}"
+                            <a href="{{ route('superadmin.organizations.show', $tenant) }}"
                                class="text-brand-500 hover:text-brand-700">
                                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
                             </a>
@@ -306,7 +306,7 @@
                     <span class="text-xs font-bold text-ink-soft w-4 text-right flex-shrink-0">{{ $i+1 }}</span>
                     <div class="lmt-avatar-sm text-xs font-bold flex-shrink-0">{{ substr($t->company_name,0,1) }}</div>
                     <div class="flex-1 min-w-0">
-                        <a href="{{ route('superadmin.tenants.show', $t) }}"
+                        <a href="{{ route('superadmin.organizations.show', $t) }}"
                            class="text-sm font-semibold text-ink hover:text-brand-600 truncate block">{{ $t->company_name }}</a>
                     </div>
                     <span class="text-sm font-bold text-emerald-600 flex-shrink-0">${{ number_format($t->lifetime_revenue ?? 0, 0) }}</span>

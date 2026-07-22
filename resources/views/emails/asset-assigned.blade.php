@@ -1,6 +1,6 @@
 @extends('emails.layout')
 @php
-  $headerTitle    = "Asset Assigned to You 🖥️";
+  $headerTitle = "Asset Assigned to You ️";
   $headerSubtitle = "A company asset has been assigned to your account";
   $ctaUrl         = $portalUrl;
   $ctaText        = "View Asset Details";
@@ -50,7 +50,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF7ED; border-radius:8px; border-left:4px solid #F59E0B; margin-bottom:20px;">
   <tr>
     <td style="padding:14px 18px;">
-      <span style="font-size:13px; color:#92400E;">⚠️ <strong>Reminder:</strong> This asset remains company property. You are responsible for its safekeeping. Return it promptly when requested by HR.</span>
+      <span style="font-size:13px; color:#92400E;">️ <strong>Reminder:</strong> This asset remains company property. You are responsible for its safekeeping. Return it promptly when requested by HR.</span>
     </td>
   </tr>
 </table>

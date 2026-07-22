@@ -22,7 +22,7 @@ class TenantWelcomeMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '🎉 Welcome to Lockmytimes — Your workspace is ready!',
+            subject: ' Welcome to Lockmytimes — Your workspace is ready!',
         );
     }
 
