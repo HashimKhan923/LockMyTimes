@@ -63,7 +63,7 @@ class MailService
      |────────────────────────────────────────────────────────────────*/
     protected function adminEmails(): array
     {
-        return User::role(['Tenant Admin', 'HR Manager', 'Admin'])
+        return User::role(['Tenant Admin', 'HR Manager'], 'web')
             ->where('is_active', true)
             ->pluck('email')
             ->filter()

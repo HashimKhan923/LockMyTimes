@@ -42,7 +42,7 @@ class NotificationService
         ?string $actionUrl = null,
         array  $data       = []
     ): void {
-        $admins = User::role(['Tenant Admin', 'HR Manager', 'Admin'])->get();
+        $admins = User::role(['Tenant Admin', 'HR Manager'], 'web')->get();
         foreach ($admins as $admin) {
             static::send($admin, $title, $type, $icon, $color, $actionUrl, $data);
         }

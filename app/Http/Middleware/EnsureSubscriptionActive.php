@@ -20,7 +20,7 @@ class EnsureSubscriptionActive
         }
 
         if (in_array($tenant->status, ['suspended', 'cancelled'])) {
-            if ($request->expectsJson()) {
+            if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => 'Your subscription is not active. Please contact support.',
                     'status'  => $tenant->status,

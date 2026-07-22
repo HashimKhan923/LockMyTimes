@@ -32,6 +32,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
 
+        // Laravel's default guest-redirect assumes a global `login` route,
+        // which this app doesn't have (only tenant-scoped employee.login /
+        // admin.login). API clients never redirect — they get a 401 JSON body.
+        $middleware->redirectGuestsTo(fn ($request) => $request->is('api/*') ? null : route('login'));
+
         $middleware->priority([
         \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
         \Illuminate\Cookie\Middleware\EncryptCookies::class,
@@ -58,6 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant'              => \App\Http\Middleware\IdentifyTenant::class,
             'tenant.api'          => \App\Http\Middleware\IdentifyTenantFromToken::class,
             'subscription.active' => \App\Http\Middleware\EnsureSubscriptionActive::class,
+            'employee.api'        => \App\Http\Middleware\EnsureEmployeeApiAuth::class,
             'superadmin'          => \App\Http\Middleware\EnsureSuperAdmin::class,
             'admin.auth'          => \App\Http\Middleware\EnsureAdminAuth::class,
             'employee.auth'       => \App\Http\Middleware\EnsureEmployeeAuth::class,
@@ -67,9 +73,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // Every /api/* route is a JSON client (mobile app) regardless of the
+        // Accept header it happens to send — never redirect or render HTML.
+        $exceptions->shouldRenderJsonWhen(function (\Illuminate\Http\Request $request, \Throwable $e) {
+            return $request->is('api/*') || $request->expectsJson();
+        });
+
         // Redirect with flash message instead of raw 403 on permission denial
         $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, \Illuminate\Http\Request $request) {
-            if ($request->expectsJson()) {
+            if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json(['message' => 'You do not have permission to perform this action.'], 403);
             }
             return redirect()->back()->with('error', 'You do not have permission to perform this action.');
