@@ -86,6 +86,12 @@
             {{ $loc->latitude }}, {{ $loc->longitude }}
         </div>
         @endif
+        <div class="mt-4 pt-3 border-t border-gray-100">
+            <button type="button" onclick='openEditModal(@json($loc))' class="lmt-btn-secondary lmt-btn-sm w-full justify-center">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+                Edit
+            </button>
+        </div>
     </div>
     @empty
     <div class="lmt-card text-center py-16 md:col-span-3">
@@ -103,25 +109,25 @@
 <div id="add-loc-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal max-w-2xl w-full">
         <div class="flex items-center justify-between mb-5">
-            <h3 class="font-black text-gray-900 text-lg">Add Work Location</h3>
+            <h3 id="loc-modal-title" class="font-black text-gray-900 text-lg">Add Work Location</h3>
             <button type="button" onclick="closeAddModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <form action="{{ route('admin.locations.store', $tenant) }}" method="POST" class="space-y-4">
+        <form id="loc-form" action="{{ route('admin.locations.store', $tenant) }}" method="POST" class="space-y-4">
             @csrf
             <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
                     <label class="lmt-label">Location Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" required class="lmt-input" placeholder="e.g. New York HQ"/>
+                    <input type="text" name="name" id="loc-name-input" required class="lmt-input" placeholder="e.g. New York HQ"/>
                 </div>
                 <div>
                     <label class="lmt-label">Code</label>
-                    <input type="text" name="code" class="lmt-input" placeholder="NYC-HQ"/>
+                    <input type="text" name="code" id="loc-code-input" class="lmt-input" placeholder="NYC-HQ"/>
                 </div>
                 <div>
                     <label class="lmt-label">Timezone</label>
-                    <select name="timezone" class="lmt-select">
+                    <select name="timezone" id="loc-timezone-input" class="lmt-select">
                         @foreach(['America/New_York'=>'Eastern','America/Chicago'=>'Central','America/Denver'=>'Mountain','America/Los_Angeles'=>'Pacific','America/Anchorage'=>'Alaska','Pacific/Honolulu'=>'Hawaii'] as $tz=>$label)
                         <option value="{{ $tz }}">{{ $label }}</option>
                         @endforeach
@@ -129,15 +135,15 @@
                 </div>
                 <div class="col-span-2">
                     <label class="lmt-label">Address</label>
-                    <input type="text" name="address_line1" class="lmt-input" placeholder="Street address"/>
+                    <input type="text" name="address_line1" id="loc-address-input" class="lmt-input" placeholder="Street address"/>
                 </div>
                 <div>
                     <label class="lmt-label">City</label>
-                    <input type="text" name="city" class="lmt-input"/>
+                    <input type="text" name="city" id="loc-city-input" class="lmt-input"/>
                 </div>
                 <div>
                     <label class="lmt-label">State</label>
-                    <input type="text" name="state" class="lmt-input" placeholder="NY"/>
+                    <input type="text" name="state" id="loc-state-input" class="lmt-input" placeholder="NY"/>
                 </div>
             </div>
 
@@ -215,17 +221,21 @@
                 <p class="lmt-help">Employees must be within this radius to clock in via QR</p>
             </div>
 
-            <div>
+            <div class="flex items-center gap-6">
                 <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" name="is_headquarters" value="1" class="w-4 h-4 rounded"/>
+                    <input type="checkbox" name="is_headquarters" id="loc-hq-input" value="1" class="w-4 h-4 rounded"/>
                     <span class="text-sm font-medium text-gray-700">This is the headquarters</span>
+                </label>
+                <label id="loc-active-wrap" class="items-center gap-2 cursor-pointer hidden">
+                    <input type="checkbox" name="is_active" id="loc-active-input" value="1" class="w-4 h-4 rounded" checked/>
+                    <span class="text-sm font-medium text-gray-700">Active</span>
                 </label>
             </div>
 
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="lmt-btn-primary flex-1">
                     <i data-lucide="map-pin" class="w-4 h-4"></i>
-                    Create Location
+                    <span id="loc-submit-label">Create Location</span>
                 </button>
                 <button type="button" onclick="closeAddModal()" class="lmt-btn-secondary flex-1">Cancel</button>
             </div>
@@ -246,7 +256,42 @@ let locationMarker = null;
 let geofenceCircle = null;
 let searchTimeout = null;
 
+const locStoreUrl = "{{ route('admin.locations.store', $tenant) }}";
+const locUpdateUrlTemplate = @json(route('admin.locations.update', [$tenant, '__ID__']));
+
+function resetLocForm() {
+    const form = document.getElementById('loc-form');
+    form.reset();
+    form.action = locStoreUrl;
+    const methodField = form.querySelector('input[name="_method"]');
+    if (methodField) methodField.remove();
+
+    document.getElementById('loc-modal-title').textContent = 'Add Work Location';
+    document.getElementById('loc-submit-label').textContent = 'Create Location';
+    const activeWrap = document.getElementById('loc-active-wrap');
+    activeWrap.classList.add('hidden');
+    activeWrap.classList.remove('flex');
+
+    clearMapPin();
+
+    document.getElementById('radius-slider').value = 100;
+    document.getElementById('radius-input').value = 100;
+    updateRadiusLabel(100);
+    updateSliderFill(document.getElementById('radius-slider'));
+}
+
+function clearMapPin() {
+    if (locationMarker) { locationMap.removeLayer(locationMarker); locationMarker = null; }
+    if (geofenceCircle) { locationMap.removeLayer(geofenceCircle); geofenceCircle = null; }
+    document.getElementById('lat-input').value = '';
+    document.getElementById('lng-input').value = '';
+    document.getElementById('coord-pill-text').textContent = 'No location selected';
+    const hint = document.getElementById('map-pin-hint');
+    if (hint) hint.style.opacity = '1';
+}
+
 function openAddModal() {
+    resetLocForm();
     const modal = document.getElementById('add-loc-modal');
     modal.classList.remove('hidden');
     modal.classList.add('flex');
@@ -255,6 +300,55 @@ function openAddModal() {
     setTimeout(initLocationMap, 150);
 }
 
+function openEditModal(loc) {
+    resetLocForm();
+
+    document.getElementById('loc-form').action = locUpdateUrlTemplate.replace('__ID__', loc.id);
+    const methodField = document.createElement('input');
+    methodField.type = 'hidden';
+    methodField.name = '_method';
+    methodField.value = 'PUT';
+    document.getElementById('loc-form').appendChild(methodField);
+
+    document.getElementById('loc-modal-title').textContent = 'Edit Work Location';
+    document.getElementById('loc-submit-label').textContent = 'Save Changes';
+
+    document.getElementById('loc-name-input').value = loc.name || '';
+    document.getElementById('loc-code-input').value = loc.code || '';
+    document.getElementById('loc-timezone-input').value = loc.timezone || '';
+    document.getElementById('loc-address-input').value = loc.address_line1 || '';
+    document.getElementById('loc-city-input').value = loc.city || '';
+    document.getElementById('loc-state-input').value = loc.state || '';
+    document.getElementById('loc-hq-input').checked = !!loc.is_headquarters;
+
+    const activeWrap = document.getElementById('loc-active-wrap');
+    activeWrap.classList.remove('hidden');
+    activeWrap.classList.add('flex');
+    document.getElementById('loc-active-input').checked = !!loc.is_active;
+
+    const radius = loc.geofence_radius_meters || 100;
+    document.getElementById('radius-slider').value = radius;
+    document.getElementById('radius-input').value = radius;
+    updateRadiusLabel(radius);
+
+    const modal = document.getElementById('add-loc-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    if (window.lucide) lucide.createIcons();
+
+    setTimeout(() => {
+        initLocationMap();
+        updateSliderFill(document.getElementById('radius-slider'));
+        const lat = parseFloat(loc.latitude);
+        const lng = parseFloat(loc.longitude);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            setPin(lat, lng);
+            locationMap.setView([lat, lng], 15);
+        } else {
+            updateRadiusCircle();
+        }
+    }, 150);
+}
 
 function closeAddModal() {
     const modal = document.getElementById('add-loc-modal');

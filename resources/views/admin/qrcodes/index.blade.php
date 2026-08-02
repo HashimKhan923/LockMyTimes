@@ -98,6 +98,10 @@
                 <i data-lucide="printer" class="w-4 h-4"></i>
                 Print
             </a>
+            <button type="button" class="lmt-btn-secondary lmt-btn-sm" title="Edit"
+                    onclick='openEditQrModal(@json($qr))'>
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+            </button>
             <form action="{{ route('admin.qrcodes.rotate', [$tenant, $qr->id]) }}" method="POST">
                 @csrf @method('PATCH')
                 <button type="submit" class="lmt-btn-secondary lmt-btn-sm"
@@ -187,7 +191,74 @@
     </div>
 </div>
 
+{{-- Edit Modal --}}
+<div id="edit-modal" class="lmt-modal-backdrop hidden">
+    <div class="lmt-modal">
+        <h3 class="font-black text-gray-900 mb-5">Edit QR Code</h3>
+        <form id="edit-qr-form" method="POST" class="space-y-4">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="location_id" id="edit-qr-location-id"/>
+            <div>
+                <label class="lmt-label">Location</label>
+                <select class="lmt-select" disabled>
+                    <option id="edit-qr-location-name"></option>
+                </select>
+                <p class="lmt-help">Location can't be changed after creation — delete and generate a new QR instead.</p>
+            </div>
+            <div>
+                <label class="lmt-label">Label (optional)</label>
+                <input type="text" name="label" id="edit-qr-label" class="lmt-input" placeholder="e.g. Main Entrance, 2nd Floor"/>
+            </div>
+            <div class="space-y-3">
+                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50">
+                    <input type="checkbox" name="require_selfie" id="edit-qr-require-selfie" value="1" class="w-4 h-4 rounded"/>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Require Selfie</p>
+                        <p class="text-xs text-gray-400">Employee must capture a selfie when clocking in</p>
+                    </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50">
+                    <input type="checkbox" name="rotate_token" id="edit-qr-rotate-token" value="1" class="w-4 h-4 rounded"/>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Daily Token Rotation</p>
+                        <p class="text-xs text-gray-400">Token auto-rotates daily (prevents screenshot fraud)</p>
+                    </div>
+                </label>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="lmt-btn-primary flex-1">Save Changes</button>
+                <button type="button" onclick="closeEditQrModal()" class="lmt-btn-secondary flex-1">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 @push('scripts')
-<script>document.addEventListener('DOMContentLoaded',()=>{ if(window.lucide) lucide.createIcons(); });</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{ if(window.lucide) lucide.createIcons(); });
+
+const qrUpdateUrlTemplate = @json(route('admin.qrcodes.update', [$tenant, '__ID__']));
+
+function openEditQrModal(qr) {
+    document.getElementById('edit-qr-form').action = qrUpdateUrlTemplate.replace('__ID__', qr.id);
+    document.getElementById('edit-qr-location-id').value = qr.location_id;
+    document.getElementById('edit-qr-location-name').textContent = qr.location ? qr.location.name : '';
+    document.getElementById('edit-qr-label').value = qr.label || '';
+    document.getElementById('edit-qr-require-selfie').checked = !!qr.require_selfie;
+    document.getElementById('edit-qr-rotate-token').checked = !!qr.rotate_token;
+
+    const modal = document.getElementById('edit-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    if (window.lucide) lucide.createIcons();
+}
+
+function closeEditQrModal() {
+    const modal = document.getElementById('edit-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
 @endpush

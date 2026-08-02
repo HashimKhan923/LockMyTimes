@@ -37,6 +37,7 @@ class LocationController extends Controller
     {
         $data = $request->validate([
             'name'                   => 'required|string|max:150',
+            'code'                   => 'nullable|string|max:20|unique:locations,code,'.$location->id,
             'address_line1'          => 'nullable|string',
             'city'                   => 'nullable|string|max:100',
             'state'                  => 'nullable|string|max:50',

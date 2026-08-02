@@ -47,6 +47,25 @@ class QrCodeController extends Controller
         return view('admin.qrcodes.show', compact('qrCode', 'svgOrUrl', 'tenant'));
     }
 
+    public function update(string $tenant, Request $request, QrCode $qrCode)
+    {
+        $data = $request->validate([
+            'location_id'    => 'required|exists:locations,id',
+            'label'          => 'nullable|string|max:100',
+            'require_selfie' => 'boolean',
+            'rotate_token'   => 'boolean',
+        ]);
+
+        $qrCode->update([
+            'location_id'    => $data['location_id'],
+            'label'          => $data['label'] ?? null,
+            'require_selfie' => $request->boolean('require_selfie'),
+            'rotate_token'   => $request->boolean('rotate_token'),
+        ]);
+
+        return back()->with('success', 'QR code updated.');
+    }
+
     public function rotate(string $tenant, QrCode $qrCode)
     {
         $this->qrService->rotateToken($qrCode);

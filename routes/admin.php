@@ -122,6 +122,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::get('/',                  [QrCodeController::class, 'index'])->name('index')->middleware('permission:qr_codes.view');
         Route::post('/',                 [QrCodeController::class, 'store'])->name('store')->middleware('permission:qr_codes.create');
         Route::get('/{qrCode}',          [QrCodeController::class, 'show'])->name('show')->middleware('permission:qr_codes.view');
+        Route::put('/{qrCode}',          [QrCodeController::class, 'update'])->name('update')->middleware('permission:qr_codes.edit');
         Route::patch('/{qrCode}/rotate', [QrCodeController::class, 'rotate'])->name('rotate')->middleware('permission:qr_codes.edit');
         Route::patch('/{qrCode}/toggle', [QrCodeController::class, 'toggle'])->name('toggle')->middleware('permission:qr_codes.edit');
         Route::delete('/{qrCode}',       [QrCodeController::class, 'destroy'])->name('destroy')->middleware('permission:qr_codes.delete');
