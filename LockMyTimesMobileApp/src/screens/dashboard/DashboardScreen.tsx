@@ -9,6 +9,7 @@ import { fetchLeaves } from '../../api/endpoints/leaves';
 import { fetchTasks } from '../../api/endpoints/tasks';
 import { fetchAnnouncements } from '../../api/endpoints/announcements';
 import { fetchPayslips } from '../../api/endpoints/payslips';
+import { fetchProfile } from '../../api/endpoints/profile';
 import { AppRefreshControl } from '../../components/common/AppRefreshControl';
 import { QuickActionTile, styles as tileStyles } from '../../components/common/QuickActionTile';
 import { Screen } from '../../components/common/Screen';
@@ -41,6 +42,11 @@ export function DashboardScreen({ navigation }: Props) {
   const tasksQuery = useQuery({ queryKey: ['tasks', 'open'], queryFn: () => fetchTasks({ filter: 'open' }) });
   const announcementsQuery = useQuery({ queryKey: ['announcements', 'index'], queryFn: () => fetchAnnouncements() });
   const payslipsQuery = useQuery({ queryKey: ['payslips', 'index'], queryFn: () => fetchPayslips() });
+  // Same query the Profile screen uses — the cached auth session's
+  // avatar_url can go stale (it's only refreshed on login), so prefer this
+  // fresher source and only fall back to the session copy before it loads.
+  const profileQuery = useQuery({ queryKey: ['profile'], queryFn: fetchProfile });
+  const avatarUrl = profileQuery.data?.employee.avatar_url ?? user?.avatar_url;
 
   const refetchAll = () => {
     indexQuery.refetch();
@@ -49,6 +55,7 @@ export function DashboardScreen({ navigation }: Props) {
     tasksQuery.refetch();
     announcementsQuery.refetch();
     payslipsQuery.refetch();
+    profileQuery.refetch();
   };
 
   const weekDays: DayHours[] = (indexQuery.data?.days ?? [])
@@ -79,8 +86,8 @@ export function DashboardScreen({ navigation }: Props) {
             style={styles.headerLeft}
           >
             <LinearGradient colors={theme.gradients.accent} style={styles.avatarRing}>
-              {user?.avatar_url ? (
-                <Image source={{ uri: user.avatar_url }} style={styles.avatar} />
+              {avatarUrl ? (
+                <Image source={{ uri: avatarUrl }} style={styles.avatar} />
               ) : (
                 <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: theme.surface }]}>
                   <Text style={{ color: theme.primary, fontWeight: '700' }}>{initials}</Text>
