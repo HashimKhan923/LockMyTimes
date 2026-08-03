@@ -168,24 +168,27 @@ class AttendanceController extends Controller
             'notes'     => 'nullable|string|max:255',
         ]);
 
-        // Resolve the QR code to clock against.
-        $qr = $this->resolveQrCode($data, $emp);
-        if (! $qr instanceof QrCode) {
-            return $this->fail($qr['message']);
+        // Resolve what to clock in against: a scanned QR code, or a plain location (or nothing).
+        $resolved = $this->resolveClockInTarget($data, $emp);
+        if (isset($resolved['error'])) {
+            return $this->fail($resolved['error']);
         }
+        $location = $resolved['location'];
+        $qr       = $resolved['qrCode'];
 
-        $lat = (float) ($data['lat'] ?? $qr->location->latitude ?? 0);
-        $lng = (float) ($data['lng'] ?? $qr->location->longitude ?? 0);
+        $lat = (float) ($data['lat'] ?? $location?->latitude ?? 0);
+        $lng = (float) ($data['lng'] ?? $location?->longitude ?? 0);
 
         $selfiePath = $this->maybeStoreSelfie($data['selfie'] ?? null, $emp->id, 'in');
 
         $result = $this->attendance->clockIn(
             employee: $emp,
-            qrCode:   $qr,
+            location: $location,
             lat:      $lat,
             lng:      $lng,
             source:   $data['source'],
-            selfie:   $selfiePath
+            selfie:   $selfiePath,
+            qrCode:   $qr,
         );
 
         if (! $result['success']) {
@@ -433,42 +436,43 @@ class AttendanceController extends Controller
         return back()->with('error', $msg)->withInput();
     }
 
-    /** Resolve the appropriate QR code to clock-in against. */
-    protected function resolveQrCode(array $data, $emp): QrCode|array
+    /**
+     * Resolve what a clock-in should be checked against.
+     *
+     * - Scanning a QR always resolves that QR's own location (and enforces its require_selfie flag).
+     * - Otherwise (web/direct), resolve the assigned/selected location if any — no QR code is required
+     *   for this path, since the employee isn't scanning anything.
+     * - No assigned location and none selected → unrestricted direct clock-in (no geofence).
+     *
+     * @return array{location: ?Location, qrCode: ?QrCode, error?: string}
+     */
+    protected function resolveClockInTarget(array $data, $emp): array
     {
         // 1) QR token (scanning a printed/desktop code)
         if (! empty($data['qr_token'])) {
             $qr = QrCode::with('location')->where('token', $data['qr_token'])
                 ->orWhere('code', $data['qr_token'])
                 ->first();
-            if (! $qr) return ['message' => 'Invalid QR code.'];
+            if (! $qr) return ['location' => null, 'qrCode' => null, 'error' => 'Invalid QR code.'];
             if (isset($qr->is_active) && ! $qr->is_active) {
-                return ['message' => 'This QR code is inactive.'];
+                return ['location' => null, 'qrCode' => null, 'error' => 'This QR code is inactive.'];
             }
-            return $qr;
+            return ['location' => $qr->location, 'qrCode' => $qr];
         }
 
-        // 2) Web clock-in pick the QR for the assigned/selected location
-        $locId = $data['location_id']
-            ?? $emp->location_id
-            ?? null;
+        // 2) Web/direct clock-in — resolve the location only, no QR needed
+        $locId = $data['location_id'] ?? $emp->location_id ?? null;
 
         if (! $locId) {
-            return ['message' => 'No location selected. Please choose one or scan a QR code.'];
+            return ['location' => null, 'qrCode' => null];
         }
 
-        $qr = QrCode::with('location')->where('location_id', $locId)
-            ->when(\Illuminate\Support\Facades\Schema::connection('tenant')->hasColumn('qr_codes', 'is_active'),
-                fn ($q) => $q->where('is_active', true))
-            ->latest('id')
-            ->first();
-
-        if (! $qr) {
-            // Build a virtual QR-like object the service can accept? Safer: fail clean.
-            return ['message' => 'No QR code is configured for this location. Ask your admin to generate one.'];
+        $location = Location::find($locId);
+        if (! $location) {
+            return ['location' => null, 'qrCode' => null, 'error' => 'Selected location was not found.'];
         }
 
-        return $qr;
+        return ['location' => $location, 'qrCode' => null];
     }
 
     /** Save the selfie (base64 dataURL) to public storage; return relative path. */

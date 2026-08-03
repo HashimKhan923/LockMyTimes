@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Tenant\Attendance;
 use App\Models\Tenant\Employee;
+use App\Models\Tenant\Location;
 use App\Models\Tenant\QrCode;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\Shift;
@@ -21,16 +22,16 @@ class AttendanceService
      | CLOCK IN
      |================================================================*/
     public function clockIn(
-        Employee $employee,
-        QrCode   $qrCode,
-        float    $lat,
-        float    $lng,
-        string   $source = 'qr',
-        ?string  $selfie = null
+        Employee  $employee,
+        ?Location $location,
+        float     $lat,
+        float     $lng,
+        string    $source = 'qr',
+        ?string   $selfie = null,
+        ?QrCode   $qrCode = null
     ): array {
-        $today    = Carbon::today();
-        $now      = Carbon::now();
-        $location = $qrCode->location;
+        $today = Carbon::today();
+        $now   = Carbon::now();
 
         // Already clocked in today?
         $existing = Attendance::where('employee_id', $employee->id)
@@ -51,20 +52,25 @@ class AttendanceService
             return ['success' => false, 'message' => ucfirst($source) . ' clock-in is currently disabled.'];
         }
 
-        // Selfie requirement
-        if (Setting::get('attendance.require_selfie', false) && ! $selfie) {
+        // Selfie requirement — global policy OR this specific QR code's own flag
+        if ((Setting::get('attendance.require_selfie', false) || $qrCode?->require_selfie) && ! $selfie) {
             return ['success' => false, 'message' => 'A selfie photo is required for clock-in.'];
         }
 
-        // Geofence check
-        $geo = $this->geofence->check($location, $lat, $lng);
+        // Geofence check — only applies when clocking in against a specific location.
+        // No location (employee has none assigned and picked none) means an unrestricted clock-in.
+        if ($location) {
+            $geo = $this->geofence->check($location, $lat, $lng);
 
-        if (! $geo['valid'] && Setting::get('attendance.geofence_strict', true)) {
-            return [
-                'success'  => false,
-                'message'  => "You are {$geo['distance']}m away from {$location->name}. You must be within {$geo['radius']}m to clock in.",
-                'distance' => $geo['distance'],
-            ];
+            if (! $geo['valid'] && Setting::get('attendance.geofence_strict', true)) {
+                return [
+                    'success'  => false,
+                    'message'  => "You are {$geo['distance']}m away from {$location->name}. You must be within {$geo['radius']}m to clock in.",
+                    'distance' => $geo['distance'],
+                ];
+            }
+        } else {
+            $geo = ['valid' => true, 'distance' => 0, 'radius' => 0];
         }
 
         // ── Shift window enforcement ─────────────────────────────────
@@ -91,8 +97,8 @@ class AttendanceService
         $attendance = Attendance::updateOrCreate(
             ['employee_id' => $employee->id, 'work_date' => $today->toDateString()],
             [
-                'location_id'              => $location->id,
-                'qr_code_id'               => $qrCode->id,
+                'location_id'              => $location?->id,
+                'qr_code_id'               => $qrCode?->id,
                 'clock_in_at'              => $now,
                 'clock_in_lat'             => $lat,
                 'clock_in_lng'             => $lng,
@@ -108,8 +114,8 @@ class AttendanceService
             ]
         );
 
-        // Increment scan count
-        $qrCode->increment('scan_count');
+        // Increment scan count — only for an actual QR scan, not a direct/web clock-in
+        $qrCode?->increment('scan_count');
 
         return [
             'success'    => true,
