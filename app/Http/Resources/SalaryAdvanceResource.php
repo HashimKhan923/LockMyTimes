@@ -12,6 +12,7 @@ class SalaryAdvanceResource extends JsonResource
         return [
             'id' => $this->id,
             'advance_number' => $this->advance_number,
+            'created_at' => $this->created_at?->toIso8601String(),
             'amount' => (float) $this->amount,
             'reason' => $this->reason,
             'repayment_type' => $this->repayment_type,

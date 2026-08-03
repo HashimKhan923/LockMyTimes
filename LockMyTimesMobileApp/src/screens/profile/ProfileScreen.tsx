@@ -8,22 +8,37 @@ import { extractErrorMessage } from '../../api/client';
 import { fetchProfile, updateProfile, uploadAvatar } from '../../api/endpoints/profile';
 import { Button } from '../../components/common/Button';
 import { HeroHeader } from '../../components/common/HeroHeader';
+import { IconInfoCard, IconInfoRow } from '../../components/common/IconInfoRow';
 import { Screen } from '../../components/common/Screen';
 import { TextField } from '../../components/common/TextField';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
 import { useAuthStore } from '../../stores/authStore';
+import { useToastStore } from '../../stores/toastStore';
 import type { MoreStackParamList } from '../../navigation/MoreStack';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'Profile'>;
 
-type Tab = 'personal' | 'address';
+type Tab = 'personal' | 'address' | 'employment';
+
+function formatDate(value: string | null): string {
+  if (!value) return '—';
+  return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function titleCase(value: string | null): string {
+  if (!value) return '—';
+  return value
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 export function ProfileScreen({ navigation }: Props) {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const authUser = useAuthStore((s) => s.user);
   const updateAuthUser = useAuthStore((s) => s.updateUser);
+  const showToast = useToastStore((s) => s.show);
   const [tab, setTab] = useState<Tab>('personal');
 
   const { data } = useQuery({ queryKey: ['profile'], queryFn: fetchProfile });
@@ -57,7 +72,11 @@ export function ProfileScreen({ navigation }: Props) {
           ? { preferred_name: preferredName, personal_email: personalEmail, phone, mobile }
           : { address_line1: addressLine1, city, state, postal_code: postalCode }
       ),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      showToast('Profile updated', 'success');
+    },
+    onError: (err) => showToast(extractErrorMessage(err), 'error'),
   });
 
   const avatarMutation = useMutation({
@@ -69,7 +88,9 @@ export function ProfileScreen({ navigation }: Props) {
       // here too so the new photo shows up there immediately instead of
       // only after the next login.
       if (authUser) updateAuthUser({ ...authUser, avatar_url: data.employee.avatar_url });
+      showToast('Profile photo updated', 'success');
     },
+    onError: (err) => showToast(extractErrorMessage(err), 'error'),
   });
 
   async function handlePickAvatar() {
@@ -133,7 +154,7 @@ export function ProfileScreen({ navigation }: Props) {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.padded}>
         <View style={styles.tabRow}>
-          {(['personal', 'address'] as Tab[]).map((t) => (
+          {(['personal', 'address', 'employment'] as Tab[]).map((t) => (
             <Pressable
               key={t}
               onPress={() => setTab(t)}
@@ -149,7 +170,7 @@ export function ProfileScreen({ navigation }: Props) {
           ))}
         </View>
 
-        {tab === 'personal' ? (
+        {tab === 'personal' && (
           <View style={{ marginTop: spacing.md }}>
             <TextField label="Preferred name" value={preferredName} onChangeText={setPreferredName} />
             <TextField
@@ -162,7 +183,8 @@ export function ProfileScreen({ navigation }: Props) {
             <TextField label="Phone" keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
             <TextField label="Mobile" keyboardType="phone-pad" value={mobile} onChangeText={setMobile} />
           </View>
-        ) : (
+        )}
+        {tab === 'address' && (
           <View style={{ marginTop: spacing.md }}>
             <TextField label="Address line 1" value={addressLine1} onChangeText={setAddressLine1} />
             <TextField label="City" value={city} onChangeText={setCity} />
@@ -170,13 +192,48 @@ export function ProfileScreen({ navigation }: Props) {
             <TextField label="Postal code" value={postalCode} onChangeText={setPostalCode} />
           </View>
         )}
+        {tab === 'employment' && (
+          <View style={{ marginTop: spacing.md, marginBottom: spacing.lg }}>
+            <Text style={[typography.caption, { color: theme.textMuted, marginBottom: spacing.sm }]}>
+              Read-only details about your role. Contact HR for changes.
+            </Text>
+            <IconInfoCard>
+              <IconInfoRow icon="clipboard-text" label="Employee code" value={emp.employee_code ?? '—'} />
+              <IconInfoRow icon="briefcase" label="Position" value={emp.position ?? '—'} />
+              <IconInfoRow icon="business" label="Department" value={emp.department ?? '—'} />
+              <IconInfoRow icon="map-pin" label="Location" value={emp.location ?? '—'} />
+              <IconInfoRow icon="person-outline" label="Direct manager" value={emp.manager_name ?? '—'} />
+              <IconInfoRow icon="calendar-outline" label="Hire date" value={formatDate(emp.hire_date)} />
+              <IconInfoRow icon="time" label="Employment type" value={titleCase(emp.employment_type)} />
+              <IconInfoRow
+                icon="activity"
+                label="Employment status"
+                value={titleCase(emp.employment_status)}
+                last={!emp.probation_end_date && !emp.confirmation_date}
+              />
+              {emp.probation_end_date && (
+                <IconInfoRow
+                  icon="calendar-outline"
+                  label="Probation ends"
+                  value={formatDate(emp.probation_end_date)}
+                  last={!emp.confirmation_date}
+                />
+              )}
+              {emp.confirmation_date && (
+                <IconInfoRow icon="checkmark-done-outline" label="Confirmed on" value={formatDate(emp.confirmation_date)} last />
+              )}
+            </IconInfoCard>
+          </View>
+        )}
 
-        {saveMutation.isError && (
+        {tab !== 'employment' && saveMutation.isError && (
           <Text style={[typography.caption, { color: theme.danger, marginBottom: spacing.sm }]}>
             {extractErrorMessage(saveMutation.error)}
           </Text>
         )}
-        <Button title="Save changes" onPress={() => saveMutation.mutate()} loading={saveMutation.isPending} />
+        {tab !== 'employment' && (
+          <Button title="Save changes" onPress={() => saveMutation.mutate()} loading={saveMutation.isPending} />
+        )}
 
         <View style={styles.linksSection}>
           <Pressable

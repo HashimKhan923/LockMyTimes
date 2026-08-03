@@ -40,6 +40,7 @@ class AnnouncementController extends Controller
             $r = $readIds->get($a->id);
             $a->_is_read = (bool) $r;
             $a->_is_acknowledged = (bool) ($r && $r->acknowledged_at);
+            $a->_acknowledged_at = $r?->acknowledged_at?->toIso8601String();
             $a->_needs_action = $a->requires_acknowledgment && ! $a->_is_acknowledged;
 
             return $a;
@@ -121,6 +122,7 @@ class AnnouncementController extends Controller
 
         $a->_is_read = true;
         $a->_is_acknowledged = (bool) $read->acknowledged_at;
+        $a->_acknowledged_at = $read->acknowledged_at?->toIso8601String();
         $a->_needs_action = $a->requires_acknowledgment && ! $a->_is_acknowledged;
 
         return response()->json(['announcement' => new AnnouncementResource($a)]);

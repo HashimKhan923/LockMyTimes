@@ -62,6 +62,34 @@ class ExpenseController extends Controller
             ")
             ->first();
 
+        $counters = Expense::where('employee_id', $emp->id)
+            ->whereYear('expense_date', $year)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(status = 'draft')     as draft,
+                SUM(status = 'submitted') as submitted,
+                SUM(status = 'approved')  as approved,
+                SUM(status = 'rejected')  as rejected,
+                SUM(status = 'paid')      as paid,
+                SUM(status = 'cancelled') as cancelled
+            ")
+            ->first();
+
+        $byCategory = Expense::with('category')
+            ->where('employee_id', $emp->id)
+            ->whereYear('expense_date', $year)
+            ->whereIn('status', ['approved', 'paid'])
+            ->get()
+            ->groupBy('category_id')
+            ->map(fn ($g) => [
+                'category' => new ExpenseCategoryResource($g->first()->category),
+                'total' => (float) $g->sum('amount'),
+                'count' => $g->count(),
+            ])
+            ->sortByDesc('total')
+            ->take(5)
+            ->values();
+
         $categories = ExpenseCategory::query()
             ->when(Schema::connection('tenant')->hasColumn('expense_categories', 'is_active'),
                 fn ($q) => $q->where('is_active', true))
@@ -84,6 +112,16 @@ class ExpenseController extends Controller
                 'rejected_amount' => (float) $totals->rejected_amount,
                 'reimbursable_amount' => (float) $totals->reimbursable_amount,
             ],
+            'counters' => [
+                'total' => (int) $counters->total,
+                'draft' => (int) $counters->draft,
+                'submitted' => (int) $counters->submitted,
+                'approved' => (int) $counters->approved,
+                'rejected' => (int) $counters->rejected,
+                'paid' => (int) $counters->paid,
+                'cancelled' => (int) $counters->cancelled,
+            ],
+            'by_category' => $byCategory,
             'categories' => ExpenseCategoryResource::collection($categories),
         ]);
     }
@@ -206,6 +244,13 @@ class ExpenseController extends Controller
         }
 
         $exp->timeline = $this->buildTimeline($exp, $approvals);
+        $exp->approvals = $approvals->map(fn ($a) => [
+            'level' => $a->approval_level,
+            'approver_name' => $a->approver?->name,
+            'decision' => $a->decision,
+            'decided_at' => $a->decided_at?->toIso8601String(),
+            'comments' => $a->comments,
+        ])->values();
 
         return response()->json(['expense' => new ExpenseResource($exp)]);
     }

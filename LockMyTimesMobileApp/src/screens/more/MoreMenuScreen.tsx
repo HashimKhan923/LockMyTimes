@@ -1,6 +1,6 @@
 import { Icon } from '../../components/common/Icon';
 import { useQuery } from '@tanstack/react-query';
-import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MotiView } from 'moti';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fetchTeamIndex } from '../../api/endpoints/team';
@@ -47,16 +47,16 @@ export function MoreMenuScreen({ navigation }: Props) {
     ...(teamData?.is_manager
       ? [{ label: 'My Team', icon: 'people-circle-outline' as const, color: (t: ReturnType<typeof useTheme>) => t.accentBlue, onPress: () => navigation.navigate('Team') }]
       : []),
-    { label: 'Payslips', icon: 'document-text-outline', color: (t) => t.success, onPress: () => navigation.navigate('PayslipList') },
-    { label: 'Expenses', icon: 'receipt-outline', color: (t) => t.accentOrange, onPress: () => navigation.navigate('ExpenseList') },
-    { label: 'Loans & Advances', icon: 'cash-outline', color: (t) => t.accentTeal, onPress: () => navigation.navigate('LoanList') },
+    { label: 'Payslips', icon: 'document-text-outline', color: (t) => t.categorical[4], onPress: () => navigation.navigate('PayslipList') },
+    { label: 'Expenses', icon: 'receipt-outline', color: (t) => t.categorical[1], onPress: () => navigation.navigate('ExpenseList') },
+    { label: 'Loans & Advances', icon: 'cash-outline', color: (t) => t.categorical[5], onPress: () => navigation.navigate('LoanList') },
     {
       label: 'Announcements',
       icon: 'megaphone-outline',
-      color: (t) => t.accentPink,
+      color: (t) => t.categorical[3],
       onPress: () => navigation.navigate('Announcements', { screen: 'AnnouncementList' }),
     },
-    { label: 'Notifications', icon: 'notifications-outline', color: (t) => t.warning, onPress: () => navigation.navigate('Notifications') },
+    { label: 'Notifications', icon: 'notifications-outline', color: (t) => t.categorical[6], onPress: () => navigation.navigate('Notifications') },
     { label: 'Settings', icon: 'settings-outline', color: (t) => t.textMuted, onPress: () => navigation.navigate('Settings') },
   ];
 
@@ -85,7 +85,7 @@ export function MoreMenuScreen({ navigation }: Props) {
         </View>
       </HeroHeader>
 
-      <View style={styles.padded}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.padded}>
         {items.map((item, i) => {
           const color = item.color(theme);
           return (
@@ -122,7 +122,7 @@ export function MoreMenuScreen({ navigation }: Props) {
           </View>
           <Text style={[typography.body, { color: theme.danger, flex: 1, fontWeight: '700' }]}>Sign out</Text>
         </Pressable>
-      </View>
+      </ScrollView>
     </Screen>
   );
 }

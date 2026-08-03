@@ -2,16 +2,19 @@ import type { TaskPriority } from '../../api/types';
 
 /**
  * Task type → accent color + icon, mirrored from the web Kanban board's
- * badge-* classes (resources/views/employee/projects/board.blade.php) so
- * the mobile app reads the same visual language.
+ * badge-* classes (resources/views/employee/projects/board.blade.php) for
+ * icon and label — but kept within the app's blue/indigo theme family rather
+ * than matching the web's per-type hues (red/green/purple/amber), per the
+ * app-wide rule that only genuine status gets its own color. The icon shape
+ * and label already distinguish bug vs. feature vs. epic, etc.
  */
 export const TASK_TYPE_META: Record<string, { color: string; icon: string; label: string }> = {
-  bug: { color: '#DC2626', icon: 'bug', label: 'Bug' },
-  feature: { color: '#059669', icon: 'star', label: 'Feature' },
-  epic: { color: '#7C3AED', icon: 'flag', label: 'Epic' },
-  story: { color: '#D97706', icon: 'book-open', label: 'Story' },
+  bug: { color: '#3845C2', icon: 'bug', label: 'Bug' },
+  feature: { color: '#3D8BFF', icon: 'star', label: 'Feature' },
+  epic: { color: '#4A5BE8', icon: 'flag', label: 'Epic' },
+  story: { color: '#7989F8', icon: 'book-open', label: 'Story' },
   improvement: { color: '#2563EB', icon: 'wrench', label: 'Improvement' },
-  support: { color: '#16A34A', icon: 'lifebuoy', label: 'Support' },
+  support: { color: '#5FC6FF', icon: 'lifebuoy', label: 'Support' },
   task: { color: '#64748B', icon: 'clipboard-text', label: 'Task' },
 };
 

@@ -6,6 +6,7 @@ import { MotiView } from 'moti';
 import { cancelAdvance, fetchAdvance } from '../../api/endpoints/loans';
 import { Button } from '../../components/common/Button';
 import { GradientCard } from '../../components/common/GradientCard';
+import { Icon } from '../../components/common/Icon';
 import { ProgressRing } from '../../components/common/ProgressRing';
 import { Screen } from '../../components/common/Screen';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -25,6 +26,27 @@ const ADVANCE_STATUS_COLOR: Record<string, 'success' | 'warning' | 'danger' | 't
   cancelled: 'textMuted',
   closed: 'textMuted',
 };
+
+const DEDUCTION_STATUS_COLOR: Record<string, 'success' | 'warning' | 'danger' | 'textMuted'> = {
+  deducted: 'success',
+  pending: 'warning',
+  skipped: 'textMuted',
+  waived: 'textMuted',
+};
+
+/** Backend timeline events carry a semantic color key ('green'/'red'/'brand'/'gray'), not a hex value — mapped here to the app's real theme colors. Icon keys (file-plus/send/check-circle/x-circle/banknote/flag/ban) map directly onto Icon's MAP. */
+function timelineColor(theme: ReturnType<typeof useTheme>, key: string): string {
+  switch (key) {
+    case 'green':
+      return theme.success;
+    case 'red':
+      return theme.danger;
+    case 'brand':
+      return theme.primary;
+    default:
+      return theme.textMuted;
+  }
+}
 
 export function AdvanceDetailScreen({ route, navigation }: Props) {
   const theme = useTheme();
@@ -85,6 +107,7 @@ export function AdvanceDetailScreen({ route, navigation }: Props) {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}
         >
+          <Row label="Requested on" value={new Date(adv.created_at).toLocaleDateString()} theme={theme} />
           <Row label="Reason" value={adv.reason} theme={theme} />
           <Row label="Repayment" value={adv.repayment_type === 'installments' ? `${adv.installments_count} installments` : 'One-time'} theme={theme} />
           <Row label="Remaining" value={currencyFormatter.format(adv.amount_remaining)} theme={theme} />
@@ -94,6 +117,64 @@ export function AdvanceDetailScreen({ route, navigation }: Props) {
           </View>
           {adv.rejection_reason && <Row label="Rejection reason" value={adv.rejection_reason} theme={theme} valueColor={theme.danger} />}
         </View>
+
+        {(adv.timeline?.length ?? 0) > 0 && (
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: theme.surface },
+              Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
+            ]}
+          >
+            <Text style={[typography.subheading, { color: theme.text, marginBottom: spacing.sm }]}>Timeline</Text>
+            {adv.timeline!.map((event, i) => {
+              const color = timelineColor(theme, event.color);
+              return (
+                <View key={i} style={styles.timelineRow}>
+                  <View style={[styles.timelineIconWrap, { backgroundColor: color + '22' }]}>
+                    <Icon name={event.icon} size={16} color={color} weight="bold" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{event.title}</Text>
+                    {event.detail && (
+                      <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>{event.detail}</Text>
+                    )}
+                    <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>
+                      {new Date(event.when).toLocaleString()}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
+
+        {(adv.deductions?.length ?? 0) > 0 && (
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: theme.surface },
+              Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
+            ]}
+          >
+            <Text style={[typography.subheading, { color: theme.text, marginBottom: spacing.sm }]}>Deductions</Text>
+            {adv.deductions!.map((d, i) => (
+              <View
+                key={d.id}
+                style={[styles.deductionRow, i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.border }]}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={[typography.body, { color: theme.text }]}>Deduction #{d.deduction_number}</Text>
+                  <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>{d.deduction_date}</Text>
+                </View>
+                <View style={styles.deductionAmount}>
+                  <Text style={[typography.caption, { color: theme.textMuted }]}>{currencyFormatter.format(d.amount)}</Text>
+                  <StatusBadge value={d.status} color={theme[DEDUCTION_STATUS_COLOR[d.status] ?? 'textMuted']} filled />
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
 
         {adv.status === 'pending' && (
           <View style={{ marginTop: spacing.lg, marginBottom: spacing.xl }}>
@@ -120,4 +201,8 @@ const styles = StyleSheet.create({
   heroRow: { flexDirection: 'row', alignItems: 'center' },
   card: { borderRadius: radii.xl, padding: spacing.md, marginTop: spacing.md },
   row: { marginBottom: spacing.sm },
+  timelineRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: spacing.xs + 2, gap: spacing.sm },
+  timelineIconWrap: { width: 30, height: 30, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' },
+  deductionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm },
+  deductionAmount: { alignItems: 'flex-end', gap: 4 },
 });

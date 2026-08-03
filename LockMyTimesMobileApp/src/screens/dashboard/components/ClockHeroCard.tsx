@@ -1,18 +1,18 @@
-import { useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { MotiView } from 'moti';
 import { useMutation, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { extractErrorMessage } from '../../../api/client';
 import { endBreak, startBreak } from '../../../api/endpoints/attendance';
-import { Button } from '../../../components/common/Button';
 import { GradientCard } from '../../../components/common/GradientCard';
+import { Icon } from '../../../components/common/Icon';
 import { ProgressRing } from '../../../components/common/ProgressRing';
 import { SkeletonBlock } from '../../../components/common/SkeletonBlock';
 import { heroSpring } from '../../../theme/motion';
 import { radii, spacing, typography } from '../../../theme/tokens';
 import { useTheme } from '../../../theme/useTheme';
 import { useLiveAttendanceTimer } from '../../../hooks/useLiveAttendanceTimer';
+import { useToastStore } from '../../../stores/toastStore';
 import { formatHMS } from '../../../utils/formatDuration';
 import type { MainTabsParamList } from '../../../navigation/MainTabs';
 import type { AttendanceIndexResponse, AttendanceStatusResponse, ClockStatus } from '../../../api/types';
@@ -37,7 +37,7 @@ export function ClockHeroCard({
 }) {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const [breakError, setBreakError] = useState<string | null>(null);
+  const showToast = useToastStore((s) => s.show);
 
   const status = statusQuery.data?.status ?? indexQuery.data?.today.clock_status ?? 'not_clocked_in';
 
@@ -54,10 +54,10 @@ export function ClockHeroCard({
   const breakMutation = useMutation({
     mutationFn: () => (status === 'on_break' ? endBreak() : startBreak('tea')),
     onSuccess: () => {
-      setBreakError(null);
       queryClient.invalidateQueries({ queryKey: ['attendance'] });
+      showToast(status === 'on_break' ? 'Break ended' : 'Break started', 'success');
     },
-    onError: (err) => setBreakError(extractErrorMessage(err)),
+    onError: (err) => showToast(extractErrorMessage(err), 'error'),
   });
 
   if (indexQuery.isLoading && statusQuery.isLoading) {
@@ -80,7 +80,7 @@ export function ClockHeroCard({
         </View>
 
         <View style={styles.mainRow}>
-          <View style={styles.actionsCol}>
+          <View style={styles.statsCol}>
             <View style={styles.goalPill}>
               <Text style={styles.goalPillText}>{workedHours.toFixed(1)}/{DAILY_GOAL_HOURS}h</Text>
             </View>
@@ -105,52 +105,49 @@ export function ClockHeroCard({
                 {STATUS_LABEL[status]} · {Math.round(percent)}% of today's goal
               </Text>
             )}
-
-            <View style={styles.actions}>
-              {status === 'not_clocked_in' && (
-                <Button
-                  title="Clock In"
-                  variant="accent"
-                  icon="add"
-                  compact
-                  onPress={() => navigation.navigate('Attendance', { screen: 'ClockIn', params: { mode: 'in' } })}
-                />
-              )}
-              {(status === 'clocked_in' || status === 'on_break') && (
-                <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-                  <Pressable
-                    onPress={() => breakMutation.mutate()}
-                    style={styles.ghostBtn}
-                  >
-                    <Text style={styles.ghostBtnText}>{status === 'on_break' ? 'End break' : 'Take a break'}</Text>
-                  </Pressable>
-                  <Button
-                    title="Clock Out"
-                    variant="accent"
-                    compact
-                    disabled={status === 'on_break'}
-                    onPress={() => navigation.navigate('Attendance', { screen: 'ClockIn', params: { mode: 'out' } })}
-                  />
-                </View>
-              )}
-              {status === 'clocked_out' && (
-                <Text style={[typography.body, styles.subtext]}>See you tomorrow ✨</Text>
-              )}
-            </View>
-
-            {breakError && <Text style={styles.errorText}>{breakError}</Text>}
           </View>
 
           <ProgressRing
             percent={percent}
-            size={108}
-            strokeWidth={11}
+            size={92}
+            strokeWidth={9}
             color="#FFFFFF"
             trackColor="rgba(255,255,255,0.28)"
           >
             <Text style={[typography.heading, { color: '#FFFFFF' }]}>{Math.round(percent)}%</Text>
             <Text style={[typography.caption, { color: 'rgba(255,255,255,0.8)' }]}>of {DAILY_GOAL_HOURS}h</Text>
           </ProgressRing>
+        </View>
+
+        {/* Full card width — was previously squeezed into a column next to the
+            ring, which caused the buttons to overflow and visually overlap it. */}
+        <View style={styles.actions}>
+          {status === 'not_clocked_in' && (
+            <Pressable
+              onPress={() => navigation.navigate('Attendance', { screen: 'ClockIn', params: { mode: 'in' } })}
+              style={styles.soloBtn}
+            >
+              <Icon name="add" size={16} color={theme.primary} />
+              <Text style={[styles.soloBtnText, { color: theme.primary }]}>Clock In</Text>
+            </Pressable>
+          )}
+          {(status === 'clocked_in' || status === 'on_break') && (
+            <View style={styles.actionsRow}>
+              <Pressable onPress={() => breakMutation.mutate()} style={styles.ghostBtn}>
+                <Text style={styles.ghostBtnText}>{status === 'on_break' ? 'End break' : 'Take a break'}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => navigation.navigate('Attendance', { screen: 'ClockIn', params: { mode: 'out' } })}
+                disabled={status === 'on_break'}
+                style={[styles.solidBtn, status === 'on_break' && styles.btnDisabled]}
+              >
+                <Text style={[styles.solidBtnText, { color: theme.primary }]}>Clock Out</Text>
+              </Pressable>
+            </View>
+          )}
+          {status === 'clocked_out' && (
+            <Text style={[typography.body, styles.subtext]}>See you tomorrow ✨</Text>
+          )}
         </View>
 
         <Pressable onPress={() => navigation.navigate('Attendance', { screen: 'AttendanceHome' })} style={styles.viewMore}>
@@ -169,7 +166,7 @@ const styles = StyleSheet.create({
   liveRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: spacing.xs },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#FFFFFF' },
   mainRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.md },
-  actionsCol: { flex: 1, marginRight: spacing.md },
+  statsCol: { flex: 1, marginRight: spacing.md },
   goalPill: {
     alignSelf: 'flex-start',
     backgroundColor: 'rgba(255,255,255,0.22)',
@@ -179,10 +176,15 @@ const styles = StyleSheet.create({
   },
   goalPillText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
   subtext: { color: 'rgba(255,255,255,0.85)', marginTop: spacing.xs },
-  actions: { marginTop: spacing.md },
+  actions: { marginTop: spacing.lg },
+  actionsRow: { flexDirection: 'row', gap: spacing.sm },
+  // Take a break / Clock Out / solo Clock In all share the same padding,
+  // radius, and font size so they read as one consistent button language
+  // regardless of fill (solid white vs. outlined) or row position.
   ghostBtn: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    flex: 1,
+    paddingVertical: spacing.sm + 4,
+    paddingHorizontal: spacing.sm,
     borderRadius: radii.md,
     borderWidth: 1.5,
     borderColor: 'rgba(255,255,255,0.55)',
@@ -190,7 +192,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ghostBtnText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
-  errorText: { color: '#FFE1DE', marginTop: spacing.sm, fontSize: 12 },
+  solidBtn: {
+    flex: 1,
+    paddingVertical: spacing.sm + 4,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  solidBtnText: { fontWeight: '700', fontSize: 13 },
+  soloBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm + 4,
+    borderRadius: radii.md,
+    backgroundColor: '#FFFFFF',
+  },
+  soloBtnText: { fontWeight: '700', fontSize: 14 },
+  btnDisabled: { opacity: 0.5 },
   viewMore: { marginTop: spacing.lg },
   viewMoreText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
 });

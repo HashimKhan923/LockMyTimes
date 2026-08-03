@@ -80,13 +80,18 @@ export type GradientName = keyof GradientTokens;
 
 /**
  * Fallback categorical palette for category/type values with no server-provided
- * `color` (e.g. an expense category or leave type missing `color`). Fixed order —
- * pick a color via `categoricalColor`, never re-sort/re-cycle, so a given
- * category keeps the same slot for its lifetime.
+ * `color` (e.g. an expense category or leave type missing `color`), and for
+ * purely decorative multi-tile/multi-bar variety (stat tile rows, chart bars)
+ * that carries no status meaning. Kept entirely within the blue/indigo brand
+ * family — no red/green/orange/pink/purple/teal — per the app-wide rule that
+ * only genuine status (approved/rejected/overdue/pending/etc.) gets a
+ * different color; everything else is a shade of the theme blue. Fixed
+ * order — pick a color via `categoricalColor`, never re-sort/re-cycle, so a
+ * given category keeps the same slot for its lifetime.
  */
 export const categorical = {
-  light: ['#7C5CFC', '#FF9A44', '#FF6FA0', '#3D8BFF', '#22C7B5', '#FFC94D', '#B15CFC', '#4CD07A'] as const,
-  dark: ['#A78BFA', '#FFB067', '#FF8FBB', '#6AA5FF', '#4FDDCB', '#FFDB7A', '#CB9BFF', '#7BE39C'] as const,
+  light: ['#9AA8FA', '#3D8BFF', '#6C7DF7', '#5FC6FF', '#4A5BE8', '#7989F8', '#3845C2', '#28319B'] as const,
+  dark: ['#BCC5FB', '#6AA5FF', '#9AA8FA', '#8FC9FF', '#7989F8', '#96A1F5', '#6C7DF7', '#4A5BE8'] as const,
 } as const;
 
 export function categoricalColor(theme: 'light' | 'dark', seed: string | number): string {

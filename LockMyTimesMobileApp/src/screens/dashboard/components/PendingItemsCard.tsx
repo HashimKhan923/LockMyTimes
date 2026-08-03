@@ -10,6 +10,8 @@ import { useTheme } from '../../../theme/useTheme';
 import type { MainTabsParamList } from '../../../navigation/MainTabs';
 import type { LeaveIndexResponse, PayslipIndexResponse, TaskInfo, TasksIndexResponse } from '../../../api/types';
 
+const currencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+
 const PRIORITY_COLOR: Record<string, 'textMuted' | 'primary' | 'warning' | 'danger'> = {
   low: 'textMuted',
   normal: 'primary',
@@ -153,7 +155,7 @@ export function PendingItemsCard({
               </Text>
             </View>
             <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
-              {latestPayslip.net_pay}
+              {currencyFormatter.format(latestPayslip.net_pay)}
             </Text>
           </Pressable>
         </MotiView>

@@ -13,6 +13,12 @@ class LeaveRequestResource extends JsonResource
         return [
             'id' => $this->id,
             'request_number' => $this->request_number,
+            'employee' => $this->when($this->relationLoaded('employee'), fn () => [
+                'id' => $this->employee?->id,
+                'full_name' => $this->employee?->full_name,
+                'avatar_url' => $this->employee?->avatar_url,
+                'position' => $this->employee?->relationLoaded('position') ? $this->employee?->position?->title : null,
+            ]),
             'leave_type' => new LeaveTypeResource($this->whenLoaded('leaveType')),
             'start_date' => $this->start_date?->toDateString(),
             'end_date' => $this->end_date?->toDateString(),

@@ -74,7 +74,7 @@ export function QuickStatsRow({
         index={0}
         label="Present days"
         value={indexQuery.data?.summary.present_days}
-        color={theme.success}
+        color={theme.categorical[0]}
         icon="checkmark-done-outline"
         isLoading={indexQuery.isLoading}
         onPress={() => navigation.navigate('Attendance', { screen: 'AttendanceHome' })}
@@ -92,7 +92,7 @@ export function QuickStatsRow({
         index={2}
         label="Leave days left"
         value={leavesQuery.data?.summary.available}
-        color={theme.warning}
+        color={theme.categorical[4]}
         icon="calendar-outline"
         isLoading={leavesQuery.isLoading}
         onPress={() => navigation.navigate('Leaves', { screen: 'LeaveList' })}
@@ -101,7 +101,7 @@ export function QuickStatsRow({
         index={3}
         label="Unread updates"
         value={announcementsQuery.data?.counters.unread}
-        color={theme.danger}
+        color={theme.categorical[3]}
         icon="megaphone-outline"
         isLoading={announcementsQuery.isLoading}
         onPress={() => navigation.navigate('More', { screen: 'Announcements', params: { screen: 'AnnouncementList' } })}

@@ -14,6 +14,7 @@ class PollResource extends JsonResource
             'question' => $this->question,
             'description' => $this->description,
             'type' => $this->type,
+            'is_anonymous' => (bool) $this->is_anonymous,
             'options' => collect($this->options ?? [])->map(
                 fn ($o) => is_array($o) ? ($o['text'] ?? $o['label'] ?? '') : (string) $o
             )->values(),

@@ -10,6 +10,7 @@ import { HeroHeader } from '../../components/common/HeroHeader';
 import { ProgressRing } from '../../components/common/ProgressRing';
 import { Screen } from '../../components/common/Screen';
 import { SegmentedControl } from '../../components/common/SegmentedControl';
+import { StatCircleTile } from '../../components/common/StatCircleTile';
 import { StatNumber } from '../../components/common/StatNumber';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { entranceStagger } from '../../theme/motion';
@@ -42,6 +43,7 @@ export function LoanListScreen({ navigation }: Props) {
   });
 
   function renderLoan({ item, index }: { item: LoanInfo; index: number }) {
+    const totalInstallments = item.installments_paid + item.installments_remaining;
     return (
       <MotiView {...entranceStagger(index)}>
         <Pressable
@@ -52,16 +54,27 @@ export function LoanListScreen({ navigation }: Props) {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}
         >
-          <View style={{ flex: 1 }}>
-            <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{item.loan_type.name}</Text>
-            <Text style={[typography.caption, { color: theme.textMuted }]}>{item.loan_number}</Text>
+          <View style={styles.cardTopRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{item.loan_type.name}</Text>
+              <Text style={[typography.caption, { color: theme.textMuted }]}>{item.loan_number}</Text>
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>
+              <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
+                {currencyFormatter.format(item.principal_amount)}
+              </Text>
+              <StatusBadge value={item.status} color={theme[LOAN_STATUS_COLOR[item.status] ?? 'textMuted']} filled />
+            </View>
           </View>
-          <View style={{ alignItems: 'flex-end' }}>
-            <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
-              {currencyFormatter.format(item.principal_amount)}
+
+          <View style={[styles.progressTrack, { backgroundColor: theme.surfaceAlt }]}>
+            <View style={[styles.progressFill, { width: `${Math.max(4, item.progress_pct)}%`, backgroundColor: theme.primary }]} />
+          </View>
+          {totalInstallments > 0 && (
+            <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.xs }]}>
+              {item.installments_paid} of {totalInstallments} installments paid
             </Text>
-            <StatusBadge value={item.status} color={theme[LOAN_STATUS_COLOR[item.status] ?? 'textMuted']} filled />
-          </View>
+          )}
         </Pressable>
       </MotiView>
     );
@@ -78,18 +91,29 @@ export function LoanListScreen({ navigation }: Props) {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}
         >
-          <View style={{ flex: 1 }}>
-            <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{item.advance_number}</Text>
-            <Text style={[typography.caption, { color: theme.textMuted }]} numberOfLines={1}>
-              {item.reason}
-            </Text>
+          <View style={styles.cardTopRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{item.advance_number}</Text>
+              <Text style={[typography.caption, { color: theme.textMuted }]} numberOfLines={1}>
+                {item.reason}
+              </Text>
+            </View>
+            <View style={{ alignItems: 'flex-end' }}>
+              <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
+                {currencyFormatter.format(item.amount)}
+              </Text>
+              <StatusBadge value={item.status} color={theme[LOAN_STATUS_COLOR[item.status] ?? 'textMuted']} filled />
+            </View>
           </View>
-          <View style={{ alignItems: 'flex-end' }}>
-            <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
-              {currencyFormatter.format(item.amount)}
-            </Text>
-            <StatusBadge value={item.status} color={theme[LOAN_STATUS_COLOR[item.status] ?? 'textMuted']} filled />
+
+          <View style={[styles.progressTrack, { backgroundColor: theme.surfaceAlt }]}>
+            <View style={[styles.progressFill, { width: `${Math.max(4, item.progress_pct)}%`, backgroundColor: theme.primary }]} />
           </View>
+          {item.installments_count > 0 && (
+            <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.xs }]}>
+              {item.installments_paid} of {item.installments_count} installments paid
+            </Text>
+          )}
         </Pressable>
       </MotiView>
     );
@@ -140,6 +164,22 @@ export function LoanListScreen({ navigation }: Props) {
       <View style={styles.padded}>
         <SegmentedControl options={TABS} value={tab} onChange={setTab} />
 
+        {tab === 'Loans' && data?.loan_stats ? (
+          <MotiView {...entranceStagger(0)} style={styles.statsRow}>
+            <StatCircleTile icon="time" value={data.loan_stats.pending} label="Pending" color={theme.warning} />
+            <StatCircleTile icon="cash-outline" value={data.loan_stats.active} label="Active" color={theme.success} />
+            <StatCircleTile icon="checkmark-done-outline" value={data.loan_stats.completed} label="Completed" color={theme.success} />
+          </MotiView>
+        ) : null}
+
+        {tab === 'Advances' && data?.advance_stats ? (
+          <MotiView {...entranceStagger(0)} style={styles.statsRow}>
+            <StatCircleTile icon="time" value={data.advance_stats.pending} label="Pending" color={theme.warning} />
+            <StatCircleTile icon="cash-outline" value={data.advance_stats.active} label="Active" color={theme.success} />
+            <StatCircleTile icon="checkmark-done-outline" value={data.advance_stats.completed} label="Completed" color={theme.success} />
+          </MotiView>
+        ) : null}
+
         <View style={{ marginTop: spacing.md }}>
           <Button
             title={tab === 'Loans' ? 'Apply for a loan' : 'Request an advance'}
@@ -174,5 +214,9 @@ export function LoanListScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   padded: { paddingHorizontal: 24, paddingTop: spacing.md },
   heroRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
-  card: { flexDirection: 'row', alignItems: 'center', borderRadius: radii.lg, padding: spacing.md, marginTop: spacing.sm },
+  statsRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
+  card: { borderRadius: radii.lg, padding: spacing.md, marginTop: spacing.sm },
+  cardTopRow: { flexDirection: 'row', alignItems: 'center' },
+  progressTrack: { height: 6, borderRadius: 3, marginTop: spacing.sm, overflow: 'hidden' },
+  progressFill: { height: 6, borderRadius: 3 },
 });

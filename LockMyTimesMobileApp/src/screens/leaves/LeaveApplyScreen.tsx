@@ -14,6 +14,7 @@ import { StatNumber } from '../../components/common/StatNumber';
 import { TextField } from '../../components/common/TextField';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
+import { useToastStore } from '../../stores/toastStore';
 import type { LeavesStackParamList } from '../../navigation/LeavesStack';
 
 type Props = NativeStackScreenProps<LeavesStackParamList, 'LeaveApply'>;
@@ -25,6 +26,7 @@ function toDateString(d: Date) {
 export function LeaveApplyScreen({ navigation }: Props) {
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const showToast = useToastStore((s) => s.show);
 
   const { data } = useQuery({ queryKey: ['leaves', 'index'], queryFn: () => fetchLeaves() });
 
@@ -68,9 +70,14 @@ export function LeaveApplyScreen({ navigation }: Props) {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leaves'] });
+      showToast('Leave request submitted', 'success');
       navigation.goBack();
     },
-    onError: (err) => setSubmitError(extractErrorMessage(err)),
+    onError: (err) => {
+      const msg = extractErrorMessage(err);
+      setSubmitError(msg);
+      showToast(msg, 'error');
+    },
   });
 
   async function pickAttachment() {

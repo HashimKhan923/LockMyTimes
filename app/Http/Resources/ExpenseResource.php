@@ -12,6 +12,12 @@ class ExpenseResource extends JsonResource
         return [
             'id' => $this->id,
             'expense_number' => $this->expense_number,
+            'employee' => $this->when($this->relationLoaded('employee'), fn () => [
+                'id' => $this->employee?->id,
+                'full_name' => $this->employee?->full_name,
+                'avatar_url' => $this->employee?->avatar_url,
+                'position' => $this->employee?->relationLoaded('position') ? $this->employee?->position?->title : null,
+            ]),
             'category' => new ExpenseCategoryResource($this->whenLoaded('category')),
             'title' => $this->title,
             'description' => $this->description,
@@ -32,6 +38,7 @@ class ExpenseResource extends JsonResource
             'rejection_reason' => $this->rejection_reason,
             'created_at' => $this->created_at?->toIso8601String(),
             'timeline' => $this->when(isset($this->timeline), fn () => $this->timeline),
+            'approvals' => $this->when(isset($this->approvals), fn () => $this->approvals),
         ];
     }
 }

@@ -10,6 +10,7 @@ import { StatNumber } from '../../components/common/StatNumber';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
+import { useToastStore } from '../../stores/toastStore';
 import type { LeavesStackParamList } from '../../navigation/LeavesStack';
 
 type Props = NativeStackScreenProps<LeavesStackParamList, 'LeaveDetail'>;
@@ -24,6 +25,7 @@ const STATUS_COLOR: Record<string, 'success' | 'warning' | 'danger' | 'textMuted
 export function LeaveDetailScreen({ route, navigation }: Props) {
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const showToast = useToastStore((s) => s.show);
   const { id } = route.params;
 
   const { data, isLoading } = useQuery({
@@ -35,8 +37,10 @@ export function LeaveDetailScreen({ route, navigation }: Props) {
     mutationFn: () => cancelLeave(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leaves'] });
+      showToast('Leave request cancelled', 'success');
       navigation.goBack();
     },
+    onError: (err) => showToast(extractErrorMessage(err), 'error'),
   });
 
   if (isLoading || !data) {

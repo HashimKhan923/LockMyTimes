@@ -11,7 +11,7 @@ export interface DayHours {
   hours: number;
 }
 
-/** Each day's bar cycles through the categorical palette for a colorful, at-a-glance week — mirrors the reference app's multi-color activity chart. */
+/** Each day's bar cycles through the categorical (blue-shades) palette for an at-a-glance week — no status meaning, just visual rhythm. */
 export function WeeklyHoursChart({
   days,
   totalHours,
@@ -84,7 +84,7 @@ export function WeeklyHoursChart({
       <View style={[styles.footerRow, { borderTopColor: theme.border }]}>
         <Text style={[typography.body, { color: theme.primary, fontWeight: '700' }]}>{totalHours.toFixed(1)}h total</Text>
         <View style={styles.dotDivider} />
-        <Text style={[typography.body, { color: theme.accentOrange, fontWeight: '700' }]}>{presentDays} day(s) present</Text>
+        <Text style={[typography.body, { color: theme.accentBlue, fontWeight: '700' }]}>{presentDays} day(s) present</Text>
       </View>
     </View>
   );

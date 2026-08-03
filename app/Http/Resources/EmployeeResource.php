@@ -36,6 +36,8 @@ class EmployeeResource extends JsonResource
             'location' => $this->whenLoaded('location', fn () => $this->location?->name),
             'manager_name' => $this->whenLoaded('manager', fn () => $this->manager?->full_name),
             'hire_date' => $this->hire_date?->toDateString(),
+            'probation_end_date' => $this->probation_end_date?->toDateString(),
+            'confirmation_date' => $this->confirmation_date?->toDateString(),
             'employment_status' => $this->employment_status,
             'employment_type' => $this->employment_type,
             'privacy_settings' => $this->privacy_settings ?? \App\Models\Tenant\Employee::defaultPrivacySettings(),

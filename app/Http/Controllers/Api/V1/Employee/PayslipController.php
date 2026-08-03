@@ -46,6 +46,17 @@ class PayslipController extends Controller
             ->orderByDesc('id')
             ->paginate(12);
 
+        $counters = Payslip::where('employee_id', $emp->id)
+            ->whereYear('pay_date', $year)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(status = 'draft')     as draft,
+                SUM(status = 'finalized') as finalized,
+                SUM(status = 'paid')      as paid,
+                SUM(status = 'cancelled') as cancelled
+            ")
+            ->first();
+
         $latest = Payslip::with('payrollRun')
             ->where('employee_id', $emp->id)
             ->whereIn('status', ['paid', 'finalized'])
@@ -86,6 +97,13 @@ class PayslipController extends Controller
                 'last_page' => $payslips->lastPage(),
                 'total' => $payslips->total(),
             ],
+            'counters' => [
+                'total' => (int) $counters->total,
+                'draft' => (int) $counters->draft,
+                'finalized' => (int) $counters->finalized,
+                'paid' => (int) $counters->paid,
+                'cancelled' => (int) $counters->cancelled,
+            ],
             'latest' => $latest ? new PayslipResource($latest) : null,
             'ytd' => [
                 'gross' => (float) $ytd->gross,
@@ -109,6 +127,31 @@ class PayslipController extends Controller
             ->findOrFail($payslip);
 
         abort_if($ps->status === 'draft', 404);
+
+        $prev = Payslip::where('employee_id', $emp->id)
+            ->whereIn('status', ['paid', 'finalized'])
+            ->where(function ($q) use ($ps) {
+                $q->where('pay_date', '<', $ps->pay_date)
+                    ->orWhere(function ($q2) use ($ps) {
+                        $q2->where('pay_date', $ps->pay_date)->where('id', '<', $ps->id);
+                    });
+            })
+            ->orderByDesc('pay_date')->orderByDesc('id')
+            ->first(['id', 'payslip_number']);
+
+        $next = Payslip::where('employee_id', $emp->id)
+            ->whereIn('status', ['paid', 'finalized'])
+            ->where(function ($q) use ($ps) {
+                $q->where('pay_date', '>', $ps->pay_date)
+                    ->orWhere(function ($q2) use ($ps) {
+                        $q2->where('pay_date', $ps->pay_date)->where('id', '>', $ps->id);
+                    });
+            })
+            ->orderBy('pay_date')->orderBy('id')
+            ->first(['id', 'payslip_number']);
+
+        $ps->prev = $prev ? ['id' => $prev->id, 'payslip_number' => $prev->payslip_number] : null;
+        $ps->next = $next ? ['id' => $next->id, 'payslip_number' => $next->payslip_number] : null;
 
         return response()->json(['payslip' => new PayslipResource($ps)]);
     }

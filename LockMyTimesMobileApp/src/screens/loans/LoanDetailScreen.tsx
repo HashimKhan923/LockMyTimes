@@ -6,6 +6,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { cancelLoan, fetchLoan } from '../../api/endpoints/loans';
 import { Button } from '../../components/common/Button';
 import { GradientCard } from '../../components/common/GradientCard';
+import { Icon } from '../../components/common/Icon';
 import { ProgressRing } from '../../components/common/ProgressRing';
 import { Screen } from '../../components/common/Screen';
 import { StatNumber } from '../../components/common/StatNumber';
@@ -32,6 +33,24 @@ const REPAYMENT_STATUS_COLOR: Record<string, 'success' | 'warning' | 'danger' | 
   due: 'warning',
   overdue: 'danger',
 };
+
+/** Backend timeline events carry a semantic color key ('green'/'red'/'brand'/'gray'), not a hex value — mapped here to the app's real theme colors. Icon keys (file-plus/send/check-circle/x-circle/banknote/flag/ban) map directly onto Icon's MAP. */
+function timelineColor(theme: ReturnType<typeof useTheme>, key: string): string {
+  switch (key) {
+    case 'green':
+      return theme.success;
+    case 'red':
+      return theme.danger;
+    case 'brand':
+      return theme.primary;
+    default:
+      return theme.textMuted;
+  }
+}
+
+function formatLabel(value: string): string {
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 export function LoanDetailScreen({ route, navigation }: Props) {
   const theme = useTheme();
@@ -99,14 +118,66 @@ export function LoanDetailScreen({ route, navigation }: Props) {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}>
           <Row label="Principal" value={currencyFormatter.format(loan.principal_amount)} theme={theme} />
+          {loan.interest_type && <Row label="Interest type" value={formatLabel(loan.interest_type)} theme={theme} />}
           <Row label="EMI" value={currencyFormatter.format(loan.emi_amount)} theme={theme} />
           <Row label="Tenure" value={`${loan.tenure_months} months`} theme={theme} />
+          <Row label="Processing fee" value={currencyFormatter.format(loan.processing_fee)} theme={theme} />
+          <View style={styles.row}>
+            <Text style={[typography.caption, { color: theme.textMuted }]}>Auto-deduct from payroll</Text>
+            <StatusBadge
+              value={loan.auto_deduct_from_payroll ? 'enabled' : 'disabled'}
+              label={loan.auto_deduct_from_payroll ? 'Enabled' : 'Disabled'}
+              color={loan.auto_deduct_from_payroll ? theme.accentBlue : theme.textMuted}
+              filled
+            />
+          </View>
           <View style={styles.row}>
             <Text style={[typography.caption, { color: theme.textMuted }]}>Status</Text>
             <StatusBadge value={loan.status} color={theme[LOAN_STATUS_COLOR[loan.status] ?? 'textMuted']} filled />
           </View>
           {loan.rejection_reason && <Row label="Rejection reason" value={loan.rejection_reason} theme={theme} valueColor={theme.danger} />}
         </View>
+
+        {(loan.guarantor_name || loan.guarantor_phone) && (
+          <View style={[
+            styles.card,
+            { backgroundColor: theme.surface },
+            Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
+          ]}>
+            <Text style={[typography.subheading, { color: theme.text, marginBottom: spacing.sm }]}>Guarantor</Text>
+            {loan.guarantor_name && <Row label="Name" value={loan.guarantor_name} theme={theme} />}
+            {loan.guarantor_phone && <Row label="Phone" value={loan.guarantor_phone} theme={theme} />}
+          </View>
+        )}
+
+        {(loan.timeline?.length ?? 0) > 0 && (
+          <View style={[
+            styles.card,
+            { backgroundColor: theme.surface },
+            Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
+          ]}>
+            <Text style={[typography.subheading, { color: theme.text, marginBottom: spacing.sm }]}>Timeline</Text>
+            {loan.timeline!.map((event, i) => {
+              const color = timelineColor(theme, event.color);
+              return (
+                <View key={i} style={styles.timelineRow}>
+                  <View style={[styles.timelineIconWrap, { backgroundColor: color + '22' }]}>
+                    <Icon name={event.icon} size={16} color={color} weight="bold" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{event.title}</Text>
+                    {event.detail && (
+                      <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>{event.detail}</Text>
+                    )}
+                    <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>
+                      {new Date(event.when).toLocaleString()}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
 
         {(loan.repayments?.length ?? 0) > 0 && (
           <View style={[
@@ -115,9 +186,19 @@ export function LoanDetailScreen({ route, navigation }: Props) {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}>
             <Text style={[typography.subheading, { color: theme.text, marginBottom: spacing.sm }]}>Repayment schedule</Text>
-            {loan.repayments!.slice(0, 6).map((r) => (
-              <View key={r.id} style={styles.repayRow}>
-                <Text style={[typography.body, { color: theme.text }]}>#{r.installment_number} · {r.due_date}</Text>
+            {loan.repayments!.map((r, i) => (
+              <View
+                key={r.id}
+                style={[styles.repayRow, i > 0 && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.border }]}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={[typography.body, { color: r.is_overdue ? theme.danger : theme.text }]}>
+                    #{r.installment_number} · {r.due_date}
+                  </Text>
+                  <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>
+                    Principal {currencyFormatter.format(r.principal_component)} · Interest {currencyFormatter.format(r.interest_component)}
+                  </Text>
+                </View>
                 <View style={styles.repayAmount}>
                   <Text style={[typography.caption, { color: theme.textMuted }]}>{currencyFormatter.format(r.emi_amount)}</Text>
                   <StatusBadge value={r.status} color={theme[REPAYMENT_STATUS_COLOR[r.status] ?? 'textMuted']} filled />
@@ -153,6 +234,8 @@ const styles = StyleSheet.create({
   heroInfo: { marginLeft: spacing.lg, flex: 1 },
   card: { borderRadius: radii.xl, padding: spacing.md, marginTop: spacing.md },
   row: { marginBottom: spacing.sm },
-  repayRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.xs + 2 },
+  repayRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm },
   repayAmount: { alignItems: 'flex-end', gap: 4 },
+  timelineRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: spacing.xs + 2, gap: spacing.sm },
+  timelineIconWrap: { width: 30, height: 30, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' },
 });

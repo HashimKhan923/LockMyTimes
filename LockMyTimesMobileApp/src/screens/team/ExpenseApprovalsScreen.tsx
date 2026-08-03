@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { FlatList, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { MotiView } from 'moti';
 import { approveExpense, fetchExpenseApprovals, rejectExpense } from '../../api/endpoints/team';
+import { AvatarStack } from '../../components/common/AvatarStack';
 import { Button } from '../../components/common/Button';
 import { Screen } from '../../components/common/Screen';
 import { StatNumber } from '../../components/common/StatNumber';
@@ -14,6 +15,10 @@ import { useTheme } from '../../theme/useTheme';
 import type { ExpenseInfo } from '../../api/types';
 
 const currencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+
+function formatCurrency(amount: number, currency?: string | null) {
+  return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency || 'USD' }).format(amount);
+}
 
 export function ExpenseApprovalsScreen() {
   const theme = useTheme();
@@ -46,10 +51,26 @@ export function ExpenseApprovalsScreen() {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}
         >
+          {item.employee && (
+            <View style={styles.requesterRow}>
+              <AvatarStack
+                people={[{ id: item.employee.id, name: item.employee.full_name, avatar_url: item.employee.avatar_url }]}
+                max={1}
+                size={28}
+              />
+              <View style={{ marginLeft: spacing.sm }}>
+                <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>{item.employee.full_name}</Text>
+                {item.employee.position && (
+                  <Text style={[typography.caption, { color: theme.textMuted }]}>{item.employee.position}</Text>
+                )}
+              </View>
+            </View>
+          )}
+
           <View style={styles.headerRow}>
             <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{item.title}</Text>
             <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
-              {currencyFormatter.format(item.amount)}
+              {formatCurrency(item.amount, item.currency)}
             </Text>
           </View>
           <View style={styles.categoryRow}>
@@ -108,6 +129,7 @@ export function ExpenseApprovalsScreen() {
 
 const styles = StyleSheet.create({
   padded: { paddingHorizontal: 24 },
+  requesterRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between' },
   categoryRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 4 },
   card: { borderRadius: radii.lg, padding: spacing.md, marginTop: spacing.sm },

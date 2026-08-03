@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from './src/navigation/RootNavigator';
+import { Toast } from './src/components/common/Toast';
 import { useAuthStore } from './src/stores/authStore';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -38,6 +39,7 @@ export default function App() {
           <NavigationContainer>
             <RootNavigator />
           </NavigationContainer>
+          <Toast />
           <StatusBar style="auto" />
         </QueryClientProvider>
       </SafeAreaProvider>

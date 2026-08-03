@@ -17,6 +17,8 @@ export interface UserProfile {
   theme: string;
   must_change_password: boolean;
   notification_preferences: Record<string, NotificationPreference>;
+  last_login_at?: string | null;
+  last_login_ip?: string | null;
 }
 
 export interface TenantInfo {
@@ -171,9 +173,17 @@ export interface LeaveAttachment {
   size: number | null;
 }
 
+export interface RequesterInfo {
+  id: number;
+  full_name: string;
+  avatar_url: string;
+  position: string | null;
+}
+
 export interface LeaveRequestInfo {
   id: number;
   request_number: string;
+  employee?: RequesterInfo;
   leave_type: LeaveType;
   start_date: string;
   end_date: string;
@@ -218,6 +228,16 @@ export interface PayslipItemInfo {
 
 export type PayslipStatus = 'draft' | 'finalized' | 'paid' | 'cancelled';
 
+export interface PayslipLineItem {
+  label: string;
+  amount: number;
+}
+
+export interface PayslipNavRef {
+  id: number;
+  payslip_number: string;
+}
+
 export interface PayslipInfo {
   id: number;
   payslip_number: string;
@@ -225,13 +245,25 @@ export interface PayslipInfo {
   period_end: string;
   pay_date: string;
   status: PayslipStatus;
+  payment_method: string | null;
+  pay_schedule?: string | null;
+  employee?: { full_name: string; employee_code: string | null; position: string | null; department: string | null };
   regular_hours: number;
   overtime_hours: number;
+  holiday_hours: number;
+  leave_hours: number;
+  earnings: PayslipLineItem[];
+  deduction_breakdown: PayslipLineItem[];
   gross_pay: number;
   net_pay: number;
   total_deductions: number;
   tax_amount: number;
+  ytd_gross: number;
+  ytd_net: number;
+  ytd_taxes: number;
   items: PayslipItemInfo[];
+  prev?: PayslipNavRef | null;
+  next?: PayslipNavRef | null;
 }
 
 export interface EmergencyContactInfo {
@@ -271,6 +303,8 @@ export interface EmployeeProfile {
   location: string | null;
   manager_name: string | null;
   hire_date: string | null;
+  probation_end_date: string | null;
+  confirmation_date: string | null;
   employment_status: string | null;
   employment_type: string | null;
   privacy_settings: Record<string, boolean>;
@@ -460,9 +494,18 @@ export interface TimelineEvent {
   when: string;
 }
 
+export interface ExpenseApprovalInfo {
+  level: number;
+  approver_name: string | null;
+  decision: string;
+  decided_at: string | null;
+  comments: string | null;
+}
+
 export interface ExpenseInfo {
   id: number;
   expense_number: string;
+  employee?: RequesterInfo;
   category: ExpenseCategoryInfo;
   title: string;
   description: string | null;
@@ -483,6 +526,7 @@ export interface ExpenseInfo {
   rejection_reason: string | null;
   created_at: string;
   timeline?: TimelineEvent[];
+  approvals?: ExpenseApprovalInfo[];
 }
 
 export interface ExpensesIndexResponse {
@@ -497,6 +541,16 @@ export interface ExpensesIndexResponse {
     rejected_amount: number;
     reimbursable_amount: number;
   };
+  counters: {
+    total: number;
+    draft: number;
+    submitted: number;
+    approved: number;
+    rejected: number;
+    paid: number;
+    cancelled: number;
+  };
+  by_category: { category: ExpenseCategoryInfo; total: number; count: number }[];
   categories: ExpenseCategoryInfo[];
 }
 
@@ -538,7 +592,9 @@ export interface LoanInfo {
   loan_type: LoanTypeInfo;
   principal_amount: number;
   interest_rate: number;
+  interest_type: string | null;
   total_interest: number;
+  processing_fee: number;
   total_amount: number;
   tenure_months: number;
   emi_amount: number;
@@ -548,6 +604,9 @@ export interface LoanInfo {
   installments_paid: number;
   installments_remaining: number;
   purpose: string;
+  guarantor_name: string | null;
+  guarantor_phone: string | null;
+  auto_deduct_from_payroll: boolean;
   status: string;
   approver_comments: string | null;
   rejection_reason: string | null;
@@ -573,6 +632,7 @@ export interface AdvanceDeductionInfo {
 export interface SalaryAdvanceInfo {
   id: number;
   advance_number: string;
+  created_at: string;
   amount: number;
   reason: string;
   repayment_type: string;
@@ -658,9 +718,11 @@ export interface AnnouncementInfo {
   banner_image_url: string | null;
   creator_name: string;
   published_at: string | null;
+  expires_at: string | null;
   views_count: number;
   is_read?: boolean;
   is_acknowledged?: boolean;
+  acknowledged_at?: string | null;
   needs_action?: boolean;
 }
 
@@ -676,6 +738,7 @@ export interface PollInfo {
   question: string;
   description: string | null;
   type: string;
+  is_anonymous: boolean;
   options: string[];
   status: string;
   starts_at: string | null;
@@ -704,6 +767,7 @@ export interface PayslipIndexResponse {
   years: number[];
   payslips: PayslipInfo[];
   pagination: { current_page: number; last_page: number; total: number };
+  counters: { total: number; draft: number; finalized: number; paid: number; cancelled: number };
   latest: PayslipInfo | null;
   ytd: {
     gross: number;

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { DetailSkeleton } from '../../components/common/SkeletonBlock';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { extractErrorMessage } from '../../api/client';
 import {
   addTaskChecklistItem,
   addTaskComment,
@@ -17,6 +18,7 @@ import { Screen } from '../../components/common/Screen';
 import { TextField } from '../../components/common/TextField';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
+import { useToastStore } from '../../stores/toastStore';
 import type { TasksStackParamList } from '../../navigation/TasksStack';
 import type { TaskStatus } from '../../api/types';
 
@@ -37,6 +39,7 @@ const STATUS_COLOR_KEY: Record<TaskStatus, 'textMuted' | 'primary' | 'warning' |
 export function TaskDetailScreen({ route }: Props) {
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const showToast = useToastStore((s) => s.show);
   const { id } = route.params;
   const [comment, setComment] = useState('');
   const [checklistItem, setChecklistItem] = useState('');
@@ -44,10 +47,15 @@ export function TaskDetailScreen({ route }: Props) {
   const { data, isLoading } = useQuery({ queryKey: ['tasks', 'detail', id], queryFn: () => fetchTask(id) });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['tasks'] });
+  const toastOnError = (err: unknown) => showToast(extractErrorMessage(err), 'error');
 
   const statusMutation = useMutation({
     mutationFn: (status: TaskStatus) => updateTaskStatus(id, status),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      showToast('Status updated', 'success');
+    },
+    onError: toastOnError,
   });
 
   const commentMutation = useMutation({
@@ -55,7 +63,9 @@ export function TaskDetailScreen({ route }: Props) {
     onSuccess: () => {
       setComment('');
       invalidate();
+      showToast('Comment posted', 'success');
     },
+    onError: toastOnError,
   });
 
   const checklistMutation = useMutation({
@@ -63,12 +73,15 @@ export function TaskDetailScreen({ route }: Props) {
     onSuccess: () => {
       setChecklistItem('');
       invalidate();
+      showToast('Checklist item added', 'success');
     },
+    onError: toastOnError,
   });
 
   const toggleMutation = useMutation({
     mutationFn: (checklistId: number) => toggleTaskChecklistItem(id, checklistId),
     onSuccess: invalidate,
+    onError: toastOnError,
   });
 
   if (isLoading || !data) {

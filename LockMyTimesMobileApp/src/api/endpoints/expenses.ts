@@ -1,9 +1,9 @@
 import { apiClient } from '../client';
 import type { ExpenseInfo, ExpensesIndexResponse } from '../types';
 
-export async function fetchExpenses(year?: number): Promise<ExpensesIndexResponse> {
+export async function fetchExpenses(year?: number, status?: string): Promise<ExpensesIndexResponse> {
   const { data } = await apiClient.get<ExpensesIndexResponse>('/expenses', {
-    params: year ? { year } : undefined,
+    params: { ...(year ? { year } : {}), ...(status ? { status } : {}) },
   });
   return data;
 }
@@ -20,8 +20,11 @@ export interface CreateExpensePayload {
   amount: number;
   expense_date: string;
   merchant?: string;
+  payment_method?: string;
+  project_code?: string;
   is_mileage?: boolean;
   miles?: number;
+  mileage_rate?: number;
   action?: 'draft' | 'submit';
   receipt?: { uri: string; name: string; mimeType: string | null };
 }
@@ -36,8 +39,11 @@ export async function createExpense(
   form.append('amount', String(payload.amount));
   form.append('expense_date', payload.expense_date);
   if (payload.merchant) form.append('merchant', payload.merchant);
+  if (payload.payment_method) form.append('payment_method', payload.payment_method);
+  if (payload.project_code) form.append('project_code', payload.project_code);
   if (payload.is_mileage) form.append('is_mileage', '1');
   if (payload.miles) form.append('miles', String(payload.miles));
+  if (payload.mileage_rate) form.append('mileage_rate', String(payload.mileage_rate));
   form.append('action', payload.action ?? 'submit');
   if (payload.receipt) {
     form.append('receipt', {

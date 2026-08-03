@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { FlatList, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { MotiView } from 'moti';
 import { approveLeave, fetchLeaveApprovals, rejectLeave } from '../../api/endpoints/team';
+import { AvatarStack } from '../../components/common/AvatarStack';
 import { Button } from '../../components/common/Button';
 import { Screen } from '../../components/common/Screen';
 import { StatusBadge } from '../../components/common/StatusBadge';
@@ -48,6 +49,22 @@ export function LeaveApprovalsScreen() {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}
         >
+          {item.employee && (
+            <View style={styles.requesterRow}>
+              <AvatarStack
+                people={[{ id: item.employee.id, name: item.employee.full_name, avatar_url: item.employee.avatar_url }]}
+                max={1}
+                size={28}
+              />
+              <View style={{ marginLeft: spacing.sm }}>
+                <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>{item.employee.full_name}</Text>
+                {item.employee.position && (
+                  <Text style={[typography.caption, { color: theme.textMuted }]}>{item.employee.position}</Text>
+                )}
+              </View>
+            </View>
+          )}
+
           <View style={styles.headerRow}>
             <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>{item.leave_type.name}</Text>
             <StatusBadge value={`${item.total_days}d`} color={item.leave_type.color} uppercase={false} filled />
@@ -101,6 +118,7 @@ export function LeaveApprovalsScreen() {
 const styles = StyleSheet.create({
   padded: { paddingHorizontal: 24 },
   card: { borderRadius: radii.lg, padding: spacing.md, marginTop: spacing.sm },
+  requesterRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   actionRow: { flexDirection: 'row', marginTop: spacing.md },
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },

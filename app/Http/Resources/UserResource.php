@@ -23,6 +23,8 @@ class UserResource extends JsonResource
             'time_format' => $this->time_format ?? '12',
             'theme' => $this->theme ?? 'system',
             'must_change_password' => (bool) $this->must_change_password,
+            'last_login_at' => $this->last_login_at?->toIso8601String(),
+            'last_login_ip' => $this->last_login_ip,
             'notification_preferences' => $this->notification_preferences ?? User::defaultNotificationPreferences(),
         ];
     }

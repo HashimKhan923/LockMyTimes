@@ -151,13 +151,13 @@ export function DashboardScreen({ navigation }: Props) {
                   <QuickActionTile
                     icon="document-text-outline"
                     label="Apply Leave"
-                    color={theme.success}
+                    color={theme.categorical[2]}
                     onPress={() => navigation.navigate('Leaves', { screen: 'LeaveApply' })}
                   />
                   <QuickActionTile
                     icon="receipt-outline"
                     label="Payslips"
-                    color={theme.accentOrange}
+                    color={theme.categorical[4]}
                     onPress={() => navigation.navigate('More', { screen: 'PayslipList' })}
                   />
                 </View>

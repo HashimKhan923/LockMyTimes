@@ -261,7 +261,7 @@ class LoanController extends Controller
     {
         $emp = $this->employeeOrFail($request);
 
-        $ln = Loan::with(['loanType', 'repayments' => fn ($q) => $q->orderBy('installment_number')])
+        $ln = Loan::with(['loanType', 'guarantorEmployee', 'repayments' => fn ($q) => $q->orderBy('installment_number')])
             ->where('employee_id', $emp->id)
             ->findOrFail($loan);
 

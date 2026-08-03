@@ -29,17 +29,28 @@ export function EmergencyContactsScreen({}: Props) {
   const [name, setName] = useState('');
   const [relationship, setRelationship] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
 
   const { data } = useQuery({ queryKey: ['profile'], queryFn: fetchProfile });
 
   const createMutation = useMutation({
-    mutationFn: () => createEmergencyContact({ name, relationship, phone }),
+    mutationFn: () =>
+      createEmergencyContact({
+        name,
+        relationship,
+        phone,
+        email: email.trim() || undefined,
+        address: address.trim() || undefined,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       setShowForm(false);
       setName('');
       setRelationship('');
       setPhone('');
+      setEmail('');
+      setAddress('');
     },
   });
 
@@ -70,6 +81,14 @@ export function EmergencyContactsScreen({}: Props) {
             <Text style={[typography.caption, { color: theme.textMuted }]}>
               {item.relationship} · {item.phone}
             </Text>
+            {item.email && (
+              <Text style={[typography.caption, { color: theme.textMuted }]}>{item.email}</Text>
+            )}
+            {item.address && (
+              <Text style={[typography.caption, { color: theme.textMuted }]} numberOfLines={2}>
+                {item.address}
+              </Text>
+            )}
           </View>
           <Pressable onPress={() => deleteMutation.mutate(item.id)}>
             <Icon name="trash-outline" size={20} color={theme.danger} />
@@ -108,6 +127,14 @@ export function EmergencyContactsScreen({}: Props) {
                 <TextField label="Name" value={name} onChangeText={setName} />
                 <TextField label="Relationship" value={relationship} onChangeText={setRelationship} />
                 <TextField label="Phone" keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
+                <TextField
+                  label="Email (optional)"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+                <TextField label="Address (optional)" value={address} onChangeText={setAddress} />
                 {createMutation.isError && (
                   <Text style={[typography.caption, { color: theme.danger, marginBottom: spacing.sm }]}>
                     {extractErrorMessage(createMutation.error)}

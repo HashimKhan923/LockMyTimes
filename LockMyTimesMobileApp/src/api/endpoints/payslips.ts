@@ -1,9 +1,9 @@
 import { apiClient } from '../client';
 import type { PayslipIndexResponse, PayslipInfo } from '../types';
 
-export async function fetchPayslips(year?: number): Promise<PayslipIndexResponse> {
+export async function fetchPayslips(year?: number, status?: string): Promise<PayslipIndexResponse> {
   const { data } = await apiClient.get<PayslipIndexResponse>('/payslips', {
-    params: year ? { year } : undefined,
+    params: { ...(year ? { year } : {}), ...(status ? { status } : {}) },
   });
   return data;
 }

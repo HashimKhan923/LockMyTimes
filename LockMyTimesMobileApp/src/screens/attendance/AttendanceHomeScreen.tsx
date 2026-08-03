@@ -16,6 +16,7 @@ import { useTheme } from '../../theme/useTheme';
 import type { AttendanceStackParamList } from '../../navigation/AttendanceStack';
 import { useResetOnTabBlur } from '../../navigation/useResetOnTabBlur';
 import { useLiveAttendanceTimer } from '../../hooks/useLiveAttendanceTimer';
+import { useToastStore } from '../../stores/toastStore';
 import { formatHMS } from '../../utils/formatDuration';
 import type { AttendanceDay, ClockStatus } from '../../api/types';
 
@@ -41,7 +42,7 @@ export function AttendanceHomeScreen({ navigation }: Props) {
   useResetOnTabBlur(navigation);
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const [breakError, setBreakError] = useState<string | null>(null);
+  const showToast = useToastStore((s) => s.show);
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -73,10 +74,10 @@ export function AttendanceHomeScreen({ navigation }: Props) {
   const breakMutation = useMutation({
     mutationFn: () => (status === 'on_break' ? endBreak() : startBreak('tea')),
     onSuccess: () => {
-      setBreakError(null);
       queryClient.invalidateQueries({ queryKey: ['attendance'] });
+      showToast(status === 'on_break' ? 'Break ended' : 'Break started', 'success');
     },
-    onError: (err) => setBreakError(extractErrorMessage(err)),
+    onError: (err) => showToast(extractErrorMessage(err), 'error'),
   });
 
   function handleCtaPress() {
@@ -129,119 +130,14 @@ export function AttendanceHomeScreen({ navigation }: Props) {
 
   return (
     <Screen padded={false}>
-      <HeroHeader>
-        <Text style={styles.clock}>{formatClock(now)}</Text>
-        <Text style={styles.clockDate}>
-          {now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
-        </Text>
-      </HeroHeader>
-
-      <View style={styles.padded}>
-        <View style={[styles.miniStatus, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}>
-          <View style={styles.miniStatusCol}>
-            <View style={[styles.miniIconBadge, { backgroundColor: theme.success + '1A' }]}>
-              <Icon name="checkbox-outline" size={16} color={theme.success} />
-            </View>
-            <Text style={[typography.caption, { color: theme.textMuted, marginTop: 6 }]}>Check In</Text>
-            <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
-              {formatTime(statusQuery.data?.clock_in_at ?? null)}
-            </Text>
-          </View>
-          <Icon name="chevron-forward" size={16} color={theme.border} />
-          <View style={styles.miniStatusCol}>
-            <View style={[styles.miniIconBadge, { backgroundColor: theme.danger + '1A' }]}>
-              <Icon name="log-out-outline" size={16} color={theme.danger} />
-            </View>
-            <Text style={[typography.caption, { color: theme.textMuted, marginTop: 6 }]}>Check Out</Text>
-            <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
-              {formatTime(statusQuery.data?.clock_out_at ?? null)}
-            </Text>
-          </View>
-        </View>
-
-        {(status === 'clocked_in' || status === 'on_break') && (
-          <MotiView
-            from={{ opacity: 0, translateY: 8 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            style={[styles.timerCard, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
-          >
-            <View style={styles.timerCol}>
-              <Text style={[typography.caption, { color: theme.textMuted }]}>Worked</Text>
-              <Text style={[styles.timerValue, { color: theme.text }]}>{formatHMS(timer.workedSeconds)}</Text>
-            </View>
-            <View style={[styles.timerDivider, { backgroundColor: theme.border }]} />
-            {status === 'on_break' ? (
-              <View style={styles.timerCol}>
-                <View style={styles.liveDotRow}>
-                  <MotiView
-                    from={{ opacity: 0.4 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ type: 'timing', duration: 700, loop: true, repeatReverse: true }}
-                    style={[styles.liveDot, { backgroundColor: theme.warning }]}
-                  />
-                  <Text style={[typography.caption, { color: theme.warning, fontWeight: '700' }]}>On break</Text>
-                </View>
-                <Text style={[styles.timerValue, { color: theme.warning }]}>{formatHMS(timer.breakSeconds)}</Text>
-              </View>
-            ) : (
-              <View style={styles.timerCol}>
-                <Text style={[typography.caption, { color: timer.isOvertime ? theme.danger : theme.textMuted }]}>
-                  {timer.isOvertime ? 'Overtime' : 'Remaining'}
-                </Text>
-                <Text style={[styles.timerValue, { color: timer.isOvertime ? theme.danger : theme.primary }]}>
-                  {formatHMS(Math.abs(timer.remainingSeconds ?? 0))}
-                </Text>
-              </View>
-            )}
-          </MotiView>
-        )}
-
-        <MotiView from={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: spacing.md }}>
-          <Pressable onPress={handleCtaPress} disabled={status === 'clocked_out'}>
-            <GradientCard colors={status === 'clocked_out' ? [theme.textMuted, theme.textMuted] : theme.gradients.accent} style={styles.ctaCard}>
-              <View style={styles.ctaIconCircle}>
-                <Icon name={cta.icon} size={34} color="#FFFFFF" />
-              </View>
-              <Text style={styles.ctaTitle}>{cta.title}</Text>
-              <Text style={styles.ctaSubtitle}>{cta.subtitle}</Text>
-              {status !== 'clocked_out' && (
-                <View style={styles.ctaPill}>
-                  <Text style={styles.ctaPillText}>QR Code or GPS available</Text>
-                </View>
-              )}
-            </GradientCard>
-          </Pressable>
-          {breakError && (
-            <Text style={[typography.caption, { color: theme.danger, marginTop: spacing.sm }]}>{breakError}</Text>
-          )}
-        </MotiView>
-
-        {status === 'clocked_in' && (
-          <View style={{ marginTop: spacing.sm }}>
-            <Pressable
-              onPress={() => breakMutation.mutate()}
-              style={[styles.linkRow, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
-            >
-              <Icon name="time" size={18} color={theme.warning} />
-              <Text style={[typography.body, { color: theme.text, flex: 1, fontWeight: '600' }]}>Take a break</Text>
-              <Icon name="chevron-forward" size={16} color={theme.textMuted} />
-            </Pressable>
-          </View>
-        )}
-
-        <View style={{ marginTop: spacing.sm }}>
-          <Pressable
-            onPress={() => navigation.navigate('DayDetail', { date: new Date().toISOString().slice(0, 10) })}
-            style={[styles.linkRow, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
-          >
-            <Icon name="calendar" size={18} color={theme.primary} />
-            <Text style={[typography.body, { color: theme.primary, flex: 1, fontWeight: '700' }]}>View Attendance History</Text>
-            <Icon name="chevron-forward" size={16} color={theme.primary} />
-          </Pressable>
-        </View>
-      </View>
-
+      {/* Everything (hero, stats, CTA, links, day list) lives inside this one
+          FlatList — as ListHeaderComponent + rows — so the whole screen
+          scrolls as a single unit. A fixed header View above a FlatList with
+          no explicit flex/height can starve the list of space entirely once
+          the header grows (e.g. the timer card only shown while clocked in),
+          leaving nothing scrollable. */}
       <FlatList
+        style={styles.flex}
         data={indexQuery.data?.days.filter((d) => d.attendance || d.holiday_name).reverse() ?? []}
         keyExtractor={(item) => item.date}
         renderItem={renderDay}
@@ -254,6 +150,116 @@ export function AttendanceHomeScreen({ navigation }: Props) {
               statusQuery.refetch();
             }}
           />
+        }
+        ListHeaderComponent={
+          <>
+            <HeroHeader style={styles.heroNegateMargin}>
+              <Text style={styles.clock}>{formatClock(now)}</Text>
+              <Text style={styles.clockDate}>
+                {now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+              </Text>
+            </HeroHeader>
+
+            <View style={[styles.miniStatus, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}>
+              <View style={styles.miniStatusCol}>
+                <View style={[styles.miniIconBadge, { backgroundColor: theme.success + '1A' }]}>
+                  <Icon name="checkbox-outline" size={16} color={theme.success} />
+                </View>
+                <Text style={[typography.caption, { color: theme.textMuted, marginTop: 6 }]}>Check In</Text>
+                <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
+                  {formatTime(statusQuery.data?.clock_in_at ?? null)}
+                </Text>
+              </View>
+              <Icon name="chevron-forward" size={16} color={theme.border} />
+              <View style={styles.miniStatusCol}>
+                <View style={[styles.miniIconBadge, { backgroundColor: theme.danger + '1A' }]}>
+                  <Icon name="log-out-outline" size={16} color={theme.danger} />
+                </View>
+                <Text style={[typography.caption, { color: theme.textMuted, marginTop: 6 }]}>Check Out</Text>
+                <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]}>
+                  {formatTime(statusQuery.data?.clock_out_at ?? null)}
+                </Text>
+              </View>
+            </View>
+
+            {(status === 'clocked_in' || status === 'on_break') && (
+              <MotiView
+                from={{ opacity: 0, translateY: 8 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                style={[styles.timerCard, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
+              >
+                <View style={styles.timerCol}>
+                  <Text style={[typography.caption, { color: theme.textMuted }]}>Worked</Text>
+                  <Text style={[styles.timerValue, { color: theme.text }]}>{formatHMS(timer.workedSeconds)}</Text>
+                </View>
+                <View style={[styles.timerDivider, { backgroundColor: theme.border }]} />
+                {status === 'on_break' ? (
+                  <View style={styles.timerCol}>
+                    <View style={styles.liveDotRow}>
+                      <MotiView
+                        from={{ opacity: 0.4 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ type: 'timing', duration: 700, loop: true, repeatReverse: true }}
+                        style={[styles.liveDot, { backgroundColor: theme.warning }]}
+                      />
+                      <Text style={[typography.caption, { color: theme.warning, fontWeight: '700' }]}>On break</Text>
+                    </View>
+                    <Text style={[styles.timerValue, { color: theme.warning }]}>{formatHMS(timer.breakSeconds)}</Text>
+                  </View>
+                ) : (
+                  <View style={styles.timerCol}>
+                    <Text style={[typography.caption, { color: timer.isOvertime ? theme.danger : theme.textMuted }]}>
+                      {timer.isOvertime ? 'Overtime' : 'Remaining'}
+                    </Text>
+                    <Text style={[styles.timerValue, { color: timer.isOvertime ? theme.danger : theme.primary }]}>
+                      {formatHMS(Math.abs(timer.remainingSeconds ?? 0))}
+                    </Text>
+                  </View>
+                )}
+              </MotiView>
+            )}
+
+            <MotiView from={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: spacing.md }}>
+              <Pressable onPress={handleCtaPress} disabled={status === 'clocked_out'}>
+                <GradientCard colors={status === 'clocked_out' ? [theme.textMuted, theme.textMuted] : theme.gradients.accent} style={styles.ctaCard}>
+                  <View style={styles.ctaIconCircle}>
+                    <Icon name={cta.icon} size={34} color="#FFFFFF" />
+                  </View>
+                  <Text style={styles.ctaTitle}>{cta.title}</Text>
+                  <Text style={styles.ctaSubtitle}>{cta.subtitle}</Text>
+                  {status !== 'clocked_out' && (
+                    <View style={styles.ctaPill}>
+                      <Text style={styles.ctaPillText}>QR Code or GPS available</Text>
+                    </View>
+                  )}
+                </GradientCard>
+              </Pressable>
+            </MotiView>
+
+            {status === 'clocked_in' && (
+              <View style={{ marginTop: spacing.sm }}>
+                <Pressable
+                  onPress={() => breakMutation.mutate()}
+                  style={[styles.linkRow, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
+                >
+                  <Icon name="time" size={18} color={theme.warning} />
+                  <Text style={[typography.body, { color: theme.text, flex: 1, fontWeight: '600' }]}>Take a break</Text>
+                  <Icon name="chevron-forward" size={16} color={theme.textMuted} />
+                </Pressable>
+              </View>
+            )}
+
+            <View style={{ marginTop: spacing.sm }}>
+              <Pressable
+                onPress={() => navigation.navigate('DayDetail', { date: new Date().toISOString().slice(0, 10) })}
+                style={[styles.linkRow, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
+              >
+                <Icon name="calendar" size={18} color={theme.primary} />
+                <Text style={[typography.body, { color: theme.primary, flex: 1, fontWeight: '700' }]}>View Attendance History</Text>
+                <Icon name="chevron-forward" size={16} color={theme.primary} />
+              </Pressable>
+            </View>
+          </>
         }
         ListEmptyComponent={
           <View style={[styles.emptyCard, { backgroundColor: theme.surface }]}>
@@ -268,7 +274,13 @@ export function AttendanceHomeScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
   padded: { paddingHorizontal: 24 },
+  // HeroHeader is meant to be full-bleed (edge-to-edge, rounded bottom
+  // corners), but it now sits inside ListHeaderComponent, whose content
+  // inherits the FlatList's contentContainerStyle padding — cancel that
+  // padding out just for this element so it isn't visually indented.
+  heroNegateMargin: { marginHorizontal: -24 },
   clock: { fontSize: 40, fontWeight: '800', color: '#FFFFFF', letterSpacing: 1 },
   clockDate: { fontSize: 14, color: 'rgba(255,255,255,0.85)', marginTop: 4, fontWeight: '600' },
   miniStatus: {
