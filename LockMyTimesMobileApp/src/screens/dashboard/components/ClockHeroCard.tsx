@@ -182,8 +182,8 @@ const styles = StyleSheet.create({
   actions: { marginTop: spacing.md },
   ghostBtn: {
     paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-    borderRadius: radii.pill,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
     borderWidth: 1.5,
     borderColor: 'rgba(255,255,255,0.55)',
     alignItems: 'center',
