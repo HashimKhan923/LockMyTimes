@@ -28,7 +28,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "LockMyTimes uses your camera to take a clock-in/out selfie and scan location QR codes.",
+          "cameraPermission": "LockMyTimes uses your camera to scan location QR codes for clock-in/out.",
           "microphonePermission": false,
           "recordAudioAndroid": false
         }

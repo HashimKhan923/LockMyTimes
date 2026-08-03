@@ -76,7 +76,7 @@
         </div>
 
         {{-- Stats --}}
-        <div class="grid grid-cols-3 gap-2 text-center mb-4">
+        <div class="grid grid-cols-2 gap-2 text-center mb-4">
             <div class="bg-gray-50 rounded-xl p-2">
                 <p class="text-sm font-black text-gray-900">{{ number_format($qr->scan_count) }}</p>
                 <p class="text-xs text-gray-400">Scans</p>
@@ -84,10 +84,6 @@
             <div class="bg-gray-50 rounded-xl p-2">
                 <p class="text-sm font-black text-gray-900">{{ $qr->location->geofence_radius_meters }}m</p>
                 <p class="text-xs text-gray-400">Radius</p>
-            </div>
-            <div class="bg-gray-50 rounded-xl p-2">
-                <p class="text-sm font-black text-gray-900">{{ $qr->require_selfie ? 'Yes' : 'No' }}</p>
-                <p class="text-xs text-gray-400">Selfie</p>
             </div>
         </div>
 
@@ -167,13 +163,6 @@
             </div>
             <div class="space-y-3">
                 <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50">
-                    <input type="checkbox" name="require_selfie" value="1" class="w-4 h-4 rounded"/>
-                    <div>
-                        <p class="text-sm font-semibold text-gray-900">Require Selfie</p>
-                        <p class="text-xs text-gray-400">Employee must capture a selfie when clocking in</p>
-                    </div>
-                </label>
-                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50">
                     <input type="checkbox" name="rotate_token" value="1" class="w-4 h-4 rounded"/>
                     <div>
                         <p class="text-sm font-semibold text-gray-900">Daily Token Rotation</p>
@@ -212,13 +201,6 @@
             </div>
             <div class="space-y-3">
                 <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50">
-                    <input type="checkbox" name="require_selfie" id="edit-qr-require-selfie" value="1" class="w-4 h-4 rounded"/>
-                    <div>
-                        <p class="text-sm font-semibold text-gray-900">Require Selfie</p>
-                        <p class="text-xs text-gray-400">Employee must capture a selfie when clocking in</p>
-                    </div>
-                </label>
-                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-50">
                     <input type="checkbox" name="rotate_token" id="edit-qr-rotate-token" value="1" class="w-4 h-4 rounded"/>
                     <div>
                         <p class="text-sm font-semibold text-gray-900">Daily Token Rotation</p>
@@ -246,7 +228,6 @@ function openEditQrModal(qr) {
     document.getElementById('edit-qr-location-id').value = qr.location_id;
     document.getElementById('edit-qr-location-name').textContent = qr.location ? qr.location.name : '';
     document.getElementById('edit-qr-label').value = qr.label || '';
-    document.getElementById('edit-qr-require-selfie').checked = !!qr.require_selfie;
     document.getElementById('edit-qr-rotate-token').checked = !!qr.rotate_token;
 
     const modal = document.getElementById('edit-modal');

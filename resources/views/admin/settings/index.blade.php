@@ -245,11 +245,6 @@
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider pt-2">Verification & Rules</p>
                 <div class="grid grid-cols-2 gap-3">
                     <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
-                        <span class="text-sm font-medium text-gray-700">Require Selfie Verification</span>
-                        <input type="checkbox" name="require_selfie" value="1" class="w-4 h-4 rounded"
-                               {{ ($attendance['require_selfie'] ?? false) ? 'checked' : '' }}/>
-                    </label>
-                    <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
                         <span class="text-sm font-medium text-gray-700">Strict Geofencing</span>
                         <input type="checkbox" name="geofence_strict" value="1" class="w-4 h-4 rounded"
                                {{ ($attendance['geofence_strict'] ?? false) ? 'checked' : '' }}/>

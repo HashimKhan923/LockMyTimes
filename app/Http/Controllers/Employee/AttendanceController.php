@@ -14,7 +14,6 @@ use App\Services\AttendanceService;
 use App\Services\GeofenceService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -164,7 +163,6 @@ class AttendanceController extends Controller
             'qr_token'  => 'nullable|string',
             'lat'       => 'nullable|numeric|between:-90,90',
             'lng'       => 'nullable|numeric|between:-180,180',
-            'selfie'    => 'nullable|string', // base64 dataURL
             'notes'     => 'nullable|string|max:255',
         ]);
 
@@ -179,21 +177,16 @@ class AttendanceController extends Controller
         $lat = (float) ($data['lat'] ?? $location?->latitude ?? 0);
         $lng = (float) ($data['lng'] ?? $location?->longitude ?? 0);
 
-        $selfiePath = $this->maybeStoreSelfie($data['selfie'] ?? null, $emp->id, 'in');
-
         $result = $this->attendance->clockIn(
             employee: $emp,
             location: $location,
             lat:      $lat,
             lng:      $lng,
             source:   $data['source'],
-            selfie:   $selfiePath,
             qrCode:   $qr,
         );
 
         if (! $result['success']) {
-            // Clean up the orphan selfie if the service rejected the clock-in
-            if ($selfiePath) Storage::disk('public')->delete($selfiePath);
             return $this->fail($result['message'], 422, $result);
         }
 
@@ -218,25 +211,20 @@ class AttendanceController extends Controller
             'source'  => 'required|in:web,qr',
             'lat'     => 'nullable|numeric|between:-90,90',
             'lng'     => 'nullable|numeric|between:-180,180',
-            'selfie'  => 'nullable|string',
             'notes'   => 'nullable|string|max:255',
         ]);
 
         $lat = (float) ($data['lat'] ?? 0);
         $lng = (float) ($data['lng'] ?? 0);
 
-        $selfiePath = $this->maybeStoreSelfie($data['selfie'] ?? null, $emp->id, 'out');
-
         $result = $this->attendance->clockOut(
             employee: $emp,
             lat:      $lat,
             lng:      $lng,
             source:   $data['source'],
-            selfie:   $selfiePath
         );
 
         if (! $result['success']) {
-            if ($selfiePath) Storage::disk('public')->delete($selfiePath);
             return $this->fail($result['message'], 422, $result);
         }
 
@@ -439,7 +427,7 @@ class AttendanceController extends Controller
     /**
      * Resolve what a clock-in should be checked against.
      *
-     * - Scanning a QR always resolves that QR's own location (and enforces its require_selfie flag).
+     * - Scanning a QR always resolves that QR's own location.
      * - Otherwise (web/direct), resolve the assigned/selected location if any — no QR code is required
      *   for this path, since the employee isn't scanning anything.
      * - No assigned location and none selected → unrestricted direct clock-in (no geofence).
@@ -473,29 +461,6 @@ class AttendanceController extends Controller
         }
 
         return ['location' => $location, 'qrCode' => null];
-    }
-
-    /** Save the selfie (base64 dataURL) to public storage; return relative path. */
-    protected function maybeStoreSelfie(?string $dataUrl, int $empId, string $kind): ?string
-    {
-        if (! $dataUrl || ! Str::startsWith($dataUrl, 'data:image/')) return null;
-
-        if (! preg_match('#^data:image/(jpeg|jpg|png|webp);base64,(.+)$#', $dataUrl, $m)) {
-            return null;
-        }
-        $ext  = strtolower($m[1] === 'jpg' ? 'jpeg' : $m[1]);
-        $bin  = base64_decode($m[2], true);
-        if ($bin === false) return null;
-
-        $path = sprintf(
-            'attendance/%d/%s/%s.%s',
-            $empId,
-            Carbon::today()->format('Y-m'),
-            $kind.'_'.now()->format('YmdHis').'_'.Str::random(6),
-            $ext
-        );
-        Storage::disk('public')->put($path, $bin);
-        return $path;
     }
 
     /** Best-effort shift resolution for a given date. */

@@ -29,7 +29,6 @@ export interface ClockInPayload {
   qr_token?: string;
   lat?: number;
   lng?: number;
-  selfie?: string;
   notes?: string;
 }
 
@@ -44,7 +43,6 @@ export interface ClockOutPayload {
   source: 'mobile' | 'qr';
   lat?: number;
   lng?: number;
-  selfie?: string;
   notes?: string;
 }
 

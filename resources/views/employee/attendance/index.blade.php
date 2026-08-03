@@ -346,14 +346,12 @@ function attendancePage() {
         /* clock-in/out modal */
         clockOpen: false,
         clockMode: 'in', // 'in' | 'out'
-        clockTab: 'web', // 'web' | 'qr' | 'selfie'
+        clockTab: 'web', // 'web' | 'qr'
         clockSubmitting: false,
         clockLocationId: {{ $emp->location_id ?? 'null' }},
         clockNotes: '',
         clockQrToken: '',
-        clockSelfie: null,    // dataURL
         clockGeo: { lat: null, lng: null, accuracy: null, err: null },
-        videoStream: null,
 
         /* drawer */
         drawerOpen: false,
@@ -413,14 +411,12 @@ function attendancePage() {
             this.clockTab = 'web';
             this.clockNotes = '';
             this.clockQrToken = '';
-            this.clockSelfie = null;
             this.clockOpen = true;
             this.captureGeo();
             this.$nextTick(() => window.lucide && lucide.createIcons());
         },
         closeClockModal() {
             this.clockOpen = false;
-            this.stopCamera();
         },
         captureGeo() {
             this.clockGeo = { lat: null, lng: null, accuracy: null, err: null };
@@ -434,37 +430,6 @@ function attendancePage() {
                 { enableHighAccuracy: true, timeout: 8000 }
             );
         },
-
-        /* Camera (selfie) */
-        async startCamera() {
-            try {
-                this.videoStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: 480, height: 480 }, audio: false
-                });
-                const v = this.$refs.video;
-                if (v) { v.srcObject = this.videoStream; v.play(); }
-            } catch (e) {
-                window.lmtToast && lmtToast('Camera permission denied or unavailable.', 'error');
-            }
-        },
-        stopCamera() {
-            if (this.videoStream) {
-                this.videoStream.getTracks().forEach(t => t.stop());
-                this.videoStream = null;
-            }
-        },
-        snapSelfie() {
-            const v = this.$refs.video;
-            if (!v || !v.videoWidth) return;
-            const c = document.createElement('canvas');
-            c.width = v.videoWidth; c.height = v.videoHeight;
-            const ctx = c.getContext('2d');
-            ctx.translate(c.width, 0); ctx.scale(-1, 1); // mirror
-            ctx.drawImage(v, 0, 0);
-            this.clockSelfie = c.toDataURL('image/jpeg', 0.85);
-            this.stopCamera();
-        },
-        retakeSelfie() { this.clockSelfie = null; this.startCamera(); },
 
         async submitClock() {
             if (this.clockSubmitting) return;
@@ -480,7 +445,6 @@ function attendancePage() {
             };
             if (this.clockTab === 'qr')    body.qr_token = this.clockQrToken;
             if (this.clockTab !== 'qr')    body.location_id = this.clockLocationId;
-            if (this.clockSelfie)          body.selfie = this.clockSelfie;
 
             try {
                 const r = await fetch(url, {

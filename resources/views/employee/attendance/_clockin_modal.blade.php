@@ -15,20 +15,15 @@
 
         {{-- Method tabs --}}
         <div class="inline-flex p-1 bg-gray-100 dark:bg-slate-800 rounded-xl text-xs font-bold mb-5">
-            <button @click="clockTab='web'; stopCamera();"
+            <button @click="clockTab='web'"
                     :class="clockTab==='web' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
                     class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
                 <i data-lucide="laptop" class="w-3.5 h-3.5"></i> Web
             </button>
-            <button @click="clockTab='qr'; stopCamera();"
+            <button @click="clockTab='qr'"
                     :class="clockTab==='qr' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
                     class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
                 <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> QR Code
-            </button>
-            <button @click="clockTab='selfie'; startCamera();"
-                    :class="clockTab==='selfie' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
-                    class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
-                <i data-lucide="camera" class="w-3.5 h-3.5"></i> Selfie
             </button>
         </div>
 
@@ -68,26 +63,6 @@
             <input type="text" class="lmt-input font-mono" x-model="clockQrToken"
                    placeholder="Paste QR token here or scan with your camera"/>
             <p class="lmt-help">Ask your admin for a printed QR code. Scanner support via camera is coming soon.</p>
-        </div>
-
-        {{-- Selfie tab --}}
-        <div x-show="clockTab === 'selfie'">
-            <div class="rounded-2xl overflow-hidden bg-gray-900 aspect-square relative">
-                <video x-ref="video" autoplay playsinline muted x-show="!clockSelfie"
-                       class="w-full h-full object-cover transform scale-x-[-1]"></video>
-                <img :src="clockSelfie" x-show="clockSelfie" alt="" class="w-full h-full object-cover"/>
-
-                <button x-show="!clockSelfie" @click="snapSelfie()"
-                        class="absolute bottom-4 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-white flex items-center justify-center hover:scale-110 transition-transform">
-                    <i data-lucide="camera" class="w-6 h-6 text-gray-900"></i>
-                </button>
-
-                <button x-show="clockSelfie" @click="retakeSelfie()"
-                        class="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/90 backdrop-blur text-sm font-bold text-gray-900 hover:bg-white transition-colors">
-                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5 inline -mt-0.5"></i> Retake
-                </button>
-            </div>
-            <p class="lmt-help mt-2">Selfie verification helps confirm it's really you.</p>
         </div>
 
         {{-- Notes --}}

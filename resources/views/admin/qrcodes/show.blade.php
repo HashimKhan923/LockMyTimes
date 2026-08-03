@@ -54,13 +54,6 @@
             </div>
         </div>
 
-        @if($qrCode->require_selfie)
-        <div class="lmt-alert lmt-alert-warning mb-4 text-xs">
-            <i data-lucide="camera" class="w-4 h-4 shrink-0"></i>
-            Selfie capture is required for this location
-        </div>
-        @endif
-
         <p class="text-xs text-gray-400">
             Token ID: <code>{{ substr($qrCode->token, 0, 12) }}…</code>
         </p>

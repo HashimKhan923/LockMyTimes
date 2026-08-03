@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
 import NetInfo from '@react-native-community/netinfo';
-import { useEffect, useRef, useState } from 'react';
-import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { MotiView } from 'moti';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { extractErrorMessage } from '../../api/client';
@@ -18,24 +18,18 @@ import type { LocationInfo } from '../../api/types';
 
 type Props = NativeStackScreenProps<AttendanceStackParamList, 'ClockIn'>;
 
-type Step = 'method' | 'selfie';
-
 export function ClockInScreen({ route, navigation }: Props) {
   const { mode } = route.params;
   const theme = useTheme();
   const queryClient = useQueryClient();
 
-  const [step, setStep] = useState<Step>(mode === 'out' ? 'selfie' : 'method');
   const [scanningQr, setScanningQr] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<LocationInfo | null>(null);
-  const [qrToken, setQrToken] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
-  const [selfie, setSelfie] = useState<{ uri: string; base64: string } | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const cameraRef = useRef<CameraView>(null);
 
   const { data: indexData } = useQuery({
     queryKey: ['attendance', 'index'],
@@ -71,29 +65,25 @@ export function ClockInScreen({ route, navigation }: Props) {
   }, []);
 
   const submitMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (vars: { qrToken?: string; locationId?: number }) => {
       const netState = await NetInfo.fetch();
       if (netState.isConnected === false) {
         throw new Error('OFFLINE');
       }
 
-      const selfieDataUrl = selfie ? `data:image/jpeg;base64,${selfie.base64}` : undefined;
-
       if (mode === 'in') {
         return clockIn({
-          source: qrToken ? 'qr' : 'mobile',
-          location_id: qrToken ? undefined : selectedLocation?.id,
-          qr_token: qrToken ?? undefined,
+          source: vars.qrToken ? 'qr' : 'mobile',
+          location_id: vars.qrToken ? undefined : vars.locationId,
+          qr_token: vars.qrToken,
           lat: coords?.lat,
           lng: coords?.lng,
-          selfie: selfieDataUrl,
         });
       }
       return clockOut({
         source: 'mobile',
         lat: coords?.lat,
         lng: coords?.lng,
-        selfie: selfieDataUrl,
       });
     },
     onSuccess: () => {
@@ -109,20 +99,10 @@ export function ClockInScreen({ route, navigation }: Props) {
     },
   });
 
-  async function handleCapture() {
-    if (!cameraRef.current) return;
-    const photo = await cameraRef.current.takePictureAsync({ base64: true, quality: 0.5 });
-    if (photo?.base64) {
-      setSelfie({ uri: photo.uri, base64: photo.base64 });
-    }
-  }
-
   function handleBarcodeScanned(result: { data: string }) {
     if (!result.data) return;
-    setQrToken(result.data);
-    setSelectedLocation(null);
     setScanningQr(false);
-    setStep('selfie');
+    submitMutation.mutate({ qrToken: result.data });
   }
 
   return (
@@ -142,7 +122,7 @@ export function ClockInScreen({ route, navigation }: Props) {
         </Text>
       )}
 
-      {step === 'method' && (
+      {mode === 'in' ? (
         <MotiView
           from={{ opacity: 0, translateY: 16 }}
           animate={{ opacity: 1, translateY: 0 }}
@@ -157,10 +137,7 @@ export function ClockInScreen({ route, navigation }: Props) {
                   {(indexData?.assigned_locations ?? []).map((loc) => (
                     <Pressable
                       key={loc.id}
-                      onPress={() => {
-                        setSelectedLocation(loc);
-                        setQrToken(null);
-                      }}
+                      onPress={() => setSelectedLocation(loc)}
                       style={[
                         styles.locationCard,
                         {
@@ -199,9 +176,10 @@ export function ClockInScreen({ route, navigation }: Props) {
 
               <View style={{ marginTop: spacing.lg }}>
                 <Button
-                  title="Continue"
-                  onPress={() => setStep('selfie')}
+                  title="Clock in now"
+                  onPress={() => submitMutation.mutate({ locationId: selectedLocation?.id })}
                   disabled={hasAssignedLocations && !selectedLocation}
+                  loading={submitMutation.isPending}
                 />
               </View>
             </>
@@ -222,43 +200,31 @@ export function ClockInScreen({ route, navigation }: Props) {
               </Pressable>
             </View>
           )}
-        </MotiView>
-      )}
 
-      {step === 'selfie' && (
+          {submitError && (
+            <Text style={[typography.caption, { color: theme.danger, marginTop: spacing.sm }]}>
+              {submitError}
+            </Text>
+          )}
+        </MotiView>
+      ) : (
         <MotiView
           from={{ opacity: 0, translateY: 16 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={sheetSpring}
           style={styles.section}
         >
-          <Text style={[typography.subheading, { color: theme.text }]}>Take a quick selfie</Text>
+          <Text style={[typography.subheading, { color: theme.text }]}>Confirm clock-out</Text>
+          <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.xs }]}>
+            You're about to clock out for today.
+          </Text>
 
-          {!selfie ? (
-            <View style={styles.cameraWrap}>
-              {cameraPermission?.granted ? (
-                <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="front" />
-              ) : (
-                <Button title="Allow camera access" onPress={() => requestCameraPermission()} />
-              )}
-            </View>
-          ) : (
-            <Image source={{ uri: selfie.uri }} style={styles.preview} />
-          )}
-
-          <View style={{ marginTop: spacing.md, gap: spacing.sm }}>
-            {!selfie ? (
-              <Button title="Capture" onPress={handleCapture} disabled={!cameraPermission?.granted} />
-            ) : (
-              <>
-                <Button
-                  title={mode === 'in' ? 'Confirm clock-in' : 'Confirm clock-out'}
-                  onPress={() => submitMutation.mutate()}
-                  loading={submitMutation.isPending}
-                />
-                <Button title="Retake" variant="secondary" onPress={() => setSelfie(null)} />
-              </>
-            )}
+          <View style={{ marginTop: spacing.lg }}>
+            <Button
+              title="Confirm clock-out"
+              onPress={() => submitMutation.mutate({})}
+              loading={submitMutation.isPending}
+            />
           </View>
 
           {submitError && (
@@ -301,10 +267,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radii.pill,
-  },
-  preview: {
-    height: 280,
-    borderRadius: radii.lg,
-    marginTop: spacing.md,
   },
 });

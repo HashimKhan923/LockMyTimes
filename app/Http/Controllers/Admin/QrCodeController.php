@@ -24,7 +24,6 @@ class QrCodeController extends Controller
         $data = $request->validate([
             'location_id'    => 'required|exists:locations,id',
             'label'          => 'nullable|string|max:100',
-            'require_selfie' => 'boolean',
             'rotate_token'   => 'boolean',
         ]);
 
@@ -32,7 +31,6 @@ class QrCodeController extends Controller
             'location_id'    => $data['location_id'],
             'label'          => $data['label'] ?? null,
             'token'          => $this->qrService->generateToken(),
-            'require_selfie' => $request->boolean('require_selfie'),
             'rotate_token'   => $request->boolean('rotate_token'),
             'is_active'      => true,
         ]);
@@ -52,14 +50,12 @@ class QrCodeController extends Controller
         $data = $request->validate([
             'location_id'    => 'required|exists:locations,id',
             'label'          => 'nullable|string|max:100',
-            'require_selfie' => 'boolean',
             'rotate_token'   => 'boolean',
         ]);
 
         $qrCode->update([
             'location_id'    => $data['location_id'],
             'label'          => $data['label'] ?? null,
-            'require_selfie' => $request->boolean('require_selfie'),
             'rotate_token'   => $request->boolean('rotate_token'),
         ]);
 

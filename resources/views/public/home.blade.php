@@ -247,7 +247,7 @@
             [
                 'icon'=>'qr-code','color'=>'brand',
                 'title'=>'QR Based Attendance',
-                'desc'=>'Geo-fenced QR codes ensure employees can only clock in from the right location. Anti-spoofing with optional selfie capture.',
+                'desc'=>'Geo-fenced QR codes ensure employees can only clock in from the right location.',
                 'badge'=>'Flagship Feature',
             ],
             [
@@ -420,7 +420,7 @@
                     @foreach([
                         ['icon'=>'shield-check','label'=>'Anti-spoofing protection'],
                         ['icon'=>'map-pin','label'=>'GPS geofencing'],
-                        ['icon'=>'camera','label'=>'Optional selfie capture'],
+                        ['icon'=>'radar','label'=>'Direct check-in within radius'],
                         ['icon'=>'rotate-ccw','label'=>'Daily token rotation'],
                     ] as $pt)
                     <div class="flex items-center gap-3 text-white/90">

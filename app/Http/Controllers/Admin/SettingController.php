@@ -104,7 +104,6 @@ class SettingController extends Controller
                 'allow_qr'               => 'boolean',
                 'allow_web'              => 'boolean',
                 'allow_mobile'           => 'boolean',
-                'require_selfie'         => 'boolean',
                 'geofence_strict'        => 'boolean',
                 'shift_window_strict'    => 'boolean',
                 'late_grace_minutes'     => 'integer',

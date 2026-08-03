@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class AttendanceResource extends JsonResource
 {
@@ -16,8 +15,6 @@ class AttendanceResource extends JsonResource
             'status' => $this->status,
             'clock_in_at' => $this->clock_in_at?->toIso8601String(),
             'clock_out_at' => $this->clock_out_at?->toIso8601String(),
-            'clock_in_selfie_url' => $this->selfieUrl($this->clock_in_selfie),
-            'clock_out_selfie_url' => $this->selfieUrl($this->clock_out_selfie),
             'total_hours' => (float) $this->total_hours,
             'regular_hours' => (float) $this->regular_hours,
             'overtime_hours' => (float) $this->overtime_hours,
@@ -32,10 +29,5 @@ class AttendanceResource extends JsonResource
             'location' => new LocationResource($this->whenLoaded('location')),
             'breaks' => AttendanceBreakResource::collection($this->whenLoaded('breaks')),
         ];
-    }
-
-    protected function selfieUrl(?string $path): ?string
-    {
-        return $path ? Storage::disk('public')->url($path) : null;
     }
 }

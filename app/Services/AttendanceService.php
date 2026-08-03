@@ -27,7 +27,6 @@ class AttendanceService
         float     $lat,
         float     $lng,
         string    $source = 'qr',
-        ?string   $selfie = null,
         ?QrCode   $qrCode = null
     ): array {
         $today = Carbon::today();
@@ -50,11 +49,6 @@ class AttendanceService
         ];
         if (isset($allowMap[$source]) && ! $allowMap[$source]) {
             return ['success' => false, 'message' => ucfirst($source) . ' clock-in is currently disabled.'];
-        }
-
-        // Selfie requirement — global policy OR this specific QR code's own flag
-        if ((Setting::get('attendance.require_selfie', false) || $qrCode?->require_selfie) && ! $selfie) {
-            return ['success' => false, 'message' => 'A selfie photo is required for clock-in.'];
         }
 
         // Geofence check — only applies when clocking in against a specific location.
@@ -103,7 +97,6 @@ class AttendanceService
                 'clock_in_lat'             => $lat,
                 'clock_in_lng'             => $lng,
                 'clock_in_distance_meters' => $geo['distance'],
-                'clock_in_selfie'          => $selfie,
                 'clock_in_ip'              => Request::ip(),
                 'user_agent'               => Request::userAgent(),
                 'is_late'                  => $isLate,
@@ -135,8 +128,7 @@ class AttendanceService
         Employee $employee,
         float    $lat,
         float    $lng,
-        string   $source = 'qr',
-        ?string  $selfie = null
+        string   $source = 'qr'
     ): array {
         $today = Carbon::today();
         $now   = Carbon::now();
@@ -185,7 +177,6 @@ class AttendanceService
             'clock_out_lat'             => $lat,
             'clock_out_lng'             => $lng,
             'clock_out_distance_meters' => 0,
-            'clock_out_selfie'          => $selfie,
             'clock_out_ip'              => Request::ip(),
             'total_hours'               => $totalHours,
             'break_hours'               => round($breakMins / 60, 2),

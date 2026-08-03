@@ -64,8 +64,6 @@ export interface AttendanceRecord {
   status: string;
   clock_in_at: string | null;
   clock_out_at: string | null;
-  clock_in_selfie_url: string | null;
-  clock_out_selfie_url: string | null;
   total_hours: number;
   regular_hours: number;
   overtime_hours: number;
