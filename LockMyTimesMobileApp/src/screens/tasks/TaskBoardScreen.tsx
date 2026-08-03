@@ -1,33 +1,34 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { MotiView } from 'moti';
+import { useRef, useState } from 'react';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fetchProjectBoard, moveTask } from '../../api/endpoints/tasks';
 import { AvatarStack } from '../../components/common/AvatarStack';
-import { Icon } from '../../components/common/Icon';
 import { Screen } from '../../components/common/Screen';
-import { StatusBadge } from '../../components/common/StatusBadge';
-import { sheetSpring } from '../../theme/motion';
+import { StatTile } from '../../components/common/StatNumber';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
+import { useAuthStore } from '../../stores/authStore';
 import type { TasksStackParamList } from '../../navigation/TasksStack';
-import type { TaskInfo, TaskListInfo, TaskPriority } from '../../api/types';
+import type { TaskInfo, TaskListInfo } from '../../api/types';
+import { KanbanCardContent } from './components/KanbanCard';
+import { KanbanColumn } from './components/KanbanColumn';
 
 type Props = NativeStackScreenProps<TasksStackParamList, 'TaskBoard'>;
 
-const PRIORITY_COLOR_KEY: Record<TaskPriority, 'textMuted' | 'primary' | 'warning' | 'danger'> = {
-  low: 'textMuted',
-  normal: 'primary',
-  high: 'warning',
-  urgent: 'danger',
-};
+interface DragRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export function TaskBoardScreen({ route, navigation }: Props) {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const { id } = route.params;
-  const [movingTask, setMovingTask] = useState<TaskInfo | null>(null);
+  const myEmployeeId = useAuthStore((s) => s.user?.employee_id ?? null);
 
   const { data } = useQuery({
     queryKey: ['projects', 'board', id],
@@ -36,70 +37,80 @@ export function TaskBoardScreen({ route, navigation }: Props) {
 
   const totalTasks = (data?.task_lists ?? []).reduce((sum, l) => sum + l.tasks.length, 0);
 
+  /* ───────── Drag-and-drop state ─────────
+   * dragX/dragY track the floating ghost card's on-screen top-left corner;
+   * originX/originY freeze where the drag began so onUpdate can add the
+   * gesture's translation to a fixed point instead of re-measuring every
+   * frame. Column window bounds are captured once at drag-start (scrolling
+   * is frozen for the duration of a drag) rather than continuously, since
+   * ScrollView position changes don't fire onLayout.
+   */
+  const dragX = useSharedValue(0);
+  const dragY = useSharedValue(0);
+  const originX = useSharedValue(0);
+  const originY = useSharedValue(0);
+
+  const [draggedTask, setDraggedTask] = useState<TaskInfo | null>(null);
+  const [activeDropListId, setActiveDropListId] = useState<number | null>(null);
+  const dragOriginListIdRef = useRef<number | null>(null);
+  const activeDropListIdRef = useRef<number | null>(null);
+  const columnRefs = useRef<Record<number, View | null>>({});
+  const columnBoundsRef = useRef<Record<number, { x: number; width: number }>>({});
+
   const moveMutation = useMutation({
-    mutationFn: (taskListId: number) => moveTask(id, movingTask!.id, taskListId),
+    mutationFn: ({ taskId, listId }: { taskId: number; listId: number }) => moveTask(id, taskId, listId),
     onSuccess: () => {
-      setMovingTask(null);
       queryClient.invalidateQueries({ queryKey: ['projects', 'board', id] });
     },
   });
 
-  function renderCard(task: TaskInfo, index: number) {
-    const priorityColor = theme[PRIORITY_COLOR_KEY[task.priority]];
-    return (
-      <MotiView
-        key={task.id}
-        from={{ opacity: 0, translateY: 8 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{ ...sheetSpring, delay: index * 30 }}
-      >
-        <Pressable
-          onPress={() => navigation.navigate('TaskDetail', { id: task.id })}
-          onLongPress={() => setMovingTask(task)}
-          style={[
-            styles.card,
-            { backgroundColor: theme.surface },
-            Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
-          ]}
-        >
-          <View style={styles.cardTopRow}>
-            <View style={[styles.priorityDot, { backgroundColor: priorityColor }]} />
-            <Text style={[typography.caption, { color: theme.textMuted, flex: 1 }]}>{task.task_code}</Text>
-            {task.comments_count > 0 && (
-              <View style={styles.metaChip}>
-                <Icon name="chatbubble-outline" size={11} color={theme.textMuted} />
-                <Text style={[typography.caption, { color: theme.textMuted, marginLeft: 2 }]}>{task.comments_count}</Text>
-              </View>
-            )}
-          </View>
-
-          <Text style={[typography.body, { color: theme.text, fontWeight: '600', marginTop: 6 }]} numberOfLines={2}>
-            {task.title}
-          </Text>
-
-          {task.subtasks_count > 0 && (
-            <Text style={[typography.caption, { color: theme.textMuted, marginTop: 6 }]}>
-              {task.completed_subtasks_count}/{task.subtasks_count} subtasks
-            </Text>
-          )}
-
-          <View style={styles.cardFooter}>
-            {task.due_date ? (
-              <View style={[styles.duePill, { backgroundColor: (task.is_overdue ? theme.danger : theme.textMuted) + '17' }]}>
-                <Icon name="calendar" size={11} color={task.is_overdue ? theme.danger : theme.textMuted} />
-                <Text style={[typography.caption, { color: task.is_overdue ? theme.danger : theme.textMuted, marginLeft: 4, fontWeight: '600' }]}>
-                  {new Date(task.due_date + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                </Text>
-              </View>
-            ) : (
-              <View />
-            )}
-            {task.assignees.length > 0 && <AvatarStack people={task.assignees} size={22} />}
-          </View>
-        </Pressable>
-      </MotiView>
-    );
+  function registerColumnRef(listId: number, ref: View | null) {
+    columnRefs.current[listId] = ref;
   }
+
+  function handleDragStart(task: TaskInfo, _rect: DragRect) {
+    setDraggedTask(task);
+    dragOriginListIdRef.current = task.task_list_id;
+    setActiveDropListId(task.task_list_id);
+    activeDropListIdRef.current = task.task_list_id;
+
+    Object.entries(columnRefs.current).forEach(([listId, ref]) => {
+      ref?.measureInWindow((x, _y, width) => {
+        columnBoundsRef.current[Number(listId)] = { x, width };
+      });
+    });
+  }
+
+  function handleDragUpdate(absoluteX: number) {
+    const match = Object.entries(columnBoundsRef.current).find(
+      ([, bounds]) => absoluteX >= bounds.x && absoluteX <= bounds.x + bounds.width
+    );
+    const matchedId = match ? Number(match[0]) : null;
+    if (matchedId !== activeDropListIdRef.current) {
+      activeDropListIdRef.current = matchedId;
+      setActiveDropListId(matchedId);
+    }
+  }
+
+  function handleDragEnd() {
+    const originListId = dragOriginListIdRef.current;
+    const targetListId = activeDropListIdRef.current ?? originListId;
+    const task = draggedTask;
+
+    setDraggedTask(null);
+    setActiveDropListId(null);
+    dragOriginListIdRef.current = null;
+    activeDropListIdRef.current = null;
+
+    if (task && targetListId && targetListId !== originListId) {
+      moveMutation.mutate({ taskId: task.id, listId: targetListId });
+    }
+  }
+
+  const ghostStyle = useAnimatedStyle(() => ({
+    left: dragX.value,
+    top: dragY.value,
+  }));
 
   return (
     <Screen padded={false}>
@@ -108,82 +119,84 @@ export function TaskBoardScreen({ route, navigation }: Props) {
           {data?.project.name ?? 'Board'}
         </Text>
         <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>
-          {totalTasks} task{totalTasks === 1 ? '' : 's'} · {data?.task_lists.length ?? 0} columns
+          {data?.project.code} · {totalTasks} task{totalTasks === 1 ? '' : 's'} · {data?.task_lists.length ?? 0} columns
         </Text>
+
+        <View style={styles.statsRow}>
+          <StatTile value={data?.task_stats.done ?? 0} label="Done" color={theme.success} />
+          <StatTile value={data?.task_stats.in_progress ?? 0} label="In progress" color={theme.primary} />
+          <StatTile value={data?.task_stats.overdue ?? 0} label="Overdue" color={theme.danger} />
+          {(data?.members.length ?? 0) > 0 && (
+            <View
+              style={[
+                styles.membersTile,
+                { backgroundColor: theme.surface },
+                Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
+              ]}
+            >
+              <AvatarStack people={data!.members} size={22} max={4} />
+            </View>
+          )}
+        </View>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.board}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        scrollEnabled={!draggedTask}
+        contentContainerStyle={styles.board}
+      >
         {(data?.task_lists ?? []).map((list: TaskListInfo) => (
-          <View key={list.id} style={[styles.column, { backgroundColor: theme.surfaceAlt }]}>
-            <View style={[styles.columnAccent, { backgroundColor: list.color ?? theme.primary }]} />
-            <View style={styles.columnHeader}>
-              <Text style={[typography.subheading, { color: theme.text, flex: 1 }]}>{list.name}</Text>
-              <StatusBadge
-                value={String(list.tasks.length)}
-                color={list.color ?? theme.primary}
-                uppercase={false}
-                filled
-              />
-            </View>
-
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {list.tasks.length === 0 ? (
-                <View style={styles.emptyColumn}>
-                  <Text style={[typography.caption, { color: theme.textMuted }]}>No tasks</Text>
-                </View>
-              ) : (
-                list.tasks.map((task, index) => renderCard(task, index))
-              )}
-            </ScrollView>
-          </View>
+          <KanbanColumn
+            key={list.id}
+            list={list}
+            myEmployeeId={myEmployeeId}
+            isDragging={!!draggedTask}
+            isActiveDropTarget={activeDropListId === list.id}
+            draggedTaskId={draggedTask?.id ?? null}
+            dragX={dragX}
+            dragY={dragY}
+            originX={originX}
+            originY={originY}
+            registerRef={registerColumnRef}
+            onTaskPress={(taskId) => navigation.navigate('TaskDetail', { id: taskId })}
+            onDragStart={handleDragStart}
+            onDragUpdate={handleDragUpdate}
+            onDragEnd={handleDragEnd}
+          />
         ))}
       </ScrollView>
 
-      <Modal visible={!!movingTask} transparent animationType="fade" onRequestClose={() => setMovingTask(null)}>
-        <Pressable style={styles.backdrop} onPress={() => setMovingTask(null)}>
-          <View style={[styles.sheet, { backgroundColor: theme.surface }]}>
-            <Text style={[typography.subheading, { color: theme.text, marginBottom: spacing.sm }]}>
-              Move "{movingTask?.title}" to…
-            </Text>
-            {(data?.task_lists ?? []).map((list) => (
-              <Pressable
-                key={list.id}
-                onPress={() => moveMutation.mutate(list.id)}
-                style={[styles.moveOption, { borderColor: theme.border }]}
-              >
-                <View style={[styles.moveDot, { backgroundColor: list.color ?? theme.primary }]} />
-                <Text style={[typography.body, { color: theme.text }]}>{list.name}</Text>
-              </Pressable>
-            ))}
-          </View>
-        </Pressable>
-      </Modal>
+      {draggedTask && (
+        <Animated.View pointerEvents="none" style={[styles.ghost, ghostStyle]}>
+          <KanbanCardContent
+            task={draggedTask}
+            isMine={draggedTask.assignees.some((a) => a.employee_id === myEmployeeId)}
+          />
+        </Animated.View>
+      )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   header: { paddingHorizontal: 24 },
-  board: { paddingHorizontal: 16, paddingTop: spacing.md, paddingBottom: spacing.lg, gap: spacing.sm },
-  column: {
-    width: 270,
-    borderRadius: radii.lg,
-    padding: spacing.sm,
-    marginHorizontal: spacing.xs,
-    maxHeight: '100%',
-    overflow: 'hidden',
+  statsRow: { flexDirection: 'row', alignItems: 'stretch', gap: spacing.sm, marginTop: spacing.md },
+  membersTile: {
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  columnAccent: { position: 'absolute', top: 0, left: 0, right: 0, height: 3 },
-  columnHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, padding: spacing.xs, marginTop: spacing.xs, marginBottom: spacing.xs },
-  emptyColumn: { alignItems: 'center', paddingVertical: spacing.lg },
-  card: { borderRadius: radii.md, padding: spacing.sm + 2, marginBottom: spacing.sm },
-  cardTopRow: { flexDirection: 'row', alignItems: 'center' },
-  priorityDot: { width: 7, height: 7, borderRadius: 4, marginRight: spacing.xs },
-  metaChip: { flexDirection: 'row', alignItems: 'center' },
-  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: spacing.sm },
-  duePill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xs + 2, paddingVertical: 3, borderRadius: radii.pill },
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  sheet: { borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, padding: spacing.lg },
-  moveOption: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.sm + 2, borderTopWidth: StyleSheet.hairlineWidth },
-  moveDot: { width: 8, height: 8, borderRadius: 4 },
+  board: { paddingHorizontal: 16, paddingTop: spacing.md, paddingBottom: spacing.lg, gap: spacing.sm },
+  ghost: {
+    position: 'absolute',
+    zIndex: 999,
+    elevation: 12,
+    shadowColor: '#08071A',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.35,
+    shadowRadius: 22,
+    transform: [{ scale: 1.03 }, { rotate: '2deg' }],
+  },
 });

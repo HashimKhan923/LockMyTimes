@@ -12,11 +12,15 @@ import { MotiView } from 'moti';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { fetchTasks } from '../../api/endpoints/tasks';
 import { Screen } from '../../components/common/Screen';
+import { StatusBadge } from '../../components/common/StatusBadge';
 import { entranceStagger } from '../../theme/motion';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
+import { useAuthStore } from '../../stores/authStore';
 import type { TasksStackParamList } from '../../navigation/TasksStack';
+import { useResetOnTabBlur } from '../../navigation/useResetOnTabBlur';
 import type { TaskInfo } from '../../api/types';
+import { PRIORITY_META, taskTypeMeta } from './taskDisplay';
 
 type Props = NativeStackScreenProps<TasksStackParamList, 'TaskList'>;
 
@@ -42,7 +46,9 @@ function buildWeek(centerOffsetStart = -3, count = 7): DateStripDay[] {
 }
 
 export function TaskListScreen({ navigation }: Props) {
+  useResetOnTabBlur(navigation);
   const theme = useTheme();
+  const myEmployeeId = useAuthStore((s) => s.user?.employee_id ?? null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>('open');
   const week = useMemo(() => buildWeek(), []);
   const [selectedDate, setSelectedDate] = useState<string | null>(toISODate(new Date()));
@@ -60,6 +66,9 @@ export function TaskListScreen({ navigation }: Props) {
 
   function renderTask({ item, index }: { item: TaskInfo; index: number }) {
     const cardAccent = item.project?.color ?? theme.categorical[item.project_id % theme.categorical.length];
+    const type = taskTypeMeta(item.type);
+    const priority = PRIORITY_META[item.priority];
+    const isMine = item.assignees.some((a) => a.employee_id === myEmployeeId);
 
     return (
       <MotiView {...entranceStagger(index)}>
@@ -71,6 +80,16 @@ export function TaskListScreen({ navigation }: Props) {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}
         >
+          <View style={styles.metaRow}>
+            <StatusBadge value={item.type} label={type.label} color={type.color} filled uppercase={false} />
+            <StatusBadge value={item.priority} label={priority.label} color={theme[priority.colorKey]} filled uppercase={false} />
+            {isMine && (
+              <View style={[styles.youBadge, { backgroundColor: theme.primary + '22' }]}>
+                <Text style={[styles.youBadgeText, { color: theme.primary }]}>YOU</Text>
+              </View>
+            )}
+          </View>
+
           <View style={styles.cardTopRow}>
             <View style={{ flex: 1 }}>
               <Text style={[typography.body, { color: theme.text, fontWeight: '700' }]} numberOfLines={1}>
@@ -88,10 +107,44 @@ export function TaskListScreen({ navigation }: Props) {
             <View style={[styles.progressFill, { width: `${Math.max(4, item.progress)}%`, backgroundColor: cardAccent }]} />
           </View>
 
+          {(item.comments_count > 0 || item.subtasks_count > 0 || item.estimated_hours > 0) && (
+            <View style={styles.chipsRow}>
+              {item.comments_count > 0 && (
+                <View style={styles.metaChip}>
+                  <Icon name="chatbubble-outline" size={12} color={theme.textMuted} />
+                  <Text style={[styles.metaChipText, { color: theme.textMuted }]}>{item.comments_count}</Text>
+                </View>
+              )}
+              {item.subtasks_count > 0 && (
+                <View style={styles.metaChip}>
+                  <Icon
+                    name="checkbox-outline"
+                    size={12}
+                    color={item.completed_subtasks_count >= item.subtasks_count ? theme.success : theme.textMuted}
+                  />
+                  <Text
+                    style={[
+                      styles.metaChipText,
+                      { color: item.completed_subtasks_count >= item.subtasks_count ? theme.success : theme.textMuted },
+                    ]}
+                  >
+                    {item.completed_subtasks_count}/{item.subtasks_count}
+                  </Text>
+                </View>
+              )}
+              {item.estimated_hours > 0 && (
+                <View style={styles.metaChip}>
+                  <Icon name="time" size={12} color={theme.textMuted} />
+                  <Text style={[styles.metaChipText, { color: theme.textMuted }]}>{item.estimated_hours}h</Text>
+                </View>
+              )}
+            </View>
+          )}
+
           <View style={styles.cardFooterRow}>
             <View style={styles.footerLeft}>
-              <Icon name="time" size={14} color={theme.textMuted} />
-              <Text style={[typography.caption, { color: theme.textMuted, marginLeft: 4 }]}>
+              <Icon name="calendar" size={14} color={item.is_overdue ? theme.danger : theme.textMuted} />
+              <Text style={[typography.caption, { color: item.is_overdue ? theme.danger : theme.textMuted, marginLeft: 4, fontWeight: item.is_overdue ? '700' : '400' }]}>
                 {item.due_date ? new Date(item.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'No due date'}
               </Text>
             </View>
@@ -198,9 +251,15 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     borderLeftWidth: 4,
   },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginBottom: spacing.xs },
+  youBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: radii.pill },
+  youBadgeText: { fontSize: 9, fontWeight: '900' },
   cardTopRow: { flexDirection: 'row', alignItems: 'center' },
   progressTrack: { height: 6, borderRadius: 3, marginTop: spacing.sm, overflow: 'hidden' },
   progressFill: { height: 6, borderRadius: 3 },
+  chipsRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
+  metaChip: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  metaChipText: { fontSize: 11, fontWeight: '600' },
   cardFooterRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: spacing.sm },
   footerLeft: { flexDirection: 'row', alignItems: 'center' },
 });

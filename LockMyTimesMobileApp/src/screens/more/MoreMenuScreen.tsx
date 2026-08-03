@@ -12,6 +12,7 @@ import { entranceStagger } from '../../theme/motion';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
 import type { MoreStackParamList } from '../../navigation/MoreStack';
+import { useResetOnTabBlur } from '../../navigation/useResetOnTabBlur';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'MoreMenu'>;
 
@@ -23,6 +24,7 @@ interface MenuItem {
 }
 
 export function MoreMenuScreen({ navigation }: Props) {
+  useResetOnTabBlur(navigation);
   const theme = useTheme();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);

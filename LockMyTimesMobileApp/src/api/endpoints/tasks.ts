@@ -26,10 +26,13 @@ export async function fetchProjectBoard(projectId: number): Promise<ProjectBoard
 export async function moveTask(
   projectId: number,
   taskId: number,
-  taskListId: number
+  taskListId: number,
+  options: { sortOrder?: number; orderedIds?: number[] } = {}
 ): Promise<{ success: true; status: string }> {
   const { data } = await apiClient.post(`/projects/${projectId}/tasks/${taskId}/move`, {
     task_list_id: taskListId,
+    sort_order: options.sortOrder,
+    ordered_ids: options.orderedIds,
   });
   return data;
 }

@@ -14,6 +14,7 @@ import { entranceStagger } from '../../theme/motion';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
 import type { AttendanceStackParamList } from '../../navigation/AttendanceStack';
+import { useResetOnTabBlur } from '../../navigation/useResetOnTabBlur';
 import type { AttendanceDay, ClockStatus } from '../../api/types';
 
 type Props = NativeStackScreenProps<AttendanceStackParamList, 'AttendanceHome'>;
@@ -35,6 +36,7 @@ function formatTime(iso: string | null) {
 }
 
 export function AttendanceHomeScreen({ navigation }: Props) {
+  useResetOnTabBlur(navigation);
   const theme = useTheme();
   const queryClient = useQueryClient();
   const [breakError, setBreakError] = useState<string | null>(null);
