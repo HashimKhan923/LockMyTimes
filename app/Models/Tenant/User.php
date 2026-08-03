@@ -79,8 +79,15 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        return $this->avatar
-            ? asset('storage/'.$this->avatar)
+        // Employee-facing avatar uploads (admin employee edit, mobile profile
+        // screen) write to employees.avatar, not users.avatar — prefer that
+        // so the logged-in user's avatar matches what their employee profile
+        // shows, rather than falling back to a placeholder despite a real
+        // photo being on file.
+        $path = $this->avatar ?: $this->employee?->avatar;
+
+        return $path
+            ? asset('storage/'.$path)
             : 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=6C7DF7&color=fff';
     }
 }

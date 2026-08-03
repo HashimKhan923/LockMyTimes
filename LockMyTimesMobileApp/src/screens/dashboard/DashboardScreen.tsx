@@ -74,7 +74,10 @@ export function DashboardScreen({ navigation }: Props) {
     <Screen padded={false}>
       <View style={styles.padded}>
         <MotiView {...entranceStagger(0)} style={styles.headerRow}>
-          <View style={styles.headerLeft}>
+          <Pressable
+            onPress={() => navigation.navigate('More', { screen: 'Profile' })}
+            style={styles.headerLeft}
+          >
             <LinearGradient colors={theme.gradients.accent} style={styles.avatarRing}>
               {user?.avatar_url ? (
                 <Image source={{ uri: user.avatar_url }} style={styles.avatar} />
@@ -88,7 +91,7 @@ export function DashboardScreen({ navigation }: Props) {
               <Text style={[typography.caption, { color: theme.textMuted }]}>Hello 👋</Text>
               <Text style={[typography.title, { color: theme.text }]}>{user?.name?.split(' ')[0]}</Text>
             </View>
-          </View>
+          </Pressable>
 
           <View style={styles.headerActions}>
             <Pressable

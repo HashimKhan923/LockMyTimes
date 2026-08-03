@@ -15,6 +15,8 @@ import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
 import type { AttendanceStackParamList } from '../../navigation/AttendanceStack';
 import { useResetOnTabBlur } from '../../navigation/useResetOnTabBlur';
+import { useLiveAttendanceTimer } from '../../hooks/useLiveAttendanceTimer';
+import { formatHMS } from '../../utils/formatDuration';
 import type { AttendanceDay, ClockStatus } from '../../api/types';
 
 type Props = NativeStackScreenProps<AttendanceStackParamList, 'AttendanceHome'>;
@@ -60,6 +62,13 @@ export function AttendanceHomeScreen({ navigation }: Props) {
 
   const status = statusQuery.data?.status ?? indexQuery.data?.today.clock_status ?? 'not_clocked_in';
   const cta = CTA[status];
+
+  const timer = useLiveAttendanceTimer({
+    status,
+    workedMinutes: statusQuery.data?.worked_minutes ?? 0,
+    breakStartedAt: statusQuery.data?.break_started ?? null,
+    shiftEndIso: indexQuery.data?.today.shift?.end ?? null,
+  });
 
   const breakMutation = useMutation({
     mutationFn: () => (status === 'on_break' ? endBreak() : startBreak('tea')),
@@ -150,6 +159,43 @@ export function AttendanceHomeScreen({ navigation }: Props) {
           </View>
         </View>
 
+        {(status === 'clocked_in' || status === 'on_break') && (
+          <MotiView
+            from={{ opacity: 0, translateY: 8 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            style={[styles.timerCard, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
+          >
+            <View style={styles.timerCol}>
+              <Text style={[typography.caption, { color: theme.textMuted }]}>Worked</Text>
+              <Text style={[styles.timerValue, { color: theme.text }]}>{formatHMS(timer.workedSeconds)}</Text>
+            </View>
+            <View style={[styles.timerDivider, { backgroundColor: theme.border }]} />
+            {status === 'on_break' ? (
+              <View style={styles.timerCol}>
+                <View style={styles.liveDotRow}>
+                  <MotiView
+                    from={{ opacity: 0.4 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ type: 'timing', duration: 700, loop: true, repeatReverse: true }}
+                    style={[styles.liveDot, { backgroundColor: theme.warning }]}
+                  />
+                  <Text style={[typography.caption, { color: theme.warning, fontWeight: '700' }]}>On break</Text>
+                </View>
+                <Text style={[styles.timerValue, { color: theme.warning }]}>{formatHMS(timer.breakSeconds)}</Text>
+              </View>
+            ) : (
+              <View style={styles.timerCol}>
+                <Text style={[typography.caption, { color: timer.isOvertime ? theme.danger : theme.textMuted }]}>
+                  {timer.isOvertime ? 'Overtime' : 'Remaining'}
+                </Text>
+                <Text style={[styles.timerValue, { color: timer.isOvertime ? theme.danger : theme.primary }]}>
+                  {formatHMS(Math.abs(timer.remainingSeconds ?? 0))}
+                </Text>
+              </View>
+            )}
+          </MotiView>
+        )}
+
         <MotiView from={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: spacing.md }}>
           <Pressable onPress={handleCtaPress} disabled={status === 'clocked_out'}>
             <GradientCard colors={status === 'clocked_out' ? [theme.textMuted, theme.textMuted] : theme.gradients.accent} style={styles.ctaCard}>
@@ -235,6 +281,18 @@ const styles = StyleSheet.create({
   },
   miniStatusCol: { alignItems: 'center' },
   miniIconBadge: { width: 32, height: 32, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center' },
+  timerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radii.lg,
+    padding: spacing.md,
+    marginTop: spacing.sm,
+  },
+  timerCol: { flex: 1, alignItems: 'center' },
+  timerDivider: { width: StyleSheet.hairlineWidth, alignSelf: 'stretch', marginVertical: 2 },
+  timerValue: { fontSize: 22, fontWeight: '800', fontVariant: ['tabular-nums'], marginTop: 4 },
+  liveDotRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  liveDot: { width: 6, height: 6, borderRadius: 3 },
   ctaCard: { alignItems: 'center', paddingVertical: spacing.xl },
   ctaIconCircle: {
     width: 72,

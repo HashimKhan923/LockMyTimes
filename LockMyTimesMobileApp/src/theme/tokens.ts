@@ -1,6 +1,8 @@
 /**
- * Brand accent is #5D6EF0 (indigo-blue). Dark is the primary mode; light is a
- * companion derived from the same hue family so both read as the same product.
+ * Brand accent is #6C7DF7 — the same brand-500 used across the web app
+ * (see tailwind.config.js / app.css --brand-500). Dark is the primary mode;
+ * light is a companion derived from the same hue family so both read as the
+ * same product, and both match the web app's brand identity.
  */
 export const colors = {
   light: {
@@ -12,8 +14,8 @@ export const colors = {
     borderStrong: '#B3BEF0',
     text: '#1A1D33',
     textMuted: '#6B6F8F',
-    primary: '#5D6EF0',
-    primaryMuted: '#E9EBFD',
+    primary: '#6C7DF7',
+    primaryMuted: '#EEF0FE',
     accentOrange: '#FF9A44',
     accentPink: '#FF6FA0',
     accentTeal: '#22C7B5',
@@ -32,7 +34,7 @@ export const colors = {
     borderStrong: '#3C4470',
     text: '#EEF0FB',
     textMuted: '#9DA3C8',
-    primary: '#96A1F5',
+    primary: '#9AA8FA',
     primaryMuted: '#2A2F58',
     accentOrange: '#FFB067',
     accentPink: '#FF8FBB',
@@ -50,8 +52,8 @@ export type ThemeColors = typeof colors.light;
 /** [from, to] gradient stops per mode. Bold, colorful pairings — the app's signature look, used freely on hero cards, rings, chips, and chart fills, not just as a rare accent. */
 export const gradients = {
   light: {
-    primary: ['#8692F4', '#5D6EF0'] as const,
-    accent: ['#5D6EF0', '#4F5ECC'] as const,
+    primary: ['#9AA8FA', '#6C7DF7'] as const,
+    accent: ['#6C7DF7', '#4A5BE8'] as const,
     sunset: ['#FFC371', '#FF9A44'] as const,
     berry: ['#FF8FBB', '#FF5A8A'] as const,
     ocean: ['#5FC6FF', '#3D8BFF'] as const,
@@ -61,8 +63,8 @@ export const gradients = {
     danger: ['#FF9CA8', '#FF5A6E'] as const,
   },
   dark: {
-    primary: ['#A6AFF7', '#96A1F5'] as const,
-    accent: ['#96A1F5', '#8791DD'] as const,
+    primary: ['#BCC5FB', '#9AA8FA'] as const,
+    accent: ['#9AA8FA', '#7989F8'] as const,
     sunset: ['#FFD199', '#FFB067'] as const,
     berry: ['#FFB3D2', '#FF8FBB'] as const,
     ocean: ['#8FC9FF', '#6AA5FF'] as const,

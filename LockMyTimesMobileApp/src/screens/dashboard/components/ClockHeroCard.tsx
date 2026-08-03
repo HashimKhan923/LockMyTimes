@@ -12,6 +12,8 @@ import { SkeletonBlock } from '../../../components/common/SkeletonBlock';
 import { heroSpring } from '../../../theme/motion';
 import { radii, spacing, typography } from '../../../theme/tokens';
 import { useTheme } from '../../../theme/useTheme';
+import { useLiveAttendanceTimer } from '../../../hooks/useLiveAttendanceTimer';
+import { formatHMS } from '../../../utils/formatDuration';
 import type { MainTabsParamList } from '../../../navigation/MainTabs';
 import type { AttendanceIndexResponse, AttendanceStatusResponse, ClockStatus } from '../../../api/types';
 
@@ -38,7 +40,15 @@ export function ClockHeroCard({
   const [breakError, setBreakError] = useState<string | null>(null);
 
   const status = statusQuery.data?.status ?? indexQuery.data?.today.clock_status ?? 'not_clocked_in';
-  const workedHours = (statusQuery.data?.worked_minutes ?? 0) / 60;
+
+  const timer = useLiveAttendanceTimer({
+    status,
+    workedMinutes: statusQuery.data?.worked_minutes ?? 0,
+    breakStartedAt: statusQuery.data?.break_started ?? null,
+    shiftEndIso: indexQuery.data?.today.shift?.end ?? null,
+    dailyGoalMinutes: DAILY_GOAL_HOURS * 60,
+  });
+  const workedHours = timer.workedSeconds / 3600;
   const percent = Math.min(100, (workedHours / DAILY_GOAL_HOURS) * 100);
 
   const breakMutation = useMutation({
@@ -74,9 +84,27 @@ export function ClockHeroCard({
             <View style={styles.goalPill}>
               <Text style={styles.goalPillText}>{workedHours.toFixed(1)}/{DAILY_GOAL_HOURS}h</Text>
             </View>
-            <Text style={[typography.caption, styles.subtext]}>
-              {STATUS_LABEL[status]} · {Math.round(percent)}% of today's goal
-            </Text>
+            {status === 'on_break' ? (
+              <View style={styles.liveRow}>
+                <MotiView
+                  from={{ opacity: 0.4 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ type: 'timing', duration: 700, loop: true, repeatReverse: true }}
+                  style={styles.liveDot}
+                />
+                <Text style={[typography.caption, styles.subtext, { marginTop: 0 }]}>
+                  On break · {formatHMS(timer.breakSeconds)}
+                </Text>
+              </View>
+            ) : status === 'clocked_in' ? (
+              <Text style={[typography.caption, styles.subtext]}>
+                {timer.isOvertime ? 'Overtime' : 'Remaining'} · {formatHMS(Math.abs(timer.remainingSeconds ?? 0))}
+              </Text>
+            ) : (
+              <Text style={[typography.caption, styles.subtext]}>
+                {STATUS_LABEL[status]} · {Math.round(percent)}% of today's goal
+              </Text>
+            )}
 
             <View style={styles.actions}>
               {status === 'not_clocked_in' && (
@@ -138,6 +166,8 @@ const styles = StyleSheet.create({
   topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   todayPill: { backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill },
   todayPillText: { color: '#FFFFFF', fontSize: 12, fontWeight: '700' },
+  liveRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: spacing.xs },
+  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#FFFFFF' },
   mainRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.md },
   actionsCol: { flex: 1, marginRight: spacing.md },
   goalPill: {

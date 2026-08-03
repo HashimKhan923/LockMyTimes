@@ -12,6 +12,7 @@ import { Screen } from '../../components/common/Screen';
 import { TextField } from '../../components/common/TextField';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
+import { useAuthStore } from '../../stores/authStore';
 import type { MoreStackParamList } from '../../navigation/MoreStack';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'Profile'>;
@@ -21,6 +22,8 @@ type Tab = 'personal' | 'address';
 export function ProfileScreen({ navigation }: Props) {
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const authUser = useAuthStore((s) => s.user);
+  const updateAuthUser = useAuthStore((s) => s.updateUser);
   const [tab, setTab] = useState<Tab>('personal');
 
   const { data } = useQuery({ queryKey: ['profile'], queryFn: fetchProfile });
@@ -59,7 +62,14 @@ export function ProfileScreen({ navigation }: Props) {
 
   const avatarMutation = useMutation({
     mutationFn: uploadAvatar,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      // The dashboard header reads the avatar from the cached auth session
+      // (set at login), not this screen's own /profile query — patch it
+      // here too so the new photo shows up there immediately instead of
+      // only after the next login.
+      if (authUser) updateAuthUser({ ...authUser, avatar_url: data.employee.avatar_url });
+    },
   });
 
   async function handlePickAvatar() {
