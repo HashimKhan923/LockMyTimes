@@ -105,6 +105,14 @@ export function ClockInScreen({ route, navigation }: Props) {
     submitMutation.mutate({ qrToken: result.data });
   }
 
+  function handleClockInPress() {
+    if (selectedLocation?.requires_qr) {
+      setScanningQr(true);
+      return;
+    }
+    submitMutation.mutate({ locationId: selectedLocation?.id });
+  }
+
   return (
     <Screen>
       <Text style={[typography.heading, { color: theme.text, marginTop: spacing.md }]}>
@@ -154,14 +162,11 @@ export function ClockInScreen({ route, navigation }: Props) {
                     </Pressable>
                   ))}
 
-                  <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.md }]}>
-                    No QR code at your location? No problem — just pick it above and continue. Scanning is only
-                    needed if you'd rather use a shared QR code instead.
-                  </Text>
-
-                  <Pressable onPress={() => setScanningQr(true)} style={styles.qrLink}>
-                    <Text style={[typography.body, { color: theme.primary }]}>Scan a QR code instead</Text>
-                  </Pressable>
+                  {selectedLocation?.requires_qr && (
+                    <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.md }]}>
+                      This location requires a QR code scan — tapping Clock in will open your camera.
+                    </Text>
+                  )}
                 </>
               ) : (
                 <View style={[styles.noLocationCard, { backgroundColor: theme.surfaceAlt }]}>
@@ -176,8 +181,8 @@ export function ClockInScreen({ route, navigation }: Props) {
 
               <View style={{ marginTop: spacing.lg }}>
                 <Button
-                  title="Clock in now"
-                  onPress={() => submitMutation.mutate({ locationId: selectedLocation?.id })}
+                  title={selectedLocation?.requires_qr ? 'Clock in (scan QR)' : 'Clock in now'}
+                  onPress={handleClockInPress}
                   disabled={hasAssignedLocations && !selectedLocation}
                   loading={submitMutation.isPending}
                 />
@@ -251,7 +256,6 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     marginTop: spacing.sm,
   },
-  qrLink: { marginTop: spacing.md, alignItems: 'center' },
   cameraWrap: {
     height: 280,
     borderRadius: radii.lg,

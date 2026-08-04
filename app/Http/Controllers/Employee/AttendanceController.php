@@ -428,8 +428,9 @@ class AttendanceController extends Controller
      * Resolve what a clock-in should be checked against.
      *
      * - Scanning a QR always resolves that QR's own location.
-     * - Otherwise (web/direct), resolve the assigned/selected location if any — no QR code is required
-     *   for this path, since the employee isn't scanning anything.
+     * - Otherwise (web/direct), resolve the assigned/selected location if any. If that location has an
+     *   active QR code assigned, a scan is required — direct clock-in is rejected so the QR requirement
+     *   can't be bypassed by just choosing the location from the list instead of scanning it.
      * - No assigned location and none selected → unrestricted direct clock-in (no geofence).
      *
      * @return array{location: ?Location, qrCode: ?QrCode, error?: string}
@@ -438,9 +439,9 @@ class AttendanceController extends Controller
     {
         // 1) QR token (scanning a printed/desktop code)
         if (! empty($data['qr_token'])) {
-            $qr = QrCode::with('location')->where('token', $data['qr_token'])
-                ->orWhere('code', $data['qr_token'])
-                ->first();
+            $token = $this->extractQrToken($data['qr_token']);
+
+            $qr = QrCode::with('location')->where('token', $token)->first();
             if (! $qr) return ['location' => null, 'qrCode' => null, 'error' => 'Invalid QR code.'];
             if (isset($qr->is_active) && ! $qr->is_active) {
                 return ['location' => null, 'qrCode' => null, 'error' => 'This QR code is inactive.'];
@@ -448,7 +449,7 @@ class AttendanceController extends Controller
             return ['location' => $qr->location, 'qrCode' => $qr];
         }
 
-        // 2) Web/direct clock-in — resolve the location only, no QR needed
+        // 2) Web/direct clock-in — resolve the location, but require a QR scan if one is assigned
         $locId = $data['location_id'] ?? $emp->location_id ?? null;
 
         if (! $locId) {
@@ -460,7 +461,24 @@ class AttendanceController extends Controller
             return ['location' => null, 'qrCode' => null, 'error' => 'Selected location was not found.'];
         }
 
+        $hasActiveQr = QrCode::where('location_id', $location->id)->where('is_active', true)->exists();
+        if ($hasActiveQr) {
+            return ['location' => $location, 'qrCode' => null, 'error' => 'This location requires a QR code scan to clock in.'];
+        }
+
         return ['location' => $location, 'qrCode' => null];
+    }
+
+    /**
+     * QR codes encode a full scan URL (e.g. https://.../api/v1/attendance/scan/{token}). Accept either
+     * that full URL or a raw token and resolve down to just the token segment.
+     */
+    protected function extractQrToken(string $raw): string
+    {
+        $trimmed = rtrim(trim($raw), '/');
+        $segments = explode('/', $trimmed);
+
+        return end($segments) ?: $trimmed;
     }
 
     /** Best-effort shift resolution for a given date. */

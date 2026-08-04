@@ -48,6 +48,7 @@ export interface LocationInfo {
   longitude: number | null;
   geofence_radius_meters: number | null;
   is_headquarters: boolean;
+  requires_qr: boolean;
 }
 
 export interface AttendanceBreakInfo {
