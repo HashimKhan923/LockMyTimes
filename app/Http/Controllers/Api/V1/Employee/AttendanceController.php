@@ -17,7 +17,6 @@ use App\Services\GeofenceService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -124,6 +123,39 @@ class AttendanceController extends Controller
             'attendance' => $att ? new AttendanceResource($att) : null,
             'holiday_name' => $hol?->name,
             'shift' => $shift,
+        ]);
+    }
+
+    public function history(Request $request): JsonResponse
+    {
+        $emp = $this->employeeOrFail($request);
+
+        try {
+            $from = $request->get('from') ? Carbon::parse($request->get('from')) : Carbon::today()->subDays(29);
+            $to = $request->get('to') ? Carbon::parse($request->get('to')) : Carbon::today();
+        } catch (\Throwable) {
+            return response()->json(['message' => 'Invalid date.'], 400);
+        }
+
+        if ($from->gt($to)) {
+            [$from, $to] = [$to, $from];
+        }
+
+        $records = Attendance::with(['location', 'breaks'])
+            ->where('employee_id', $emp->id)
+            ->whereBetween('work_date', [$from->toDateString(), $to->toDateString()])
+            ->orderByDesc('work_date')
+            ->paginate(30);
+
+        return response()->json([
+            'from' => $from->toDateString(),
+            'to' => $to->toDateString(),
+            'records' => AttendanceResource::collection($records->items()),
+            'pagination' => [
+                'current_page' => $records->currentPage(),
+                'last_page' => $records->lastPage(),
+                'total' => $records->total(),
+            ],
         ]);
     }
 
@@ -456,22 +488,20 @@ class AttendanceController extends Controller
         ];
     }
 
+    /**
+     * An employee only ever has at most one assigned location (`location_id`). Returning just that
+     * (rather than every active company location as a pick-list) is what lets the mobile app skip the
+     * location picker entirely and clock in directly when an employee has one assigned location.
+     */
     protected function resolveAssignedLocations($emp)
     {
-        $qrCounts = fn ($q) => $q->withCount(['qrCodes as active_qr_count' => fn ($qq) => $qq->where('is_active', true)]);
+        if (! $emp->location_id) {
+            return collect();
+        }
 
-        $primary = $emp->location_id
-            ? $qrCounts(Location::where('id', $emp->location_id))->get()
-            : collect();
-
-        $others = $qrCounts(Location::query())
-            ->when(Schema::connection('tenant')->hasColumn('locations', 'is_active'),
-                fn ($q) => $q->where('is_active', true))
-            ->when($emp->location_id, fn ($q) => $q->where('id', '!=', $emp->location_id))
-            ->orderBy('name')
+        return Location::where('id', $emp->location_id)
+            ->withCount(['qrCodes as active_qr_count' => fn ($qq) => $qq->where('is_active', true)])
             ->get();
-
-        return $primary->concat($others)->values();
     }
 
     protected function statusKey($att, $hol, Carbon $d): string

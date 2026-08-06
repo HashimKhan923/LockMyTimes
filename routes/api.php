@@ -40,6 +40,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::prefix('attendance')->name('attendance.')->group(function () {
             Route::get('/', [AttendanceController::class, 'index'])->name('index');
             Route::get('/status', [AttendanceController::class, 'status'])->name('status');
+            Route::get('/history', [AttendanceController::class, 'history'])->name('history');
             Route::get('/export', [AttendanceController::class, 'export'])->name('export');
             Route::get('/{date}', [AttendanceController::class, 'day'])->name('day')->where('date', '\d{4}-\d{2}-\d{2}');
             Route::post('/clock-in', [AttendanceController::class, 'clockIn'])->name('clockIn');

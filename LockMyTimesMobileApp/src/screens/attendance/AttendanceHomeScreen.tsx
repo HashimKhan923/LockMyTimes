@@ -223,7 +223,7 @@ export function AttendanceHomeScreen({ navigation }: Props) {
               <Pressable onPress={handleCtaPress} disabled={status === 'clocked_out'}>
                 <GradientCard colors={status === 'clocked_out' ? [theme.textMuted, theme.textMuted] : theme.gradients.accent} style={styles.ctaCard}>
                   <View style={styles.ctaIconCircle}>
-                    <Icon name={cta.icon} size={34} color="#FFFFFF" />
+                    <Icon name={cta.icon} size={26} color="#FFFFFF" />
                   </View>
                   <Text style={styles.ctaTitle}>{cta.title}</Text>
                   <Text style={styles.ctaSubtitle}>{cta.subtitle}</Text>
@@ -251,7 +251,7 @@ export function AttendanceHomeScreen({ navigation }: Props) {
 
             <View style={{ marginTop: spacing.sm }}>
               <Pressable
-                onPress={() => navigation.navigate('DayDetail', { date: new Date().toISOString().slice(0, 10) })}
+                onPress={() => navigation.navigate('History')}
                 style={[styles.linkRow, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
               >
                 <Icon name="calendar" size={18} color={theme.primary} />
@@ -281,8 +281,8 @@ const styles = StyleSheet.create({
   // inherits the FlatList's contentContainerStyle padding — cancel that
   // padding out just for this element so it isn't visually indented.
   heroNegateMargin: { marginHorizontal: -24 },
-  clock: { fontSize: 40, fontWeight: '800', color: '#FFFFFF', letterSpacing: 1 },
-  clockDate: { fontSize: 14, color: 'rgba(255,255,255,0.85)', marginTop: 4, fontWeight: '600' },
+  clock: { fontSize: 40, fontWeight: '800', color: '#FFFFFF', letterSpacing: 1, textAlign: 'center' },
+  clockDate: { fontSize: 14, color: 'rgba(255,255,255,0.85)', marginTop: 4, fontWeight: '600', textAlign: 'center' },
   miniStatus: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -305,19 +305,19 @@ const styles = StyleSheet.create({
   timerValue: { fontSize: 22, fontWeight: '800', fontVariant: ['tabular-nums'], marginTop: 4 },
   liveDotRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   liveDot: { width: 6, height: 6, borderRadius: 3 },
-  ctaCard: { alignItems: 'center', paddingVertical: spacing.xl },
+  ctaCard: { alignItems: 'center', paddingVertical: spacing.lg },
   ctaIconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: 'rgba(255,255,255,0.22)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ctaTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: '800', marginTop: spacing.md, letterSpacing: 0.5 },
+  ctaTitle: { color: '#FFFFFF', fontSize: 20, fontWeight: '800', marginTop: spacing.sm, letterSpacing: 0.5 },
   ctaSubtitle: { color: 'rgba(255,255,255,0.85)', marginTop: 4, fontSize: 13 },
   ctaPill: {
-    marginTop: spacing.md,
+    marginTop: spacing.sm,
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: spacing.md,
     paddingVertical: 6,

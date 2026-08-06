@@ -1,6 +1,7 @@
 import { apiClient } from '../client';
 import type {
   AttendanceDayResponse,
+  AttendanceHistoryResponse,
   AttendanceIndexResponse,
   AttendanceRecord,
   AttendanceStatusResponse,
@@ -20,6 +21,13 @@ export async function fetchAttendanceStatus(): Promise<AttendanceStatusResponse>
 
 export async function fetchAttendanceDay(date: string): Promise<AttendanceDayResponse> {
   const { data } = await apiClient.get<AttendanceDayResponse>(`/attendance/${date}`);
+  return data;
+}
+
+export async function fetchAttendanceHistory(from?: string, to?: string): Promise<AttendanceHistoryResponse> {
+  const { data } = await apiClient.get<AttendanceHistoryResponse>('/attendance/history', {
+    params: { ...(from ? { from } : {}), ...(to ? { to } : {}) },
+  });
   return data;
 }
 

@@ -56,7 +56,7 @@ export function LoginScreen() {
       </MotiView>
 
       <MotiView {...entranceStagger(0)} style={styles.top}>
-        <Text style={[typography.title, { color: theme.text, textAlign: 'center' }]}>Welcome back</Text>
+        <Text style={[typography.title, { color: theme.text, textAlign: 'center' }]}>Welcome</Text>
         <Text
           style={[typography.body, { color: theme.textMuted, marginTop: spacing.xs, textAlign: 'center' }]}
         >

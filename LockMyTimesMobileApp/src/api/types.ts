@@ -141,6 +141,13 @@ export interface AttendanceDayResponse {
   shift: ShiftInfo | null;
 }
 
+export interface AttendanceHistoryResponse {
+  from: string;
+  to: string;
+  records: AttendanceRecord[];
+  pagination: { current_page: number; last_page: number; total: number };
+}
+
 export interface LeaveType {
   id: number;
   name: string;

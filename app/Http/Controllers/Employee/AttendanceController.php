@@ -506,21 +506,20 @@ class AttendanceController extends Controller
         ];
     }
 
-    /** Locations available to clock from (assigned location + same-tenant active). */
+    /**
+     * An employee only ever has at most one assigned location (`location_id`). Returning just that
+     * (rather than every active company location as a pick-list) is what lets the clock-in UI skip the
+     * location picker entirely when an employee has one assigned location.
+     */
     protected function resolveAssignedLocations($emp)
     {
-        // Primary: employee's assigned location first
-        $primary = $emp->location_id ? Location::where('id', $emp->location_id)->get() : collect();
+        if (! $emp->location_id) {
+            return collect();
+        }
 
-        // Plus any other active locations the company has
-        $others = Location::query()
-            ->when(\Illuminate\Support\Facades\Schema::connection('tenant')->hasColumn('locations', 'is_active'),
-                fn ($q) => $q->where('is_active', true))
-            ->when($emp->location_id, fn ($q) => $q->where('id', '!=', $emp->location_id))
-            ->orderBy('name')
+        return Location::where('id', $emp->location_id)
+            ->withCount(['qrCodes as active_qr_count' => fn ($qq) => $qq->where('is_active', true)])
             ->get();
-
-        return $primary->concat($others)->values();
     }
 
     /** Compact status keyword for the calendar cell. */

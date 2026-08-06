@@ -46,8 +46,8 @@ function TabButton({
   }));
 
   return (
-    <Pressable onPress={onPress} style={styles.button}>
-      <View style={styles.iconWrap}>
+    <Pressable onPress={onPress} style={styles.button} hitSlop={8} android_ripple={{ color: activeColor + '22', borderless: true }}>
+      <View style={styles.iconWrap} pointerEvents="none">
         <AnimatedGradient colors={gradient} style={[styles.pill, pillStyle]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
         <Animated.View style={iconStyle}>
           <Icon name={ICONS[label] ?? 'ellipse'} weight={focused ? 'fill' : 'regular'} size={21} color={focused ? '#FFFFFF' : color} />
@@ -71,13 +71,12 @@ export function AnimatedTabBar({ state, descriptors, navigation }: BottomTabBarP
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, 12) + 8 }]}>
+    <View style={[styles.wrap, { paddingBottom: insets.bottom, backgroundColor: theme.surfaceRaised, borderTopColor: theme.border }]}>
       <View
         style={[
           styles.bar,
-          { backgroundColor: theme.surfaceRaised, borderColor: theme.border },
           Platform.select({
-            ios: { shadowColor: '#08071A', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.28, shadowRadius: 24 },
+            ios: { shadowColor: '#08071A', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.12, shadowRadius: 12 },
             android: { elevation: 8 },
           }),
         ]}
@@ -112,11 +111,9 @@ export function AnimatedTabBar({ state, descriptors, navigation }: BottomTabBarP
 }
 
 const styles = StyleSheet.create({
-  wrap: { paddingHorizontal: 16 },
+  wrap: { borderTopWidth: StyleSheet.hairlineWidth },
   bar: {
     flexDirection: 'row',
-    borderRadius: radii.xl,
-    borderWidth: StyleSheet.hairlineWidth,
     paddingTop: 10,
     paddingBottom: 6,
   },

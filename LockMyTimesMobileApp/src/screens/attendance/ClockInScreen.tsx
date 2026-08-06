@@ -37,7 +37,15 @@ export function ClockInScreen({ route, navigation }: Props) {
     enabled: mode === 'in',
   });
 
-  const hasAssignedLocations = (indexData?.assigned_locations?.length ?? 0) > 0;
+  const assignedLocations = indexData?.assigned_locations ?? [];
+  const hasAssignedLocations = assignedLocations.length > 0;
+  const needsLocationPicker = assignedLocations.length > 1;
+
+  // A single assigned location needs no picker at all — select it automatically
+  // so the employee can clock in with one tap.
+  useEffect(() => {
+    if (assignedLocations.length === 1) setSelectedLocation(assignedLocations[0]);
+  }, [assignedLocations.length === 1 ? assignedLocations[0]?.id : null]);
 
   // Resolve GPS in the background as soon as the sheet opens — non-blocking,
   // never gates the rest of the flow (see build plan B6/B8).
@@ -141,26 +149,39 @@ export function ClockInScreen({ route, navigation }: Props) {
             <>
               {hasAssignedLocations ? (
                 <>
-                  <Text style={[typography.subheading, { color: theme.text }]}>Choose a location</Text>
-                  {(indexData?.assigned_locations ?? []).map((loc) => (
-                    <Pressable
-                      key={loc.id}
-                      onPress={() => setSelectedLocation(loc)}
-                      style={[
-                        styles.locationCard,
-                        {
-                          borderColor: selectedLocation?.id === loc.id ? theme.primary : 'transparent',
-                          backgroundColor: theme.surface,
-                        },
-                        Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
-                      ]}
-                    >
-                      <Text style={[typography.body, { color: theme.text }]}>{loc.name}</Text>
-                      {loc.is_headquarters && (
-                        <Text style={[typography.caption, { color: theme.textMuted }]}>Headquarters</Text>
-                      )}
-                    </Pressable>
-                  ))}
+                  {needsLocationPicker ? (
+                    <>
+                      <Text style={[typography.subheading, { color: theme.text }]}>Choose a location</Text>
+                      {assignedLocations.map((loc) => (
+                        <Pressable
+                          key={loc.id}
+                          onPress={() => setSelectedLocation(loc)}
+                          style={[
+                            styles.locationCard,
+                            {
+                              borderColor: selectedLocation?.id === loc.id ? theme.primary : 'transparent',
+                              backgroundColor: theme.surface,
+                            },
+                            Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
+                          ]}
+                        >
+                          <Text style={[typography.body, { color: theme.text }]}>{loc.name}</Text>
+                          {loc.is_headquarters && (
+                            <Text style={[typography.caption, { color: theme.textMuted }]}>Headquarters</Text>
+                          )}
+                        </Pressable>
+                      ))}
+                    </>
+                  ) : (
+                    <View style={[styles.noLocationCard, { backgroundColor: theme.surfaceAlt }]}>
+                      <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>
+                        {selectedLocation?.name}
+                      </Text>
+                      <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.xs }]}>
+                        Your assigned location — just tap Clock in below.
+                      </Text>
+                    </View>
+                  )}
 
                   {selectedLocation?.requires_qr && (
                     <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.md }]}>
