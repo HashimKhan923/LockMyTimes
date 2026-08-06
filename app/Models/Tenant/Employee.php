@@ -13,7 +13,7 @@ class Employee extends TenantModel
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id', 'employee_code',
+        'user_id', 'employee_code', 'external_source', 'external_id',
         'first_name', 'middle_name', 'last_name', 'preferred_name',
         'email', 'personal_email', 'phone', 'mobile',
         'date_of_birth', 'gender', 'marital_status', 'nationality', 'avatar',

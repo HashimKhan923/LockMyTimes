@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\EmailTemplate;
+use App\Models\Tenant\PayrollIntegration;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\TaxSetting;
 use Illuminate\Http\Request;
@@ -35,13 +36,14 @@ class SettingController extends Controller
 
         $taxSettings    = TaxSetting::orderByDesc('year')->orderBy('tax_type')->get();
         $emailTemplates = EmailTemplate::orderBy('category')->orderBy('name')->get();
+        $payrollIntegration = PayrollIntegration::where('provider', 'payroll_relief')->first();
 
         $currentYear = now()->year;
 
         return view('admin.settings.index', compact(
             'tab', 'general', 'attendance', 'payroll', 'leaves',
             'notifications', 'theme', 'taxSettings', 'emailTemplates',
-            'currentYear', 'tenant'
+            'payrollIntegration', 'currentYear', 'tenant'
         ));
     }
 

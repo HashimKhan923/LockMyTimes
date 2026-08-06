@@ -9,6 +9,7 @@ class PayrollRun extends TenantModel
 {
     protected $fillable = [
         'run_number', 'pay_schedule',
+        'external_source', 'external_id',
         'period_start', 'period_end', 'pay_date',
         'status',
         'total_employees', 'total_gross', 'total_deductions', 'total_taxes', 'total_net',

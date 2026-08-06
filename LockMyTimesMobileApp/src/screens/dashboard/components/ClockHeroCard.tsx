@@ -61,7 +61,7 @@ export function ClockHeroCard({
   });
 
   if (indexQuery.isLoading && statusQuery.isLoading) {
-    return <SkeletonBlock height={210} radius={radii.xl} style={styles.hero} />;
+    return <SkeletonBlock height={165} radius={radii.xl} style={styles.hero} />;
   }
 
   return (
@@ -71,7 +71,12 @@ export function ClockHeroCard({
       transition={heroSpring}
       style={styles.hero}
     >
-      <GradientCard colors={theme.gradients.accent} glowColor={theme.primary} radius={radii.xl}>
+      <GradientCard
+        colors={theme.gradients.accent}
+        glowColor={theme.primary}
+        radius={radii.xl}
+        contentStyle={styles.cardContent}
+      >
         <View style={styles.topRow}>
           <Text style={[typography.subheading, { color: '#FFFFFF' }]}>Daily Goal</Text>
           <View style={styles.todayPill}>
@@ -109,8 +114,8 @@ export function ClockHeroCard({
 
           <ProgressRing
             percent={percent}
-            size={92}
-            strokeWidth={9}
+            size={72}
+            strokeWidth={7}
             color="#FFFFFF"
             trackColor="rgba(255,255,255,0.28)"
           >
@@ -159,13 +164,14 @@ export function ClockHeroCard({
 }
 
 const styles = StyleSheet.create({
-  hero: { marginTop: spacing.lg, marginBottom: spacing.md },
+  hero: { marginTop: spacing.md, marginBottom: spacing.sm },
+  cardContent: { padding: spacing.md },
   topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   todayPill: { backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: spacing.sm, paddingVertical: 4, borderRadius: radii.pill },
   todayPillText: { color: '#FFFFFF', fontSize: 12, fontWeight: '700' },
   liveRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: spacing.xs },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#FFFFFF' },
-  mainRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.md },
+  mainRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm },
   statsCol: { flex: 1, marginRight: spacing.md },
   goalPill: {
     alignSelf: 'flex-start',
@@ -176,14 +182,14 @@ const styles = StyleSheet.create({
   },
   goalPillText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
   subtext: { color: 'rgba(255,255,255,0.85)', marginTop: spacing.xs },
-  actions: { marginTop: spacing.lg },
+  actions: { marginTop: spacing.sm },
   actionsRow: { flexDirection: 'row', gap: spacing.sm },
   // Take a break / Clock Out / solo Clock In all share the same padding,
   // radius, and font size so they read as one consistent button language
   // regardless of fill (solid white vs. outlined) or row position.
   ghostBtn: {
     flex: 1,
-    paddingVertical: spacing.sm + 4,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.sm,
     borderRadius: radii.md,
     borderWidth: 1.5,
@@ -194,7 +200,7 @@ const styles = StyleSheet.create({
   ghostBtnText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
   solidBtn: {
     flex: 1,
-    paddingVertical: spacing.sm + 4,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.sm,
     borderRadius: radii.md,
     backgroundColor: '#FFFFFF',
@@ -207,12 +213,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
-    paddingVertical: spacing.sm + 4,
+    paddingVertical: spacing.sm,
     borderRadius: radii.md,
     backgroundColor: '#FFFFFF',
   },
   soloBtnText: { fontWeight: '700', fontSize: 14 },
   btnDisabled: { opacity: 0.5 },
-  viewMore: { marginTop: spacing.lg },
+  viewMore: { marginTop: spacing.sm },
   viewMoreText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
 });

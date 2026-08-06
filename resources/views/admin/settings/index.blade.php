@@ -20,6 +20,7 @@
                 'leaves'       => ['calendar-off','Leave Policy'],
                 'notifications'=> ['bell',       'Notifications'],
                 'email'        => ['mail',       'Email Templates'],
+                'integrations' => ['plug',       'Integrations'],
             ] as $key => [$icon, $label])
             <a href="{{ route('admin.settings.index', $tenant) }}?tab={{ $key }}"
                class="flex items-center gap-3 px-4 py-3 text-sm font-semibold border-b border-gray-50 last:border-none transition-colors
@@ -571,6 +572,99 @@
                 <p class="font-black text-gray-400">No email templates found</p>
             </div>
             @endforelse
+        </div>
+
+        {{-- ===== INTEGRATIONS ===== --}}
+        @elseif($tab === 'integrations')
+        <div class="lmt-card">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <i data-lucide="plug" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="font-black text-gray-900">Payroll Relief (AccountantsWorld)</h2>
+                    <p class="text-xs text-gray-400">Optional — pull finished payslips from your Payroll Relief account into LockMyTimes</p>
+                </div>
+                @if($payrollIntegration && $payrollIntegration->status === 'connected')
+                    <span class="lmt-badge-green text-xs ml-auto">Connected</span>
+                @elseif($payrollIntegration && $payrollIntegration->status === 'error')
+                    <span class="lmt-badge-red text-xs ml-auto">Connection error</span>
+                @else
+                    <span class="lmt-badge-gray text-xs ml-auto">Not connected</span>
+                @endif
+            </div>
+
+            <p class="text-sm text-gray-500 mb-6">
+                This is entirely optional. If you don't connect anything here, your team keeps using LockMyTimes's
+                own built-in payroll system exactly as before — nothing changes. Connecting only adds the ability
+                to automatically pull payslips already finalized in Payroll Relief into LockMyTimes so employees
+                can see them in the app.
+            </p>
+
+            @if($payrollIntegration && $payrollIntegration->status === 'error' && $payrollIntegration->last_error)
+            <div class="rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3 mb-6">
+                {{ $payrollIntegration->last_error }}
+            </div>
+            @endif
+
+            @if($payrollIntegration && $payrollIntegration->isConnected())
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="rounded-xl bg-gray-50 p-4">
+                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Last synced</p>
+                        <p class="font-bold text-gray-900 text-sm">
+                            {{ $payrollIntegration->last_synced_at?->format('M j, Y g:i A') ?? 'Never yet' }}
+                        </p>
+                    </div>
+                    <div class="rounded-xl bg-gray-50 p-4">
+                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Imported so far</p>
+                        <p class="font-bold text-gray-900 text-sm">
+                            {{ $payrollIntegration->employees_synced }} employee(s) · {{ $payrollIntegration->payslips_synced }} payslip(s)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 mb-8">
+                    <form action="{{ route('admin.settings.integrations.payrollRelief.sync', $tenant) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="lmt-btn-primary">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            Sync Now
+                        </button>
+                    </form>
+                    <form action="{{ route('admin.settings.integrations.payrollRelief.disconnect', $tenant) }}" method="POST"
+                          onsubmit="return confirm('Disconnect Payroll Relief? You can reconnect any time with your API key.');">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="lmt-btn-secondary">
+                            <i data-lucide="unlink" class="w-4 h-4"></i>
+                            Disconnect
+                        </button>
+                    </form>
+                </div>
+            @endif
+
+            <form action="{{ route('admin.settings.integrations.payrollRelief.connect', $tenant) }}" method="POST" class="space-y-5 border-t border-gray-100 pt-6">
+                @csrf
+                <div>
+                    <label class="lmt-label">Payroll Relief API Key</label>
+                    <input type="password" name="api_key" class="lmt-input" autocomplete="off"
+                           placeholder="{{ $payrollIntegration?->isConnected() ? 'Enter a new key to replace the saved one' : 'Paste your API key' }}"/>
+                    <p class="lmt-help">
+                        Get this from AccountantsWorld after they enable the Payroll Relief Open API for your account
+                        (contact 877-840-6122 if you haven't been onboarded yet).
+                    </p>
+                </div>
+                <div>
+                    <label class="lmt-label">API Base URL <span class="text-gray-400 font-normal">(optional — only if AccountantsWorld gave you a different one)</span></label>
+                    <input type="url" name="base_url" class="lmt-input" placeholder="https://api.accountantsworld.com/payrollrelief/v1"
+                           value="{{ $payrollIntegration?->base_url }}"/>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="lmt-btn-primary">
+                        <i data-lucide="plug" class="w-4 h-4"></i>
+                        {{ $payrollIntegration?->isConnected() ? 'Update & Reconnect' : 'Connect' }}
+                    </button>
+                </div>
+            </form>
         </div>
         @endif
     </div>

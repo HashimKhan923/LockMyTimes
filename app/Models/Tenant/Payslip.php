@@ -6,6 +6,7 @@ class Payslip extends TenantModel
 {
     protected $fillable = [
         'payroll_run_id', 'employee_id', 'payslip_number',
+        'external_source', 'external_id',
         'period_start', 'period_end', 'pay_date',
         'regular_hours', 'overtime_hours', 'holiday_hours', 'leave_hours',
         'base_pay', 'overtime_pay', 'bonus', 'commission', 'reimbursement',

@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
   wrap: { borderTopWidth: StyleSheet.hairlineWidth },
   bar: {
     flexDirection: 'row',
-    paddingTop: 10,
-    paddingBottom: 6,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
   button: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3 },
   iconWrap: { width: 40, height: 30, alignItems: 'center', justifyContent: 'center' },

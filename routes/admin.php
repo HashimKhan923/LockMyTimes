@@ -350,5 +350,11 @@ Route::prefix('announcements')->name('announcements.')->group(function () {
         Route::patch('/tax/{taxSetting}',      [\App\Http\Controllers\Admin\SettingController::class, 'updateTax'])->name('tax.update')->middleware('permission:settings.edit');
         Route::delete('/tax/{taxSetting}',     [\App\Http\Controllers\Admin\SettingController::class, 'destroyTax'])->name('tax.destroy')->middleware('permission:settings.delete');
         Route::patch('/email/{emailTemplate}', [\App\Http\Controllers\Admin\SettingController::class, 'updateEmailTemplate'])->name('email.update')->middleware('permission:settings.edit');
+
+        Route::prefix('integrations/payroll-relief')->name('integrations.payrollRelief.')->group(function () {
+            Route::post('/connect',    [\App\Http\Controllers\Admin\PayrollIntegrationController::class, 'connect'])->name('connect')->middleware('permission:settings.edit');
+            Route::post('/sync',       [\App\Http\Controllers\Admin\PayrollIntegrationController::class, 'syncNow'])->name('sync')->middleware('permission:settings.edit');
+            Route::delete('/',         [\App\Http\Controllers\Admin\PayrollIntegrationController::class, 'disconnect'])->name('disconnect')->middleware('permission:settings.edit');
+        });
     });
 });
