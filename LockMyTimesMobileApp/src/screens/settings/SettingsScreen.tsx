@@ -21,6 +21,25 @@ import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
 import { useTheme } from '../../theme/useTheme';
 import type { NotificationPreference } from '../../api/types';
 
+// Mirrors User::defaultNotificationPreferences() / Employee::defaultPrivacySettings() on the
+// backend — used whenever the stored value is missing/empty so the tab never renders blank.
+const DEFAULT_NOTIF_PREFS: Record<string, NotificationPreference> = {
+  leave_approvals: { in_app: true, email: true },
+  payslip_available: { in_app: true, email: true },
+  announcements: { in_app: true, email: false },
+  expense_updates: { in_app: true, email: true },
+  loan_updates: { in_app: true, email: false },
+  task_assignments: { in_app: true, email: false },
+};
+
+const DEFAULT_PRIVACY_PREFS: Record<string, boolean> = {
+  show_in_directory: true,
+  show_phone: false,
+  show_email: false,
+  show_department: true,
+  show_position: true,
+};
+
 const NOTIF_LABELS: Record<string, string> = {
   leave_approvals: 'Leave approvals',
   payslip_available: 'New payslips',
@@ -116,18 +135,26 @@ export function SettingsScreen() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
   });
 
+  const notifPrefs =
+    user?.notification_preferences && Object.keys(user.notification_preferences).length > 0
+      ? user.notification_preferences
+      : DEFAULT_NOTIF_PREFS;
+
+  const privacyPrefs =
+    profileData?.employee.privacy_settings && Object.keys(profileData.employee.privacy_settings).length > 0
+      ? profileData.employee.privacy_settings
+      : DEFAULT_PRIVACY_PREFS;
+
   function toggleNotif(key: string, channel: 'in_app' | 'email', value: boolean) {
-    if (!user) return;
     const next = {
-      ...user.notification_preferences,
-      [key]: { ...user.notification_preferences[key], [channel]: value },
+      ...notifPrefs,
+      [key]: { ...notifPrefs[key], [channel]: value },
     };
     notifMutation.mutate(next);
   }
 
   function togglePrivacy(key: string, value: boolean) {
-    if (!profileData) return;
-    privacyMutation.mutate({ ...profileData.employee.privacy_settings, [key]: value });
+    privacyMutation.mutate({ ...privacyPrefs, [key]: value });
   }
 
   const [signOutMessage, setSignOutMessage] = useState<string | null>(null);
@@ -288,7 +315,7 @@ export function SettingsScreen() {
                 Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
               ]}
             >
-              {Object.entries(user.notification_preferences).map(([key, pref]) => (
+              {Object.entries(notifPrefs).map(([key, pref]) => (
                 <View key={key} style={styles.notifGroup}>
                   <Text style={[typography.caption, { color: theme.textMuted }]}>{NOTIF_LABELS[key] ?? key}</Text>
                   <ToggleRow label="In-app" value={pref.in_app} onValueChange={(v) => toggleNotif(key, 'in_app', v)} />
@@ -299,7 +326,7 @@ export function SettingsScreen() {
           </>
         )}
 
-        {tab === 'privacy' && profileData && (
+        {tab === 'privacy' && (
           <>
             <Text style={[typography.subheading, { color: theme.text, marginTop: spacing.lg }]}>Privacy</Text>
             <View
@@ -309,7 +336,7 @@ export function SettingsScreen() {
                 Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
               ]}
             >
-              {Object.entries(profileData.employee.privacy_settings).map(([key, value]) => (
+              {Object.entries(privacyPrefs).map(([key, value]) => (
                 <ToggleRow
                   key={key}
                   label={PRIVACY_LABELS[key] ?? key}
