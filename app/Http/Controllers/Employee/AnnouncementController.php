@@ -329,7 +329,15 @@ class AnnouncementController extends Controller
     protected function visibleAnnouncementsQuery($emp, $user)
     {
         $query = Announcement::query()
-            ->where('status', 'published')
+            // 'scheduled' announcements never flip to 'published' on their own (no cron job does
+            // that transition) — treat a scheduled announcement whose publish_at has passed as
+            // visible too, otherwise it stays invisible forever past its intended publish date.
+            ->where(function ($q) {
+                $q->where('status', 'published')
+                    ->orWhere(function ($q2) {
+                        $q2->where('status', 'scheduled')->whereNotNull('publish_at')->where('publish_at', '<=', now());
+                    });
+            })
             ->where(function ($q) {
                 $q->whereNull('publish_at')->orWhere('publish_at', '<=', now());
             })
