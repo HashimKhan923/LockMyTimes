@@ -1,10 +1,10 @@
 <div class="lmt-card p-0 overflow-hidden" data-lmt-anim="fade-up">
 
     @php
-        // Show only cells that fall inside this month, sorted descending
+        // Show only cells that fall inside this month, sorted ascending (1st -> end of month)
         $rows = collect($calendarCells)
             ->filter(fn ($c) => $c->in_month)
-            ->sortByDesc(fn ($c) => $c->date->toDateString())
+            ->sortBy(fn ($c) => $c->date->toDateString())
             ->values();
     @endphp
 

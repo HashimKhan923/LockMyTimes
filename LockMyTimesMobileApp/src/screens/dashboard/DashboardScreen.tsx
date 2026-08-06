@@ -188,7 +188,7 @@ export function DashboardScreen({ navigation }: Props) {
             )}
           </MotiView>
         )}
-        contentContainerStyle={[styles.padded, { paddingBottom: spacing.xxl }]}
+        contentContainerStyle={[styles.padded, { paddingBottom: spacing.md }]}
         refreshControl={<AppRefreshControl refreshing={indexQuery.isRefetching} onRefresh={refetchAll} />}
       />
     </Screen>
