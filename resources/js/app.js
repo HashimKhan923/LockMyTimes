@@ -61,6 +61,12 @@ window.lmtToast = function (message, type = 'info', duration = 3000) {
 // Auto-animate elements with `data-lmt-anim`
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-lmt-anim]').forEach((el) => {
+        // Elements hidden at load time (e.g. inactive Alpine `x-show` tabs) have no layout, so their
+        // scrollTrigger never fires — gsap.from() would set opacity:0 on them permanently, leaving
+        // the tab blank forever even after Alpine later shows it. Skip animating anything not
+        // currently visible; it just appears normally (no fade-in) once shown, which is correct.
+        if (el.offsetParent === null) return;
+
         const animType = el.dataset.lmtAnim || 'fade-up';
         const delay = parseFloat(el.dataset.lmtDelay || 0);
 

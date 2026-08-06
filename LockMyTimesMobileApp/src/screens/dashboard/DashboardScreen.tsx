@@ -95,7 +95,7 @@ export function DashboardScreen({ navigation }: Props) {
               )}
             </LinearGradient>
             <View style={{ marginLeft: spacing.sm }}>
-              <Text style={[typography.caption, { color: theme.textMuted }]}>Hello 👋</Text>
+              <Text style={[typography.caption, { color: theme.textMuted }]}>Hello </Text>
               <Text style={[typography.title, { color: theme.text }]}>{user?.name?.split(' ')[0]}</Text>
             </View>
           </Pressable>
