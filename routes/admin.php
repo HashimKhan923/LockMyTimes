@@ -41,6 +41,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
     /* Billing & Subscription */
     Route::prefix('billing')->name('billing.')->group(function () {
         Route::get('/',        [BillingController::class, 'index'])->name('index');
+        Route::post('/preview-change', [BillingController::class, 'previewChange'])->name('preview-change');
         Route::post('/checkout', [BillingController::class, 'checkout'])->name('checkout');
         Route::get('/portal',  [BillingController::class, 'portal'])->name('portal');
         Route::post('/cancel', [BillingController::class, 'cancel'])->name('cancel');

@@ -44,6 +44,75 @@ class BillingController extends Controller
     }
 
     /* ================================================================
+     | PREVIEW CHANGE — what switching to this plan/cycle will cost today,
+     | shown as a confirmation step before an existing subscriber actually
+     | switches. First-time subscribers (no existing subscription) skip
+     | this — Stripe Checkout itself is their payment confirmation step.
+     |================================================================*/
+    public function previewChange(Request $request, string $tenant)
+    {
+        $request->validate([
+            'plan_slug'     => 'required|string|exists:main.subscription_plans,slug',
+            'billing_cycle' => 'required|in:monthly,yearly',
+        ]);
+
+        $plan = SubscriptionPlan::where('slug', $request->plan_slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $priceId = $request->billing_cycle === 'yearly'
+            ? $plan->stripe_yearly_price_id
+            : $plan->stripe_monthly_price_id;
+
+        if (! $priceId) {
+            return response()->json(['message' => 'This plan is not yet configured for payments.'], 422);
+        }
+
+        $currentTenant = $this->tenantManager->current();
+
+        $activeSub = Subscription::where('tenant_id', $currentTenant->id)
+            ->whereIn('status', ['active', 'trialing'])
+            ->whereNotNull('stripe_subscription_id')
+            ->latest()
+            ->first();
+
+        if (! $activeSub) {
+            return response()->json(['has_existing_subscription' => false]);
+        }
+
+        $stripe = new StripeClient(config('services.stripe.secret'));
+
+        try {
+            $stripeSub = $stripe->subscriptions->retrieve($activeSub->stripe_subscription_id);
+            $itemId    = $stripeSub->items->data[0]->id ?? null;
+
+            if (! $itemId) {
+                return response()->json(['message' => 'Could not find your subscription details.'], 422);
+            }
+
+            $preview = $stripe->invoices->createPreview([
+                'subscription' => $activeSub->stripe_subscription_id,
+                'subscription_details' => [
+                    'items' => [[
+                        'id'    => $itemId,
+                        'price' => $priceId,
+                    ]],
+                    'proration_behavior' => 'create_prorations',
+                ],
+            ]);
+
+            return response()->json([
+                'has_existing_subscription' => true,
+                'amount_due'  => round($preview->amount_due / 100, 2),
+                'currency'    => strtoupper($preview->currency),
+                'is_trialing' => $activeSub->status === 'trialing',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Could not calculate the price change. Please try again.'], 422);
+        }
+    }
+
+    /* ================================================================
      | CHECKOUT — start a new subscription or upgrade plan
      |================================================================*/
     public function checkout(Request $request, string $tenant)

@@ -112,7 +112,7 @@
     </div>
 
     {{-- Plans Grid --}}
-    <div>
+    <div @if($subscription) x-data="billingPlanChange('{{ route('admin.billing.preview-change', $tenant) }}')" @endif>
         <h3 class="text-base font-bold text-ink mb-4">Available Plans</h3>
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             @foreach($plans as $plan)
@@ -201,20 +201,73 @@
                         </button>
                     </div>
 
-                    <button type="submit" class="w-full lmt-btn-primary text-sm py-2.5">
-                        @if($subscription && $subscription->plan && $plan->monthly_price > $subscription->plan->monthly_price)
+                    @if($subscription)
+                    <button type="button"
+                            @click="openConfirm('{{ $plan->slug }}', @js($plan->name), cycle, $el.closest('form'))"
+                            class="w-full lmt-btn-primary text-sm py-2.5">
+                        @if($subscription->plan && $plan->monthly_price > $subscription->plan->monthly_price)
                             Upgrade to {{ $plan->name }}
-                        @elseif($subscription && $subscription->plan)
-                            Switch to {{ $plan->name }}
                         @else
-                            Subscribe
+                            Switch to {{ $plan->name }}
                         @endif
                     </button>
+                    @else
+                    <button type="submit" class="w-full lmt-btn-primary text-sm py-2.5">
+                        Subscribe
+                    </button>
+                    @endif
                 </form>
                 @endif
             </div>
             @endforeach
         </div>
+
+        @if($subscription)
+        {{-- Plan Change Confirmation Modal --}}
+        <div class="lmt-modal-backdrop" x-show="open" x-cloak @click.self="open=false">
+            <div class="lmt-modal">
+                <h3 class="font-black text-ink mb-4">Confirm plan change</h3>
+
+                <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-ink-soft gap-2">
+                    <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                    </svg>
+                    Calculating price change…
+                </div>
+
+                <div x-show="!loading && error" class="text-center py-6">
+                    <p class="text-sm text-red-600 font-semibold">Could not calculate the price change.</p>
+                    <p class="text-xs text-ink-soft mt-1">Please try again in a moment.</p>
+                </div>
+
+                <div x-show="!loading && !error" class="space-y-4">
+                    <p class="text-sm text-ink-soft">
+                        You're switching to <span class="font-bold text-ink" x-text="planName"></span>.
+                    </p>
+
+                    <template x-if="isTrialing">
+                        <div class="rounded-xl p-3 text-sm bg-blue-50 text-blue-700">
+                            You're still in your free trial, so nothing is charged today. This will be your price once billing starts.
+                        </div>
+                    </template>
+
+                    <div class="rounded-xl p-4 bg-gray-50 text-center">
+                        <p class="text-xs text-ink-soft mb-1" x-text="isCredit ? 'You\'ll be credited' : (isTrialing ? 'Price after trial' : 'You\'ll be charged today')"></p>
+                        <p class="text-2xl font-black" :class="isCredit ? 'text-emerald-600' : 'text-ink'">
+                            <span x-text="isCredit ? '-' : ''"></span>{{-- credit sign --}}
+                            <span x-text="currency"></span>&nbsp;<span x-text="amountDue?.toFixed(2)"></span>
+                        </p>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="button" @click="confirmSubmit()" class="lmt-btn-primary flex-1">Confirm switch</button>
+                        <button type="button" @click="open=false" class="lmt-btn-secondary flex-1">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 
@@ -292,3 +345,61 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+function billingPlanChange(previewUrl) {
+    return {
+        open: false,
+        loading: false,
+        error: false,
+        planName: '',
+        amountDue: null,
+        currency: 'USD',
+        isTrialing: false,
+        isCredit: false,
+        formEl: null,
+
+        async openConfirm(planSlug, planName, cycle, formEl) {
+            this.formEl = formEl;
+            this.planName = planName;
+            this.open = true;
+            this.loading = true;
+            this.error = false;
+            try {
+                const res = await fetch(previewUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                    },
+                    body: JSON.stringify({ plan_slug: planSlug, billing_cycle: cycle }),
+                });
+                const data = await res.json();
+                if (!res.ok || !data.has_existing_subscription) {
+                    // Nothing to preview against — submit directly rather than blocking on a
+                    // confirmation the backend can't compute.
+                    this.open = false;
+                    formEl.submit();
+                    return;
+                }
+                this.amountDue = Math.abs(data.amount_due);
+                this.isCredit = data.amount_due < 0;
+                this.currency = data.currency;
+                this.isTrialing = data.is_trialing;
+            } catch (e) {
+                this.error = true;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        confirmSubmit() {
+            if (this.formEl) this.formEl.submit();
+        },
+    };
+}
+</script>
+@endpush
