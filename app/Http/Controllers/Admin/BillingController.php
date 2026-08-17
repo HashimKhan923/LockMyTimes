@@ -68,20 +68,44 @@ class BillingController extends Controller
         $currentTenant = $this->tenantManager->current();
         $stripe        = new StripeClient(config('services.stripe.secret'));
 
-        // If tenant already has an active Stripe subscription — create a portal session to switch
+        // If tenant already has an active Stripe subscription, switch its price in place below
+        // instead of starting a brand new Checkout session.
         $activeSub = Subscription::where('tenant_id', $currentTenant->id)
             ->whereIn('status', ['active', 'trialing'])
             ->whereNotNull('stripe_subscription_id')
             ->latest()
             ->first();
 
-        if ($activeSub && $currentTenant->stripe_customer_id) {
-            // Use Stripe Customer Portal for plan changes on existing subscriptions
-            $session = $stripe->billingPortal->sessions->create([
-                'customer'   => $currentTenant->stripe_customer_id,
-                'return_url' => route('admin.billing.index', $tenant),
+        if ($activeSub && $currentTenant->stripe_customer_id && $activeSub->stripe_subscription_id) {
+            // Already subscribed — switch the existing Stripe subscription's price directly
+            // rather than sending the admin to the generic billing portal (which has no way to
+            // know which plan they meant to switch to). The customer.subscription.updated
+            // webhook (SubscriptionController::handleSubscriptionUpdated) picks up the new
+            // price and syncs our Subscription/Tenant records — same as every other
+            // subscription-state change in this app.
+            $stripeSub = $stripe->subscriptions->retrieve($activeSub->stripe_subscription_id);
+            $itemId    = $stripeSub->items->data[0]->id ?? null;
+
+            if (! $itemId) {
+                return back()->with('error', 'Could not find your subscription details. Please contact support.');
+            }
+
+            $stripe->subscriptions->update($activeSub->stripe_subscription_id, [
+                'items' => [[
+                    'id'    => $itemId,
+                    'price' => $priceId,
+                ]],
+                'proration_behavior' => 'create_prorations',
+                'metadata' => [
+                    'tenant_id'     => (string) $currentTenant->id,
+                    'tenant_slug'   => $currentTenant->slug,
+                    'plan_slug'     => $plan->slug,
+                    'billing_cycle' => $request->billing_cycle,
+                ],
             ]);
-            return redirect($session->url);
+
+            return redirect()->route('admin.billing.index', $tenant)
+                ->with('success', "Your plan is being changed to {$plan->name}. This can take a few seconds to finish updating.");
         }
 
         // First-time checkout for this tenant

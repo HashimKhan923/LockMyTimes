@@ -117,7 +117,8 @@
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             @foreach($plans as $plan)
             @php $isCurrent = $subscription?->plan_id === $plan->id; @endphp
-            <div class="lmt-card flex flex-col {{ $plan->is_featured ? 'ring-2 ring-brand-400' : '' }} {{ $isCurrent ? 'ring-2 ring-emerald-400' : '' }}">
+            <div class="lmt-card flex flex-col {{ $plan->is_featured ? 'ring-2 ring-brand-400' : '' }} {{ $isCurrent ? 'ring-2 ring-emerald-400' : '' }}"
+                 x-data="{ cycle: 'monthly' }">
 
                 @if($isCurrent)
                 <div class="text-center mb-3">
@@ -136,9 +137,18 @@
                     @endif
                 </div>
 
-                <div class="mb-4 flex items-end gap-1">
-                    <span class="text-2xl font-black text-ink">${{ number_format($plan->monthly_price, 0) }}</span>
-                    <span class="text-ink-soft text-sm mb-1">/mo</span>
+                <div class="mb-4">
+                    <div x-show="cycle==='monthly'" class="flex items-end gap-1">
+                        <span class="text-2xl font-black text-ink">${{ number_format($plan->monthly_price, 0) }}</span>
+                        <span class="text-ink-soft text-sm mb-1">/mo</span>
+                    </div>
+                    <div x-show="cycle==='yearly'" x-cloak class="flex items-end gap-1">
+                        <span class="text-2xl font-black text-ink">${{ number_format($plan->yearly_price / 12, 0) }}</span>
+                        <span class="text-ink-soft text-sm mb-1">/mo</span>
+                    </div>
+                    <p x-show="cycle==='yearly'" x-cloak class="text-xs text-emerald-600 font-semibold mt-0.5">
+                        Billed ${{ number_format($plan->yearly_price, 0) }}/year
+                    </p>
                 </div>
 
                 <ul class="space-y-2 mb-5 flex-1">
@@ -168,7 +178,7 @@
                     Active
                 </div>
                 @else
-                <form method="POST" action="{{ route('admin.billing.checkout', $tenant) }}" x-data="{ cycle: 'monthly' }">
+                <form method="POST" action="{{ route('admin.billing.checkout', $tenant) }}">
                     @csrf
                     <input type="hidden" name="plan_slug" value="{{ $plan->slug }}">
                     <input type="hidden" name="billing_cycle" x-bind:value="cycle">
