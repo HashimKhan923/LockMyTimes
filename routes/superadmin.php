@@ -4,6 +4,7 @@ use App\Http\Controllers\SuperAdmin\AnalyticsController;
 use App\Http\Controllers\SuperAdmin\AuditController;
 use App\Http\Controllers\SuperAdmin\AuthController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
+use App\Http\Controllers\SuperAdmin\NotificationController;
 use App\Http\Controllers\SuperAdmin\PaymentController;
 use App\Http\Controllers\SuperAdmin\PlanController;
 use App\Http\Controllers\SuperAdmin\SettingsController;
@@ -32,6 +33,16 @@ Route::middleware('superadmin')->group(function () {
 
     // Analytics
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+
+    // Notifications
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/',              [NotificationController::class, 'index'])->name('index');
+        Route::get('/feed',          [NotificationController::class, 'feed'])->name('feed');
+        Route::patch('/{id}/read',   [NotificationController::class, 'markRead'])->name('read');
+        Route::post('/read-all',     [NotificationController::class, 'markAllRead'])->name('read-all');
+        Route::delete('/clear-all',  [NotificationController::class, 'destroyAll'])->name('clear-all');
+        Route::delete('/{id}',       [NotificationController::class, 'destroy'])->name('destroy');
+    });
 
     // Organizations
     Route::prefix('organizations')->name('organizations.')->group(function () {

@@ -7,6 +7,7 @@ use App\Models\Tenant\Expense;
 use App\Models\Tenant\ExpenseApproval;
 use App\Models\Tenant\ExpenseCategory;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -227,7 +228,13 @@ class ExpenseController extends Controller
             DB::connection('tenant')->commit();
 
             if ($action !== 'draft') {
-                app(MailService::class)->sendExpenseSubmitted($expense->load(['employee', 'category']));
+                $expense->load(['employee', 'category']);
+                app(MailService::class)->sendExpenseSubmitted($expense);
+                NotificationService::notifyAdmins(
+                    "{$emp->full_name} submitted an expense of \${$expense->amount}",
+                    'expense.submitted', 'receipt', '#8B5CF6',
+                    route('admin.expenses.index', $tenant)
+                );
             }
         } catch (\Throwable $e) {
             DB::connection('tenant')->rollBack();

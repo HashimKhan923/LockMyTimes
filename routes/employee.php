@@ -7,6 +7,7 @@ use App\Http\Controllers\Employee\DashboardController;
 use App\Http\Controllers\Employee\ExpenseController;
 use App\Http\Controllers\Employee\LeaveController;
 use App\Http\Controllers\Employee\LoanController;
+use App\Http\Controllers\Employee\NotificationController;
 use App\Http\Controllers\Employee\PayslipController;
 use App\Http\Controllers\Employee\ProfileController;
 use App\Http\Controllers\Employee\ProjectController;
@@ -175,10 +176,12 @@ Route::middleware(['tenant', 'subscription.active', 'employee.auth'])->group(fun
 
     /* ─── Phase 16 — Notifications ─── */
     Route::prefix('notifications')->name('notifications.')->group(function () {
-        Route::get('/',                  [DashboardController::class, 'comingSoon'])->name('index');
-        Route::get('/feed',              [DashboardController::class, 'comingSoonJson'])->name('feed');
-        Route::patch('/{id}/read',       [DashboardController::class, 'comingSoonJson'])->name('read');
-        Route::post('/read-all',         [DashboardController::class, 'comingSoonJson'])->name('read-all');
+        Route::get('/',                  [NotificationController::class, 'index'])->name('index');
+        Route::get('/feed',              [NotificationController::class, 'feed'])->name('feed');
+        Route::patch('/{id}/read',       [NotificationController::class, 'markRead'])->name('read');
+        Route::post('/read-all',         [NotificationController::class, 'markAllRead'])->name('read-all');
+        Route::delete('/clear-all',      [NotificationController::class, 'destroyAll'])->name('clear-all');
+        Route::delete('/{id}',           [NotificationController::class, 'destroy'])->name('destroy');
     });
 
     /* ─── Phase 17 — Helpdesk / Support (REMOVED) ─── */

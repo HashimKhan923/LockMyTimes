@@ -32,18 +32,23 @@ class NotificationService
     }
 
     /**
-     * Broadcast a notification to all admin users.
+     * Broadcast a notification to all admin users. Pass $excludeUserId (typically the acting
+     * admin) to avoid notifying someone about the action they just took themselves.
      */
     public static function notifyAdmins(
         string $title,
-        string $type       = 'general',
-        string $icon       = 'bell',
-        string $color      = '#6C7DF7',
-        ?string $actionUrl = null,
-        array  $data       = []
+        string $type         = 'general',
+        string $icon         = 'bell',
+        string $color        = '#6C7DF7',
+        ?string $actionUrl   = null,
+        array  $data         = [],
+        ?int   $excludeUserId = null
     ): void {
         $admins = User::role(['Tenant Admin', 'HR Manager'], 'web')->get();
         foreach ($admins as $admin) {
+            if ($excludeUserId !== null && $admin->id === $excludeUserId) {
+                continue;
+            }
             static::send($admin, $title, $type, $icon, $color, $actionUrl, $data);
         }
     }
@@ -69,33 +74,57 @@ class NotificationService
             'leave.rejected', 'x-circle', '#EF4444', $url);
     }
 
-    public static function payrollReady(User $admin, string $period, string $url): void
+    public static function loanApproved(User $employee, string $amount, string $url): void
     {
-        static::send($admin, "Payroll run for {$period} is ready for review",
-            'payroll.ready', 'dollar-sign', '#F59E0B', $url);
+        static::send($employee, "Your loan request of {$amount} was approved",
+            'loan.approved', 'check-circle', '#10B981', $url);
     }
 
-    public static function payrollApproved(User $admin, string $period, string $url): void
+    public static function loanRejected(User $employee, string $amount, string $url): void
     {
-        static::send($admin, "Payroll for {$period} has been approved",
-            'payroll.approved', 'check-circle', '#10B981', $url);
+        static::send($employee, "Your loan request of {$amount} was rejected",
+            'loan.rejected', 'x-circle', '#EF4444', $url);
     }
 
-    public static function payrollRejected(User $admin, string $period, string $url): void
+    public static function loanDisbursed(User $employee, string $amount, string $url): void
     {
-        static::send($admin, "Payroll for {$period} was rejected",
-            'payroll.rejected', 'x-circle', '#EF4444', $url);
+        static::send($employee, "Your loan of {$amount} has been disbursed",
+            'loan.disbursed', 'banknote', '#10B981', $url);
     }
 
-    public static function expenseSubmitted(User $admin, string $employeeName, string $amount, string $url): void
+    public static function payslipAvailable(User $employee, string $period, string $url): void
     {
-        static::send($admin, "{$employeeName} submitted an expense of {$amount}",
-            'expense.submitted', 'receipt', '#8B5CF6', $url);
+        static::send($employee, "Your payslip for {$period} is available",
+            'payslip.available', 'file-text', '#6C7DF7', $url);
     }
 
-    public static function newEmployee(User $admin, string $name, string $url): void
+    public static function assetAssigned(User $employee, string $assetName, string $url): void
     {
-        static::send($admin, "New employee {$name} has been added",
-            'employee.created', 'user-plus', '#6C7DF7', $url);
+        static::send($employee, "{$assetName} has been assigned to you",
+            'asset.assigned', 'package', '#3B82F6', $url);
+    }
+
+    public static function trainingEnrolled(User $employee, string $courseName, string $url): void
+    {
+        static::send($employee, "You've been enrolled in {$courseName}",
+            'training.enrolled', 'graduation-cap', '#3B82F6', $url);
+    }
+
+    public static function taskAssigned(User $employee, string $taskTitle, string $url): void
+    {
+        static::send($employee, "You've been assigned a task: {$taskTitle}",
+            'task.assigned', 'check-square', '#6C7DF7', $url);
+    }
+
+    public static function reviewAssigned(User $employee, string $revieweeName, string $url): void
+    {
+        static::send($employee, "You've been assigned to review {$revieweeName}",
+            'review.assigned', 'clipboard-list', '#8B5CF6', $url);
+    }
+
+    public static function kudoReceived(User $employee, string $fromName, string $url): void
+    {
+        static::send($employee, "{$fromName} gave you a kudo",
+            'kudo.received', 'award', '#F59E0B', $url);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Tenant\Expense;
 use App\Models\Tenant\ExpenseCategory;
 use App\Services\ExportService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -98,7 +99,16 @@ class ExpenseController extends Controller
             'approved_at' => now(),
         ]);
 
-        app(MailService::class)->sendExpenseApproved($expense->fresh(['employee', 'category']));
+        $expense = $expense->fresh(['employee', 'category']);
+        app(MailService::class)->sendExpenseApproved($expense);
+        if ($expense->employee?->user) {
+            NotificationService::send(
+                $expense->employee->user,
+                "Your expense of \${$expense->amount} was approved",
+                'expense.approved', 'check-circle', '#10B981',
+                route('employee.expenses.index', $tenant)
+            );
+        }
 
         return back()->with('success', "Expense approved — \${$expense->amount}.");
     }
@@ -116,7 +126,16 @@ class ExpenseController extends Controller
             'rejection_reason' => $request->reason,
         ]);
 
-        app(MailService::class)->sendExpenseRejected($expense->fresh(['employee', 'category']));
+        $expense = $expense->fresh(['employee', 'category']);
+        app(MailService::class)->sendExpenseRejected($expense);
+        if ($expense->employee?->user) {
+            NotificationService::send(
+                $expense->employee->user,
+                "Your expense of \${$expense->amount} was rejected",
+                'expense.rejected', 'x-circle', '#EF4444',
+                route('employee.expenses.index', $tenant)
+            );
+        }
 
         return back()->with('success', 'Expense rejected.');
     }
@@ -132,7 +151,16 @@ class ExpenseController extends Controller
             'paid_at' => now(),
         ]);
 
-        app(MailService::class)->sendExpensePaid($expense->fresh(['employee', 'category']));
+        $expense = $expense->fresh(['employee', 'category']);
+        app(MailService::class)->sendExpensePaid($expense);
+        if ($expense->employee?->user) {
+            NotificationService::send(
+                $expense->employee->user,
+                "Your expense of \${$expense->amount} has been paid",
+                'expense.paid', 'banknote', '#10B981',
+                route('employee.expenses.index', $tenant)
+            );
+        }
 
         return back()->with('success', 'Expense marked as paid.');
     }
@@ -163,8 +191,15 @@ class ExpenseController extends Controller
         $data['submitted_at']   = now();
 
         $expense = Expense::create($data);
+        $expense->load(['employee', 'category']);
 
-        app(MailService::class)->sendExpenseSubmitted($expense->load(['employee', 'category']));
+        app(MailService::class)->sendExpenseSubmitted($expense);
+        NotificationService::notifyAdmins(
+            "{$expense->employee->full_name}'s expense of \${$expense->amount} needs approval",
+            'expense.submitted', 'receipt', '#8B5CF6',
+            route('admin.expenses.index', $tenant),
+            [], auth()->id()
+        );
 
         return back()->with('success', 'Expense submitted successfully.');
     }

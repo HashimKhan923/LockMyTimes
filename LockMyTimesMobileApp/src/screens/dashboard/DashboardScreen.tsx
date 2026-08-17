@@ -8,6 +8,7 @@ import { fetchAttendanceIndex, fetchAttendanceStatus } from '../../api/endpoints
 import { fetchLeaves } from '../../api/endpoints/leaves';
 import { fetchTasks } from '../../api/endpoints/tasks';
 import { fetchAnnouncements } from '../../api/endpoints/announcements';
+import { fetchNotifications } from '../../api/endpoints/notifications';
 import { fetchPayslips } from '../../api/endpoints/payslips';
 import { fetchProfile } from '../../api/endpoints/profile';
 import { AppRefreshControl } from '../../components/common/AppRefreshControl';
@@ -41,6 +42,11 @@ export function DashboardScreen({ navigation }: Props) {
   const leavesQuery = useQuery({ queryKey: ['leaves', 'index'], queryFn: () => fetchLeaves() });
   const tasksQuery = useQuery({ queryKey: ['tasks', 'open'], queryFn: () => fetchTasks({ filter: 'open' }) });
   const announcementsQuery = useQuery({ queryKey: ['announcements', 'index'], queryFn: () => fetchAnnouncements() });
+  const notificationsQuery = useQuery({
+    queryKey: ['notifications', 'index'],
+    queryFn: fetchNotifications,
+    refetchInterval: 60_000,
+  });
   const payslipsQuery = useQuery({ queryKey: ['payslips', 'index'], queryFn: () => fetchPayslips() });
   // Same query the Profile screen uses — the cached auth session's
   // avatar_url can go stale (it's only refreshed on login), so prefer this
@@ -54,6 +60,7 @@ export function DashboardScreen({ navigation }: Props) {
     leavesQuery.refetch();
     tasksQuery.refetch();
     announcementsQuery.refetch();
+    notificationsQuery.refetch();
     payslipsQuery.refetch();
     profileQuery.refetch();
   };
@@ -75,6 +82,7 @@ export function DashboardScreen({ navigation }: Props) {
     .toUpperCase();
 
   const unreadCount = announcementsQuery.data?.counters.unread ?? 0;
+  const unreadNotifCount = notificationsQuery.data?.unread_count ?? 0;
   const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
 
   return (
@@ -113,6 +121,7 @@ export function DashboardScreen({ navigation }: Props) {
               style={[styles.iconButton, { backgroundColor: theme.surfaceAlt, borderColor: theme.border }]}
             >
               <Icon name="notifications-outline" size={19} color={theme.text} />
+              {unreadNotifCount > 0 && <View style={[styles.dot, { backgroundColor: theme.danger, borderColor: theme.background }]} />}
             </Pressable>
           </View>
         </MotiView>

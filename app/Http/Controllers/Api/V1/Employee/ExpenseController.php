@@ -9,6 +9,8 @@ use App\Models\Tenant\Expense;
 use App\Models\Tenant\ExpenseApproval;
 use App\Models\Tenant\ExpenseCategory;
 use App\Services\MailService;
+use App\Services\NotificationService;
+use App\Services\TenantManager;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -213,7 +215,13 @@ class ExpenseController extends Controller
 
         if ($action !== 'draft') {
             try {
-                app(MailService::class)->sendExpenseSubmitted($expense->load(['employee', 'category']));
+                $expense->load(['employee', 'category']);
+                app(MailService::class)->sendExpenseSubmitted($expense);
+                NotificationService::notifyAdmins(
+                    "{$emp->full_name} submitted an expense of \${$expense->amount}",
+                    'expense.submitted', 'receipt', '#8B5CF6',
+                    route('admin.expenses.index', app(TenantManager::class)->current()->slug)
+                );
             } catch (\Throwable $e) {
                 \Log::error('Expense-submitted notification failed (API): '.$e->getMessage());
             }

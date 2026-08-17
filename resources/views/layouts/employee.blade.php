@@ -416,6 +416,41 @@
                                 this.$nextTick(() => window.lucide && lucide.createIcons());
                             }
                             @endif
+                        },
+                        async markAllRead() {
+                            @if(\Route::has('employee.notifications.read-all'))
+                            try {
+                                await fetch('{{ route('employee.notifications.read-all', $tenantSlug) }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                    }
+                                });
+                                this.items = this.items.map(i => ({ ...i, unread: false }));
+                                this.unread = 0;
+                            } catch(e) {}
+                            @endif
+                        },
+                        async clickItem(item) {
+                            @if(\Route::has('employee.notifications.read'))
+                            if (item.unread) {
+                                try {
+                                    await fetch('{{ route('employee.notifications.feed', $tenantSlug) }}'.replace('/feed', '/' + item.id + '/read'), {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content,
+                                        }
+                                    });
+                                    item.unread = false;
+                                    this.unread = Math.max(0, this.unread - 1);
+                                } catch(e) {}
+                            }
+                            @endif
+                            if (item.action_url) { window.location.href = item.action_url; }
                         }
                     }"
                     x-init="load(); setInterval(()=>load(), 60000)"
@@ -437,7 +472,11 @@
 
                         <div class="px-4 py-3 border-b border-gray-100 dark:border-slate-700 flex items-center justify-between">
                             <span class="font-bold text-sm text-gray-900 dark:text-slate-100">Notifications</span>
-                            <span x-show="unread > 0" x-cloak class="lmt-badge-brand text-xs" x-text="unread + ' new'"></span>
+                            <div class="flex items-center gap-2">
+                                <span x-show="unread > 0" x-cloak class="lmt-badge-brand text-xs" x-text="unread + ' new'"></span>
+                                <button x-show="unread > 0" x-cloak @click="markAllRead()"
+                                        class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Mark all read</button>
+                            </div>
                         </div>
 
                         <div class="max-h-80 overflow-y-auto">
@@ -456,9 +495,9 @@
                             </div>
 
                             <template x-for="item in items" :key="item.id">
-                                <a :href="item.action_url || '#'"
-                                   :class="item.unread ? 'bg-blue-50/40 dark:bg-slate-700/40' : ''"
-                                   class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-gray-50 dark:border-slate-700/50 last:border-0">
+                                <div @click="clickItem(item)"
+                                     :class="item.unread ? 'bg-blue-50/40 dark:bg-slate-700/40' : ''"
+                                     class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-colors border-b border-gray-50 dark:border-slate-700/50 last:border-0">
                                     <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
                                          :style="'background:' + (item.color || '#6C7DF7') + '20; color:' + (item.color || '#6C7DF7')">
                                         <i :data-lucide="item.icon || 'bell'" class="w-3.5 h-3.5"></i>
@@ -468,7 +507,7 @@
                                         <p class="text-xs text-gray-400 mt-0.5" x-text="item.time"></p>
                                     </div>
                                     <span x-show="item.unread" class="w-2 h-2 rounded-full flex-shrink-0 mt-2" style="background:var(--brand-500);"></span>
-                                </a>
+                                </div>
                             </template>
                         </div>
 

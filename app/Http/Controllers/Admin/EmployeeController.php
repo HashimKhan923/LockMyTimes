@@ -10,6 +10,7 @@ use App\Models\Tenant\Position;
 use App\Models\Tenant\User;
 use App\Services\ExportService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -155,6 +156,12 @@ class EmployeeController extends Controller
             app(MailService::class)->sendEmployeeWelcome(
                 $employee->load(['department', 'position']),
                 $tempPassword
+            );
+            NotificationService::notifyAdmins(
+                "New employee {$employee->full_name} has been added",
+                'employee.created', 'user-plus', '#6C7DF7',
+                route('admin.employees.show', [$tenant, $employee->id]),
+                [], auth()->id()
             );
 
             return redirect()

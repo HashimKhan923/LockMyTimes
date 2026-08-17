@@ -215,82 +215,122 @@
                     <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-500"></i>
                 </button>
 
-                {{-- Notification bell with dropdown --}}
-                @php
-                $notifItems = [];
-                $expiringTrials = \App\Models\Main\Tenant::where('status','trial')
-                    ->where('trial_ends_at','<=',now()->addDays(3))
-                    ->where('trial_ends_at','>',now())
-                    ->orderBy('trial_ends_at')
-                    ->limit(5)->get(['id','company_name','trial_ends_at','slug']);
-                foreach($expiringTrials as $t) {
-                    $notifItems[] = ['type'=>'warning','icon'=>'clock','msg'=>$t->company_name.' trial expires '.$t->trial_ends_at->diffForHumans(),'url'=>route('superadmin.organizations.show',$t)];
-                }
-                $failedPayments = \App\Models\Main\Payment::where('status','failed')->where('created_at','>=',now()->subDays(7))->count();
-                if($failedPayments) {
-                    $notifItems[] = ['type'=>'danger','icon'=>'credit-card','msg'=>$failedPayments.' failed payment(s) in last 7 days','url'=>route('superadmin.payments.index',['status'=>'failed'])];
-                }
-                $openTickets = \App\Models\Main\SupportTicket::where('status','open')->count();
-                if($openTickets) {
-                    $notifItems[] = ['type'=>'info','icon'=>'life-buoy','msg'=>$openTickets.' open support ticket(s)','url'=>route('superadmin.tickets.index',['status'=>'open'])];
-                }
-                $totalNotifs = count($notifItems);
-                @endphp
-
-                <div class="relative" x-data="{ open: false }" @click.outside="open=false">
-                    <button @click="open=!open"
+                {{-- Notification bell with dropdown — real persisted notifications (system alerts
+                     like expiring trials / failed payments / new tickets are pushed into this same
+                     feed by scheduled checks and event triggers, see SuperAdminNotificationService) --}}
+                <div class="relative" x-data="{
+                        open: false, items: [], unread: 0, loading: false,
+                        async load() {
+                            this.loading = true;
+                            try {
+                                const res = await fetch('{{ route('superadmin.notifications.feed') }}', {
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                                });
+                                const data = await res.json();
+                                this.items = data.items ?? [];
+                                this.unread = data.unread_count ?? 0;
+                            } catch(e) {} finally {
+                                this.loading = false;
+                                this.$nextTick(() => window.lucide && lucide.createIcons());
+                            }
+                        },
+                        async markAllRead() {
+                            try {
+                                await fetch('{{ route('superadmin.notifications.read-all') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                    }
+                                });
+                                this.items = this.items.map(i => ({ ...i, unread: false }));
+                                this.unread = 0;
+                            } catch(e) {}
+                        },
+                        async clickItem(item) {
+                            if (item.unread) {
+                                try {
+                                    await fetch('{{ route('superadmin.notifications.feed') }}'.replace('/feed', '/' + item.id + '/read'), {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content,
+                                        }
+                                    });
+                                    item.unread = false;
+                                    this.unread = Math.max(0, this.unread - 1);
+                                } catch(e) {}
+                            }
+                            if (item.action_url) { window.location.href = item.action_url; }
+                            this.open = false;
+                        }
+                    }"
+                    x-init="load(); setInterval(()=>load(), 60000)"
+                    @click.outside="open=false">
+                    <button @click="open=!open; if(open) load()"
                             class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors relative"
                             title="Notifications">
                         <i data-lucide="bell" class="w-4 h-4 text-gray-500"></i>
-                        @if($totalNotifs > 0)
-                        <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center leading-none">{{ $totalNotifs }}</span>
-                        @endif
+                        <span x-show="unread > 0" x-cloak
+                              class="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center leading-none px-1"
+                              x-text="unread > 9 ? '9+' : unread"></span>
                     </button>
 
                     {{-- Dropdown --}}
-                    <div x-show="open" x-transition:enter="transition ease-out duration-150"
+                    <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-150"
                          x-transition:enter-start="opacity-0 -translate-y-2"
                          x-transition:enter-end="opacity-100 translate-y-0"
                          class="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl border border-gray-100 overflow-hidden z-50"
                          style="box-shadow:0 8px 32px rgba(0,0,0,0.12);">
                         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                             <p class="font-bold text-ink text-sm">Notifications</p>
-                            @if($totalNotifs > 0)
-                            <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">{{ $totalNotifs }} new</span>
-                            @endif
+                            <div class="flex items-center gap-2">
+                                <span x-show="unread > 0" x-cloak class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full" x-text="unread + ' new'"></span>
+                                <button x-show="unread > 0" x-cloak @click="markAllRead()"
+                                        class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Mark all read</button>
+                            </div>
                         </div>
 
-                        @if(empty($notifItems))
-                        <div class="px-4 py-8 text-center">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mx-auto mb-3">
-                                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i>
-                            </div>
-                            <p class="text-sm font-semibold text-ink">All clear!</p>
-                            <p class="text-xs text-ink-soft mt-1">No alerts at this time.</p>
-                        </div>
-                        @else
                         <div class="max-h-72 overflow-y-auto divide-y divide-gray-50">
-                            @foreach($notifItems as $n)
-                            @php
-                            $nColors = ['warning'=>['bg'=>'bg-amber-50','icon'=>'text-amber-500'],'danger'=>['bg'=>'bg-red-50','icon'=>'text-red-500'],'info'=>['bg'=>'bg-brand-50','icon'=>'text-brand-500']];
-                            $nc = $nColors[$n['type']] ?? $nColors['info'];
-                            @endphp
-                            <a href="{{ $n['url'] }}"
-                               class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
-                               @click="open=false">
-                                <div class="w-8 h-8 rounded-lg {{ $nc['bg'] }} flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <i data-lucide="{{ $n['icon'] }}" class="w-4 h-4 {{ $nc['icon'] }}"></i>
+                            <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-gray-400 gap-2">
+                                <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                                </svg>
+                                Loading…
+                            </div>
+
+                            <div x-show="!loading && items.length === 0" class="px-4 py-8 text-center">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mx-auto mb-3">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i>
                                 </div>
-                                <p class="text-sm text-ink leading-snug flex-1">{{ $n['msg'] }}</p>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-gray-300 group-hover:text-brand-500 transition-colors flex-shrink-0 mt-1"></i>
-                            </a>
-                            @endforeach
+                                <p class="text-sm font-semibold text-ink">All clear!</p>
+                                <p class="text-xs text-ink-soft mt-1">No alerts at this time.</p>
+                            </div>
+
+                            <template x-for="item in items" :key="item.id">
+                                <div @click="clickItem(item)"
+                                     :class="item.unread ? 'bg-brand-50/40' : ''"
+                                     class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors group">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                                         :style="'background:' + item.color + '20; color:' + item.color">
+                                        <i :data-lucide="item.icon" class="w-4 h-4"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-ink leading-snug" x-text="item.title"></p>
+                                        <p class="text-xs text-ink-soft mt-0.5" x-text="item.time"></p>
+                                    </div>
+                                    <span x-show="item.unread" class="w-2 h-2 rounded-full flex-shrink-0 mt-2 bg-brand-500"></span>
+                                </div>
+                            </template>
                         </div>
-                        @endif
 
                         <div class="px-4 py-2.5 border-t border-gray-100 bg-gray-50/50">
-                            <a href="{{ route('superadmin.dashboard') }}" class="text-xs text-brand-500 hover:text-brand-700 font-semibold"
-                               @click="open=false">View all alerts on dashboard </a>
+                            <a href="{{ route('superadmin.notifications.index') }}" class="text-xs text-brand-500 hover:text-brand-700 font-semibold">
+                                View all notifications
+                            </a>
                         </div>
                     </div>
                 </div>

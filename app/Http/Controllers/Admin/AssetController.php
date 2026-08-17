@@ -10,6 +10,7 @@ use App\Models\Tenant\Employee;
 use App\Models\Tenant\Location;
 use App\Services\ExportService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -179,7 +180,13 @@ class AssetController extends Controller
         $asset->update(['status' => 'assigned']);
 
         $employee = Employee::find($data['employee_id']);
-        app(MailService::class)->sendAssetAssigned($assignment->load(['employee', 'asset.category']));
+        $assignment->load(['employee.user', 'asset.category']);
+        app(MailService::class)->sendAssetAssigned($assignment);
+        if ($employee->user) {
+            // The employee-facing assets page isn't built yet — link to the dashboard instead.
+            NotificationService::assetAssigned($employee->user, $assignment->asset->name ?? 'An asset',
+                route('employee.dashboard', $tenant));
+        }
         return back()->with('success', "Asset assigned to {$employee->full_name}.");
     }
 

@@ -9,6 +9,7 @@ use App\Models\Tenant\Training;
 use App\Models\Tenant\TrainingEnrollment;
 use App\Services\ExportService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -181,7 +182,14 @@ class TrainingController extends Controller
             if ($created->wasRecentlyCreated) {
                 $enrolled++;
                 $employee = Employee::find($empId);
-                if ($employee) $mailer->sendTrainingEnrolled($employee, $training);
+                if ($employee) {
+                    $mailer->sendTrainingEnrolled($employee, $training);
+                    if ($employee->user) {
+                        // The employee-facing training page isn't built yet — link to the dashboard instead.
+                        NotificationService::trainingEnrolled($employee->user, $training->title,
+                            route('employee.dashboard', $tenant));
+                    }
+                }
             }
         }
 

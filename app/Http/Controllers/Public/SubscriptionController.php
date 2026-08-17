@@ -8,6 +8,7 @@ use App\Models\Main\Payment;
 use App\Models\Main\Subscription;
 use App\Models\Main\SubscriptionPlan;
 use App\Models\Main\Tenant;
+use App\Services\SuperAdminNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -132,6 +133,11 @@ class SubscriptionController extends Controller
                     }
 
                     $tenant->applyPlan($plan);
+
+                    SuperAdminNotificationService::tenantSignedUp(
+                        $tenant->company_name,
+                        route('superadmin.organizations.show', $tenant)
+                    );
                 }
 
                 try {
@@ -254,6 +260,11 @@ class SubscriptionController extends Controller
 
         $this->createOrUpdateSubscription($tenant, $plan, $session->subscription, $meta['billing_cycle'] ?? 'monthly');
         $tenant->applyPlan($plan);
+
+        SuperAdminNotificationService::tenantSignedUp(
+            $tenant->company_name,
+            route('superadmin.organizations.show', $tenant)
+        );
 
         // Mark as pending — the success page will provision synchronously as a fallback,
         // or a queue worker will pick it up if available.
@@ -422,6 +433,12 @@ class SubscriptionController extends Controller
             'status'            => 'failed',
             'failure_message'   => 'Payment failed — card declined or insufficient funds',
         ]);
+
+        SuperAdminNotificationService::paymentFailed(
+            $tenant->company_name,
+            strtoupper($invoice->currency) . ' ' . number_format($invoice->amount_due / 100, 2),
+            route('superadmin.organizations.show', $tenant)
+        );
 
         Log::warning("Payment failed for tenant: {$tenant->slug}");
     }

@@ -324,8 +324,9 @@ class LeaveController extends Controller
             if ($needsApproval) {
                 app(MailService::class)->sendLeaveRequested($lr->load(['employee', 'leaveType']));
 
-                // Admins already get an email above — the direct manager only gets notified today
-                // if they're also an admin. Give the actual manager an in-app heads-up too.
+                // Bell notification: the direct manager (if any) plus all tenant admins/HR, so
+                // approval never depends on one specific manager being assigned — an employee
+                // with no manager set still gets their request surfaced to someone.
                 $managerUser = $emp->manager?->user;
                 if ($managerUser) {
                     NotificationService::send(
@@ -337,6 +338,12 @@ class LeaveController extends Controller
                         route('employee.team.approvals.leaves', $tenant)
                     );
                 }
+                NotificationService::notifyAdmins(
+                    "{$emp->full_name} submitted a leave request",
+                    'leave.requested', 'calendar-clock', '#F59E0B',
+                    route('admin.leaves.index', $tenant),
+                    [], $managerUser?->id
+                );
             } else {
                 // Auto-approved (leave type doesn't require approval) — the employee otherwise
                 // hears nothing at all.

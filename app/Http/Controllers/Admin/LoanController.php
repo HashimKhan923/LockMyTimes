@@ -10,6 +10,7 @@ use App\Models\Tenant\LoanType;
 use App\Models\Tenant\SalaryAdvance;
 use App\Services\ExportService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -150,7 +151,13 @@ class LoanController extends Controller
             'approved_at' => now(),
         ]);
 
-        app(MailService::class)->sendLoanApproved($loan->fresh(['employee', 'loanType']));
+        $loan = $loan->fresh(['employee', 'loanType']);
+        app(MailService::class)->sendLoanApproved($loan);
+        if ($loan->employee?->user) {
+            NotificationService::loanApproved($loan->employee->user,
+                number_format((float) $loan->principal_amount, 2),
+                route('employee.loans.index', $tenant));
+        }
 
         return back()->with('success', "Loan {$loan->loan_number} approved.");
     }
@@ -180,7 +187,13 @@ class LoanController extends Controller
         // Generate repayment schedule
         $this->generateRepaymentSchedule($loan);
 
-        app(MailService::class)->sendLoanDisbursed($loan->fresh(['employee', 'loanType']));
+        $loan = $loan->fresh(['employee', 'loanType']);
+        app(MailService::class)->sendLoanDisbursed($loan);
+        if ($loan->employee?->user) {
+            NotificationService::loanDisbursed($loan->employee->user,
+                number_format((float) $loan->principal_amount, 2),
+                route('employee.loans.index', $tenant));
+        }
 
         return back()->with('success', "Loan disbursed. Repayment schedule generated.");
     }
@@ -199,7 +212,13 @@ class LoanController extends Controller
             'rejection_reason' => $request->reason,
         ]);
 
-        app(MailService::class)->sendLoanRejected($loan->fresh(['employee', 'loanType']));
+        $loan = $loan->fresh(['employee', 'loanType']);
+        app(MailService::class)->sendLoanRejected($loan);
+        if ($loan->employee?->user) {
+            NotificationService::loanRejected($loan->employee->user,
+                number_format((float) $loan->principal_amount, 2),
+                route('employee.loans.index', $tenant));
+        }
 
         return back()->with('success', 'Loan rejected.');
     }

@@ -10,6 +10,7 @@ use App\Models\Tenant\PerformanceReview;
 use App\Models\Tenant\ReviewCycle;
 use App\Services\ExportService;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -97,7 +98,13 @@ class PerformanceController extends Controller
         ]);
 
         $review = PerformanceReview::create(array_merge($data, ['status' => 'pending']));
-        app(MailService::class)->sendReviewAssigned($review->load(['employee', 'reviewer', 'cycle']));
+        $review->load(['employee', 'reviewer.user', 'cycle']);
+        app(MailService::class)->sendReviewAssigned($review);
+        if ($review->reviewer?->user) {
+            // The employee-facing reviews page isn't built yet — link to the dashboard instead.
+            NotificationService::reviewAssigned($review->reviewer->user, $review->employee->full_name,
+                route('employee.dashboard', $tenant));
+        }
         return back()->with('success', 'Performance review created.');
     }
 
@@ -206,7 +213,13 @@ class PerformanceController extends Controller
             'reactions_count'  => 0,
         ]);
 
-        app(MailService::class)->sendKudoReceived($kudo->load(['toEmployee', 'fromEmployee']));
+        $kudo->load(['toEmployee.user', 'fromEmployee']);
+        app(MailService::class)->sendKudoReceived($kudo);
+        if ($kudo->toEmployee?->user) {
+            // The employee-facing kudos page isn't built yet — link to the dashboard instead.
+            NotificationService::kudoReceived($kudo->toEmployee->user, $kudo->fromEmployee->full_name,
+                route('employee.dashboard', $tenant));
+        }
 
         return back()->with('success', 'Kudos sent!');
     }

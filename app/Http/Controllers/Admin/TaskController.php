@@ -12,6 +12,7 @@ use App\Models\Tenant\TaskComment;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\TaskList;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -99,7 +100,13 @@ class TaskController extends Controller
                     'assigned_by' => auth()->id(),
                 ]);
                 $employee = Employee::find($empId);
-                if ($employee) $mailer->sendTaskAssigned($employee, $task);
+                if ($employee) {
+                    $mailer->sendTaskAssigned($employee, $task);
+                    if ($employee->user) {
+                        NotificationService::taskAssigned($employee->user, $task->title,
+                            route('employee.tasks.show', [$tenant, $task->id]));
+                    }
+                }
             }
         }
 

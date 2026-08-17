@@ -325,6 +325,7 @@ class LeaveController extends Controller
             try {
                 app(MailService::class)->sendLeaveRequested($lr->load(['employee', 'leaveType']));
 
+                $tenantSlug = app(TenantManager::class)->current()->slug;
                 $managerUser = $emp->manager?->user;
                 if ($managerUser) {
                     NotificationService::send(
@@ -333,9 +334,15 @@ class LeaveController extends Controller
                         'leave.requested',
                         'calendar-clock',
                         '#F59E0B',
-                        route('employee.team.approvals.leaves', app(TenantManager::class)->current()->slug)
+                        route('employee.team.approvals.leaves', $tenantSlug)
                     );
                 }
+                NotificationService::notifyAdmins(
+                    "{$emp->full_name} submitted a leave request",
+                    'leave.requested', 'calendar-clock', '#F59E0B',
+                    route('admin.leaves.index', $tenantSlug),
+                    [], $managerUser?->id
+                );
             } catch (\Throwable $e) {
                 \Log::error('Leave-requested notification failed (API): '.$e->getMessage());
             }

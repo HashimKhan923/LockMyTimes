@@ -84,9 +84,11 @@ public function createRun(string $tenant, Request $request)
 
     $this->payrollService->generateRun($run);
 
-    NotificationService::payrollReady(auth()->user(),
-        $run->period_start . ' – ' . $run->period_end,
-        route('admin.payroll.show', [$tenant, $run->id])
+    NotificationService::notifyAdmins(
+        "Payroll run for {$run->period_start} – {$run->period_end} is ready for review",
+        'payroll.ready', 'dollar-sign', '#F59E0B',
+        route('admin.payroll.show', [$tenant, $run->id]),
+        [], auth()->id()
     );
 
     return redirect()
@@ -132,9 +134,11 @@ public function createRun(string $tenant, Request $request)
 
         AuditLog::record('payroll.approved', $payrollRun, [], ['run_number' => $payrollRun->run_number]);
 
-        NotificationService::payrollApproved(auth()->user(),
-            $payrollRun->period_start . ' – ' . $payrollRun->period_end,
-            route('admin.payroll.show', [$tenant, $payrollRun->id])
+        NotificationService::notifyAdmins(
+            "Payroll for {$payrollRun->period_start} – {$payrollRun->period_end} has been approved",
+            'payroll.approved', 'check-circle', '#10B981',
+            route('admin.payroll.show', [$tenant, $payrollRun->id]),
+            [], auth()->id()
         );
 
         return back()->with('success', "Payroll run {$payrollRun->run_number} approved.");
@@ -163,9 +167,11 @@ public function createRun(string $tenant, Request $request)
             'reason' => $request->reason,
         ]);
 
-        NotificationService::payrollRejected(auth()->user(),
-            $payrollRun->period_start . ' – ' . $payrollRun->period_end,
-            route('admin.payroll.show', [$tenant, $payrollRun->id])
+        NotificationService::notifyAdmins(
+            "Payroll for {$payrollRun->period_start} – {$payrollRun->period_end} was rejected",
+            'payroll.rejected', 'x-circle', '#EF4444',
+            route('admin.payroll.show', [$tenant, $payrollRun->id]),
+            [], auth()->id()
         );
 
         return back()->with('success', "Payroll run {$payrollRun->run_number} rejected.");
@@ -186,7 +192,16 @@ public function createRun(string $tenant, Request $request)
         AuditLog::record('payroll.paid', $payrollRun, [], ['run_number' => $payrollRun->run_number]);
 
         $mailer = app(MailService::class);
-        $payrollRun->payslips()->with('employee')->get()->each(fn ($slip) => $mailer->sendPayslipAvailable($slip));
+        $payrollRun->payslips()->with('employee.user')->get()->each(function ($slip) use ($mailer, $tenant) {
+            $mailer->sendPayslipAvailable($slip);
+            if ($slip->employee?->user) {
+                NotificationService::payslipAvailable(
+                    $slip->employee->user,
+                    $slip->period_start->format('M j') . ' – ' . $slip->period_end->format('M j, Y'),
+                    route('employee.payslips.index', $tenant)
+                );
+            }
+        });
 
         return back()->with('success', "Payroll marked as paid.");
     }
