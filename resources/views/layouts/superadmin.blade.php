@@ -241,7 +241,7 @@
                                     headers: {
                                         'X-Requested-With': 'XMLHttpRequest',
                                         'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
                                     }
                                 });
                                 this.items = this.items.map(i => ({ ...i, unread: false }));
@@ -256,7 +256,7 @@
                                         headers: {
                                             'X-Requested-With': 'XMLHttpRequest',
                                             'Accept': 'application/json',
-                                            'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content,
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
                                         }
                                     });
                                     item.unread = false;
