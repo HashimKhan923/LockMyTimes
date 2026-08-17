@@ -3,6 +3,7 @@
 namespace App\Models\Tenant;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Location extends TenantModel
@@ -34,6 +35,12 @@ class Location extends TenantModel
     public function employees(): HasMany
     {
         return $this->hasMany(Employee::class);
+    }
+
+    /** All employees assigned here, including as a non-primary secondary location. */
+    public function assignedEmployees(): BelongsToMany
+    {
+        return $this->belongsToMany(Employee::class, 'employee_locations')->withPivot('is_primary')->withTimestamps();
     }
 
     /**

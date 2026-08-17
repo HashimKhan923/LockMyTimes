@@ -47,6 +47,12 @@
 
         {{-- Web tab --}}
         <div x-show="clockTab === 'web'">
+            @if(($emp->employment_mode ?? 'onsite') === 'remote')
+            <div class="mb-4 p-3 rounded-xl flex items-start gap-3 text-xs bg-brand-50 text-brand-700 border border-brand-100">
+                <i data-lucide="globe" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                <p class="font-bold">You're set to Remote — clock in from anywhere, no geofence check applies.</p>
+            </div>
+            @endif
             <label class="lmt-label">Location</label>
             <select class="lmt-input" x-model="clockLocationId">
                 <option value="">Pick a location…</option>

@@ -90,7 +90,11 @@ export function AttendanceHistoryScreen({ navigation }: Props) {
             </Text>
             <Text style={[typography.caption, { color: theme.textMuted, marginTop: 2 }]}>
               {formatTime(item.clock_in_at)} – {formatTime(item.clock_out_at)}
-              {item.location?.name ? ` · ${item.location.name}` : ''}
+              {item.is_remote_clockin
+                ? ` · Remote${[item.clock_in_city, item.clock_in_country].filter(Boolean).length ? ' (' + [item.clock_in_city, item.clock_in_country].filter(Boolean).join(', ') + ')' : ''}`
+                : item.location?.name
+                  ? ` · ${item.location.name}`
+                  : ''}
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>

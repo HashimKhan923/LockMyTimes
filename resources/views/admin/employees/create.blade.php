@@ -158,7 +158,7 @@
                 </div>
 
                 <div>
-                    <label class="lmt-label">Work Location</label>
+                    <label class="lmt-label">Work Location <span class="text-gray-400 font-normal">(primary)</span></label>
                     <select name="location_id" class="lmt-select">
                         <option value="">— Select Location —</option>
                         @foreach($locations as $loc)
@@ -168,6 +168,33 @@
                         </option>
                         @endforeach
                     </select>
+                </div>
+
+                <div>
+                    <label class="lmt-label">Employment Mode</label>
+                    <select name="employment_mode" class="lmt-select">
+                        @foreach(['onsite' => 'Onsite', 'remote' => 'Remote', 'hybrid' => 'Hybrid'] as $val => $label)
+                        <option value="{{ $val }}"
+                                {{ old('employment_mode', $employee->employment_mode ?? 'onsite') === $val ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                        @endforeach
+                    </select>
+                    <p class="lmt-help">Remote employees skip geofence checks entirely and can clock in from anywhere.</p>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="lmt-label">Additional Locations <span class="text-gray-400 font-normal">(optional — for employees splitting time across branches)</span></label>
+                    <div class="flex flex-wrap gap-3 mt-1">
+                        @php $assignedIds = old('location_ids', $employee->exists ? $employee->locations->pluck('id')->all() : []); @endphp
+                        @foreach($locations as $loc)
+                        <label class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 cursor-pointer">
+                            <input type="checkbox" name="location_ids[]" value="{{ $loc->id }}"
+                                   {{ in_array($loc->id, $assignedIds) ? 'checked' : '' }}>
+                            {{ $loc->name }}
+                        </label>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div>

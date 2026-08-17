@@ -19,6 +19,7 @@ class Attendance extends TenantModel
         'is_late', 'late_minutes', 'is_early_out', 'early_minutes',
         'source', 'status',
         'is_geofence_breach', 'is_manual_entry', 'is_approved',
+        'is_remote_clockin', 'clock_in_city', 'clock_in_country', 'clock_in_timezone',
         'approved_by', 'notes',
     ];
 
@@ -41,6 +42,7 @@ class Attendance extends TenantModel
             'is_geofence_breach' => 'boolean',
             'is_manual_entry'    => 'boolean',
             'is_approved'        => 'boolean',
+            'is_remote_clockin'  => 'boolean',
         ];
     }
 

@@ -307,6 +307,10 @@
 =================================================== --}}
 @elseif($report === 'payroll')
 
+<div class="flex justify-end mb-4">
+    @include('exports.buttons', ['route' => 'admin.reports.payroll.export', 'params' => [$tenant], 'extra' => ['from' => $from, 'to' => $to]])
+</div>
+
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     @foreach([
         ['Payroll Runs',     $totals['runs'],                          'layers',       'bg-brand-50',  'text-brand-600'],

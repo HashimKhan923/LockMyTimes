@@ -35,6 +35,10 @@ class AttendanceController extends Controller
             $query->where('status', $status);
         }
 
+        if ($request->boolean('remote')) {
+            $query->where('is_remote_clockin', true);
+        }
+
         if ($search = $request->get('search')) {
             $query->whereHas('employee', function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")

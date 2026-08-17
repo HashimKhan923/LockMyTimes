@@ -40,6 +40,7 @@ export function ClockInScreen({ route, navigation }: Props) {
   const assignedLocations = indexData?.assigned_locations ?? [];
   const hasAssignedLocations = assignedLocations.length > 0;
   const needsLocationPicker = assignedLocations.length > 1;
+  const isRemote = indexData?.employment_mode === 'remote';
 
   // A single assigned location needs no picker at all — select it automatically
   // so the employee can clock in with one tap.
@@ -127,15 +128,22 @@ export function ClockInScreen({ route, navigation }: Props) {
         {mode === 'in' ? 'Clock in' : 'Clock out'}
       </Text>
 
-      {locationError && (
+      {locationError && !isRemote && (
         <Text style={[typography.caption, { color: theme.warning, marginTop: spacing.xs }]}>
           {locationError}
         </Text>
       )}
-      {!locationError && !coords && (
+      {!locationError && !coords && !isRemote && (
         <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.xs }]}>
           Locating…
         </Text>
+      )}
+      {isRemote && mode === 'in' && (
+        <View style={[styles.remoteBanner, { backgroundColor: theme.primaryMuted, marginTop: spacing.sm }]}>
+          <Text style={[typography.caption, { color: theme.primary, fontWeight: '700' }]}>
+            You're set to Remote — clock in from anywhere, no location check applies.
+          </Text>
+        </View>
       )}
 
       {mode === 'in' ? (
@@ -266,6 +274,7 @@ export function ClockInScreen({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   section: { marginTop: spacing.lg },
+  remoteBanner: { borderRadius: radii.md, padding: spacing.sm, paddingHorizontal: spacing.md },
   locationCard: {
     borderWidth: 2,
     borderRadius: radii.lg,

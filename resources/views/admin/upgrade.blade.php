@@ -48,7 +48,7 @@
             'assets'      => $plan->has_assets,
             'training'    => $plan->has_training,
             'recruitment' => $plan->has_recruitment,
-            'documents'   => $plan->has_documents,
+            // 'documents' hidden per client request (2026-08)
             'expenses'    => $plan->has_expenses,
         ];
     @endphp

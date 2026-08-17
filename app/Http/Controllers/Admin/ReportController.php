@@ -220,6 +220,36 @@ class ReportController extends Controller
     /* ================================================================
      | PAYROLL REPORT
      |================================================================*/
+    /* ================================================================
+     | PAYROLL REPORT — EXPORT
+     |================================================================*/
+    public function payrollReportExport(string $tenant, Request $request, \App\Services\ExportService $exporter)
+    {
+        $from = Carbon::parse($request->get('from', now()->startOfYear()->toDateString()));
+        $to   = Carbon::parse($request->get('to', now()->toDateString()));
+        $format = $request->get('format', 'excel');
+
+        ['monthly' => $monthly, 'totals' => $totals] = $this->payrollReport($from, $to);
+
+        $columns = ['Month', 'Payslips', 'Gross Pay', 'Net Pay'];
+        $rows = $monthly->map(fn ($m) => [
+            $m['label'],
+            $m['count'],
+            number_format($m['gross'], 2),
+            number_format($m['net'], 2),
+        ])->push([
+            'TOTAL', $totals['runs'], number_format($totals['gross'], 2), number_format($totals['net'], 2),
+        ]);
+
+        $title = 'Payroll Report — '.$from->format('M j, Y').' to '.$to->format('M j, Y');
+
+        if ($format === 'pdf') {
+            return $exporter->pdf($title, $columns, $rows, 'payroll-report-'.now()->format('Y-m-d').'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, 'payroll-report-'.now()->format('Y-m-d').'.xlsx');
+    }
+
     private function payrollReport(Carbon $from, Carbon $to): array
     {
         $runs = PayrollRun::whereBetween('pay_date', [$from, $to])

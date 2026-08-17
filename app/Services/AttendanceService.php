@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Request;
 class AttendanceService
 {
     public function __construct(
-        protected GeofenceService $geofence
+        protected GeofenceService $geofence,
+        protected IpGeolocationService $geoService
     ) {}
 
     /* ================================================================
@@ -29,7 +30,7 @@ class AttendanceService
         string    $source = 'qr',
         ?QrCode   $qrCode = null
     ): array {
-        $today = Carbon::today();
+        $today = $employee->localToday();
         $now   = Carbon::now();
 
         // Already clocked in today?
@@ -51,9 +52,10 @@ class AttendanceService
             return ['success' => false, 'message' => ucfirst($source) . ' clock-in is currently disabled.'];
         }
 
-        // Geofence check — only applies when clocking in against a specific location.
+        // Geofence check — only applies when clocking in against a specific location, and never
+        // for a 'remote' employee even if a location happens to be on file (kept for reporting).
         // No location (employee has none assigned and picked none) means an unrestricted clock-in.
-        if ($location) {
+        if ($location && ! $employee->skipsGeofence()) {
             $geo = $this->geofence->check($location, $lat, $lng);
 
             if (! $geo['valid'] && Setting::get('attendance.geofence_strict', true)) {
@@ -66,6 +68,10 @@ class AttendanceService
         } else {
             $geo = ['valid' => true, 'distance' => 0, 'radius' => 0];
         }
+
+        // Best-effort city/country for remote clock-ins — informational only, never blocks.
+        $isRemote = $employee->isRemote();
+        $remoteGeo = $isRemote ? $this->geoService->lookup(Request::ip()) : ['city' => null, 'country' => null];
 
         // ── Shift window enforcement ─────────────────────────────────
         $shiftCheck = $this->enforceShiftWindow($employee, $today, $now);
@@ -102,6 +108,10 @@ class AttendanceService
                 'is_late'                  => $isLate,
                 'late_minutes'             => $lateMinutes,
                 'is_geofence_breach'       => ! $geo['valid'],
+                'is_remote_clockin'        => $isRemote,
+                'clock_in_city'            => $remoteGeo['city'],
+                'clock_in_country'         => $remoteGeo['country'],
+                'clock_in_timezone'        => $this->resolveTimezone($employee),
                 'status'                   => 'present',
                 'source'                   => $source,
             ]
@@ -130,7 +140,7 @@ class AttendanceService
         float    $lng,
         string   $source = 'qr'
     ): array {
-        $today = Carbon::today();
+        $today = $employee->localToday();
         $now   = Carbon::now();
 
         $attendance = Attendance::where('employee_id', $employee->id)
@@ -222,7 +232,7 @@ class AttendanceService
         }
 
         $shift = $assignment->shift;
-        $tz    = $employee->location?->timezone ?? config('app.timezone');
+        $tz    = $this->resolveTimezone($employee);
 
         // 1. Working day check (0=Sun … 6=Sat, matches Carbon::dayOfWeek)
         $workingDays = is_array($shift->working_days)
@@ -299,9 +309,20 @@ class AttendanceService
         if (! $assignment?->shift) return null;
 
         $field = $which === 'start' ? 'start_time' : 'end_time';
-        $tz    = $employee->location?->timezone ?? config('app.timezone');
+        $tz    = $this->resolveTimezone($employee);
 
         return Carbon::createFromFormat('H:i:s', $assignment->shift->{$field}, $tz);
+    }
+
+    /**
+     * Timezone to interpret shift/late/overtime math against for this employee. Remote and
+     * hybrid employees' own timezone (from their User record) takes precedence over their
+     * location's, since it may not reflect where they're actually working. Falls back to the
+     * assigned location's timezone, then the app default.
+     */
+    private function resolveTimezone(Employee $employee): string
+    {
+        return $employee->attendanceTimezone();
     }
 
     private function calculateBreakMinutes(Attendance $attendance): int

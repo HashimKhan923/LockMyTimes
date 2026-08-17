@@ -275,12 +275,6 @@
                 'badge'=>null,
             ],
             [
-                'icon'=>'file-signature','color'=>'teal',
-                'title'=>'Document Management',
-                'desc'=>'Central repository for policies, contracts, and forms with built-in e-signature and expiry tracking.',
-                'badge'=>null,
-            ],
-            [
                 'icon'=>'piggy-bank','color'=>'orange',
                 'title'=>'Loans & Advances',
                 'desc'=>'Employees can apply for salary advances or loans. Auto-generate EMI schedules and deduct via payroll.',

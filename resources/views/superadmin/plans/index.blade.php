@@ -98,7 +98,7 @@
                 'has_payroll'          => 'Payroll Processing',
                 'has_performance'      => 'Performance Reviews',
                 'has_recruitment'      => 'Recruitment ATS',
-                'has_documents'        => 'Document Management',
+                // 'has_documents' hidden per client request (2026-08)
                 'has_expenses'         => 'Expense Tracking',
                 'has_assets'           => 'Asset Management',
                 'has_training'         => 'Training Module',

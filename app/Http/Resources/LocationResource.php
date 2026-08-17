@@ -17,6 +17,7 @@ class LocationResource extends JsonResource
             'longitude' => $this->longitude !== null ? (float) $this->longitude : null,
             'geofence_radius_meters' => $this->geofence_radius_meters,
             'is_headquarters' => (bool) $this->is_headquarters,
+            'timezone' => $this->timezone,
             'requires_qr' => (bool) ($this->active_qr_count ?? $this->qrCodes()->where('is_active', true)->count()),
         ];
     }

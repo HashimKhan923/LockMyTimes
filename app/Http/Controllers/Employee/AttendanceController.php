@@ -35,7 +35,7 @@ class AttendanceController extends Controller
         $view  = $request->get('view', 'list'); // 'calendar' | 'list'
         $month = $request->get('month')
             ? Carbon::parse($request->get('month').'-01')
-            : Carbon::today()->startOfMonth();
+            : $emp->localToday()->startOfMonth();
 
         $from = $month->copy()->startOfMonth();
         $to   = $month->copy()->endOfMonth();
@@ -48,7 +48,8 @@ class AttendanceController extends Controller
             ->keyBy(fn ($a) => Carbon::parse($a->work_date)->toDateString());
 
         /* ───────── Holidays in this range ───────── */
-        $holidays = Holiday::whereBetween('date', [$from->toDateString(), $to->toDateString()])
+        $holidays = Holiday::visibleTo($this->assignedLocationIds($emp))
+            ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
             ->get()
             ->keyBy(fn ($h) => Carbon::parse($h->date)->toDateString());
 
@@ -89,7 +90,7 @@ class AttendanceController extends Controller
         ];
 
         /* ───────── Today's snapshot for the clock-in/out card ───────── */
-        $today        = Carbon::today();
+        $today        = $emp->localToday();
         $todayRec     = $records->get($today->toDateString());
         $activeBreak  = $todayRec
             ? AttendanceBreak::where('attendance_id', $todayRec->id)->whereNull('end_at')->first()
@@ -135,7 +136,7 @@ class AttendanceController extends Controller
             ->where('work_date', $d->toDateString())
             ->first();
 
-        $hol   = Holiday::whereDate('date', $d->toDateString())->first();
+        $hol   = Holiday::visibleTo($this->assignedLocationIds($emp))->whereDate('date', $d->toDateString())->first();
         $shift = $this->resolveShiftForDate($emp, $d);
 
         return response()->json([
@@ -252,7 +253,7 @@ class AttendanceController extends Controller
         ]);
 
         $att = Attendance::where('employee_id', $emp->id)
-            ->where('work_date', Carbon::today()->toDateString())
+            ->where('work_date', $emp->localToday()->toDateString())
             ->first();
 
         if (! $att || ! $att->clock_in_at) {
@@ -288,7 +289,7 @@ class AttendanceController extends Controller
         abort_unless($emp, 403);
 
         $att = Attendance::where('employee_id', $emp->id)
-            ->where('work_date', Carbon::today()->toDateString())
+            ->where('work_date', $emp->localToday()->toDateString())
             ->first();
 
         if (! $att) return $this->fail('No attendance record for today.');
@@ -321,7 +322,7 @@ class AttendanceController extends Controller
         abort_unless($emp, 403);
 
         $att = Attendance::where('employee_id', $emp->id)
-            ->where('work_date', Carbon::today()->toDateString())
+            ->where('work_date', $emp->localToday()->toDateString())
             ->first();
         $active = $att
             ? AttendanceBreak::where('attendance_id', $att->id)->whereNull('end_at')->first()
@@ -361,7 +362,7 @@ class AttendanceController extends Controller
 
         $month = $request->get('month')
             ? Carbon::parse($request->get('month').'-01')
-            : Carbon::today()->startOfMonth();
+            : $emp->localToday()->startOfMonth();
 
         $records = Attendance::with('location')
             ->where('employee_id', $emp->id)
@@ -456,6 +457,11 @@ class AttendanceController extends Controller
             return ['location' => null, 'qrCode' => null];
         }
 
+        $assignedIds = $this->assignedLocationIds($emp);
+        if ($assignedIds->isNotEmpty() && ! $assignedIds->contains((int) $locId)) {
+            return ['location' => null, 'qrCode' => null, 'error' => 'You are not assigned to that location.'];
+        }
+
         $location = Location::find($locId);
         if (! $location) {
             return ['location' => null, 'qrCode' => null, 'error' => 'Selected location was not found.'];
@@ -507,19 +513,33 @@ class AttendanceController extends Controller
     }
 
     /**
-     * An employee only ever has at most one assigned location (`location_id`). Returning just that
-     * (rather than every active company location as a pick-list) is what lets the clock-in UI skip the
-     * location picker entirely when an employee has one assigned location.
+     * An employee's assigned locations — their primary `location_id` plus any additional ones from
+     * `employee_locations` (e.g. an employee splitting time across two branches). Returning only the
+     * employee's own locations (never every company location) is what lets the clock-in UI skip the
+     * picker entirely when there's exactly one, and show a real picker only when there's genuinely
+     * more than one to choose from.
      */
     protected function resolveAssignedLocations($emp)
     {
-        if (! $emp->location_id) {
+        $ids = $this->assignedLocationIds($emp);
+
+        if ($ids->isEmpty()) {
             return collect();
         }
 
-        return Location::where('id', $emp->location_id)
+        return Location::whereIn('id', $ids)
             ->withCount(['qrCodes as active_qr_count' => fn ($qq) => $qq->where('is_active', true)])
+            ->orderByRaw('id != ?', [$emp->location_id])
             ->get();
+    }
+
+    /** IDs of every location this employee is assigned to (primary `location_id` + `employee_locations` pivot). */
+    protected function assignedLocationIds($emp)
+    {
+        return $emp->locations()->pluck('locations.id')
+            ->when($emp->location_id, fn ($c) => $c->push($emp->location_id))
+            ->unique()
+            ->values();
     }
 
     /** Compact status keyword for the calendar cell. */

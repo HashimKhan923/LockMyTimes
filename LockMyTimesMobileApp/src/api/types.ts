@@ -19,6 +19,7 @@ export interface UserProfile {
   notification_preferences: Record<string, NotificationPreference>;
   last_login_at?: string | null;
   last_login_ip?: string | null;
+  employment_mode?: 'onsite' | 'remote' | 'hybrid' | null;
 }
 
 export interface TenantInfo {
@@ -49,6 +50,7 @@ export interface LocationInfo {
   geofence_radius_meters: number | null;
   is_headquarters: boolean;
   requires_qr: boolean;
+  timezone: string | null;
 }
 
 export interface AttendanceBreakInfo {
@@ -76,6 +78,9 @@ export interface AttendanceRecord {
   is_early_out: boolean;
   early_minutes: number;
   is_geofence_breach: boolean;
+  is_remote_clockin: boolean;
+  clock_in_city: string | null;
+  clock_in_country: string | null;
   source: string | null;
   notes: string | null;
   location: LocationInfo | null;
@@ -122,6 +127,7 @@ export interface AttendanceIndexResponse {
     shift: ShiftInfo | null;
   };
   assigned_locations: LocationInfo[];
+  employment_mode: 'onsite' | 'remote' | 'hybrid';
 }
 
 export interface AttendanceStatusResponse {
@@ -173,7 +179,7 @@ export interface LeaveBalanceInfo {
   used_pct: number;
 }
 
-export type LeaveStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+export type LeaveStatus = 'pending' | 'pending_final' | 'approved' | 'rejected' | 'cancelled';
 
 export interface LeaveAttachment {
   name: string | null;
@@ -206,6 +212,7 @@ export interface LeaveRequestInfo {
   approver_comments: string | null;
   rejection_reason: string | null;
   created_at: string;
+  teammates_on_leave_same_week: number | null;
 }
 
 export interface LeaveIndexResponse {

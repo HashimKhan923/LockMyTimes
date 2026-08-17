@@ -91,6 +91,13 @@ export function DayDetailScreen({ route }: Props) {
               <Row label="Clock in" value={formatTime(att.clock_in_at)} theme={theme} />
               <Row label="Clock out" value={formatTime(att.clock_out_at)} theme={theme} />
               <Row label="Location" value={att.location?.name ?? '—'} theme={theme} />
+              {att.is_remote_clockin && (
+                <Row
+                  label="Clocked in from"
+                  value={[att.clock_in_city, att.clock_in_country].filter(Boolean).join(', ') || 'Remote'}
+                  theme={theme}
+                />
+              )}
             </MotiView>
 
             {att.breaks.length > 0 && (

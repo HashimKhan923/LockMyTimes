@@ -72,6 +72,11 @@ export function LeaveApprovalsScreen() {
           <Text style={[typography.caption, { color: theme.textMuted }]}>
             {item.start_date} – {item.end_date}
           </Text>
+          {!!item.teammates_on_leave_same_week && (
+            <Text style={[typography.caption, { color: theme.warning, marginTop: spacing.xs }]}>
+              {item.teammates_on_leave_same_week} teammate{item.teammates_on_leave_same_week === 1 ? '' : 's'} already off this week
+            </Text>
+          )}
           <Text style={[typography.body, { color: theme.text, marginTop: spacing.xs }]}>{item.reason}</Text>
 
           <View style={styles.actionRow}>

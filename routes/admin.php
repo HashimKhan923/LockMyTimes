@@ -170,6 +170,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::post('/run',                      [\App\Http\Controllers\Admin\PayrollController::class, 'createRun'])->name('run')->middleware('permission:payroll.create');
         Route::get('/{payrollRun}',              [\App\Http\Controllers\Admin\PayrollController::class, 'show'])->name('show')->middleware('permission:payroll.view');
         Route::patch('/{payrollRun}/approve',    [\App\Http\Controllers\Admin\PayrollController::class, 'approve'])->name('approve')->middleware('permission:payroll.approve');
+        Route::patch('/{payrollRun}/reject',     [\App\Http\Controllers\Admin\PayrollController::class, 'reject'])->name('reject')->middleware('permission:payroll.approve');
         Route::patch('/{payrollRun}/paid',       [\App\Http\Controllers\Admin\PayrollController::class, 'markPaid'])->name('paid')->middleware('permission:payroll.approve');
         Route::patch('/{payrollRun}/regenerate', [\App\Http\Controllers\Admin\PayrollController::class, 'regenerate'])->name('regenerate')->middleware('permission:payroll.edit');
         Route::get('/payslip/{payslip}',         [\App\Http\Controllers\Admin\PayrollController::class, 'payslip'])->name('payslip')->middleware('permission:payslips.view');
@@ -328,6 +329,7 @@ Route::prefix('announcements')->name('announcements.')->group(function () {
     Route::delete('/polls/{poll}',       [\App\Http\Controllers\Admin\AnnouncementController::class, 'destroyPoll'])->name('polls.destroy')->middleware('permission:announcements.delete');
 });
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index')->middleware('permission:reports.view');
+    Route::get('/reports/payroll/export', [\App\Http\Controllers\Admin\ReportController::class, 'payrollReportExport'])->name('reports.payroll.export')->middleware('permission:reports.view');
 
     /* ---- Roles & Permissions ---- */
     Route::prefix('roles')->name('roles.')->group(function () {

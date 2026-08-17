@@ -92,6 +92,9 @@ class EmployeeController extends Controller
             'department_id'     => 'nullable|exists:departments,id',
             'position_id'       => 'nullable|exists:positions,id',
             'location_id'       => 'nullable|exists:locations,id',
+            'employment_mode'   => 'nullable|in:onsite,remote,hybrid',
+            'location_ids'      => 'nullable|array',
+            'location_ids.*'    => 'exists:locations,id',
             'manager_id'        => 'nullable|exists:employees,id',
             'employment_status' => 'required|in:active,on_leave,suspended,terminated',
             'employment_type'   => 'required|in:full_time,part_time,contract,intern,temporary',
@@ -99,6 +102,9 @@ class EmployeeController extends Controller
             'salary_frequency'  => 'nullable|in:hourly,weekly,bi_weekly,semi_monthly,monthly,annually',
             'avatar'            => 'nullable|image|max:2048',
         ]);
+
+        $locationIds = $validated['location_ids'] ?? [];
+        unset($validated['location_ids']);
 
         // Enforce plan employee limit
         $currentTenant = \App\Models\Main\Tenant::where('slug', $tenant)->first();
@@ -122,6 +128,7 @@ class EmployeeController extends Controller
             }
 
             $employee = Employee::create($validated);
+            $this->syncLocations($employee, $locationIds);
 
             // Create a user account for this employee
             $tempPassword = Str::random(10);
@@ -209,6 +216,9 @@ class EmployeeController extends Controller
             'department_id'     => 'nullable|exists:departments,id',
             'position_id'       => 'nullable|exists:positions,id',
             'location_id'       => 'nullable|exists:locations,id',
+            'employment_mode'   => 'nullable|in:onsite,remote,hybrid',
+            'location_ids'      => 'nullable|array',
+            'location_ids.*'    => 'exists:locations,id',
             'manager_id'        => 'nullable|exists:employees,id',
             'employment_status' => 'required|in:active,on_leave,suspended,terminated,retired',
             'employment_type'   => 'required|in:full_time,part_time,contract,intern,temporary',
@@ -217,12 +227,16 @@ class EmployeeController extends Controller
             'avatar'            => 'nullable|image|max:2048',
         ]);
 
+        $locationIds = $validated['location_ids'] ?? [];
+        unset($validated['location_ids']);
+
         if ($request->hasFile('avatar')) {
             if ($employee->avatar) Storage::disk('public')->delete($employee->avatar);
             $validated['avatar'] = $request->file('avatar')->store('employees/avatars','public');
         }
 
         $employee->update($validated);
+        $this->syncLocations($employee, $locationIds);
 
         // Sync user record
         if ($employee->user) {
@@ -349,5 +363,22 @@ class EmployeeController extends Controller
         }
 
         return $exporter->excel($columns, $rows, 'employees-'.now()->format('Y-m-d').'.xlsx');
+    }
+
+    /**
+     * Sync the employee_locations pivot: the employee's primary `location_id` always gets a row
+     * (is_primary=true), plus any additional locations chosen for a multi-location employee.
+     */
+    private function syncLocations(Employee $employee, array $locationIds): void
+    {
+        $sync = [];
+        foreach (array_unique(array_filter($locationIds)) as $id) {
+            $sync[$id] = ['is_primary' => (int) $id === (int) $employee->location_id];
+        }
+        if ($employee->location_id && ! isset($sync[$employee->location_id])) {
+            $sync[$employee->location_id] = ['is_primary' => true];
+        }
+
+        $employee->locations()->sync($sync);
     }
 }

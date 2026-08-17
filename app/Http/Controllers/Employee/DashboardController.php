@@ -119,7 +119,7 @@ class DashboardController extends Controller
             ->where('year', $today->year)
             ->get()
             ->map(function ($b) {
-                $available = (float) ($b->allocated + $b->accrued + $b->carried_over + $b->adjusted - $b->used - $b->pending);
+                $available = $b->available;
                 $total     = (float) ($b->allocated + $b->accrued + $b->carried_over + $b->adjusted);
                 $usedPct   = $total > 0 ? min(100, round(($b->used / $total) * 100)) : 0;
                 return (object) [

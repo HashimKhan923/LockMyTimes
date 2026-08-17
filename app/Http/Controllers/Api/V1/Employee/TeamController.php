@@ -17,6 +17,10 @@ use App\Models\Tenant\LeaveBalance;
 use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\Task;
 use App\Models\Tenant\TaskAssignee;
+use App\Models\Tenant\User;
+use App\Services\MailService;
+use App\Services\NotificationService;
+use App\Services\TenantManager;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -139,7 +143,7 @@ class TeamController extends Controller
             ->filter(fn ($b) => $b->leaveType)
             ->map(function ($b) {
                 $total = (float) ($b->allocated + $b->accrued + $b->carried_over + $b->adjusted);
-                $available = (float) ($total - $b->used - $b->pending);
+                $available = $b->available;
 
                 return [
                     'name' => $b->leaveType->name,
@@ -192,6 +196,11 @@ class TeamController extends Controller
             ->orderByDesc('created_at')
             ->paginate(15);
 
+        $leaves->getCollection()->transform(function ($leave) use ($reportIds) {
+            $leave->_teammates_on_leave = $this->teammatesOnLeaveCount($leave, $reportIds);
+            return $leave;
+        });
+
         $counters = LeaveRequest::whereIn('employee_id', $reportIds)
             ->selectRaw("COUNT(*) as total, SUM(status = 'pending') as pending, SUM(status = 'approved') as approved, SUM(status = 'rejected') as rejected")
             ->first();
@@ -226,28 +235,67 @@ class TeamController extends Controller
             ->first();
 
         if ($balance) {
-            $net = (float) ($balance->allocated + $balance->accrued + $balance->carried_over + $balance->adjusted - $balance->used - $balance->pending);
+            $net = $balance->available;
             if ($net < 0) {
                 return $this->fail('Insufficient leave balance. Approving this would create a negative balance of '.abs($net).' day(s). Contact HR to adjust the balance first.');
             }
         }
 
+        $threshold = (float) \App\Models\Tenant\Setting::get('leaves.second_approval_threshold_days', 5);
+        $needsFinalSignoff = (float) $leaveReq->total_days >= $threshold;
+
         DB::connection('tenant')->beginTransaction();
         try {
-            $leaveReq->update([
-                'status' => 'approved',
-                'approved_by' => $request->user()->id,
-                'approved_at' => now(),
-                'approver_comments' => $data['note'] ?? null,
-            ]);
+            if ($needsFinalSignoff) {
+                $leaveReq->update([
+                    'status' => 'pending_final',
+                    'approver_comments' => $data['note'] ?? null,
+                ]);
+                \App\Models\Tenant\LeaveApproval::create([
+                    'leave_request_id' => $leaveReq->id,
+                    'approver_id' => $request->user()->id,
+                    'approval_level' => 1,
+                    'decision' => 'approved',
+                    'comments' => $data['note'] ?? null,
+                    'decided_at' => now(),
+                ]);
+            } else {
+                $leaveReq->update([
+                    'status' => 'approved',
+                    'approved_by' => $request->user()->id,
+                    'approved_at' => now(),
+                    'approver_comments' => $data['note'] ?? null,
+                ]);
+                $this->movePendingToUsed($leaveReq, $balance);
+            }
 
-            $this->movePendingToUsed($leaveReq, $balance);
             DB::connection('tenant')->commit();
         } catch (\Throwable $e) {
             DB::connection('tenant')->rollBack();
             \Log::error('Team leave approve failed (API): '.$e->getMessage());
 
             return $this->fail('Could not approve the leave. Please try again.', 500);
+        }
+
+        if ($needsFinalSignoff) {
+            NotificationService::notifyAdmins(
+                "{$leaveReq->employee->full_name}'s leave ({$leaveReq->total_days} days) needs final sign-off",
+                'leave.pending_final', 'calendar-check', '#F59E0B',
+                route('admin.leaves.index', app(TenantManager::class)->current()->slug)
+            );
+
+            return response()->json(['success' => true, 'message' => "Approved — forwarded for final sign-off."]);
+        }
+
+        $employeeUser = User::where('employee_id', $leaveReq->employee_id)->first();
+        if ($employeeUser) {
+            NotificationService::leaveApproved($employeeUser, $request->user()->name,
+                route('employee.team.approvals.leaves', app(TenantManager::class)->current()->slug));
+        }
+        try {
+            app(MailService::class)->sendLeaveApproved($leaveReq->fresh(['employee', 'leaveType', 'approver']));
+        } catch (\Throwable $e) {
+            \Log::error('Team leave-approved email failed (API): '.$e->getMessage());
         }
 
         return response()->json(['success' => true, 'message' => "{$leaveReq->employee->full_name}'s leave approved."]);
@@ -289,6 +337,17 @@ class TeamController extends Controller
             \Log::error('Team leave reject failed (API): '.$e->getMessage());
 
             return $this->fail('Could not reject the leave. Please try again.', 500);
+        }
+
+        $employeeUser = User::where('employee_id', $leaveReq->employee_id)->first();
+        if ($employeeUser) {
+            NotificationService::leaveRejected($employeeUser, $request->user()->name,
+                route('employee.team.approvals.leaves', app(TenantManager::class)->current()->slug));
+        }
+        try {
+            app(MailService::class)->sendLeaveRejected($leaveReq->fresh(['employee', 'leaveType']));
+        } catch (\Throwable $e) {
+            \Log::error('Team leave-rejected email failed (API): '.$e->getMessage());
         }
 
         return response()->json(['success' => true, 'message' => 'Leave request rejected.']);
@@ -431,6 +490,25 @@ class TeamController extends Controller
     protected function getReportIds(int $managerEmployeeId)
     {
         return Employee::where('manager_id', $managerEmployeeId)->pluck('id');
+    }
+
+    /**
+     * How many OTHER employees in the given pool already have an approved (or awaiting-final-
+     * signoff) leave overlapping the calendar week of this request's start date — a heads-up for
+     * the approver, not a hard block.
+     */
+    protected function teammatesOnLeaveCount(LeaveRequest $leave, $employeeIdPool): int
+    {
+        $weekStart = Carbon::parse($leave->start_date)->startOfWeek();
+        $weekEnd   = Carbon::parse($leave->start_date)->endOfWeek();
+
+        return LeaveRequest::whereIn('employee_id', $employeeIdPool)
+            ->where('employee_id', '!=', $leave->employee_id)
+            ->whereIn('status', ['approved', 'pending_final'])
+            ->where('start_date', '<=', $weekEnd->toDateString())
+            ->where('end_date', '>=', $weekStart->toDateString())
+            ->distinct()
+            ->count('employee_id');
     }
 
     protected function fail(string $msg, int $status = 422): JsonResponse

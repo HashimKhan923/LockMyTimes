@@ -81,6 +81,12 @@ class NotificationService
             'payroll.approved', 'check-circle', '#10B981', $url);
     }
 
+    public static function payrollRejected(User $admin, string $period, string $url): void
+    {
+        static::send($admin, "Payroll for {$period} was rejected",
+            'payroll.rejected', 'x-circle', '#EF4444', $url);
+    }
+
     public static function expenseSubmitted(User $admin, string $employeeName, string $amount, string $url): void
     {
         static::send($admin, "{$employeeName} submitted an expense of {$amount}",

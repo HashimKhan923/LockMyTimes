@@ -134,6 +134,13 @@
                                     , {{ $req->start_date->format('Y') }}
                                     @endif
                                 </p>
+                                @if($req->_teammates_on_leave)
+                                <p class="inline-flex items-center gap-1 mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700"
+                                   title="Other people in the same department already on leave the same week">
+                                    <i data-lucide="users" class="w-2.5 h-2.5"></i>
+                                    {{ $req->_teammates_on_leave }} in dept. already off this week
+                                </p>
+                                @endif
                             </td>
                             <td>
                                 <span class="text-sm font-bold text-gray-900">

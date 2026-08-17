@@ -11,6 +11,9 @@ use App\Models\Tenant\LeaveBalance;
 use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\Task;
 use App\Models\Tenant\TaskAssignee;
+use App\Models\Tenant\User;
+use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -255,18 +258,20 @@ class TeamController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        // Attach balance info for context
-        $leaves->getCollection()->transform(function ($leave) {
+        // Attach balance info + team conflict info for context
+        $leaves->getCollection()->transform(function ($leave) use ($reportIds) {
             $balance = LeaveBalance::where('employee_id', $leave->employee_id)
                 ->where('leave_type_id', $leave->leave_type_id)
                 ->where('year', Carbon::parse($leave->start_date)->year)
                 ->first();
 
             if ($balance) {
-                $leave->_available_balance = (float) ($balance->allocated + $balance->accrued + $balance->carried_over + $balance->adjusted - $balance->used - $balance->pending);
+                $leave->_available_balance = $balance->available;
             } else {
                 $leave->_available_balance = null;
             }
+
+            $leave->_teammates_on_leave = $this->teammatesOnLeaveCount($leave, $reportIds);
 
             return $leave;
         });
@@ -317,7 +322,7 @@ class TeamController extends Controller
             ->first();
 
         if ($balance) {
-            $net = (float) ($balance->allocated + $balance->accrued + $balance->carried_over + $balance->adjusted - $balance->used - $balance->pending);
+            $net = $balance->available;
             if ($net < 0) {
                 return back()->with('error',
                     'Insufficient leave balance. Approving this would create a negative balance of ' . abs($net) . ' day(s). Contact HR to adjust the balance first.'
@@ -325,23 +330,62 @@ class TeamController extends Controller
             }
         }
 
+        // Long requests get a second (admin) sign-off instead of finalizing on manager approval
+        // alone — short requests keep today's single-step behavior exactly as-is.
+        $threshold = (float) \App\Models\Tenant\Setting::get('leaves.second_approval_threshold_days', 5);
+        $needsFinalSignoff = (float) $leaveReq->total_days >= $threshold;
+
         DB::connection('tenant')->beginTransaction();
         try {
-            $leaveReq->update([
-                'status'            => 'approved',
-                'approved_by'       => auth()->id(),
-                'approved_at'       => now(),
-                'approver_comments' => $data['note'] ?? null,
-            ]);
-
-            // Move from pending used on the balance row
-            $this->movePendingToUsed($leaveReq, $balance);
+            if ($needsFinalSignoff) {
+                $leaveReq->update([
+                    'status'            => 'pending_final',
+                    'approver_comments' => $data['note'] ?? null,
+                ]);
+                \App\Models\Tenant\LeaveApproval::create([
+                    'leave_request_id' => $leaveReq->id,
+                    'approver_id'      => auth()->id(),
+                    'approval_level'   => 1,
+                    'decision'         => 'approved',
+                    'comments'         => $data['note'] ?? null,
+                    'decided_at'       => now(),
+                ]);
+                // Balance stays 'pending' — only moves to 'used' on final admin sign-off.
+            } else {
+                $leaveReq->update([
+                    'status'            => 'approved',
+                    'approved_by'       => auth()->id(),
+                    'approved_at'       => now(),
+                    'approver_comments' => $data['note'] ?? null,
+                ]);
+                $this->movePendingToUsed($leaveReq, $balance);
+            }
 
             DB::connection('tenant')->commit();
         } catch (\Throwable $e) {
             DB::connection('tenant')->rollBack();
             \Log::error('Team leave approve failed: '.$e->getMessage());
             return back()->with('error', 'Could not approve the leave. Please try again.');
+        }
+
+        if ($needsFinalSignoff) {
+            // Employee isn't told "approved" yet — an admin still needs to sign off.
+            NotificationService::notifyAdmins(
+                "{$leaveReq->employee->full_name}'s leave ({$leaveReq->total_days} days) needs final sign-off",
+                'leave.pending_final', 'calendar-check', '#F59E0B',
+                route('admin.leaves.index', $tenant)
+            );
+        } else {
+            $employeeUser = User::where('employee_id', $leaveReq->employee_id)->first();
+            if ($employeeUser) {
+                NotificationService::leaveApproved($employeeUser, auth()->user()->name,
+                    route('employee.team.approvals.leaves', $tenant));
+            }
+            try {
+                app(MailService::class)->sendLeaveApproved($leaveReq->fresh(['employee', 'leaveType', 'approver']));
+            } catch (\Throwable $e) {
+                \Log::error('Team leave-approved email failed: '.$e->getMessage());
+            }
         }
 
         return back()->with('success', "{$leaveReq->employee->full_name}'s leave approved.");
@@ -391,6 +435,17 @@ class TeamController extends Controller
             DB::connection('tenant')->rollBack();
             \Log::error('Team leave reject failed: '.$e->getMessage());
             return back()->with('error', 'Could not reject the leave. Please try again.');
+        }
+
+        $employeeUser = User::where('employee_id', $leaveReq->employee_id)->first();
+        if ($employeeUser) {
+            NotificationService::leaveRejected($employeeUser, auth()->user()->name,
+                route('employee.team.approvals.leaves', $tenant));
+        }
+        try {
+            app(MailService::class)->sendLeaveRejected($leaveReq->fresh(['employee', 'leaveType']));
+        } catch (\Throwable $e) {
+            \Log::error('Team leave-rejected email failed: '.$e->getMessage());
         }
 
         return back()->with('success', "Leave request rejected.");
@@ -559,6 +614,26 @@ class TeamController extends Controller
     /* ================================================================
      | Helpers
      |================================================================*/
+
+    /**
+     * How many OTHER employees in the given pool already have an approved (or awaiting-final-
+     * signoff) leave overlapping the calendar week of this request's start date — a heads-up for
+     * the approver, not a hard block.
+     */
+    protected function teammatesOnLeaveCount(LeaveRequest $leave, $employeeIdPool): int
+    {
+        $weekStart = Carbon::parse($leave->start_date)->startOfWeek();
+        $weekEnd   = Carbon::parse($leave->start_date)->endOfWeek();
+
+        return LeaveRequest::whereIn('employee_id', $employeeIdPool)
+            ->where('employee_id', '!=', $leave->employee_id)
+            ->whereIn('status', ['approved', 'pending_final'])
+            ->where('start_date', '<=', $weekEnd->toDateString())
+            ->where('end_date', '>=', $weekStart->toDateString())
+            ->distinct()
+            ->count('employee_id');
+    }
+
     private function movePendingToUsed(LeaveRequest $leave, ?LeaveBalance $balance): void
     {
         if (! $balance) {

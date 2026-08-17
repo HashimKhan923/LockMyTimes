@@ -220,7 +220,8 @@
                 'Organisation' => [
                     ['route'=>'admin.assets.index',      'icon'=>'package',          'label'=>'Assets'],
                     ['route'=>'admin.training.index',    'icon'=>'graduation-cap',   'label'=>'Training'],
-                    ['route'=>'admin.documents.index',   'icon'=>'folder-open',      'label'=>'Documents'],
+                    // 'Documents' hidden per client request (2026-08) — feature not deleted,
+                    // route/controller/models still intact, just not linked from the nav.
                     ['route'=>'admin.recruitment.index', 'icon'=>'user-plus',        'label'=>'Recruitment'],
                 ],
                 'Communication' => [

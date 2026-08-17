@@ -37,6 +37,7 @@ class LeaveRequestResource extends JsonResource
             'approver_comments' => $this->approver_comments,
             'rejection_reason' => $this->rejection_reason,
             'created_at' => $this->created_at?->toIso8601String(),
+            'teammates_on_leave_same_week' => $this->_teammates_on_leave ?? null,
         ];
     }
 }

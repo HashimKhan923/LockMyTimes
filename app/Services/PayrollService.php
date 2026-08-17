@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Models\Tenant\Attendance;
+use App\Models\Tenant\AuditLog;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\PayrollRun;
 use App\Models\Tenant\Payslip;
+use App\Models\Tenant\PayslipItem;
 use App\Models\Tenant\Setting;
+use App\Models\Tenant\TaxSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -35,6 +38,11 @@ class PayrollService
                 'total_taxes'     => $run->payslips()->sum(DB::raw('federal_tax + state_tax + fica_ss + fica_medicare')),
             ]);
         });
+
+        AuditLog::record('payroll.generated', $run, [], [
+            'run_number' => $run->run_number,
+            'total_employees' => $run->fresh()->total_employees,
+        ]);
     }
 
     public function generatePayslip(PayrollRun $run, Employee $employee): Payslip
@@ -64,7 +72,9 @@ class PayrollService
         $ficaSsRate      = (float) Setting::get('payroll.fica_ss_rate',       6.2)  / 100;
         $ficaMedRate     = (float) Setting::get('payroll.fica_medicare_rate',  1.45) / 100;
         $annualGross     = $grossPay * 12;
-        $federalTax      = round($this->federalTax($annualGross) / 12, 2);
+        $year            = Carbon::parse($run->pay_date)->year;
+        $federalTax      = round($this->federalTax($annualGross, $year) / 12, 2);
+        $stateTax        = round($this->stateTax($annualGross, $employee->state, $year) / 12, 2);
         $ficaSS          = round($grossPay * $ficaSsRate, 2);
         $ficaMedicare    = round($grossPay * $ficaMedRate, 2);
 
@@ -73,14 +83,14 @@ class PayrollService
         $loanDeduct    = $this->loanDeductions($employee);
 
         $totalDeductions = round(
-            $federalTax + $ficaSS + $ficaMedicare
+            $federalTax + $stateTax + $ficaSS + $ficaMedicare
             + $otherDeduct + $loanDeduct + $absentDeduct,
             2
         );
 
         $netPay = round($grossPay - $totalDeductions, 2);
 
-        return Payslip::updateOrCreate(
+        $payslip = Payslip::updateOrCreate(
             [
                 'payroll_run_id' => $run->id,
                 'employee_id'    => $employee->id,
@@ -102,7 +112,7 @@ class PayrollService
                 'reimbursement'   => 0,
                 'gross_pay'       => $grossPay,
                 'federal_tax'     => $federalTax,
-                'state_tax'       => 0,
+                'state_tax'       => $stateTax,
                 'local_tax'       => 0,
                 'fica_ss'         => $ficaSS,
                 'fica_medicare'   => $ficaMedicare,
@@ -113,11 +123,59 @@ class PayrollService
                 'net_pay'         => $netPay,
                 'ytd_gross'       => $grossPay,
                 'ytd_net'         => $netPay,
-                'ytd_taxes'       => round($federalTax + $ficaSS + $ficaMedicare, 2),
+                'ytd_taxes'       => round($federalTax + $stateTax + $ficaSS + $ficaMedicare, 2),
                 'status'          => 'draft',
                 'payment_method'  => 'direct_deposit',
             ]
         );
+
+        $this->writePayslipItems($payslip, [
+            'earnings' => array_filter([
+                'Base Pay' => $basePay,
+                'Overtime Pay' => $otPay,
+                'Bonus' => $bonus,
+            ]),
+            'taxes' => array_filter([
+                'Federal Income Tax' => $federalTax,
+                'State Tax' => $stateTax,
+                'Social Security' => $ficaSS,
+                'Medicare' => $ficaMedicare,
+            ]),
+            'deductions' => array_filter([
+                'Absence Deduction' => $absentDeduct,
+                'Loan / Advance Repayment' => $loanDeduct,
+                'Other Deductions' => $otherDeduct,
+            ]),
+        ]);
+
+        return $payslip;
+    }
+
+    /**
+     * Populate the itemized PayslipItem breakdown for a generated payslip, mirroring the shape
+     * PayrollSyncService already writes for third-party-imported payslips (see its own loop over
+     * $row['items']) so a payslip looks the same regardless of source. Clears any prior items
+     * first since generatePayslip() can be called again for the same run (regenerate).
+     */
+    private function writePayslipItems(Payslip $payslip, array $groups): void
+    {
+        $payslip->items()->delete();
+
+        $sortOrder = 0;
+        foreach (['earnings' => 'earning', 'taxes' => 'tax', 'deductions' => 'deduction'] as $group => $type) {
+            foreach ($groups[$group] as $label => $amount) {
+                if ($amount <= 0) {
+                    continue;
+                }
+                PayslipItem::create([
+                    'payslip_id' => $payslip->id,
+                    'label' => $label,
+                    'type' => $type,
+                    'amount' => $amount,
+                    'sort_order' => $sortOrder++,
+                ]);
+            }
+        }
     }
 
     /* ================================================================
@@ -187,23 +245,87 @@ class PayrollService
         return round((float)$loans + (float)$advances, 2);
     }
 
-    private function federalTax(float $annualGross): float
+    /**
+     * Federal income tax on an annual gross figure. Reads brackets + standard-deduction
+     * (wage_base) from a `tax_settings` row for the given year when one exists — this is what
+     * lets an admin actually change the numbers from Settings > Tax Settings and have it affect
+     * real payroll. Falls back to the last-known (2024) statutory brackets so payroll never
+     * breaks for a tenant/year that hasn't been configured yet.
+     */
+    private function federalTax(float $annualGross, int $year): float
     {
-        $taxable  = max(0, $annualGross - 14600);
-        $brackets = [
-            [0,      11600,  0,      0.10],
-            [11600,  47150,  1160,   0.12],
-            [47150,  100525, 5426,   0.22],
-            [100525, 191950, 17168,  0.24],
-            [191950, 243725, 39110,  0.32],
-            [243725, 609350, 55678,  0.35],
-            [609350, PHP_INT_MAX, 183647, 0.37],
-        ];
-        foreach ($brackets as [$min, $max, $base, $rate]) {
-            if ($taxable <= $max) {
-                return round($base + ($taxable - $min) * $rate, 2);
-            }
+        $setting = TaxSetting::where('tax_type', 'federal_income')
+            ->whereNull('state')
+            ->where('year', $year)
+            ->where('is_active', true)
+            ->first();
+
+        if ($setting) {
+            return $this->applyTaxSetting($annualGross, $setting);
         }
+
+        return $this->applyBrackets(max(0, $annualGross - 14600), self::DEFAULT_FEDERAL_BRACKETS_2024);
+    }
+
+    /**
+     * State income tax on an annual gross figure, keyed by the employee's own address state.
+     * No tax_settings row for that state/year simply means $0 — most US states have no income
+     * tax, and this stays correct-by-default until an admin configures one that does.
+     */
+    private function stateTax(float $annualGross, ?string $state, int $year): float
+    {
+        if (! $state) {
+            return 0;
+        }
+
+        $setting = TaxSetting::where('tax_type', 'state_income')
+            ->where('state', $state)
+            ->where('year', $year)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $setting) {
+            return 0;
+        }
+
+        return $this->applyTaxSetting($annualGross, $setting);
+    }
+
+    /** A tax_settings row is either bracket-based or a flat rate — apply whichever is configured. */
+    private function applyTaxSetting(float $annualGross, TaxSetting $setting): float
+    {
+        $taxable = max(0, $annualGross - (float) ($setting->wage_base ?? 0));
+
+        if (! empty($setting->brackets)) {
+            return $this->applyBrackets($taxable, $setting->brackets);
+        }
+
+        if ($setting->flat_rate !== null) {
+            return round($taxable * ((float) $setting->flat_rate / 100), 2);
+        }
+
         return 0;
     }
+
+    /** @param array<int, array{min: float, max: float, base: float, rate: float}> $brackets */
+    private function applyBrackets(float $taxable, array $brackets): float
+    {
+        foreach ($brackets as $bracket) {
+            if ($taxable <= $bracket['max']) {
+                return round($bracket['base'] + ($taxable - $bracket['min']) * $bracket['rate'], 2);
+            }
+        }
+
+        return 0;
+    }
+
+    private const DEFAULT_FEDERAL_BRACKETS_2024 = [
+        ['min' => 0,      'max' => 11600,      'base' => 0,      'rate' => 0.10],
+        ['min' => 11600,  'max' => 47150,      'base' => 1160,   'rate' => 0.12],
+        ['min' => 47150,  'max' => 100525,     'base' => 5426,   'rate' => 0.22],
+        ['min' => 100525, 'max' => 191950,     'base' => 17168,  'rate' => 0.24],
+        ['min' => 191950, 'max' => 243725,     'base' => 39110,  'rate' => 0.32],
+        ['min' => 243725, 'max' => 609350,     'base' => 55678,  'rate' => 0.35],
+        ['min' => 609350, 'max' => PHP_INT_MAX, 'base' => 183647, 'rate' => 0.37],
+    ];
 }

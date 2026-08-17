@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Holiday;
+use App\Models\Tenant\LeaveApproval;
 use App\Models\Tenant\LeaveBalance;
 use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\LeaveType;
@@ -47,6 +48,16 @@ class LeaveController extends Controller
         $leaveTypes = LeaveType::where('is_active', true)->orderBy('name')->get();
         $employees  = Employee::active()->orderBy('first_name')->get();
 
+        // Team conflict heads-up: how many other people in the same department are already
+        // off during the same calendar week as each request.
+        $requests->getCollection()->transform(function ($leave) {
+            $deptId = $leave->employee?->department_id;
+            $leave->_teammates_on_leave = $deptId
+                ? $this->teammatesOnLeaveCount($leave, Employee::where('department_id', $deptId)->pluck('id'))
+                : null;
+            return $leave;
+        });
+
         $stats = [
             'pending'        => LeaveRequest::where('status', 'pending')->count(),
             'approved'       => LeaveRequest::where('status', 'approved')
@@ -85,12 +96,15 @@ class LeaveController extends Controller
             'end_date'      => 'required|date|after_or_equal:start_date',
             'reason'        => 'nullable|string|max:500',
             'is_half_day'   => 'boolean',
+            'half_part'     => 'nullable|in:first_half,second_half',
         ]);
+
+        $isHalfDay = $request->boolean('is_half_day');
 
         $days = $this->calculateWorkingDays(
             Carbon::parse($data['start_date']),
             Carbon::parse($data['end_date']),
-            $request->boolean('is_half_day')
+            $isHalfDay
         );
 
         $lastId        = LeaveRequest::max('id') ?? 0;
@@ -103,6 +117,7 @@ class LeaveController extends Controller
             'start_date'     => $data['start_date'],
             'end_date'       => $data['end_date'],
             'total_days'     => $days,
+            'day_part'       => $isHalfDay ? ($data['half_part'] ?? 'first_half') : 'full_day',
             'reason'         => $data['reason'] ?? null,
             'status'         => 'approved',
             'approved_by'    => auth()->id(),
@@ -125,9 +140,14 @@ class LeaveController extends Controller
      |================================================================*/
     public function approve(string $tenant, Request $request, LeaveRequest $leave)
     {
-        if ($leave->status !== 'pending') {
+        // 'pending_final' = a manager already approved a long request and escalated it here for
+        // final sign-off (see TeamController::approveLeave); 'pending' = the normal single-step
+        // case (no manager involved, or a short request).
+        if (! in_array($leave->status, ['pending', 'pending_final'], true)) {
             return back()->with('error', 'This leave request has already been processed.');
         }
+
+        $wasPendingFinal = $leave->status === 'pending_final';
 
         $allowNegative = (bool) Setting::get('leaves.allow_negative_balance', false);
 
@@ -138,7 +158,7 @@ class LeaveController extends Controller
 
         if (! $allowNegative && $balance) {
             // Full formula: pending already includes this leave's days
-            $net = (float) ($balance->allocated + $balance->accrued + $balance->carried_over + $balance->adjusted - $balance->used - $balance->pending);
+            $net = $balance->available;
             if ($net < 0) {
                 return back()->with('error',
                     "Insufficient balance. Approving this would result in a negative balance of " . abs($net) . " day(s)."
@@ -151,6 +171,15 @@ class LeaveController extends Controller
             'approved_by'      => auth()->id(),
             'approved_at'      => now(),
             'approver_comments'=> $request->get('note'),
+        ]);
+
+        LeaveApproval::create([
+            'leave_request_id' => $leave->id,
+            'approver_id'      => auth()->id(),
+            'approval_level'   => $wasPendingFinal ? 2 : 1,
+            'decision'         => 'approved',
+            'comments'         => $request->get('note'),
+            'decided_at'       => now(),
         ]);
 
         // Move from pending used
@@ -193,6 +222,18 @@ class LeaveController extends Controller
                     ->first();
 
                 $this->movePendingToUsed($leave, $balance);
+
+                $employeeUser = User::where('employee_id', $leave->employee_id)->first();
+                if ($employeeUser) {
+                    NotificationService::leaveApproved($employeeUser, 'Auto-approval',
+                        route('admin.leaves.index', $tenant));
+                }
+                try {
+                    app(MailService::class)->sendLeaveApproved($leave->fresh(['employee', 'leaveType']));
+                } catch (\Throwable $e) {
+                    \Log::error('Leave auto-approve email failed: '.$e->getMessage());
+                }
+
                 $approved++;
             });
 
@@ -206,15 +247,26 @@ class LeaveController extends Controller
     {
         $request->validate(['reason' => 'required|string|max:500']);
 
-        if ($leave->status !== 'pending') {
+        if (! in_array($leave->status, ['pending', 'pending_final'], true)) {
             return back()->with('error', 'This leave request has already been processed.');
         }
+
+        $wasPendingFinal = $leave->status === 'pending_final';
 
         $leave->update([
             'status'           => 'rejected',
             'approved_by'      => auth()->id(),
             'approved_at'      => now(),
             'rejection_reason' => $request->reason,
+        ]);
+
+        LeaveApproval::create([
+            'leave_request_id' => $leave->id,
+            'approver_id'      => auth()->id(),
+            'approval_level'   => $wasPendingFinal ? 2 : 1,
+            'decision'         => 'rejected',
+            'comments'         => $request->reason,
+            'decided_at'       => now(),
         ]);
 
         // Release pending balance
@@ -513,6 +565,25 @@ class LeaveController extends Controller
         );
 
         $balance->increment('used', (float) $leave->total_days);
+    }
+
+    /**
+     * How many OTHER employees in the given pool already have an approved (or awaiting-final-
+     * signoff) leave overlapping the calendar week of this request's start date — a heads-up for
+     * the approver, not a hard block.
+     */
+    private function teammatesOnLeaveCount(LeaveRequest $leave, $employeeIdPool): int
+    {
+        $weekStart = Carbon::parse($leave->start_date)->startOfWeek();
+        $weekEnd   = Carbon::parse($leave->start_date)->endOfWeek();
+
+        return LeaveRequest::whereIn('employee_id', $employeeIdPool)
+            ->where('employee_id', '!=', $leave->employee_id)
+            ->whereIn('status', ['approved', 'pending_final'])
+            ->where('start_date', '<=', $weekEnd->toDateString())
+            ->where('end_date', '>=', $weekStart->toDateString())
+            ->distinct()
+            ->count('employee_id');
     }
 
     protected function calculateWorkingDays(Carbon $start, Carbon $end, bool $isHalfDay = false): float

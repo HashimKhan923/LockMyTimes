@@ -114,6 +114,10 @@
                 </option>
                 @endforeach
             </select>
+            <label class="flex items-center gap-2 text-sm text-gray-600 px-1">
+                <input type="checkbox" name="remote" value="1" {{ request('remote') ? 'checked' : '' }} onchange="this.form.submit()">
+                Remote only
+            </label>
             <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
         </form>
     </div>
@@ -199,6 +203,14 @@
                         </span>
                         @if($rec->is_manual_entry)
                         <span class="block text-xs text-gray-400 mt-0.5">Manual</span>
+                        @endif
+                        @if($rec->is_remote_clockin)
+                        <span class="block lmt-badge-brand text-xs mt-1">
+                            <i data-lucide="globe" class="w-3 h-3 inline"></i> Remote
+                            @if($rec->clock_in_city || $rec->clock_in_country)
+                                · {{ collect([$rec->clock_in_city, $rec->clock_in_country])->filter()->implode(', ') }}
+                            @endif
+                        </span>
                         @endif
                     </td>
                     <td class="text-xs text-gray-400 max-w-24 truncate">

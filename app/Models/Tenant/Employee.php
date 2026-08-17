@@ -4,6 +4,7 @@ namespace App\Models\Tenant;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,7 +20,7 @@ class Employee extends TenantModel
         'date_of_birth', 'gender', 'marital_status', 'nationality', 'avatar',
         'ssn_encrypted', 'employee_type', 'i9_verified', 'i9_verified_date',
         'address_line1', 'address_line2', 'city', 'state', 'postal_code', 'country',
-        'department_id', 'position_id', 'location_id', 'manager_id',
+        'department_id', 'position_id', 'location_id', 'employment_mode', 'manager_id',
         'employment_status', 'employment_type',
         'hire_date', 'probation_end_date', 'confirmation_date',
         'termination_date', 'termination_reason',
@@ -73,11 +74,51 @@ class Employee extends TenantModel
         return (bool) ($settings[$key] ?? self::defaultPrivacySettings()[$key] ?? false);
     }
 
+    /* ============ Remote/hybrid attendance helpers ============ */
+    public function isRemote(): bool
+    {
+        return $this->employment_mode === 'remote';
+    }
+
+    public function skipsGeofence(): bool
+    {
+        // 'hybrid' employees still clock in at an office most days and are geofenced normally;
+        // only 'remote' gets an automatic bypass. A hybrid employee working remote on a given
+        // day just doesn't pick a location (falls back to the existing no-location free clock-in).
+        return $this->employment_mode === 'remote';
+    }
+
+    /**
+     * Timezone this employee's attendance/shift math should be interpreted in. Remote/hybrid
+     * employees' own timezone (from their User record) takes precedence over their location's,
+     * since it may not reflect where they're actually working; falls back to the assigned
+     * location's timezone, then the app default.
+     */
+    public function attendanceTimezone(): string
+    {
+        if (in_array($this->employment_mode, ['remote', 'hybrid'], true) && $this->user?->timezone) {
+            return $this->user->timezone;
+        }
+
+        return $this->location?->timezone ?? config('app.timezone');
+    }
+
+    /**
+     * "Today" as a calendar date in this employee's own timezone, not the server's — matters for
+     * work_date bucketing so a remote employee clocking in near their local midnight lands on the
+     * correct day even when it differs from the server's current date.
+     */
+    public function localToday(): \Carbon\Carbon
+    {
+        return \Carbon\Carbon::today($this->attendanceTimezone());
+    }
+
     /* ============ Relationships ============ */
     public function user(): BelongsTo            { return $this->belongsTo(User::class); }
     public function department(): BelongsTo      { return $this->belongsTo(Department::class); }
     public function position(): BelongsTo        { return $this->belongsTo(Position::class); }
     public function location(): BelongsTo        { return $this->belongsTo(Location::class); }
+    public function locations(): BelongsToMany   { return $this->belongsToMany(Location::class, 'employee_locations')->withPivot('is_primary')->withTimestamps(); }
     public function manager(): BelongsTo         { return $this->belongsTo(self::class, 'manager_id'); }
     public function subordinates(): HasMany      { return $this->hasMany(self::class, 'manager_id'); }
     public function emergencyContacts(): HasMany { return $this->hasMany(EmergencyContact::class); }

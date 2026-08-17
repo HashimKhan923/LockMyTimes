@@ -20,6 +20,11 @@
                 Recalculate
             </button>
         </form>
+        <button type="button" class="lmt-btn-secondary lmt-btn-sm" style="color:#EF4444;border-color:#FCA5A5;"
+                onclick="openModal('reject-modal')">
+            <i data-lucide="x" class="w-4 h-4"></i>
+            Reject Run
+        </button>
         <form action="{{ route('admin.payroll.approve', [$tenant, $payrollRun->id]) }}" method="POST">
             @csrf @method('PATCH')
             <button type="submit" class="lmt-btn-primary lmt-btn-sm">
@@ -40,6 +45,20 @@
         @endif
     </div>
 </div>
+
+@if($payrollRun->status === 'rejected')
+<div class="lmt-card mb-6" style="background:#FEF2F2;border-color:#FCA5A5;">
+    <div class="flex items-start gap-3">
+        <i data-lucide="x-circle" class="w-5 h-5 flex-shrink-0" style="color:#EF4444;"></i>
+        <div>
+            <p class="font-bold text-gray-900">Rejected by {{ $payrollRun->rejecter?->name ?? 'an admin' }}
+                @if($payrollRun->rejected_at) on {{ $payrollRun->rejected_at->format('M j, Y g:i A') }} @endif
+            </p>
+            <p class="text-sm text-gray-600 mt-1">{{ $payrollRun->rejection_reason }}</p>
+        </div>
+    </div>
+</div>
+@endif
 
 {{-- Run Header --}}
 <div class="lmt-card mb-6 relative overflow-hidden">
@@ -178,7 +197,40 @@
     </div>
 </div>
 
+{{-- Reject Modal --}}
+<div id="reject-modal" class="lmt-modal-backdrop hidden">
+    <div class="lmt-modal">
+        <h3 class="font-black text-gray-900 mb-5">Reject Payroll Run</h3>
+        <form action="{{ route('admin.payroll.reject', [$tenant, $payrollRun->id]) }}" method="POST" class="space-y-4">
+            @csrf @method('PATCH')
+            <div>
+                <label class="lmt-label">Reason <span class="text-red-500">*</span></label>
+                <textarea name="reason" required class="lmt-textarea" rows="3"
+                          placeholder="Why is this payroll run being rejected?"></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="lmt-btn-danger flex-1">Reject</button>
+                <button type="button" onclick="closeModal('reject-modal')"
+                        class="lmt-btn-secondary flex-1">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 @push('scripts')
-<script>document.addEventListener('DOMContentLoaded',()=>{ if(window.lucide) lucide.createIcons(); });</script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{ if(window.lucide) lucide.createIcons(); });
+function openModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+    document.getElementById(id).classList.add('flex');
+}
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+    document.getElementById(id).classList.remove('flex');
+}
+document.getElementById('reject-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeModal('reject-modal');
+});
+</script>
 @endpush

@@ -9,6 +9,7 @@ use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\LeaveType;
 use App\Models\Tenant\Setting;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +41,7 @@ class LeaveController extends Controller
             ->filter(fn ($b) => $b->leaveType) // skip orphans
             ->map(function ($b) {
                 $total     = (float) ($b->allocated + $b->accrued + $b->carried_over + $b->adjusted);
-                $available = (float) ($total - $b->used - $b->pending);
+                $available = $b->available;
                 $usedPct   = $total > 0 ? min(100, round((($b->used + $b->pending) / $total) * 100)) : 0;
                 return (object) [
                     'id'        => $b->id,
@@ -142,7 +143,7 @@ class LeaveController extends Controller
             $b = $balancesByType->get($t->id);
             if ($b) {
                 $total     = (float) ($b->allocated + $b->accrued + $b->carried_over + $b->adjusted);
-                $available = (float) ($total - $b->used - $b->pending);
+                $available = $b->available;
             } else {
                 // No balance row yet — show the leave type default so employee knows their entitlement
                 $total     = (float) $t->default_days_per_year;
@@ -194,10 +195,16 @@ class LeaveController extends Controller
             }
         }
 
+        // Minimum service tenure
+        $minService = (int) ($type->min_service_months ?? 0);
+        if ($minService > 0 && ($emp->service_months ?? 0) < $minService) {
+            $errors['leave_type_id'] = "You need at least {$minService} months of service to request this leave type (you have {$emp->service_months}).";
+        }
+
         // Normalize day_part to DB enum values (form sends 'full', DB expects 'full_day')
         $rawPart  = $data['day_part'] ?? 'full_day';
         $dayPart  = ($rawPart === 'full') ? 'full_day' : $rawPart;
-        $workdays = $this->countWorkingDays($start, $end);
+        $workdays = $this->countWorkingDays($start, $end, $this->employeeLocationIds($emp));
         if ($workdays === 0) {
             $errors['start_date'] = 'No working days in the selected range.';
         }
@@ -240,7 +247,7 @@ class LeaveController extends Controller
         }
 
         if ($balance) {
-            $available = (float) ($balance->allocated + $balance->accrued + $balance->carried_over + $balance->adjusted - $balance->used - $balance->pending);
+            $available = $balance->available;
             if ($type->is_paid && $totalDays > $available) {
                 $errors['leave_type_id'] = "Insufficient balance. You have {$available} day(s) available but requested {$totalDays}.";
             }
@@ -316,6 +323,27 @@ class LeaveController extends Controller
 
             if ($needsApproval) {
                 app(MailService::class)->sendLeaveRequested($lr->load(['employee', 'leaveType']));
+
+                // Admins already get an email above — the direct manager only gets notified today
+                // if they're also an admin. Give the actual manager an in-app heads-up too.
+                $managerUser = $emp->manager?->user;
+                if ($managerUser) {
+                    NotificationService::send(
+                        $managerUser,
+                        "{$emp->full_name} submitted a leave request",
+                        'leave.requested',
+                        'calendar-clock',
+                        '#F59E0B',
+                        route('employee.team.approvals.leaves', $tenant)
+                    );
+                }
+            } else {
+                // Auto-approved (leave type doesn't require approval) — the employee otherwise
+                // hears nothing at all.
+                app(MailService::class)->sendLeaveApproved($lr->fresh(['employee', 'leaveType']));
+                if ($emp->user) {
+                    NotificationService::leaveApproved($emp->user, 'Auto-approval', route('employee.leaves.index', $tenant));
+                }
             }
         } catch (\Throwable $e) {
             DB::connection('tenant')->rollBack();
@@ -423,10 +451,12 @@ class LeaveController extends Controller
         $rawDp = $data['day_part'] ?? 'full_day';
         $dp    = ($rawDp === 'full') ? 'full_day' : $rawDp;
 
-        $workdays = $this->countWorkingDays($start, $end);
+        $locationIds = $this->employeeLocationIds($emp);
+        $workdays = $this->countWorkingDays($start, $end, $locationIds);
         $total    = ($start->equalTo($end) && $dp !== 'full_day') ? 0.5 : (float) $workdays;
 
-        $holidaysInRange = Holiday::whereBetween('date', [$start->toDateString(), $end->toDateString()])
+        $holidaysInRange = Holiday::visibleTo($locationIds)
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
             ->orderBy('date')
             ->get(['date', 'name'])
             ->map(fn ($h) => ['date' => Carbon::parse($h->date)->format('M j'), 'name' => $h->name]);
@@ -439,7 +469,7 @@ class LeaveController extends Controller
                 ->where('year', $start->year)
                 ->first();
             if ($bal) {
-                $available = (float) ($bal->allocated + $bal->accrued + $bal->carried_over + $bal->adjusted - $bal->used - $bal->pending);
+                $available = $bal->available;
                 $remaining = round($available - $total, 1);
             }
         }
@@ -474,11 +504,12 @@ class LeaveController extends Controller
     }
 
     /** Count Mon–Fri days excluding holidays between two dates inclusive. */
-    protected function countWorkingDays(Carbon $from, Carbon $to): int
+    protected function countWorkingDays(Carbon $from, Carbon $to, array $locationIds = []): int
     {
         $weekStartsMon = (bool) Setting::get('attendance.week_starts_monday', true);
 
-        $holidayDates = Holiday::whereBetween('date', [$from->toDateString(), $to->toDateString()])
+        $holidayDates = Holiday::visibleTo($locationIds)
+            ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
             ->pluck('date')
             ->map(fn ($d) => Carbon::parse($d)->toDateString())
             ->flip();
@@ -490,5 +521,15 @@ class LeaveController extends Controller
             $count++;
         }
         return $count;
+    }
+
+    /** IDs of every location this employee is assigned to (primary location_id + employee_locations pivot). */
+    protected function employeeLocationIds($emp): array
+    {
+        return $emp->locations()->pluck('locations.id')
+            ->when($emp->location_id, fn ($c) => $c->push($emp->location_id))
+            ->unique()
+            ->values()
+            ->all();
     }
 }

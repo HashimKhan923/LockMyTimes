@@ -201,7 +201,7 @@
                     ['name' => 'has_payroll',           'label' => 'Payroll',              'icon' => 'banknote'],
                     ['name' => 'has_performance',       'label' => 'Performance Reviews',  'icon' => 'bar-chart-2'],
                     ['name' => 'has_recruitment',       'label' => 'Recruitment ATS',      'icon' => 'user-plus'],
-                    ['name' => 'has_documents',         'label' => 'Documents',            'icon' => 'file-text'],
+                    {{-- 'has_documents' hidden per client request (2026-08) — column/model untouched --}}
                     ['name' => 'has_expenses',          'label' => 'Expenses',             'icon' => 'receipt'],
                     ['name' => 'has_assets',            'label' => 'Asset Management',     'icon' => 'package'],
                     ['name' => 'has_training',          'label' => 'Training',             'icon' => 'graduation-cap'],

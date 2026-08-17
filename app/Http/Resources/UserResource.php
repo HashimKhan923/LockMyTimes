@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'must_change_password' => (bool) $this->must_change_password,
             'last_login_at' => $this->last_login_at?->toIso8601String(),
             'last_login_ip' => $this->last_login_ip,
+            'employment_mode' => $this->employee?->employment_mode,
             'notification_preferences' => $this->notification_preferences ?? User::defaultNotificationPreferences(),
         ];
     }

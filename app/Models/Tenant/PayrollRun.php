@@ -14,6 +14,7 @@ class PayrollRun extends TenantModel
         'status',
         'total_employees', 'total_gross', 'total_deductions', 'total_taxes', 'total_net',
         'created_by', 'approved_by', 'approved_at', 'notes',
+        'rejected_by', 'rejected_at', 'rejection_reason',
     ];
 
     protected function casts(): array
@@ -23,6 +24,7 @@ class PayrollRun extends TenantModel
             'period_end'       => 'date',
             'pay_date'         => 'date',
             'approved_at'      => 'datetime',
+            'rejected_at'      => 'datetime',
             'total_gross'      => 'decimal:2',
             'total_deductions' => 'decimal:2',
             'total_taxes'      => 'decimal:2',
@@ -33,4 +35,5 @@ class PayrollRun extends TenantModel
     public function payslips(): HasMany { return $this->hasMany(Payslip::class); }
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
     public function approver(): BelongsTo { return $this->belongsTo(User::class, 'approved_by'); }
+    public function rejecter(): BelongsTo { return $this->belongsTo(User::class, 'rejected_by'); }
 }

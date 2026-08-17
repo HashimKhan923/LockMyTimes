@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Tenant\AuditLog;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Payslip;
 use App\Models\Tenant\PayrollRun;
@@ -31,7 +32,7 @@ class PayrollController extends Controller
             'total_paid_ytd'    => PayrollRun::where('status', 'paid')
                                     ->whereYear('pay_date', now()->year)
                                     ->sum('total_net'),
-            'pending_approval'  => PayrollRun::where('status', 'pending_approval')->count(),
+            'pending_approval'  => PayrollRun::whereIn('status', ['draft', 'calculated'])->count(),
         ];
 
         // Monthly payroll chart (last 6 months)
@@ -129,12 +130,45 @@ public function createRun(string $tenant, Request $request)
         // Mark all payslips as approved
         $payrollRun->payslips()->update(['status' => 'finalized']);
 
+        AuditLog::record('payroll.approved', $payrollRun, [], ['run_number' => $payrollRun->run_number]);
+
         NotificationService::payrollApproved(auth()->user(),
             $payrollRun->period_start . ' – ' . $payrollRun->period_end,
             route('admin.payroll.show', [$tenant, $payrollRun->id])
         );
 
         return back()->with('success', "Payroll run {$payrollRun->run_number} approved.");
+    }
+
+    /* ================================================================
+     | REJECT RUN
+     |================================================================*/
+    public function reject(string $tenant, Request $request, PayrollRun $payrollRun)
+    {
+        $request->validate(['reason' => 'required|string|max:500']);
+
+        if ($payrollRun->status !== 'draft') {
+            return back()->with('error', 'Only draft payroll runs can be rejected.');
+        }
+
+        $payrollRun->update([
+            'status'           => 'rejected',
+            'rejected_by'      => auth()->id(),
+            'rejected_at'      => now(),
+            'rejection_reason' => $request->reason,
+        ]);
+
+        AuditLog::record('payroll.rejected', $payrollRun, [], [
+            'run_number' => $payrollRun->run_number,
+            'reason' => $request->reason,
+        ]);
+
+        NotificationService::payrollRejected(auth()->user(),
+            $payrollRun->period_start . ' – ' . $payrollRun->period_end,
+            route('admin.payroll.show', [$tenant, $payrollRun->id])
+        );
+
+        return back()->with('success', "Payroll run {$payrollRun->run_number} rejected.");
     }
 
     /* ================================================================
@@ -148,6 +182,8 @@ public function createRun(string $tenant, Request $request)
 
         $payrollRun->update(['status' => 'paid']);  // remove paid_at — not in migration
         $payrollRun->payslips()->update(['status' => 'paid']);
+
+        AuditLog::record('payroll.paid', $payrollRun, [], ['run_number' => $payrollRun->run_number]);
 
         $mailer = app(MailService::class);
         $payrollRun->payslips()->with('employee')->get()->each(fn ($slip) => $mailer->sendPayslipAvailable($slip));
@@ -165,6 +201,8 @@ public function createRun(string $tenant, Request $request)
         }
 
         $this->payrollService->generateRun($payrollRun);
+
+        AuditLog::record('payroll.regenerated', $payrollRun, [], ['run_number' => $payrollRun->run_number]);
 
         return back()->with('success', 'Payroll recalculated successfully.');
     }
