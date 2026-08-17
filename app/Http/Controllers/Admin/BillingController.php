@@ -79,10 +79,7 @@ class BillingController extends Controller
         if ($activeSub && $currentTenant->stripe_customer_id && $activeSub->stripe_subscription_id) {
             // Already subscribed — switch the existing Stripe subscription's price directly
             // rather than sending the admin to the generic billing portal (which has no way to
-            // know which plan they meant to switch to). The customer.subscription.updated
-            // webhook (SubscriptionController::handleSubscriptionUpdated) picks up the new
-            // price and syncs our Subscription/Tenant records — same as every other
-            // subscription-state change in this app.
+            // know which plan they meant to switch to).
             $stripeSub = $stripe->subscriptions->retrieve($activeSub->stripe_subscription_id);
             $itemId    = $stripeSub->items->data[0]->id ?? null;
 
@@ -104,8 +101,22 @@ class BillingController extends Controller
                 ],
             ]);
 
+            // Update our own records immediately rather than waiting on the
+            // customer.subscription.updated webhook — this app has no reachable public
+            // endpoint for Stripe to call back to in most dev/local setups, so relying on the
+            // webhook alone left the plan change invisible even though Stripe had it right.
+            // (If the webhook does arrive later, handleSubscriptionUpdated() just no-ops since
+            // the plan_id will already match.)
+            $activeSub->update([
+                'plan_id'       => $plan->id,
+                'stripe_price_id' => $priceId,
+                'billing_cycle' => $request->billing_cycle,
+                'amount'        => $request->billing_cycle === 'yearly' ? $plan->yearly_price : $plan->monthly_price,
+            ]);
+            $currentTenant->applyPlan($plan);
+
             return redirect()->route('admin.billing.index', $tenant)
-                ->with('success', "Your plan is being changed to {$plan->name}. This can take a few seconds to finish updating.");
+                ->with('success', "Your plan has been changed to {$plan->name}.");
         }
 
         // First-time checkout for this tenant
