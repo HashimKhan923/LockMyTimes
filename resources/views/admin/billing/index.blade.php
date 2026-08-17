@@ -148,12 +148,6 @@
                         Up to {{ $plan->max_employees }} employees
                     </li>
                     @endif
-                    @if($plan->max_storage_gb)
-                    <li class="flex items-center gap-2 text-sm text-ink-soft">
-                        <i data-lucide="hard-drive" class="w-3.5 h-3.5 text-brand-400 flex-shrink-0"></i>
-                        {{ $plan->max_storage_gb }} GB storage
-                    </li>
-                    @endif
                     @foreach(array_filter([
                         $plan->has_payroll      ? 'Payroll' : null,
                         $plan->has_recruitment  ? 'Recruitment' : null,
@@ -223,11 +217,8 @@
         <div class="space-y-4">
             @php
                 $maxEmp  = $currentTenant->getPlanLimit('max_employees');
-                $maxStor = $currentTenant->getPlanLimit('max_storage_gb');
                 $usedEmp = $currentTenant->employees_count ?? 0;
-                $usedStor= round(($currentTenant->storage_used_bytes ?? 0) / 1024 / 1024 / 1024, 2);
                 $empPct  = $maxEmp ? min(100, round($usedEmp / $maxEmp * 100)) : 0;
-                $storPct = $maxStor ? min(100, round($usedStor / $maxStor * 100)) : 0;
             @endphp
 
             <div>
@@ -239,18 +230,6 @@
                     <div class="h-2 rounded-full transition-all
                         @if($empPct > 90) bg-red-500 @elseif($empPct > 70) bg-amber-500 @else bg-brand-500 @endif"
                         style="width: {{ $empPct }}%"></div>
-                </div>
-            </div>
-
-            <div>
-                <div class="flex justify-between text-xs mb-1.5">
-                    <span class="text-ink-soft font-medium">Storage</span>
-                    <span class="text-ink font-semibold">{{ $usedStor }} / {{ $maxStor ?? '∞' }} GB</span>
-                </div>
-                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div class="h-2 rounded-full transition-all
-                        @if($storPct > 90) bg-red-500 @elseif($storPct > 70) bg-amber-500 @else bg-brand-500 @endif"
-                        style="width: {{ $storPct }}%"></div>
                 </div>
             </div>
         </div>

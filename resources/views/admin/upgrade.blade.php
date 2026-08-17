@@ -87,10 +87,6 @@
                 <p class="text-xs text-gray-500">employees</p>
             </div>
             <div class="text-center">
-                <p class="text-2xl font-black text-gray-900">{{ $plan->max_storage_gb }}GB</p>
-                <p class="text-xs text-gray-500">storage</p>
-            </div>
-            <div class="text-center">
                 <p class="text-2xl font-black text-gray-900">{{ $plan->max_admins }}</p>
                 <p class="text-xs text-gray-500">admins</p>
             </div>
@@ -142,7 +138,7 @@
 @if($currentTenant)
 <div class="mt-10 max-w-2xl mx-auto p-6 rounded-2xl bg-gray-50 border border-gray-200">
     <h4 class="font-bold text-gray-800 mb-4">Your Current Usage</h4>
-    <div class="grid grid-cols-3 gap-4 text-center">
+    <div class="grid grid-cols-2 gap-4 text-center">
         <div>
             <p class="text-2xl font-black text-gray-900">{{ $currentTenant->employees_count }}</p>
             <p class="text-xs text-gray-500">
@@ -153,19 +149,6 @@
             <div class="mt-1.5 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                 <div class="h-full rounded-full {{ $currentTenant->employees_count / $maxEmp > 0.8 ? 'bg-red-500' : 'bg-indigo-500' }}"
                      style="width: {{ min(100, round($currentTenant->employees_count / $maxEmp * 100)) }}%"></div>
-            </div>
-            @endif
-        </div>
-        <div>
-            <p class="text-2xl font-black text-gray-900">{{ $currentTenant->storage_used_gb }}GB</p>
-            <p class="text-xs text-gray-500">
-                of {{ $currentTenant->getPlanLimit('max_storage_gb', '∞') }}GB storage
-            </p>
-            @php $maxGb = $currentTenant->getPlanLimit('max_storage_gb'); @endphp
-            @if($maxGb)
-            <div class="mt-1.5 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <div class="h-full rounded-full {{ $currentTenant->storage_used_gb / $maxGb > 0.8 ? 'bg-red-500' : 'bg-indigo-500' }}"
-                     style="width: {{ min(100, round($currentTenant->storage_used_gb / $maxGb * 100)) }}%"></div>
             </div>
             @endif
         </div>

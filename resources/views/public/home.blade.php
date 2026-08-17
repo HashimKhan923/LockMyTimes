@@ -553,7 +553,10 @@
 
                 {{-- Features --}}
                 <div class="space-y-3">
-                    @php $featureList = $plan->features ?? []; @endphp
+                    {{-- Storage bullets (e.g. "10 GB document storage") filtered out per client
+                         request (2026-08) — the plan's stored features list is left untouched,
+                         this just skips rendering any storage-related line here. --}}
+                    @php $featureList = collect($plan->features ?? [])->reject(fn ($f) => stripos($f, 'storage') !== false); @endphp
                     @foreach($featureList as $feat)
                     <div class="flex items-start gap-2.5 text-sm">
                         <i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 {{ $plan->is_featured ? 'text-white' : 'text-emerald-500' }}"></i>
@@ -563,16 +566,12 @@
                 </div>
 
                 {{-- Limits --}}
-                <div class="mt-6 pt-6 border-t grid grid-cols-2 gap-3 {{ $plan->is_featured ? 'border-white/20' : 'border-gray-100' }}">
+                <div class="mt-6 pt-6 border-t {{ $plan->is_featured ? 'border-white/20' : 'border-gray-100' }}">
                     <div class="text-center">
                         <div class="text-lg font-black {{ $plan->is_featured ? 'text-white' : 'text-ink' }}" style="font-family:'Syne',sans-serif">
                             {{ $plan->max_employees >= 9999 ? '∞' : $plan->max_employees }}
                         </div>
                         <div class="text-xs {{ $plan->is_featured ? 'text-white/70' : 'text-ink-soft' }}">employees</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-lg font-black {{ $plan->is_featured ? 'text-white' : 'text-ink' }}" style="font-family:'Syne',sans-serif">{{ $plan->max_storage_gb }}GB</div>
-                        <div class="text-xs {{ $plan->is_featured ? 'text-white/70' : 'text-ink-soft' }}">storage</div>
                     </div>
                 </div>
             </div>

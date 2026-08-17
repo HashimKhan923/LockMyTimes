@@ -71,11 +71,10 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
 </div>
 
 {{-- KPI row --}}
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
     @foreach([
         ['label'=>'Employees',        'value'=>number_format($tenant->employees_count), 'icon'=>'users',        'bg'=>'bg-brand-50',   'text'=>'text-brand-600'],
         ['label'=>'Lifetime Revenue', 'value'=>'$'.number_format($lifetimeRevenue,0),   'icon'=>'dollar-sign',  'bg'=>'bg-emerald-50', 'text'=>'text-emerald-600'],
-        ['label'=>'Storage Used',     'value'=>$tenant->storage_used_gb.' GB',          'icon'=>'hard-drive',   'bg'=>'bg-amber-50',   'text'=>'text-amber-600'],
         ['label'=>'Support Tickets',  'value'=>$tenant->supportTickets->count(),        'icon'=>'life-buoy',    'bg'=>'bg-purple-50',  'text'=>'text-purple-600'],
     ] as $s)
     <div class="lmt-stat">
@@ -107,7 +106,6 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                 $meters = [
                     ['label'=>'Employees', 'used'=>$tenant->employees_count, 'max'=>$plan->max_employees, 'icon'=>'users'],
                     ['label'=>'Admins',    'used'=>$tenant->admins_count,    'max'=>$plan->max_admins,    'icon'=>'shield'],
-                    ['label'=>'Storage',   'used'=>round($tenant->storage_used_gb,2), 'max'=>$plan->max_storage_gb, 'icon'=>'hard-drive', 'unit'=>'GB'],
                 ];
                 @endphp
                 @foreach($meters as $meter)

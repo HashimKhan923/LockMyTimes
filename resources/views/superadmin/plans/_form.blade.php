@@ -74,7 +74,13 @@
         <div class="lmt-card">
             <h3 class="font-bold text-ink mb-5" style="font-family:'Nunito',sans-serif">Usage Limits</h3>
             <p class="text-xs text-ink-soft mb-4">Leave blank for unlimited.</p>
-            <div class="grid sm:grid-cols-3 gap-4">
+            {{-- Storage (max_storage_gb) hidden per client request (2026-08) — column, plan data,
+                 and enforcement logic (Tenant::canUploadBytes/incrementStorage) all still intact.
+                 Kept as a hidden input (not deleted) so saving this form doesn't null out the
+                 plan's existing storage limit — max_storage_gb is nullable in validation, so an
+                 absent field would silently reset it to "unlimited" on every edit otherwise. --}}
+            <input type="hidden" name="max_storage_gb" value="{{ old('max_storage_gb', $plan->max_storage_gb ?? '') }}">
+            <div class="grid sm:grid-cols-2 gap-4">
                 <div>
                     <label class="lmt-label">Max Employees</label>
                     <input type="number" name="max_employees" min="1"
@@ -85,12 +91,6 @@
                     <label class="lmt-label">Max Admins</label>
                     <input type="number" name="max_admins" min="1"
                            value="{{ old('max_admins', $plan->max_admins ?? '') }}"
-                           class="lmt-input" placeholder="Unlimited">
-                </div>
-                <div>
-                    <label class="lmt-label">Storage (GB)</label>
-                    <input type="number" name="max_storage_gb" min="1"
-                           value="{{ old('max_storage_gb', $plan->max_storage_gb ?? '') }}"
                            class="lmt-input" placeholder="Unlimited">
                 </div>
             </div>

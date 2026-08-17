@@ -76,11 +76,10 @@
         </div>
 
         {{-- Limits --}}
-        <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="grid grid-cols-2 gap-3 mb-5">
             @foreach([
                 ['label' => 'Employees', 'value' => $plan->max_employees ?? '∞', 'icon' => 'users'],
                 ['label' => 'Admins', 'value' => $plan->max_admins ?? '∞', 'icon' => 'shield'],
-                ['label' => 'Storage', 'value' => ($plan->max_storage_gb ? $plan->max_storage_gb.'GB' : '∞'), 'icon' => 'hard-drive'],
             ] as $limit)
             <div class="text-center bg-gray-50 rounded-xl p-3">
                 <i data-lucide="{{ $limit['icon'] }}" class="w-4 h-4 text-ink-soft mx-auto mb-1"></i>
@@ -116,12 +115,14 @@
             @endforeach
         </div>
 
-        {{-- Custom features list --}}
-        @if(!empty($plan->features))
+        {{-- Custom features list — storage-related bullets filtered from display per client
+             request (2026-08); the plan's stored features list itself is untouched. --}}
+        @php $extraFeatures = collect($plan->features ?? [])->reject(fn ($f) => stripos($f, 'storage') !== false); @endphp
+        @if($extraFeatures->isNotEmpty())
         <div class="mb-4 pt-3 border-t border-gray-100">
             <p class="text-xs font-semibold text-ink-soft uppercase tracking-wider mb-2">Additional Features</p>
             <div class="space-y-1">
-                @foreach($plan->features as $feat)
+                @foreach($extraFeatures as $feat)
                 <div class="flex items-center gap-2 text-xs text-ink-soft">
                     <i data-lucide="star" class="w-3 h-3 text-amber-400 flex-shrink-0"></i>
                     {{ $feat }}
