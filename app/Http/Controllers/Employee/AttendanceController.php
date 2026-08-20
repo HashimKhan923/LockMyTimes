@@ -48,7 +48,7 @@ class AttendanceController extends Controller
             ->keyBy(fn ($a) => Carbon::parse($a->work_date)->toDateString());
 
         /* ───────── Holidays in this range ───────── */
-        $holidays = Holiday::visibleTo($this->assignedLocationIds($emp))
+        $holidays = Holiday::visibleTo($this->assignedLocationIds($emp)->all())
             ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
             ->get()
             ->keyBy(fn ($h) => Carbon::parse($h->date)->toDateString());
@@ -136,7 +136,7 @@ class AttendanceController extends Controller
             ->where('work_date', $d->toDateString())
             ->first();
 
-        $hol   = Holiday::visibleTo($this->assignedLocationIds($emp))->whereDate('date', $d->toDateString())->first();
+        $hol   = Holiday::visibleTo($this->assignedLocationIds($emp)->all())->whereDate('date', $d->toDateString())->first();
         $shift = $this->resolveShiftForDate($emp, $d);
 
         return response()->json([

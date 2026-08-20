@@ -106,6 +106,7 @@ class EmployeeController extends Controller
 
         $locationIds = $validated['location_ids'] ?? [];
         unset($validated['location_ids']);
+        $validated['base_salary'] = $validated['base_salary'] ?? 0;
 
         // Enforce plan employee limit
         $currentTenant = \App\Models\Main\Tenant::where('slug', $tenant)->first();
@@ -236,6 +237,7 @@ class EmployeeController extends Controller
 
         $locationIds = $validated['location_ids'] ?? [];
         unset($validated['location_ids']);
+        $validated['base_salary'] = $validated['base_salary'] ?? 0;
 
         if ($request->hasFile('avatar')) {
             if ($employee->avatar) Storage::disk('public')->delete($employee->avatar);

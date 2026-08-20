@@ -27,6 +27,8 @@ class DepartmentController extends Controller
             'manager_id' => 'nullable|exists:employees,id',
             'color'      => 'nullable|string|max:7',
         ]);
+        $data['parent_id']  = ($data['parent_id']  ?? null) ?: null;
+        $data['manager_id'] = ($data['manager_id'] ?? null) ?: null;
         Department::create(array_merge($data, ['is_active' => true]));
         return back()->with('success', 'Department created.');
     }
@@ -42,6 +44,8 @@ class DepartmentController extends Controller
             'color'      => 'nullable|string|max:7',
             'is_active'  => 'boolean',
         ]);
+        $data['parent_id']  = ($data['parent_id']  ?? null) ?: null;
+        $data['manager_id'] = ($data['manager_id'] ?? null) ?: null;
         $department->update($data);
         return back()->with('success', 'Department updated.');
     }
