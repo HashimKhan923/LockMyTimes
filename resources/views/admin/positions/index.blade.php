@@ -14,19 +14,12 @@
 
 <div class="lmt-card p-0 overflow-hidden">
     <table class="lmt-table">
-        <thead><tr><th>Title</th><th>Department</th><th>Level</th><th>Salary Range</th><th>Employees</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Title</th><th>Department</th><th>Employees</th><th>Actions</th></tr></thead>
         <tbody>
         @forelse($positions as $pos)
         <tr>
             <td class="font-semibold text-gray-900 text-sm">{{ $pos->title }}</td>
             <td class="text-sm text-gray-600">{{ $pos->department?->name ?? '—' }}</td>
-            <td><span class="lmt-badge-brand text-xs capitalize">{{ $pos->level }}</span></td>
-            <td class="text-sm text-gray-600">
-                @if($pos->min_salary || $pos->max_salary)
-                    ${{ number_format($pos->min_salary ?? 0, 0) }} – ${{ number_format($pos->max_salary ?? 0, 0) }}
-                @else —
-                @endif
-            </td>
             <td class="text-sm font-semibold text-gray-900">{{ $pos->employees_count }}</td>
             <td>
                 <form action="{{ route('admin.positions.destroy', [$tenant, $pos->id]) }}" method="POST"
@@ -40,7 +33,7 @@
             </td>
         </tr>
         @empty
-        <tr><td colspan="6" class="text-center py-12 text-gray-400">No positions yet</td></tr>
+        <tr><td colspan="4" class="text-center py-12 text-gray-400">No positions yet</td></tr>
         @endforelse
         </tbody>
     </table>
