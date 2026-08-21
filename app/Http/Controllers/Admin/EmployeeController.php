@@ -375,17 +375,17 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Sync the employee_locations pivot: the employee's primary `location_id` always gets a row
-     * (is_primary=true), plus any additional locations chosen for a multi-location employee.
+     * Sync the employee_locations pivot to exactly what was checked in the "Additional Locations"
+     * form — including allowing the admin to uncheck the current primary location's own box.
+     * This doesn't strand the primary location: attendance/holiday visibility (assignedLocationIds()
+     * in the attendance controllers) always unions in $employee->location_id directly regardless of
+     * what's in this pivot, so nothing else in the app depends on the primary having a pivot row.
      */
     private function syncLocations(Employee $employee, array $locationIds): void
     {
         $sync = [];
         foreach (array_unique(array_filter($locationIds)) as $id) {
             $sync[$id] = ['is_primary' => (int) $id === (int) $employee->location_id];
-        }
-        if ($employee->location_id && ! isset($sync[$employee->location_id])) {
-            $sync[$employee->location_id] = ['is_primary' => true];
         }
 
         $employee->locations()->sync($sync);
