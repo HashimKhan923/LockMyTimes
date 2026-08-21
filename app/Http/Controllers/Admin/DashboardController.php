@@ -99,7 +99,7 @@ class DashboardController extends Controller
 
         /* ====== Upcoming Holidays ====== */
         $upcomingHolidays = Holiday::where('date', '>=', $today->toDateString())
-            ->where('date', '<=', $today->addDays(30)->toDateString())
+            ->where('date', '<=', $today->copy()->addDays(30)->toDateString())
             ->where('is_active', true)
             ->orderBy('date')
             ->take(3)
