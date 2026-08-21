@@ -6,8 +6,7 @@
 @section('content')
 @php
     use App\Http\Controllers\Employee\SettingsController;
-    $locales        = SettingsController::locales();
-    $timezoneGroups = SettingsController::timezoneGroups();
+    $locales = SettingsController::locales();
 
     $tabs = [
         'preferences'   => ['label' => __('employee.settings_preferences'),   'icon' => 'settings-2'],
@@ -111,26 +110,21 @@
                     </div>
                 </div>
 
-                {{-- Timezone --}}
+                {{-- Timezone — admin-managed, not employee-editable (set from Admin > Employees) --}}
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                     <div>
                         <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_timezone') }}</p>
                         <p class="text-xs text-gray-500 mt-0.5">{{ __('employee.settings_timezone_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2">
-                        <select name="timezone" class="lmt-input @error('timezone') border-red-400 @enderror">
-                            @foreach($timezoneGroups as $region => $tzList)
-                                <optgroup label="{{ $region }}">
-                                    @foreach($tzList as $tz)
-                                        <option value="{{ $tz }}" @selected(($user->timezone ?? 'America/New_York') === $tz)>{{ str_replace('_', ' ', $tz) }}</option>
-                                    @endforeach
-                                </optgroup>
-                            @endforeach
-                        </select>
-                        @error('timezone')<p class="lmt-err">{{ $message }}</p>@enderror
+                        @php $effectiveTz = $emp->attendanceTimezone(); @endphp
+                        <div class="lmt-input bg-gray-50 text-gray-600 flex items-center justify-between">
+                            <span>{{ str_replace('_', ' ', $effectiveTz) }}</span>
+                            <span class="text-xs text-gray-400">Set by your admin</span>
+                        </div>
                         <p class="lmt-help mt-1.5">
                             {{ __('employee.settings_your_time') }}:
-                            <strong class="text-gray-700">{{ now()->setTimezone($user->timezone ?? 'UTC')->format('D, d M Y — H:i T') }}</strong>
+                            <strong class="text-gray-700">{{ now()->setTimezone($effectiveTz)->format('D, d M Y — H:i T') }}</strong>
                         </p>
                     </div>
                 </div>

@@ -1,9 +1,10 @@
 import { apiClient } from '../client';
 import type { NotificationPreference, UserProfile } from '../types';
 
+// timezone is deliberately not part of this payload — it's admin-managed only (set from
+// Admin > Employees on the web), never an employee self-service preference.
 export interface UpdatePreferencesPayload {
   locale: string;
-  timezone: string;
   date_format: 'DMY' | 'MDY' | 'YMD';
   time_format: '12' | '24';
   theme: 'light' | 'dark' | 'system';

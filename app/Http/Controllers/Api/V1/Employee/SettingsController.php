@@ -20,9 +20,10 @@ class SettingsController extends Controller
     {
         $user = $request->user();
 
+        // timezone is deliberately not accepted here — it's admin-managed only (set from
+        // Admin > Employees), never an employee self-service preference.
         $validated = $request->validate([
             'locale' => ['required', Rule::in(['en', 'es', 'fr', 'ar'])],
-            'timezone' => ['required', 'timezone'],
             'date_format' => ['required', Rule::in(['DMY', 'MDY', 'YMD'])],
             'time_format' => ['required', Rule::in(['12', '24'])],
             'theme' => ['required', Rule::in(['light', 'dark', 'system'])],

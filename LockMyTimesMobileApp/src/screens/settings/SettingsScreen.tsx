@@ -14,7 +14,6 @@ import { HeroHeader } from '../../components/common/HeroHeader';
 import { Icon } from '../../components/common/Icon';
 import { IconInfoCard, IconInfoRow } from '../../components/common/IconInfoRow';
 import { Screen } from '../../components/common/Screen';
-import { TextField } from '../../components/common/TextField';
 import { ToggleRow } from '../../components/common/ToggleRow';
 import { useAuthStore } from '../../stores/authStore';
 import { elevatedShadow, radii, spacing, typography } from '../../theme/tokens';
@@ -95,14 +94,12 @@ export function SettingsScreen() {
   const { data: profileData } = useQuery({ queryKey: ['profile'], queryFn: fetchProfile });
 
   const [locale, setLocale] = useState(user?.locale ?? 'en');
-  const [timezone, setTimezone] = useState(user?.timezone ?? 'UTC');
   const [dateFormat, setDateFormat] = useState<'DMY' | 'MDY' | 'YMD'>((user?.date_format as 'DMY' | 'MDY' | 'YMD') ?? 'DMY');
   const [timeFormat, setTimeFormat] = useState<'12' | '24'>((user?.time_format as '12' | '24') ?? '12');
 
   useEffect(() => {
     if (!user) return;
     setLocale(user.locale);
-    setTimezone(user.timezone ?? 'UTC');
     setDateFormat((user.date_format as 'DMY' | 'MDY' | 'YMD') ?? 'DMY');
     setTimeFormat((user.time_format as '12' | '24') ?? '12');
   }, [user]);
@@ -111,7 +108,6 @@ export function SettingsScreen() {
     mutationFn: () =>
       updatePreferences({
         locale,
-        timezone,
         date_format: dateFormat,
         time_format: timeFormat,
         theme: (user?.theme as 'light' | 'dark' | 'system') ?? 'system',
@@ -121,7 +117,7 @@ export function SettingsScreen() {
 
   const themeMutation = useMutation({
     mutationFn: (nextTheme: 'light' | 'dark' | 'system') =>
-      updatePreferences({ locale, timezone, date_format: dateFormat, time_format: timeFormat, theme: nextTheme }),
+      updatePreferences({ locale, date_format: dateFormat, time_format: timeFormat, theme: nextTheme }),
     onSuccess: (data) => updateUser(data.user),
   });
 
@@ -218,12 +214,12 @@ export function SettingsScreen() {
             </View>
 
             <Text style={[typography.subheading, { color: theme.text, marginTop: spacing.lg }]}>Timezone</Text>
-            <TextField
-              label="IANA timezone (e.g. America/New_York)"
-              value={timezone}
-              onChangeText={setTimezone}
-              autoCapitalize="none"
-            />
+            <IconInfoCard>
+              <IconInfoRow icon="globe" label="Timezone" value={user.timezone ?? 'Company default'} last />
+            </IconInfoCard>
+            <Text style={[typography.caption, { color: theme.textMuted, marginTop: spacing.xs }]}>
+              Set by your admin — used for your shift times and clock-in day boundaries.
+            </Text>
 
             <Text style={[typography.subheading, { color: theme.text }]}>Date format</Text>
             <View style={styles.chipRow}>

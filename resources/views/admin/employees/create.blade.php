@@ -183,6 +183,23 @@
                     <p class="lmt-help">Remote employees skip geofence checks entirely and can clock in from anywhere.</p>
                 </div>
 
+                <div>
+                    <label class="lmt-label">Timezone</label>
+                    @php $currentTz = old('timezone', $employee->user?->timezone ?? ''); @endphp
+                    <select name="timezone" class="lmt-select">
+                        <option value="">— Company Default ({{ $generalTimezone }}) —</option>
+                        @foreach(\DateTimeZone::listIdentifiers() as $tz)
+                        <option value="{{ $tz }}" {{ $currentTz === $tz ? 'selected' : '' }}>{{ $tz }}</option>
+                        @endforeach
+                    </select>
+                    <p class="lmt-help">
+                        Used for this employee's shift times, late/overtime math, and clock-in day
+                        boundaries. Leave as company default unless this person works from a different
+                        timezone (e.g. a remote employee abroad). Only admins can set this — employees
+                        can't change it themselves.
+                    </p>
+                </div>
+
                 <div class="md:col-span-2">
                     <label class="lmt-label">Additional Locations <span class="text-gray-400 font-normal">(optional — for employees splitting time across branches)</span></label>
                     <div class="flex flex-wrap gap-3 mt-1">

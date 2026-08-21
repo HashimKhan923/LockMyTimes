@@ -7,6 +7,7 @@ use App\Models\Tenant\Department;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Location;
 use App\Models\Tenant\Position;
+use App\Models\Tenant\Setting;
 use App\Models\Tenant\User;
 use App\Services\ExportService;
 use App\Services\MailService;
@@ -72,9 +73,10 @@ class EmployeeController extends Controller
         $locations   = Location::where('is_active', true)->orderBy('name')->get();
         $managers    = Employee::active()->orderBy('first_name')->get();
         $employee    = new \App\Models\Tenant\Employee();
+        $generalTimezone = Setting::get('general.timezone', config('app.timezone'));
 
         return view('admin.employees.create',
-            compact('departments', 'positions', 'locations', 'managers', 'employee', 'tenant'));
+            compact('departments', 'positions', 'locations', 'managers', 'employee', 'tenant', 'generalTimezone'));
     }
 
     /* ================================================================
@@ -102,11 +104,16 @@ class EmployeeController extends Controller
             'base_salary'       => 'nullable|numeric|min:0',
             'salary_frequency'  => 'nullable|in:hourly,weekly,bi_weekly,semi_monthly,monthly,annually',
             'avatar'            => 'nullable|image|max:2048',
+            // Empty/omitted = inherit the company's General Settings timezone dynamically (see
+            // Employee::attendanceTimezone()) rather than freezing a snapshot at hire time.
+            'timezone'          => 'nullable|timezone',
         ]);
 
         $locationIds = $validated['location_ids'] ?? [];
         unset($validated['location_ids']);
         $validated['base_salary'] = $validated['base_salary'] ?? 0;
+        $timezone = $validated['timezone'] ?? null;
+        unset($validated['timezone']);
 
         // Enforce plan employee limit
         $currentTenant = \App\Models\Main\Tenant::where('slug', $tenant)->first();
@@ -142,6 +149,7 @@ class EmployeeController extends Controller
                 'must_change_password' => true,
                 'is_active'            => true,
                 'email_verified_at'    => now(),
+                'timezone'             => $timezone,
             ]);
             $user->assignRole('Employee');
 
@@ -203,9 +211,10 @@ class EmployeeController extends Controller
         $managers    = Employee::active()
             ->where('id', '!=', $employee->id)
             ->orderBy('first_name')->get();
+        $generalTimezone = Setting::get('general.timezone', config('app.timezone'));
 
         return view('admin.employees.edit',
-            compact('employee', 'departments', 'positions', 'locations', 'managers', 'tenant'));
+            compact('employee', 'departments', 'positions', 'locations', 'managers', 'tenant', 'generalTimezone'));
     }
 
     /* ================================================================
@@ -233,11 +242,16 @@ class EmployeeController extends Controller
             'base_salary'       => 'nullable|numeric|min:0',
             'salary_frequency'  => 'nullable|in:hourly,weekly,bi_weekly,semi_monthly,monthly,annually',
             'avatar'            => 'nullable|image|max:2048',
+            // Empty/omitted = inherit the company's General Settings timezone dynamically (see
+            // Employee::attendanceTimezone()) rather than freezing a snapshot at hire time.
+            'timezone'          => 'nullable|timezone',
         ]);
 
         $locationIds = $validated['location_ids'] ?? [];
         unset($validated['location_ids']);
         $validated['base_salary'] = $validated['base_salary'] ?? 0;
+        $timezone = $validated['timezone'] ?? null;
+        unset($validated['timezone']);
 
         if ($request->hasFile('avatar')) {
             if ($employee->avatar) Storage::disk('public')->delete($employee->avatar);
@@ -247,11 +261,13 @@ class EmployeeController extends Controller
         $employee->update($validated);
         $this->syncLocations($employee, $locationIds);
 
-        // Sync user record
+        // Sync user record — timezone is admin-only (employees cannot set their own; see
+        // Employee\SettingsController, which no longer accepts a timezone field at all).
         if ($employee->user) {
             $employee->user->update([
-                'name'  => $employee->full_name,
-                'email' => $employee->email,
+                'name'     => $employee->full_name,
+                'email'    => $employee->email,
+                'timezone' => $timezone,
             ]);
         }
 

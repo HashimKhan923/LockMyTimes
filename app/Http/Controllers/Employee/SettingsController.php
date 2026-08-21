@@ -34,9 +34,10 @@ class SettingsController extends Controller
     {
         $user = auth()->user();
 
+        // timezone is deliberately not accepted here — it's admin-managed only (set from
+        // Admin > Employees), never an employee self-service preference.
         $validated = $request->validate([
             'locale'      => ['required', Rule::in(array_keys(self::locales()))],
-            'timezone'    => ['required', 'timezone'],
             'date_format' => ['required', Rule::in(['DMY', 'MDY', 'YMD'])],
             'time_format' => ['required', Rule::in(['12', '24'])],
             'theme'       => ['required', Rule::in(['light', 'dark', 'system'])],
@@ -117,17 +118,5 @@ class SettingsController extends Controller
             'fr' => 'Français',
             'ar' => 'العربية',
         ];
-    }
-
-    public static function timezoneGroups(): array
-    {
-        $all    = \DateTimeZone::listIdentifiers();
-        $groups = [];
-        foreach ($all as $tz) {
-            $region = explode('/', $tz, 2)[0];
-            $groups[$region][] = $tz;
-        }
-        ksort($groups);
-        return $groups;
     }
 }
