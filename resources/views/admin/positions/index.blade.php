@@ -56,32 +56,14 @@
                 <label class="lmt-label">Title <span class="text-red-500">*</span></label>
                 <input type="text" name="title" required class="lmt-input" placeholder="e.g. Senior Software Engineer"/>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="lmt-label">Department</label>
-                    <select name="department_id" class="lmt-select">
-                        <option value="">— None —</option>
-                        @foreach($departments as $dept)
-                        <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="lmt-label">Level</label>
-                    <select name="level" class="lmt-select">
-                        @foreach(['entry','junior','mid','senior','lead','manager','director','executive'] as $l)
-                        <option value="{{ $l }}">{{ ucfirst($l) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="lmt-label">Min Salary ($)</label>
-                    <input type="number" name="min_salary" class="lmt-input" placeholder="0"/>
-                </div>
-                <div>
-                    <label class="lmt-label">Max Salary ($)</label>
-                    <input type="number" name="max_salary" class="lmt-input" placeholder="0"/>
-                </div>
+            <div>
+                <label class="lmt-label">Department</label>
+                <select name="department_id" class="lmt-select">
+                    <option value="">— None —</option>
+                    @foreach($departments as $dept)
+                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="lmt-btn-primary flex-1">Create</button>

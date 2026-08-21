@@ -28,6 +28,7 @@ class PositionController extends Controller
             'max_salary'    => 'nullable|numeric|min:0',
             'level'         => 'nullable|in:entry,junior,mid,senior,lead,manager,director,executive',
         ]);
+        $data['department_id'] = ($data['department_id'] ?? null) ?: null;
         Position::create(array_merge($data, ['is_active' => true]));
         return back()->with('success', 'Position created.');
     }
@@ -42,6 +43,7 @@ class PositionController extends Controller
             'level'         => 'nullable|in:entry,junior,mid,senior,lead,manager,director,executive',
             'is_active'     => 'boolean',
         ]);
+        $data['department_id'] = ($data['department_id'] ?? null) ?: null;
         $position->update($data);
         return back()->with('success', 'Position updated.');
     }
