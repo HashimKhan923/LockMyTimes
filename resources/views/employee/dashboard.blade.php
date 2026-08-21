@@ -82,7 +82,16 @@
                         {{ $shift->name }} · {{ $shift->label }}
                     </span>
                 @endif
-                @if($emp->location)
+                @if($attendance?->is_remote_clockin)
+                    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-white/10 border border-white/20 text-white">
+                        <i data-lucide="globe" class="w-3 h-3"></i>
+                        Remote
+                        @php $remotePlace = collect([$attendance->clock_in_city, $attendance->clock_in_country])->filter()->implode(', '); @endphp
+                        @if($remotePlace)
+                            — {{ $remotePlace }}
+                        @endif
+                    </span>
+                @elseif($emp->location)
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-white/10 border border-white/20 text-white">
                         <i data-lucide="map-pin" class="w-3 h-3"></i>
                         {{ $emp->location->name }}

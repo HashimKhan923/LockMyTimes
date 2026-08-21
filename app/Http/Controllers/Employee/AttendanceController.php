@@ -467,8 +467,13 @@ class AttendanceController extends Controller
             return ['location' => null, 'qrCode' => null, 'error' => 'Selected location was not found.'];
         }
 
+        // A "requires QR" location only makes sense to enforce where scanning is actually
+        // possible: the mobile app has a real camera scanner. The web portal's QR tab is a
+        // manual paste-only field (no camera capture), so forcing browser/PC users through it
+        // would make clock-in effectively impossible for them — they fall back to geofence
+        // verification via the Web tab instead, same as any other location.
         $hasActiveQr = QrCode::where('location_id', $location->id)->where('is_active', true)->exists();
-        if ($hasActiveQr && ! $emp->skipsGeofence()) {
+        if ($hasActiveQr && ! $emp->skipsGeofence() && ($data['source'] ?? null) === 'mobile') {
             return ['location' => $location, 'qrCode' => null, 'error' => 'This location requires a QR code scan to clock in.'];
         }
 
