@@ -468,7 +468,7 @@ class AttendanceController extends Controller
         }
 
         $hasActiveQr = QrCode::where('location_id', $location->id)->where('is_active', true)->exists();
-        if ($hasActiveQr) {
+        if ($hasActiveQr && ! $emp->skipsGeofence()) {
             return ['location' => $location, 'qrCode' => null, 'error' => 'This location requires a QR code scan to clock in.'];
         }
 
