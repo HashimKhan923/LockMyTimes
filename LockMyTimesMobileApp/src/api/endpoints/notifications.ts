@@ -15,3 +15,8 @@ export async function markAllNotificationsRead(): Promise<{ success: true }> {
   const { data } = await apiClient.post('/notifications/read-all');
   return data;
 }
+
+export async function registerPushToken(pushToken: string): Promise<{ success: true }> {
+  const { data } = await apiClient.post('/notifications/push-token', { push_token: pushToken });
+  return data;
+}

@@ -83,6 +83,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('/', [NotificationController::class, 'index'])->name('index');
             Route::patch('/{id}/read', [NotificationController::class, 'markRead'])->name('read');
             Route::post('/read-all', [NotificationController::class, 'markAllRead'])->name('readAll');
+            Route::post('/push-token', [NotificationController::class, 'registerPushToken'])->name('pushToken');
         });
 
         Route::prefix('expenses')->name('expenses.')->group(function () {

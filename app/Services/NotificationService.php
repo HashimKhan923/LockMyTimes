@@ -19,7 +19,7 @@ class NotificationService
         ?string $actionUrl  = null,
         array  $data        = []
     ): Notification {
-        return Notification::create([
+        $notification = Notification::create([
             'type'            => $type,
             'notifiable_type' => User::class,
             'notifiable_id'   => $user->id,
@@ -29,6 +29,34 @@ class NotificationService
             'action_url'      => $actionUrl,
             'data'            => $data,
         ]);
+
+        ExpoPushService::send($user, self::pushTitle($type), $title, [
+            'notification_id' => $notification->id,
+            'type'            => $type,
+            'action_url'      => $actionUrl,
+        ]);
+
+        return $notification;
+    }
+
+    /**
+     * A short category label for the push banner's title line — the DB
+     * "title" is the full sentence and reads better as the push body.
+     */
+    private static function pushTitle(string $type): string
+    {
+        return match (true) {
+            str_starts_with($type, 'leave.')    => 'Leave update',
+            str_starts_with($type, 'loan.')     => 'Loan update',
+            str_starts_with($type, 'payslip.')  => 'Payroll',
+            str_starts_with($type, 'expense.')  => 'Expense update',
+            str_starts_with($type, 'asset.')    => 'Asset assignment',
+            str_starts_with($type, 'training.') => 'Training',
+            str_starts_with($type, 'task.')     => 'Task update',
+            str_starts_with($type, 'review.')   => 'Performance review',
+            str_starts_with($type, 'kudo.')     => 'Kudos',
+            default                              => 'LockMyTimes',
+        };
     }
 
     /**

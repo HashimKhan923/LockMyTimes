@@ -108,7 +108,14 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
+
+        // Prevent push notifications continuing to arrive for this device
+        // under the account that just signed out (device may be shared, or
+        // a different employee may sign in next). The app re-registers the
+        // token on its next authenticated session.
+        $user->update(['device_token' => null]);
 
         return response()->json(['message' => 'Signed out.']);
     }

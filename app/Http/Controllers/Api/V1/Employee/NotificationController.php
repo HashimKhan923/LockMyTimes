@@ -9,10 +9,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Read-side only — new for the mobile API (no push, poll/pull-to-refresh
- * only, per the plan's explicit push-deferral). Notification::send() etc.
- * (write side) stays untouched; this just queries the polymorphic
- * notifications already produced by that pipeline for the current user.
+ * Read side of the in-app notification feed, plus push-token registration.
+ * Writing notifications still goes through NotificationService::send(),
+ * which also fires the OS-level push via ExpoPushService.
  */
 class NotificationController extends Controller
 {
@@ -46,6 +45,21 @@ class NotificationController extends Controller
     public function markAllRead(Request $request): JsonResponse
     {
         Notification::unreadFor($request->user()->id)->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Register (or refresh) this device's Expo push token, so future
+     * NotificationService::send() calls can also fire an OS-level push.
+     */
+    public function registerPushToken(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'push_token' => ['required', 'string', 'max:255', 'regex:/^Expo(nent)?PushToken\[.+\]$/'],
+        ]);
+
+        $request->user()->update(['device_token' => $data['push_token']]);
 
         return response()->json(['success' => true]);
     }
