@@ -98,7 +98,7 @@
             <div class="lmt-card p-0 overflow-hidden" data-lmt-anim="fade-up">
                 <div class="p-5 border-b border-gray-100 dark:border-slate-700">
                     <h2 class="text-lg font-black text-gray-900 dark:text-slate-100">Team members</h2>
-                    <p class="text-xs text-gray-500 mt-0.5">Click on someone to see their full profile</p>
+                    <p class="text-xs text-gray-800 mt-0.5">Click on someone to see their full profile</p>
                 </div>
 
                 <div class="divide-y divide-gray-100 dark:divide-slate-700">
@@ -130,7 +130,7 @@
                                         {{ $statusLbl }}
                                     </span>
                                 </div>
-                                <p class="text-xs text-gray-500 truncate">
+                                <p class="text-xs text-gray-800 truncate">
                                     {{ $r->position?->title ?? 'No position' }}
                                     @if($r->department) &middot; {{ $r->department->name }} @endif
                                 </p>
@@ -155,7 +155,7 @@
                                         {{ $r->_open_tasks }}
                                     </span>
                                 @endif
-                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 ml-1"></i>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 ml-1"></i>
                             </div>
                         </a>
                     @endforeach
@@ -170,14 +170,14 @@
             <div class="lmt-card" data-lmt-anim="fade-up">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-black text-gray-900 dark:text-slate-100 flex items-center gap-1.5">
-                        <i data-lucide="calendar" class="w-4 h-4 text-gray-400"></i> Recent leaves
+                        <i data-lucide="calendar" class="w-4 h-4 text-gray-800"></i> Recent leaves
                     </h3>
                     <a href="{{ route('employee.team.approvals.leaves', ['tenant' => $tenantSlug, 'status' => 'all']) }}"
                        class="text-[10px] font-bold hover:underline" style="color:var(--brand-500);">View all</a>
                 </div>
 
                 @if($recentLeaves->isEmpty())
-                    <p class="text-xs text-gray-400">No recent leave requests.</p>
+                    <p class="text-xs text-gray-800">No recent leave requests.</p>
                 @else
                     <div class="space-y-2">
                         @foreach($recentLeaves as $l)
@@ -197,7 +197,7 @@
                                 @endif
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs font-bold text-gray-900 dark:text-slate-100 truncate">{{ $l->employee?->full_name }}</p>
-                                    <p class="text-[10px] text-gray-500 truncate">
+                                    <p class="text-[10px] text-gray-800 truncate">
                                         {{ $l->leaveType?->name ?? 'Leave' }} &middot; {{ (float) $l->total_days }} day{{ (float) $l->total_days === 1.0 ? '' : 's' }}
                                     </p>
                                 </div>
@@ -212,14 +212,14 @@
             <div class="lmt-card" data-lmt-anim="fade-up">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-black text-gray-900 dark:text-slate-100 flex items-center gap-1.5">
-                        <i data-lucide="receipt" class="w-4 h-4 text-gray-400"></i> Recent expenses
+                        <i data-lucide="receipt" class="w-4 h-4 text-gray-800"></i> Recent expenses
                     </h3>
                     <a href="{{ route('employee.team.approvals.expenses', ['tenant' => $tenantSlug, 'status' => 'all']) }}"
                        class="text-[10px] font-bold hover:underline" style="color:var(--brand-500);">View all</a>
                 </div>
 
                 @if($recentExpenses->isEmpty())
-                    <p class="text-xs text-gray-400">No recent expense submissions.</p>
+                    <p class="text-xs text-gray-800">No recent expense submissions.</p>
                 @else
                     <div class="space-y-2">
                         @foreach($recentExpenses as $e)
@@ -239,7 +239,7 @@
                                 @endif
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs font-bold text-gray-900 dark:text-slate-100 truncate">{{ $e->employee?->full_name }}</p>
-                                    <p class="text-[10px] text-gray-500 truncate">
+                                    <p class="text-[10px] text-gray-800 truncate">
                                         {{ $sym }}{{ number_format($e->amount, 2) }} &middot; {{ $e->category?->name ?? 'Uncategorised' }}
                                     </p>
                                 </div>

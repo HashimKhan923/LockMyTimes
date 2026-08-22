@@ -33,7 +33,7 @@
             </td>
         </tr>
         @empty
-        <tr><td colspan="4" class="text-center py-12 text-gray-400">No positions yet</td></tr>
+        <tr><td colspan="4" class="text-center py-12 text-gray-800">No positions yet</td></tr>
         @endforelse
         </tbody>
     </table>

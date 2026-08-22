@@ -132,7 +132,7 @@
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h3 class="font-black text-gray-900 text-base">Attendance This Week</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Daily presence across the team</p>
+                <p class="text-xs text-gray-800 mt-0.5">Daily presence across the team</p>
             </div>
             <a href="{{ route('admin.attendance.index', $currentTenant->slug) }}"
                class="text-xs font-bold text-brand-500 hover:text-brand-700 flex items-center gap-1">
@@ -153,7 +153,7 @@
                     <div class="absolute inset-0 opacity-30" style="background:linear-gradient(180deg,#fff 0%,transparent 100%);"></div>
                     @endif
                 </div>
-                <span class="text-xs font-semibold {{ $day['date'] === today()->toDateString() ? 'text-brand-600' : 'text-gray-400' }}">
+                <span class="text-xs font-semibold {{ $day['date'] === today()->toDateString() ? 'text-brand-600' : 'text-gray-800' }}">
                     {{ $day['label'] }}
                 </span>
             </div>
@@ -164,15 +164,15 @@
         <div class="mt-4 pt-4 border-t border-gray-100 grid grid-cols-3 gap-4 text-center">
             <div>
                 <p class="text-xl font-black text-emerald-600">{{ $presentToday }}</p>
-                <p class="text-xs text-gray-400">Present</p>
+                <p class="text-xs text-gray-800">Present</p>
             </div>
             <div>
                 <p class="text-xl font-black text-amber-500">{{ $onLeaveToday }}</p>
-                <p class="text-xs text-gray-400">On Leave</p>
+                <p class="text-xs text-gray-800">On Leave</p>
             </div>
             <div>
                 <p class="text-xl font-black text-red-500">{{ $lateToday }}</p>
-                <p class="text-xs text-gray-400">Late</p>
+                <p class="text-xs text-gray-800">Late</p>
             </div>
         </div>
     </div>
@@ -199,7 +199,7 @@
                     <i data-lucide="{{ $action['icon'] }}" class="w-4 h-4"></i>
                 </div>
                 <span class="text-sm font-semibold text-gray-700 group-hover:text-gray-900">{{ $action['label'] }}</span>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 ml-auto group-hover:text-gray-500 transition-colors"></i>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 ml-auto group-hover:text-gray-800 transition-colors"></i>
             </a>
             @else
             <div class="flex items-center gap-3 p-3 rounded-xl opacity-50">
@@ -237,7 +237,7 @@
                 <p class="text-sm font-semibold text-gray-900 truncate">
                     {{ $att->employee->full_name ?? 'Employee' }}
                 </p>
-                <p class="text-xs text-gray-400">
+                <p class="text-xs text-gray-800">
                     {{ $att->clock_in_at?->format('h:i A') ?? '—' }}
                     @if($att->is_late)
                     <span class="text-amber-500 font-semibold ml-1">Late</span>
@@ -255,7 +255,7 @@
         @empty
         <div class="text-center py-8">
             <i data-lucide="clock" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-            <p class="text-sm text-gray-400">No clock-ins yet today</p>
+            <p class="text-sm text-gray-800">No clock-ins yet today</p>
         </div>
         @endforelse
     </div>
@@ -277,7 +277,7 @@
                 <p class="text-sm font-semibold text-gray-900 truncate">
                     {{ $leave->employee->full_name ?? 'Employee' }}
                 </p>
-                <p class="text-xs text-gray-400">
+                <p class="text-xs text-gray-800">
                     {{ $leave->leaveType->name ?? 'Leave' }} ·
                     {{ $leave->start_date->format('M j') }}–{{ $leave->end_date->format('M j') }}
                     ({{ $leave->total_days }}d)
@@ -294,7 +294,7 @@
         @empty
         <div class="text-center py-8">
             <i data-lucide="calendar-check" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-            <p class="text-sm text-gray-400">No pending leave requests</p>
+            <p class="text-sm text-gray-800">No pending leave requests</p>
         </div>
         @endforelse
     </div>
@@ -307,7 +307,7 @@
         @if($deptChart->isEmpty())
         <div class="text-center py-8">
             <i data-lucide="git-branch" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-            <p class="text-sm text-gray-400">No departments set up yet</p>
+            <p class="text-sm text-gray-800">No departments set up yet</p>
         </div>
         @else
         <div class="space-y-3">
@@ -341,7 +341,7 @@
         @if($birthdaysToday->isEmpty() && $anniversariesToday->isEmpty())
         <div class="text-center py-8">
             <p class="text-3xl mb-2"></p>
-            <p class="text-sm text-gray-400">No celebrations today</p>
+            <p class="text-sm text-gray-800">No celebrations today</p>
         </div>
         @else
             @foreach($birthdaysToday as $emp)
@@ -349,7 +349,7 @@
                 <div class="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-lg"></div>
                 <div>
                     <p class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</p>
-                    <p class="text-xs text-gray-400">Birthday today!</p>
+                    <p class="text-xs text-gray-800">Birthday today!</p>
                 </div>
             </div>
             @endforeach
@@ -359,7 +359,7 @@
                 <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg"></div>
                 <div>
                     <p class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</p>
-                    <p class="text-xs text-gray-400">{{ $years }}-year work anniversary!</p>
+                    <p class="text-xs text-gray-800">{{ $years }}-year work anniversary!</p>
                 </div>
             </div>
             @endforeach
@@ -375,10 +375,10 @@
                 @if($kudo->badge)
                 <span class="lmt-badge-brand text-xs">{{ $kudo->badge }}</span>
                 @endif
-                <span class="text-xs text-gray-400 ml-auto">{{ $kudo->created_at->diffForHumans() }}</span>
+                <span class="text-xs text-gray-800 ml-auto">{{ $kudo->created_at->diffForHumans() }}</span>
             </div>
             <p class="text-sm text-gray-700 italic">"{{ Str::limit($kudo->message, 80) }}"</p>
-            <div class="flex items-center gap-1 mt-2 text-xs text-gray-500">
+            <div class="flex items-center gap-1 mt-2 text-xs text-gray-800">
                 <span class="font-semibold text-gray-700">{{ $kudo->fromEmployee->first_name ?? '?' }}</span>
                 <i data-lucide="arrow-right" class="w-3 h-3"></i>
                 <span class="font-semibold text-brand-600">{{ $kudo->toEmployee->first_name ?? '?' }}</span>
@@ -387,8 +387,8 @@
         @empty
         <div class="text-center py-8">
             <p class="text-3xl mb-2"></p>
-            <p class="text-sm text-gray-400">No kudos yet</p>
-            <p class="text-xs text-gray-300 mt-1">Start recognising your team!</p>
+            <p class="text-sm text-gray-800">No kudos yet</p>
+            <p class="text-xs text-gray-800 mt-1">Start recognising your team!</p>
         </div>
         @endforelse
     </div>
@@ -405,7 +405,7 @@
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-gray-900 truncate">{{ $holiday->name }}</p>
-                <p class="text-xs text-gray-400">
+                <p class="text-xs text-gray-800">
                     {{ $daysAway === 0 ? 'Today' : ($daysAway === 1 ? 'Tomorrow' : "In {$daysAway} days") }}
                     · {{ $holiday->is_paid ? 'Paid' : 'Unpaid' }}
                 </p>
@@ -417,7 +417,7 @@
         @empty
         <div class="text-center py-8">
             <i data-lucide="calendar" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-            <p class="text-sm text-gray-400">No upcoming holidays</p>
+            <p class="text-sm text-gray-800">No upcoming holidays</p>
         </div>
         @endforelse
 

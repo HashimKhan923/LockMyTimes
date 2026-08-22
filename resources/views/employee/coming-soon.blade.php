@@ -14,7 +14,7 @@
         <h1 class="text-3xl font-black text-gray-900 mb-2" style="font-family:'Plus Jakarta Sans',sans-serif">
             {{ $feature }} is on the way
         </h1>
-        <p class="text-gray-500 max-w-md mx-auto">
+        <p class="text-gray-800 max-w-md mx-auto">
             We're polishing this section to make it just right. Check back soon — it'll be worth the wait.
         </p>
     </div>

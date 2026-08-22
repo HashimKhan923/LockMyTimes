@@ -5,11 +5,11 @@
     @csrf
 
     @if($poll->type === 'multiple_choice')
-        <p class="text-xs text-gray-500 mb-3">Pick one or more options that apply.</p>
+        <p class="text-xs text-gray-800 mb-3">Pick one or more options that apply.</p>
     @elseif($poll->type === 'rating')
-        <p class="text-xs text-gray-500 mb-3">Tap a rating to vote.</p>
+        <p class="text-xs text-gray-800 mb-3">Tap a rating to vote.</p>
     @else
-        <p class="text-xs text-gray-500 mb-3">Pick one option.</p>
+        <p class="text-xs text-gray-800 mb-3">Pick one option.</p>
     @endif
 
     <div class="space-y-2">

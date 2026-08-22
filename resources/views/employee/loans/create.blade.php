@@ -23,7 +23,7 @@
 
     {{-- Back link --}}
     <a href="{{ route('employee.loans.index', $tenantSlug) }}"
-       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors mb-4">
+       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-700 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to loans
     </a>
@@ -32,20 +32,20 @@
         <h1 class="text-2xl lg:text-3xl font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
             Apply for a Loan
         </h1>
-        <p class="text-sm text-gray-500 mt-1">Submit a loan application for approval by your HR / finance team.</p>
+        <p class="text-sm text-gray-800 mt-1">Submit a loan application for approval by your HR / finance team.</p>
     </div>
 
     {{-- Profile snapshot --}}
     <div class="lmt-card p-4 mb-5 flex flex-wrap items-center gap-4 text-xs" data-lmt-anim="fade-up">
         <div class="flex items-center gap-2">
-            <i data-lucide="user" class="w-4 h-4 text-gray-400"></i>
-            <span class="text-gray-500">Service:</span>
+            <i data-lucide="user" class="w-4 h-4 text-gray-800"></i>
+            <span class="text-gray-800">Service:</span>
             <span class="font-bold text-gray-900 dark:text-slate-100">{{ $serviceMonths }} months</span>
         </div>
         @if($baseSalary > 0)
             <div class="flex items-center gap-2">
-                <i data-lucide="dollar-sign" class="w-4 h-4 text-gray-400"></i>
-                <span class="text-gray-500">Base salary:</span>
+                <i data-lucide="dollar-sign" class="w-4 h-4 text-gray-800"></i>
+                <span class="text-gray-800">Base salary:</span>
                 <span class="font-bold text-gray-900 dark:text-slate-100">{{ $sym }}{{ number_format($baseSalary, 2) }}</span>
             </div>
         @endif
@@ -101,22 +101,22 @@
                                     <span class="font-bold text-sm text-gray-900 dark:text-slate-100 truncate">{{ $t->name }}</span>
                                 </div>
                                 @if($t->description)
-                                    <p class="text-[11px] text-gray-500 dark:text-slate-400 mb-2 line-clamp-2">{{ $t->description }}</p>
+                                    <p class="text-[11px] text-gray-800 dark:text-slate-400 mb-2 line-clamp-2">{{ $t->description }}</p>
                                 @endif
                                 <div class="space-y-1 text-[10px]">
                                     @if($t->default_interest_rate > 0)
                                         <div class="flex justify-between">
-                                            <span class="text-gray-400">Interest</span>
+                                            <span class="text-gray-800">Interest</span>
                                             <span class="font-mono font-bold text-gray-700 dark:text-slate-200">{{ number_format($t->default_interest_rate, 2) }}% p.a.</span>
                                         </div>
                                     @endif
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Tenure</span>
+                                        <span class="text-gray-800">Tenure</span>
                                         <span class="font-mono font-bold text-gray-700 dark:text-slate-200">{{ $t->min_tenure_months }}–{{ $t->max_tenure_months }} months</span>
                                     </div>
                                     @if($t->_effective_max)
                                         <div class="flex justify-between">
-                                            <span class="text-gray-400">Max</span>
+                                            <span class="text-gray-800">Max</span>
                                             <span class="font-mono font-bold text-gray-700 dark:text-slate-200">{{ $sym }}{{ number_format($t->_effective_max, 0) }}</span>
                                         </div>
                                     @endif
@@ -151,7 +151,7 @@
                 <div>
                     <label class="lmt-label">Loan amount <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 pointer-events-none">{{ $sym }}</span>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-800 pointer-events-none">{{ $sym }}</span>
                         <input type="number" name="principal_amount" required min="1" step="0.01"
                                class="lmt-input pl-8 font-mono"
                                x-model.number="form.principal_amount"
@@ -183,19 +183,19 @@
                  class="rounded-2xl p-5 grid grid-cols-3 gap-4"
                  style="background:linear-gradient(135deg,var(--brand-50),#ede9fe);">
                 <div>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Monthly EMI</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Monthly EMI</p>
                     <p class="text-xl font-black font-mono mt-1" style="color:var(--brand-600);">
                         {{ $sym }}<span x-text="formatNumber(emi.emi)"></span>
                     </p>
                 </div>
                 <div>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total interest</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Total interest</p>
                     <p class="text-xl font-black font-mono mt-1 text-gray-700 dark:text-slate-200">
                         {{ $sym }}<span x-text="formatNumber(emi.total_interest)"></span>
                     </p>
                 </div>
                 <div>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total payable</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Total payable</p>
                     <p class="text-xl font-black font-mono mt-1 text-gray-900 dark:text-slate-100">
                         {{ $sym }}<span x-text="formatNumber(emi.total_amount)"></span>
                     </p>

@@ -13,7 +13,7 @@
             <h1 class="text-2xl lg:text-3xl font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
                 My Projects
             </h1>
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-sm text-gray-800 mt-1">
                 {{ (int) ($counters->total ?? 0) }} project{{ ($counters->total ?? 0) == 1 ? '' : 's' }} you're a part of
             </p>
         </div>
@@ -62,7 +62,7 @@
                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                           {{ $active
                                 ? 'border-transparent text-white'
-                                : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                                : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                    @if($active) style="background:var(--brand-500);" @endif>
                     {{ $chip['label'] }}
                     <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $active ? 'bg-white/20' : 'bg-gray-100 dark:bg-slate-700' }}">
@@ -75,7 +75,7 @@
         {{-- Search --}}
         <form method="GET" action="{{ route('employee.projects.index', $tenantSlug) }}" class="relative">
             <input type="hidden" name="status" value="{{ $status }}">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-800"></i>
             <input type="search" name="q" value="{{ $search }}"
                    placeholder="Search projects..."
                    class="lmt-input pl-9" style="min-width:220px;"/>
@@ -88,10 +88,10 @@
     @if($projects->isEmpty())
         <div class="lmt-card text-center py-16 px-5" data-lmt-anim="fade-up">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                <i data-lucide="folder-kanban" class="w-7 h-7 text-gray-300"></i>
+                <i data-lucide="folder-kanban" class="w-7 h-7 text-gray-800"></i>
             </div>
             <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No projects found</p>
-            <p class="text-xs text-gray-500 mt-1">
+            <p class="text-xs text-gray-800 mt-1">
                 @if($search !== '')
                     No projects match "{{ $search }}". Try a different search.
                 @else
@@ -122,7 +122,7 @@
 
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex-1 min-w-0">
-                            <p class="font-mono text-[10px] font-bold text-gray-400">{{ $p->code }}</p>
+                            <p class="font-mono text-[10px] font-bold text-gray-800">{{ $p->code }}</p>
                             <h3 class="font-black text-base text-gray-900 dark:text-slate-100 mt-0.5 truncate group-hover:text-brand-600 transition-colors">
                                 {{ $p->name }}
                             </h3>
@@ -131,14 +131,14 @@
                     </div>
 
                     @if($p->description)
-                        <p class="text-xs text-gray-500 dark:text-slate-400 line-clamp-2 mb-3">{{ $p->description }}</p>
+                        <p class="text-xs text-gray-800 dark:text-slate-400 line-clamp-2 mb-3">{{ $p->description }}</p>
                     @endif
 
                     {{-- Progress bar (project-wide) --}}
                     @if($p->progress > 0)
                         <div class="mb-3">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Project progress</span>
+                                <span class="text-[10px] font-bold text-gray-800 uppercase tracking-wider">Project progress</span>
                                 <span class="font-mono text-[10px] font-bold text-gray-700 dark:text-slate-300">{{ $p->progress }}%</span>
                             </div>
                             <div class="h-1.5 rounded-full bg-gray-100 dark:bg-slate-700 overflow-hidden">
@@ -150,21 +150,21 @@
                     {{-- My tasks stats --}}
                     <div class="grid grid-cols-3 gap-2 mb-3">
                         <div class="bg-gray-50/70 dark:bg-slate-800/60 rounded-lg p-2">
-                            <p class="text-[9px] text-gray-400 font-bold uppercase">My tasks</p>
+                            <p class="text-[9px] text-gray-800 font-bold uppercase">My tasks</p>
                             <p class="font-mono font-black text-base text-gray-900 dark:text-slate-100">{{ $p->_my_total ?? 0 }}</p>
                         </div>
                         <div class="bg-gray-50/70 dark:bg-slate-800/60 rounded-lg p-2">
-                            <p class="text-[9px] text-gray-400 font-bold uppercase">Open</p>
+                            <p class="text-[9px] text-gray-800 font-bold uppercase">Open</p>
                             <p class="font-mono font-black text-base" style="color:var(--brand-600);">{{ $p->_my_open ?? 0 }}</p>
                         </div>
                         <div class="bg-gray-50/70 dark:bg-slate-800/60 rounded-lg p-2">
-                            <p class="text-[9px] text-gray-400 font-bold uppercase">Overdue</p>
-                            <p class="font-mono font-black text-base {{ ($p->_my_overdue ?? 0) > 0 ? 'text-red-600' : 'text-gray-400' }}">{{ $p->_my_overdue ?? 0 }}</p>
+                            <p class="text-[9px] text-gray-800 font-bold uppercase">Overdue</p>
+                            <p class="font-mono font-black text-base {{ ($p->_my_overdue ?? 0) > 0 ? 'text-red-600' : 'text-gray-800' }}">{{ $p->_my_overdue ?? 0 }}</p>
                         </div>
                     </div>
 
                     {{-- Footer meta --}}
-                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-gray-100 dark:border-slate-700 text-[10px] text-gray-500">
+                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-gray-100 dark:border-slate-700 text-[10px] text-gray-800">
                         <div class="flex items-center gap-2">
                             @if($p->_my_role)
                                 <span class="font-bold uppercase">

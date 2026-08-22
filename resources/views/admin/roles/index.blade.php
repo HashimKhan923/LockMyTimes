@@ -28,7 +28,7 @@
 <div class="flex items-center justify-between mb-5">
     <div>
         <h2 class="text-lg font-black text-gray-900">All Roles</h2>
-        <p class="text-sm text-gray-400">Manage access levels and permissions across your organization</p>
+        <p class="text-sm text-gray-800">Manage access levels and permissions across your organization</p>
     </div>
     <button onclick="openModal('add-role-modal')" class="lmt-btn-primary lmt-btn-sm">
         <i data-lucide="plus" class="w-4 h-4"></i>
@@ -77,11 +77,11 @@
         <div class="grid grid-cols-2 gap-3 mb-4">
             <div class="bg-gray-50 rounded-xl p-3 text-center">
                 <p class="text-lg font-black text-gray-900">{{ $role->permissions_count }}</p>
-                <p class="text-xs text-gray-400">Permissions</p>
+                <p class="text-xs text-gray-800">Permissions</p>
             </div>
             <div class="bg-gray-50 rounded-xl p-3 text-center">
                 <p class="text-lg font-black text-gray-900">{{ $userCount }}</p>
-                <p class="text-xs text-gray-400">User{{ $userCount !== 1 ? 's' : '' }}</p>
+                <p class="text-xs text-gray-800">User{{ $userCount !== 1 ? 's' : '' }}</p>
             </div>
         </div>
 
@@ -96,7 +96,7 @@
                   method="POST" onsubmit="return confirm('Delete the \'{{ addslashes($role->name) }}\' role?')">
                 @csrf @method('DELETE')
                 <button type="submit"
-                        class="w-9 h-9 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors flex-shrink-0">
+                        class="w-9 h-9 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors flex-shrink-0">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
             </form>
@@ -112,7 +112,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Create Custom Role</h3>
             <button onclick="closeModal('add-role-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>

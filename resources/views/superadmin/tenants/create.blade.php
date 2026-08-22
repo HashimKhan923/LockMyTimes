@@ -8,7 +8,7 @@
 <div class="flex items-center gap-4 mb-6">
     <a href="{{ route('superadmin.organizations.index') }}"
        class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
-        <i data-lucide="arrow-left" class="w-4 h-4 text-gray-500"></i>
+        <i data-lucide="arrow-left" class="w-4 h-4 text-gray-800"></i>
     </a>
     <div>
         <h2 class="text-xl font-black text-ink">Create New Organization</h2>

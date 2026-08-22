@@ -68,20 +68,20 @@
         </div>
         <h3 class="font-black text-gray-900 mb-1">{{ $loc->name }}</h3>
         @if($loc->address_line1)
-        <p class="text-xs text-gray-400 mb-3">{{ $loc->address_line1 }}, {{ $loc->city }}, {{ $loc->state }}</p>
+        <p class="text-xs text-gray-800 mb-3">{{ $loc->address_line1 }}, {{ $loc->city }}, {{ $loc->state }}</p>
         @endif
         <div class="grid grid-cols-2 gap-3 text-xs">
             <div class="bg-gray-50 rounded-xl p-2 text-center">
                 <p class="font-black text-gray-900 text-base">{{ $loc->employees_count }}</p>
-                <p class="text-gray-400">Employees</p>
+                <p class="text-gray-800">Employees</p>
             </div>
             <div class="bg-gray-50 rounded-xl p-2 text-center">
                 <p class="font-black text-gray-900 text-base">{{ $loc->geofence_radius_meters }}m</p>
-                <p class="text-gray-400">Geo-fence</p>
+                <p class="text-gray-800">Geo-fence</p>
             </div>
         </div>
         @if($loc->latitude && $loc->longitude)
-        <div class="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
+        <div class="mt-3 flex items-center gap-1.5 text-xs text-gray-800">
             <i data-lucide="crosshair" class="w-3.5 h-3.5"></i>
             {{ $loc->latitude }}, {{ $loc->longitude }}
         </div>
@@ -96,8 +96,8 @@
     @empty
     <div class="lmt-card text-center py-16 md:col-span-3">
         <i data-lucide="map-pin" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-        <p class="font-semibold text-gray-500 mb-1">No locations yet</p>
-        <p class="text-sm text-gray-400 mb-4">Add a location to start generating QR codes for attendance</p>
+        <p class="font-semibold text-gray-800 mb-1">No locations yet</p>
+        <p class="text-sm text-gray-800 mb-4">Add a location to start generating QR codes for attendance</p>
         <button onclick="openAddModal()" class="lmt-btn-primary lmt-btn-sm inline-flex">
             <i data-lucide="plus" class="w-4 h-4"></i> Add Location
         </button>
@@ -110,7 +110,7 @@
     <div class="lmt-modal max-w-2xl w-full">
         <div class="flex items-center justify-between mb-5">
             <h3 id="loc-modal-title" class="font-black text-gray-900 text-lg">Add Work Location</h3>
-            <button type="button" onclick="closeAddModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+            <button type="button" onclick="closeAddModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-800 hover:text-gray-600 transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -152,13 +152,13 @@
                 <label class="lmt-label mb-2 flex items-center gap-2">
                     <i data-lucide="map" class="w-4 h-4 text-indigo-500"></i>
                     Pin Location on Map
-                    <span class="text-xs font-normal text-gray-400">— click or drag the pin</span>
+                    <span class="text-xs font-normal text-gray-800">— click or drag the pin</span>
                 </label>
                 <div class="map-wrapper rounded-2xl overflow-hidden border-2 border-gray-100 shadow-sm" style="background:#f8fafc;">
                     {{-- Search bar overlay --}}
                     <div class="map-search-box">
                         <div class="relative">
-                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" style="z-index:2;"></i>
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-800 pointer-events-none" style="z-index:2;"></i>
                             <input id="map-search-input" type="text" placeholder="Search for a place..."
                                 class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border-0 shadow-lg bg-white/95 backdrop-blur focus:outline-none focus:ring-2 focus:ring-indigo-400"
                                 autocomplete="off"/>
@@ -194,14 +194,14 @@
                     <label class="lmt-label">Latitude</label>
                     <div class="relative">
                         <input type="number" name="latitude" id="lat-input" step="0.0000001" class="lmt-input pr-8" placeholder="Click map to set"/>
-                        <i data-lucide="crosshair" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                        <i data-lucide="crosshair" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-800"></i>
                     </div>
                 </div>
                 <div>
                     <label class="lmt-label">Longitude</label>
                     <div class="relative">
                         <input type="number" name="longitude" id="lng-input" step="0.0000001" class="lmt-input pr-8" placeholder="Click map to set"/>
-                        <i data-lucide="crosshair" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                        <i data-lucide="crosshair" class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-800"></i>
                     </div>
                 </div>
             </div>
@@ -213,7 +213,7 @@
                     <span class="font-black text-indigo-600" id="radius-display">100 m</span>
                 </label>
                 <div class="radius-slider-wrap mt-2">
-                    <i data-lucide="circle" class="w-4 h-4 text-gray-300 shrink-0"></i>
+                    <i data-lucide="circle" class="w-4 h-4 text-gray-800 shrink-0"></i>
                     <input type="range" id="radius-slider" min="10" max="5000" value="100" step="10"/>
                     <i data-lucide="circle" class="w-6 h-6 text-indigo-400 shrink-0"></i>
                 </div>
@@ -446,12 +446,12 @@ function initLocationMap() {
         .then(data => {
             searchResults.innerHTML = '';
             if (!data.length) {
-                searchResults.innerHTML = '<div class="map-search-result-item text-gray-400">No results found</div>';
+                searchResults.innerHTML = '<div class="map-search-result-item text-gray-800">No results found</div>';
             } else {
                 data.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'map-search-result-item';
-                    div.innerHTML = `<span class="font-medium text-gray-800">${item.display_name.split(',')[0]}</span><br><span class="text-gray-400 text-xs">${item.display_name}</span>`;
+                    div.innerHTML = `<span class="font-medium text-gray-800">${item.display_name.split(',')[0]}</span><br><span class="text-gray-800 text-xs">${item.display_name}</span>`;
                     div.addEventListener('click', () => {
                         const lat = parseFloat(item.lat);
                         const lng = parseFloat(item.lon);

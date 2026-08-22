@@ -40,7 +40,7 @@
     {{-- Top nav --}}
     <div class="flex items-center justify-between mb-5">
         <a href="{{ route('employee.loans.index', $tenantSlug) }}"
-           class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
+           class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>All Loans</span>
         </a>
@@ -73,7 +73,7 @@
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-mono text-xs font-bold text-gray-400">{{ $loan->loan_number }}</span>
+                    <span class="font-mono text-xs font-bold text-gray-800">{{ $loan->loan_number }}</span>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold"
                           style="background:{{ $statusBg }};color:{{ $statusColor }};">
                         <i data-lucide="{{ $statusIcon }}" class="w-3 h-3"></i>
@@ -110,11 +110,11 @@
             </div>
 
             <div class="text-left lg:text-right flex-shrink-0">
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Principal</p>
+                <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Principal</p>
                 <p class="text-3xl lg:text-4xl font-black font-mono text-gray-900 dark:text-slate-100">
                     {{ $sym }}{{ number_format($loan->principal_amount, 2) }}
                 </p>
-                <p class="text-xs text-gray-400 mt-0.5">
+                <p class="text-xs text-gray-800 mt-0.5">
                     {{ $loan->tenure_months }} months @ {{ number_format($loan->interest_rate, 2) }}%
                 </p>
             </div>
@@ -138,19 +138,19 @@
 
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div class="bg-gray-50 dark:bg-slate-800/60 rounded-xl p-3">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Paid</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Paid</p>
                     <p class="text-base font-black font-mono mt-1 text-emerald-600">{{ $sym }}{{ number_format($loan->amount_paid, 2) }}</p>
                 </div>
                 <div class="bg-gray-50 dark:bg-slate-800/60 rounded-xl p-3">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Remaining</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Remaining</p>
                     <p class="text-base font-black font-mono mt-1 text-gray-900 dark:text-slate-100">{{ $sym }}{{ number_format($loan->amount_remaining, 2) }}</p>
                 </div>
                 <div class="bg-gray-50 dark:bg-slate-800/60 rounded-xl p-3">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Installments</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Installments</p>
                     <p class="text-base font-black font-mono mt-1 text-gray-900 dark:text-slate-100">{{ $loan->installments_paid }}/{{ $loan->tenure_months }}</p>
                 </div>
                 <div class="bg-gray-50 dark:bg-slate-800/60 rounded-xl p-3">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">EMI</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">EMI</p>
                     <p class="text-base font-black font-mono mt-1" style="color:var(--brand-600);">{{ $sym }}{{ number_format($loan->emi_amount, 2) }}</p>
                 </div>
             </div>
@@ -164,7 +164,7 @@
 
             {{-- Details --}}
             <div class="lmt-card" data-lmt-anim="fade-up">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                     <i data-lucide="info" class="w-3.5 h-3.5"></i> Loan details
                 </h3>
                 <div class="space-y-3">
@@ -192,7 +192,7 @@
                     @endphp
                     @foreach($rows as [$label, $value, $icon])
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800 last:border-b-0">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="{{ $icon }}" class="w-3.5 h-3.5"></i>
                                 <span>{{ $label }}</span>
                             </div>
@@ -207,7 +207,7 @@
                 <div class="lmt-card p-0 overflow-hidden" data-lmt-anim="fade-up">
                     <div class="p-5 border-b border-gray-100 dark:border-slate-700">
                         <h3 class="text-sm font-black text-gray-900 dark:text-slate-100">Repayment schedule</h3>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ $loan->repayments->count() }} installment{{ $loan->repayments->count() == 1 ? '' : 's' }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ $loan->repayments->count() }} installment{{ $loan->repayments->count() == 1 ? '' : 's' }}</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="lmt-table">
@@ -249,7 +249,7 @@
                                             <span class="font-mono text-xs text-gray-700 dark:text-slate-200">{{ $sym }}{{ number_format($r->principal_component, 2) }}</span>
                                         </td>
                                         <td class="text-right">
-                                            <span class="font-mono text-xs text-gray-500">{{ $sym }}{{ number_format($r->interest_component, 2) }}</span>
+                                            <span class="font-mono text-xs text-gray-800">{{ $sym }}{{ number_format($r->interest_component, 2) }}</span>
                                         </td>
                                         <td class="text-right">
                                             <span class="font-mono font-bold text-xs text-gray-900 dark:text-slate-100">{{ $sym }}{{ number_format($r->emi_amount, 2) }}</span>
@@ -267,7 +267,7 @@
         {{-- ═════ RIGHT: timeline ═════ --}}
         <div class="space-y-5">
             <div class="lmt-card" data-lmt-anim="fade-up">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                     <i data-lucide="git-commit" class="w-3.5 h-3.5"></i> Activity
                 </h3>
 
@@ -295,9 +295,9 @@
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $event['title'] }}</p>
                                 @if(! empty($event['detail']))
-                                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5 whitespace-pre-line">{{ $event['detail'] }}</p>
+                                    <p class="text-xs text-gray-800 dark:text-slate-400 mt-0.5 whitespace-pre-line">{{ $event['detail'] }}</p>
                                 @endif
-                                <p class="text-[10px] text-gray-400 mt-1 font-semibold uppercase tracking-wider">
+                                <p class="text-[10px] text-gray-800 mt-1 font-semibold uppercase tracking-wider">
                                     {{ \Carbon\Carbon::parse($event['when'])->format('M j, Y · g:i A') }}
                                 </p>
                             </div>
@@ -321,7 +321,7 @@
                     <i data-lucide="alert-triangle" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Cancel this application?</h3>
-                <p class="text-sm text-gray-500 mt-2">
+                <p class="text-sm text-gray-800 mt-2">
                     Loan application <span class="font-mono font-bold">{{ $loan->loan_number }}</span> will be cancelled. You can apply again if needed.
                 </p>
             </div>

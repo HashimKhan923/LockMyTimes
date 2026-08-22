@@ -237,7 +237,7 @@
             <p class="text-sm text-ink-soft">{{ $admin->email }}</p>
             <span class="mt-2 inline-block lmt-badge-brand text-xs capitalize">{{ $admin->role ?? 'owner' }}</span>
             @if($admin->last_login_at)
-            <p class="text-xs text-gray-400 mt-3">Last login: {{ $admin->last_login_at->diffForHumans() }}</p>
+            <p class="text-xs text-gray-800 mt-3">Last login: {{ $admin->last_login_at->diffForHumans() }}</p>
             @endif
         </div>
 

@@ -93,7 +93,7 @@
         <nav class="flex-1 p-3 space-y-1 overflow-y-auto overflow-x-hidden">
 
             {{-- Main --}}
-            <p class="nav-section-label text-xs font-bold text-gray-400 uppercase tracking-widest px-3 py-2">Main</p>
+            <p class="nav-section-label text-xs font-bold text-gray-800 uppercase tracking-widest px-3 py-2">Main</p>
             @php
             $nav = [
                 ['route'=>'superadmin.dashboard',       'icon'=>'layout-dashboard', 'label'=>'Dashboard'],
@@ -113,7 +113,7 @@
             @endforeach
 
             {{-- Billing --}}
-            <p class="nav-section-label text-xs font-bold text-gray-400 uppercase tracking-widest px-3 pt-4 pb-2">Billing</p>
+            <p class="nav-section-label text-xs font-bold text-gray-800 uppercase tracking-widest px-3 pt-4 pb-2">Billing</p>
             @php
             $billing = [
                 ['route'=>'superadmin.plans.index',    'icon'=>'layers',      'label'=>'Plans'],
@@ -132,7 +132,7 @@
             @endforeach
 
             {{-- Support --}}
-            <p class="nav-section-label text-xs font-bold text-gray-400 uppercase tracking-widest px-3 pt-4 pb-2">Support & Security</p>
+            <p class="nav-section-label text-xs font-bold text-gray-800 uppercase tracking-widest px-3 pt-4 pb-2">Support & Security</p>
             @php
             $support = [
                 ['route'=>'superadmin.tickets.index', 'icon'=>'life-buoy',    'label'=>'Support Tickets', 'badge'=>\App\Models\Main\SupportTicket::where('status','open')->count()],
@@ -154,7 +154,7 @@
             @endforeach
 
             {{-- Config --}}
-            <p class="nav-section-label text-xs font-bold text-gray-400 uppercase tracking-widest px-3 pt-4 pb-2">Configuration</p>
+            <p class="nav-section-label text-xs font-bold text-gray-800 uppercase tracking-widest px-3 pt-4 pb-2">Configuration</p>
             @php $active = request()->routeIs('superadmin.settings*'); @endphp
             <a href="{{ route('superadmin.settings') }}"
                class="sa-nav-link {{ $active ? 'active' : '' }}"
@@ -174,12 +174,12 @@
                 </div>
                 <div class="nav-label flex-1 min-w-0">
                     <p class="text-xs font-bold text-gray-900 truncate">{{ Auth::guard('superadmin')->user()->name ?? 'Admin' }}</p>
-                    <p class="text-xs text-gray-400 capitalize">{{ Auth::guard('superadmin')->user()->role ?? 'owner' }}</p>
+                    <p class="text-xs text-gray-800 capitalize">{{ Auth::guard('superadmin')->user()->role ?? 'owner' }}</p>
                 </div>
                 <form action="{{ route('superadmin.logout') }}" method="POST" class="nav-label">
                     @csrf
                     <button type="submit"
-                            class="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-red-50"
+                            class="text-gray-800 hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-red-50"
                             title="Sign out">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                     </button>
@@ -197,11 +197,11 @@
             <div class="flex items-center gap-4">
                 <button @click="sidebarOpen=!sidebarOpen"
                         class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors flex-shrink-0">
-                    <i data-lucide="panel-left" class="w-5 h-5 text-gray-500"></i>
+                    <i data-lucide="panel-left" class="w-5 h-5 text-gray-800"></i>
                 </button>
                 <div class="flex items-center gap-2 text-sm">
-                    <span class="text-gray-400 font-medium">Control Center</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i>
+                    <span class="text-gray-800 font-medium">Control Center</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800"></i>
                     <span class="font-bold text-gray-900">@yield('page-title','Dashboard')</span>
                 </div>
             </div>
@@ -212,7 +212,7 @@
                 <button @click="darkMode=!darkMode"
                         class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors"
                         title="Toggle dark mode">
-                    <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-500"></i>
+                    <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-800"></i>
                 </button>
 
                 {{-- Notification bell with dropdown — real persisted notifications (system alerts
@@ -272,7 +272,7 @@
                     <button @click="open=!open; if(open) load()"
                             class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors relative"
                             title="Notifications">
-                        <i data-lucide="bell" class="w-4 h-4 text-gray-500"></i>
+                        <i data-lucide="bell" class="w-4 h-4 text-gray-800"></i>
                         <span x-show="unread > 0" x-cloak
                               class="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center leading-none px-1"
                               x-text="unread > 9 ? '9+' : unread"></span>
@@ -289,12 +289,12 @@
                             <div class="flex items-center gap-2">
                                 <span x-show="unread > 0" x-cloak class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full" x-text="unread + ' new'"></span>
                                 <button x-show="unread > 0" x-cloak @click="markAllRead()"
-                                        class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Mark all read</button>
+                                        class="text-xs text-gray-800 hover:text-gray-600 transition-colors">Mark all read</button>
                             </div>
                         </div>
 
                         <div class="max-h-72 overflow-y-auto divide-y divide-gray-50">
-                            <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-gray-400 gap-2">
+                            <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-gray-800 gap-2">
                                 <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
@@ -336,7 +336,7 @@
                 </div>
 
                 {{-- Date badge --}}
-                <div class="hidden md:flex items-center gap-2 text-xs text-gray-500 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100">
+                <div class="hidden md:flex items-center gap-2 text-xs text-gray-800 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100">
                     <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                     {{ now()->format('M j, Y') }}
                 </div>

@@ -31,7 +31,7 @@
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px
               {{ $tab === $t
                   ? 'border-brand-500 text-brand-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                  : 'border-transparent text-gray-800 hover:text-gray-700' }}">
         {{ $label }}
     </a>
     @endforeach
@@ -111,7 +111,7 @@
                             </div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $loan->employee->full_name ?? '—' }}</p>
-                                <p class="text-xs text-gray-400">{{ $loan->employee->department?->name }}</p>
+                                <p class="text-xs text-gray-800">{{ $loan->employee->department?->name }}</p>
                             </div>
                         </div>
                     </td>
@@ -135,9 +135,9 @@
                                 <div class="h-full rounded-full lmt-gradient-bg"
                                      style="width:{{ $pct }}%"></div>
                             </div>
-                            <span class="text-xs text-gray-500">{{ $pct }}%</span>
+                            <span class="text-xs text-gray-800">{{ $pct }}%</span>
                         </div>
-                        <p class="text-xs text-gray-400 mt-0.5">
+                        <p class="text-xs text-gray-800 mt-0.5">
                             {{ $loan->installments_paid }}/{{ $loan->tenure_months }} installments
                         </p>
                     </td>
@@ -179,7 +179,7 @@
                 <tr>
                     <td colspan="9" class="text-center py-14">
                         <i data-lucide="credit-card" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="text-gray-400">No loans found</p>
+                        <p class="text-gray-800">No loans found</p>
                     </td>
                 </tr>
                 @endforelse
@@ -236,7 +236,7 @@
                             </div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $adv->employee->full_name ?? '—' }}</p>
-                                <p class="text-xs text-gray-400">{{ $adv->reason }}</p>
+                                <p class="text-xs text-gray-800">{{ $adv->reason }}</p>
                             </div>
                         </div>
                     </td>
@@ -276,7 +276,7 @@
                 <tr>
                     <td colspan="8" class="text-center py-14">
                         <i data-lucide="piggy-bank" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="text-gray-400">No salary advances</p>
+                        <p class="text-gray-800">No salary advances</p>
                     </td>
                 </tr>
                 @endforelse
@@ -306,17 +306,17 @@
             </div>
             <div>
                 <h3 class="font-black text-gray-900">{{ $lt->name }}</h3>
-                <p class="text-xs text-gray-400">{{ $lt->interest_rate ?? $lt->default_interest_rate }}% · {{ ucfirst($lt->interest_type) }}</p>
+                <p class="text-xs text-gray-800">{{ $lt->interest_rate ?? $lt->default_interest_rate }}% · {{ ucfirst($lt->interest_type) }}</p>
             </div>
         </div>
         <div class="grid grid-cols-2 gap-2 text-xs mb-3">
             <div class="bg-gray-50 rounded-lg p-2 text-center">
                 <p class="font-black text-gray-900">${{ number_format($lt->min_amount ?? 0, 0) }} – ${{ number_format($lt->max_amount ?? 0, 0) }}</p>
-                <p class="text-gray-400">Amount Range</p>
+                <p class="text-gray-800">Amount Range</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-2 text-center">
                 <p class="font-black text-gray-900">{{ $lt->min_tenure_months }}–{{ $lt->max_tenure_months }} mo</p>
-                <p class="text-gray-400">Tenure</p>
+                <p class="text-gray-800">Tenure</p>
             </div>
         </div>
         <div class="flex flex-wrap gap-1.5">
@@ -334,7 +334,7 @@
     @empty
     <div class="lmt-card text-center py-10 md:col-span-3">
         <i data-lucide="layers" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-        <p class="text-gray-400 text-sm">No loan types configured</p>
+        <p class="text-gray-800 text-sm">No loan types configured</p>
     </div>
     @endforelse
 </div>

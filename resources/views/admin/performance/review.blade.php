@@ -7,7 +7,7 @@
 <div class="max-w-3xl mx-auto">
 
     <a href="{{ route('admin.performance.index', $tenant) }}?tab=reviews"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Reviews
     </a>
@@ -29,11 +29,11 @@
                         {{ str_replace('_',' ',$review->status) }}
                     </span>
                 </div>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-gray-800">
                     {{ $review->employee->position?->title }}
                     @if($review->employee->department) · {{ $review->employee->department->name }} @endif
                 </p>
-                <div class="flex flex-wrap gap-4 mt-2 text-xs text-gray-400">
+                <div class="flex flex-wrap gap-4 mt-2 text-xs text-gray-800">
                     <span>Reviewer: <strong class="text-gray-700">{{ $review->reviewer->full_name ?? 'Self' }}</strong></span>
                     <span>Type: <strong class="text-gray-700 capitalize">{{ str_replace('_',' ', $review->review_type ?? 'annual') }}</strong></span>
                     <span>Due: <strong class="text-gray-700">{{ $review->due_date?->format('M j, Y') ?? '—' }}</strong></span>
@@ -77,7 +77,7 @@
                     <div class="w-7 h-7 rounded-lg {{ $section['color'] }} flex items-center justify-center">
                         <i data-lucide="{{ $section['icon'] }}" class="w-3.5 h-3.5"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{ $section['label'] }}</span>
+                    <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">{{ $section['label'] }}</span>
                 </div>
                 <p class="text-sm text-gray-700 leading-relaxed">{{ $section['value'] }}</p>
             </div>
@@ -86,7 +86,7 @@
         </div>
 
         @if($review->submitted_at)
-        <p class="text-xs text-gray-400 mt-4 text-right">
+        <p class="text-xs text-gray-800 mt-4 text-right">
             Submitted {{ $review->submitted_at->format('M j, Y h:i A') }}
         </p>
         @endif
@@ -107,7 +107,7 @@
                     @for($i=1;$i<=5;$i++)
                     <button type="button" @click="rating={{ $i }}"
                             class="w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all"
-                            :class="rating >= {{ $i }} ? 'bg-amber-400 text-white scale-110' : 'bg-gray-100 text-gray-400'">
+                            :class="rating >= {{ $i }} ? 'bg-amber-400 text-white scale-110' : 'bg-gray-100 text-gray-800'">
                         {{ $i }}
                     </button>
                     @endfor

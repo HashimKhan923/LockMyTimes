@@ -57,7 +57,7 @@
                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                       {{ $active
                             ? 'border-transparent text-white'
-                            : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                            : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                @if($active) style="background:var(--brand-500);" @endif>
                 <i data-lucide="{{ $chip['icon'] }}" class="w-3.5 h-3.5"></i>
                 {{ $chip['label'] }}
@@ -72,10 +72,10 @@
     @if($polls->isEmpty())
         <div class="lmt-card text-center py-16 px-5" data-lmt-anim="fade-up">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                <i data-lucide="bar-chart-2" class="w-7 h-7 text-gray-300"></i>
+                <i data-lucide="bar-chart-2" class="w-7 h-7 text-gray-800"></i>
             </div>
             <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No polls yet</p>
-            <p class="text-xs text-gray-500 mt-1">Polls will show up here when they're posted.</p>
+            <p class="text-xs text-gray-800 mt-1">Polls will show up here when they're posted.</p>
         </div>
     @else
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -100,7 +100,7 @@
 
                     <div class="flex items-center gap-2 flex-wrap mb-2">
                         <span class="{{ $statusCls }}">{{ $statusLbl }}</span>
-                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{{ $typeLabel }}</span>
+                        <span class="text-[9px] font-bold text-gray-800 uppercase tracking-wider">{{ $typeLabel }}</span>
                         @if($p->is_anonymous)
                             <span class="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
                                 <i data-lucide="eye-off" class="w-2.5 h-2.5"></i>
@@ -112,16 +112,16 @@
                     <h3 class="font-black text-sm text-gray-900 dark:text-slate-100 group-hover:underline line-clamp-2">{{ $p->question }}</h3>
 
                     @if($p->description)
-                        <p class="text-xs text-gray-500 dark:text-slate-400 line-clamp-2 mt-1.5">{{ $p->description }}</p>
+                        <p class="text-xs text-gray-800 dark:text-slate-400 line-clamp-2 mt-1.5">{{ $p->description }}</p>
                     @endif
 
-                    <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between text-[11px] text-gray-500">
+                    <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between text-[11px] text-gray-800">
                         <span class="inline-flex items-center gap-1.5">
                             <i data-lucide="list" class="w-3 h-3"></i>
                             {{ count($p->options ?? []) }} option{{ count($p->options ?? []) === 1 ? '' : 's' }}
                         </span>
                         @if($p->ends_at)
-                            <span class="inline-flex items-center gap-1.5 {{ ! $p->_is_active ? 'text-gray-400' : '' }}">
+                            <span class="inline-flex items-center gap-1.5 {{ ! $p->_is_active ? 'text-gray-800' : '' }}">
                                 <i data-lucide="clock" class="w-3 h-3"></i>
                                 @if($p->_is_active)
                                     Ends {{ $p->ends_at->diffForHumans() }}

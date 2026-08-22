@@ -150,7 +150,7 @@
 <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
     <div class="flex items-center gap-3">
         <a href="{{ route('employee.projects.index', $tenantSlug) }}"
-           class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">
+           class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-800 hover:bg-gray-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
         </a>
         <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black text-lg"
@@ -165,7 +165,7 @@
                 <span class="lmt-badge-indigo text-xs uppercase">{{ str_replace('_',' ',$myMember->role) }}</span>
                 @endif
             </div>
-            <p class="text-xs text-gray-400">{{ $project->code }}
+            <p class="text-xs text-gray-800">{{ $project->code }}
                 @if($project->manager) · PM: {{ $project->manager->full_name }} @endif
             </p>
         </div>
@@ -175,16 +175,16 @@
         {{-- Stats --}}
         <div class="bg-gray-100 rounded-xl px-3 py-1.5 text-center">
             <p class="text-sm font-black text-emerald-600">{{ $taskStats['done'] }}</p>
-            <p class="text-[10px] text-gray-400">done</p>
+            <p class="text-[10px] text-gray-800">done</p>
         </div>
         <div class="bg-gray-100 rounded-xl px-3 py-1.5 text-center">
             <p class="text-sm font-black text-brand-600">{{ $taskStats['in_progress'] }}</p>
-            <p class="text-[10px] text-gray-400">in progress</p>
+            <p class="text-[10px] text-gray-800">in progress</p>
         </div>
         @if($taskStats['overdue'] > 0)
         <div class="bg-gray-100 rounded-xl px-3 py-1.5 text-center">
             <p class="text-sm font-black text-red-500">{{ $taskStats['overdue'] }}</p>
-            <p class="text-[10px] text-gray-400">overdue</p>
+            <p class="text-[10px] text-gray-800">overdue</p>
         </div>
         @endif
 
@@ -227,7 +227,7 @@
             </div>
             @if($isManager)
             <button onclick="quickAddTask({{ $list->id }})"
-                    class="w-6 h-6 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 flex items-center justify-center transition-colors"
+                    class="w-6 h-6 rounded-lg text-gray-800 hover:text-brand-600 hover:bg-brand-50 flex items-center justify-center transition-colors"
                     title="Quick Add">
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             </button>
@@ -271,7 +271,7 @@
                         @endif
                     </div>
                     @if($task->due_date)
-                    <span class="text-[10px] flex items-center gap-0.5 {{ $task->due_date->isPast() && !in_array($task->status,['done','cancelled']) ? 'text-red-500 font-bold' : 'text-gray-400' }}">
+                    <span class="text-[10px] flex items-center gap-0.5 {{ $task->due_date->isPast() && !in_array($task->status,['done','cancelled']) ? 'text-red-500 font-bold' : 'text-gray-800' }}">
                         <i data-lucide="calendar" class="w-2.5 h-2.5"></i>
                         {{ $task->due_date->format('M j') }}
                     </span>
@@ -302,7 +302,7 @@
                         @endif
                         @endforeach
                     </div>
-                    <div class="flex items-center gap-2 text-gray-400">
+                    <div class="flex items-center gap-2 text-gray-800">
                         @if(($task->comments_count ?? 0) > 0)
                         <span class="flex items-center gap-0.5 text-[10px]">
                             <i data-lucide="message-circle" class="w-3 h-3"></i>
@@ -357,7 +357,7 @@
             {{-- Loading --}}
             <div id="task-modal-loading" class="text-center py-10">
                 <div class="w-8 h-8 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin mx-auto"></div>
-                <p class="text-sm text-gray-400 mt-3">Loading task…</p>
+                <p class="text-sm text-gray-800 mt-3">Loading task…</p>
             </div>
 
             {{-- Content --}}
@@ -367,11 +367,11 @@
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
                         <span id="tmd-type" class="text-xs font-bold px-2 py-1 rounded-full"></span>
-                        <span id="tmd-code" class="text-xs text-gray-400 font-mono"></span>
+                        <span id="tmd-code" class="text-xs text-gray-800 font-mono"></span>
                         <span id="tmd-you-badge" class="badge-you hidden">YOUR TASK</span>
                     </div>
                     <button onclick="closeTaskModal()"
-                            class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                            class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -386,7 +386,7 @@
                     <div class="col-span-2 space-y-5">
 
                         <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Description</p>
+                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Description</p>
                             <textarea id="tmd-description" rows="3"
                                       class="lmt-textarea text-sm w-full"
                                       placeholder="Add a description…"></textarea>
@@ -394,7 +394,7 @@
 
                         {{-- Attachments --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Attachments</p>
+                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Attachments</p>
                             <div id="tmd-attachments" class="space-y-1.5 mb-2"></div>
                             <label class="flex items-center gap-2 cursor-pointer w-fit">
                                 <input type="file" id="attachment-input" class="hidden" multiple
@@ -409,8 +409,8 @@
                         {{-- Checklist --}}
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Checklist</p>
-                                <span id="tmd-checklist-progress" class="text-xs font-bold text-gray-500"></span>
+                                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider">Checklist</p>
+                                <span id="tmd-checklist-progress" class="text-xs font-bold text-gray-800"></span>
                             </div>
                             <div id="tmd-checklist" class="space-y-1.5 mb-3"></div>
                             <div id="tmd-checklist-add" class="flex gap-2">
@@ -424,7 +424,7 @@
 
                         {{-- Comments --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Comments</p>
+                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Comments</p>
                             <div id="tmd-comments" class="space-y-3 max-h-48 overflow-y-auto mb-3"></div>
                             <div class="flex gap-2">
                                 <textarea id="comment-input" rows="2"
@@ -439,7 +439,7 @@
                     <div class="space-y-4">
 
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Status</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Status</p>
                             <select id="tmd-status" onchange="updateTaskField('status', this.value)"
                                     class="lmt-select py-2 text-sm w-full">
                                 @foreach(['backlog'=>'Backlog','todo'=>'To Do','in_progress'=>'In Progress','in_review'=>'In Review','on_hold'=>'On Hold','done'=>'Done','cancelled'=>'Cancelled'] as $v=>$l)
@@ -449,7 +449,7 @@
                         </div>
 
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Priority</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Priority</p>
                             <select id="tmd-priority" onchange="updateTaskField('priority', this.value)"
                                     class="lmt-select py-2 text-sm w-full">
                                 @foreach(['low'=>'Low','normal'=>'Normal','high'=>'High','urgent'=>'Urgent'] as $v=>$l)
@@ -459,23 +459,23 @@
                         </div>
 
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-2">Assignees</p>
+                            <p class="text-xs font-bold text-gray-800 mb-2">Assignees</p>
                             <div id="tmd-assignees" class="flex flex-wrap gap-1.5"></div>
                         </div>
 
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Due Date</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Due Date</p>
                             <input type="date" id="tmd-due" class="lmt-input py-1.5 text-sm w-full"/>
                         </div>
 
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Estimated Hours</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Estimated Hours</p>
                             <input type="number" id="tmd-hours" min="0" step="0.5"
                                    class="lmt-input py-1.5 text-sm w-full" placeholder="0"/>
                         </div>
 
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Progress</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Progress</p>
                             <div class="flex items-center gap-2">
                                 <input type="range" id="tmd-progress" min="0" max="100" step="5"
                                        class="flex-1 h-2 accent-brand-600"
@@ -553,7 +553,7 @@
                             {{ substr($m->employee->first_name, 0, 1) }}
                         </div>
                         <span class="text-sm text-gray-700">{{ $m->employee->full_name }}</span>
-                        <span class="ml-auto text-[10px] font-bold text-gray-400 uppercase">{{ $m->role }}</span>
+                        <span class="ml-auto text-[10px] font-bold text-gray-800 uppercase">{{ $m->role }}</span>
                     </label>
                     @endif
                     @endforeach
@@ -775,7 +775,7 @@ function addTaskCardToDOM(task, listId) {
         <p class="text-sm font-semibold text-gray-900 leading-snug mb-2 line-clamp-2">${task.title}</p>
         <div class="flex items-center justify-between mt-2">
             <div class="flex -space-x-1.5 card-assignees">${assigneeHtml}</div>
-            <div class="flex items-center gap-2 text-gray-400"></div>
+            <div class="flex items-center gap-2 text-gray-800"></div>
         </div>`;
     const qa = document.getElementById(`quick-add-${listId}`);
     qa ? col.insertBefore(card, qa) : col.appendChild(card);
@@ -882,7 +882,7 @@ function renderAttachments(attachments) {
     const container = document.getElementById('tmd-attachments');
     if (!container) return;
     if (!attachments || !attachments.length) {
-        container.innerHTML = '<p class="text-xs text-gray-300 italic">No attachments yet.</p>';
+        container.innerHTML = '<p class="text-xs text-gray-800 italic">No attachments yet.</p>';
         return;
     }
     container.innerHTML = attachments.map(a => {
@@ -891,12 +891,12 @@ function renderAttachments(attachments) {
         const sizeHuman = a.file_size_human ?? (a.file_size ? (a.file_size / 1024).toFixed(1) + ' KB' : '');
         return `
         <div class="flex items-center gap-2 text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-2">
-            <i data-lucide="${icon}" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
+            <i data-lucide="${icon}" class="w-3.5 h-3.5 text-gray-800 flex-shrink-0"></i>
             <a href="${TASK_BASE}/${currentTaskId}/attachments/${a.id}" target="_blank"
                class="flex-1 truncate hover:text-brand-600 font-medium text-xs">${a.file_name}</a>
-            <span class="text-[10px] text-gray-400 flex-shrink-0">${sizeHuman}</span>
+            <span class="text-[10px] text-gray-800 flex-shrink-0">${sizeHuman}</span>
             <button onclick="deleteAttachment(${a.id}, this)"
-                    class="text-gray-300 hover:text-red-500 flex-shrink-0 transition-colors">
+                    class="text-gray-800 hover:text-red-500 flex-shrink-0 transition-colors">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
             </button>
         </div>`;
@@ -933,7 +933,7 @@ async function deleteAttachment(attachmentId, btn) {
 function renderAssigneesList(assignees) {
     const el = document.getElementById('tmd-assignees');
     el.innerHTML = assignees.length === 0
-        ? '<span class="text-xs text-gray-400 italic">No assignees</span>'
+        ? '<span class="text-xs text-gray-800 italic">No assignees</span>'
         : assignees.map(a => `
             <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold">
                 <div class="w-4 h-4 rounded-full bg-brand-200 text-brand-800 text-[9px] font-black flex items-center justify-center">
@@ -958,7 +958,7 @@ function renderChecklist(items) {
                    ${!currentTaskMine ? 'disabled' : ''}
                    onchange="toggleChecklist(${item.id}, this.checked)"
                    class="w-4 h-4 rounded cursor-pointer"/>
-            <span class="text-sm text-gray-700 flex-1 ${item.is_completed ? 'line-through text-gray-400' : ''}">${item.item}</span>`;
+            <span class="text-sm text-gray-700 flex-1 ${item.is_completed ? 'line-through text-gray-800' : ''}">${item.item}</span>`;
         container.appendChild(div);
     });
 }
@@ -967,7 +967,7 @@ function renderComments(comments) {
     const container = document.getElementById('tmd-comments');
     container.innerHTML = '';
     if (!comments.length) {
-        container.innerHTML = '<p class="text-xs text-gray-300 text-center py-3">No comments yet</p>';
+        container.innerHTML = '<p class="text-xs text-gray-800 text-center py-3">No comments yet</p>';
         return;
     }
     comments.forEach(c => {
@@ -980,7 +980,7 @@ function renderComments(comments) {
             <div class="flex-1 bg-gray-50 rounded-xl p-2.5">
                 <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-semibold text-gray-700">${c.user?.name ?? 'User'}</span>
-                    <span class="text-[10px] text-gray-400">${new Date(c.created_at).toLocaleDateString()}</span>
+                    <span class="text-[10px] text-gray-800">${new Date(c.created_at).toLocaleDateString()}</span>
                 </div>
                 <p class="text-sm text-gray-600">${c.content}</p>
             </div>`;

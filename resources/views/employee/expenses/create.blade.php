@@ -23,7 +23,7 @@
 
     {{-- Back link --}}
     <a href="{{ route('employee.expenses.index', $tenantSlug) }}"
-       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors mb-4">
+       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-700 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to expenses
     </a>
@@ -32,7 +32,7 @@
         <h1 class="text-2xl lg:text-3xl font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
             Submit an Expense
         </h1>
-        <p class="text-sm text-gray-500 mt-1">Submit a new expense claim. Your manager will be notified for approval.</p>
+        <p class="text-sm text-gray-800 mt-1">Submit a new expense claim. Your manager will be notified for approval.</p>
     </div>
 
     @if($errors->any())
@@ -85,7 +85,7 @@
                             <div class="p-3 rounded-2xl border-2 transition-all"
                                  :class="form.category_id === {{ $c->id }} ? 'border-brand-500 bg-brand-50/40' : 'border-gray-200 hover:border-gray-300 dark:border-slate-700 dark:hover:border-slate-600'">
                                 <div class="flex items-center gap-2">
-                                    <i data-lucide="{{ $c->icon ?? 'tag' }}" class="w-4 h-4 text-gray-500"></i>
+                                    <i data-lucide="{{ $c->icon ?? 'tag' }}" class="w-4 h-4 text-gray-800"></i>
                                     <span class="font-bold text-sm text-gray-900 dark:text-slate-100 truncate">{{ $c->name }}</span>
                                 </div>
                                 <div class="flex flex-wrap gap-1 mt-2">
@@ -124,7 +124,7 @@
                 <label class="lmt-label">Amount <span class="text-red-500">*</span></label>
                 <div class="relative">
                     @if($sym)
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 pointer-events-none">{{ $sym }}</span>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-800 pointer-events-none">{{ $sym }}</span>
                     @endif
                     <input type="number" name="amount" required min="0.01" max="9999999.99" step="0.01"
                            class="lmt-input @if($sym) pl-8 @endif font-mono"
@@ -156,7 +156,7 @@
                 @error('expense_date') <p class="lmt-err">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="lmt-label">Payment method <span class="text-gray-400 font-normal">(optional)</span></label>
+                <label class="lmt-label">Payment method <span class="text-gray-800 font-normal">(optional)</span></label>
                 <select name="payment_method" class="lmt-input">
                     <option value="">— Select —</option>
                     @foreach(['Personal Card', 'Personal Cash', 'Company Card', 'Bank Transfer', 'Other'] as $pm)
@@ -170,7 +170,7 @@
         {{-- 4. Merchant + Project --}}
         <div class="grid sm:grid-cols-2 gap-4">
             <div>
-                <label class="lmt-label">Merchant <span class="text-gray-400 font-normal">(optional)</span></label>
+                <label class="lmt-label">Merchant <span class="text-gray-800 font-normal">(optional)</span></label>
                 <input type="text" name="merchant" maxlength="200"
                        class="lmt-input"
                        placeholder="e.g. Starbucks, Uber"
@@ -178,7 +178,7 @@
                 @error('merchant') <p class="lmt-err">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="lmt-label">Project code <span class="text-gray-400 font-normal">(optional)</span></label>
+                <label class="lmt-label">Project code <span class="text-gray-800 font-normal">(optional)</span></label>
                 <input type="text" name="project_code" maxlength="50"
                        class="lmt-input font-mono"
                        placeholder="e.g. PROJ-2026-001"
@@ -200,7 +200,7 @@
                         <i data-lucide="car" class="w-4 h-4"></i>
                         Mileage claim
                     </p>
-                    <p class="text-xs text-gray-500 mt-0.5">Tick this if you're claiming mileage instead of receipted expenses.</p>
+                    <p class="text-xs text-gray-800 mt-0.5">Tick this if you're claiming mileage instead of receipted expenses.</p>
                 </div>
             </label>
 
@@ -216,7 +216,7 @@
                     <label class="lmt-label">Rate per mile</label>
                     <div class="relative">
                         @if($sym)
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 pointer-events-none">{{ $sym }}</span>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-800 pointer-events-none">{{ $sym }}</span>
                         @endif
                         <input type="number" name="mileage_rate" min="0" max="99" step="0.0001"
                                class="lmt-input @if($sym) pl-8 @endif font-mono"
@@ -229,7 +229,7 @@
 
         {{-- 6. Description --}}
         <div>
-            <label class="lmt-label">Description <span class="text-gray-400 font-normal">(optional)</span></label>
+            <label class="lmt-label">Description <span class="text-gray-800 font-normal">(optional)</span></label>
             <textarea name="description" maxlength="1000"
                       class="lmt-textarea" rows="3"
                       placeholder="Anything that helps the approver understand this expense…">{{ old('description') }}</textarea>
@@ -241,7 +241,7 @@
         <div>
             <label class="lmt-label">
                 Receipt
-                <span class="text-gray-400 font-normal" x-show="!selectedCategory?.requires_receipt">(recommended)</span>
+                <span class="text-gray-800 font-normal" x-show="!selectedCategory?.requires_receipt">(recommended)</span>
                 <span class="text-red-500" x-show="selectedCategory?.requires_receipt">*</span>
             </label>
             <input type="file" name="receipt" accept=".jpg,.jpeg,.png,.pdf"

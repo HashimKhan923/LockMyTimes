@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.training.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Training
     </a>
@@ -46,7 +46,7 @@
             <div class="p-5">
                 <h2 class="text-xl font-black text-gray-900 mb-2">{{ $training->title }}</h2>
                 @if($training->description)
-                <p class="text-sm text-gray-500 leading-relaxed mb-4">{{ $training->description }}</p>
+                <p class="text-sm text-gray-800 leading-relaxed mb-4">{{ $training->description }}</p>
                 @endif
 
                 <div class="space-y-2">
@@ -60,7 +60,7 @@
                         ['Spots',      $training->max_participants ? $training->enrollments->count().'/'.$training->max_participants : 'Unlimited'],
                     ] as [$k,$v])
                     <div class="flex justify-between py-1.5 border-b border-gray-50 last:border-none">
-                        <span class="text-xs text-gray-400">{{ $k }}</span>
+                        <span class="text-xs text-gray-800">{{ $k }}</span>
                         <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
                     </div>
                     @endforeach
@@ -104,13 +104,13 @@
                 ] as [$label,$val,$color])
                 <div class="bg-gray-50 rounded-xl p-3 text-center">
                     <p class="text-xl font-black {{ $color }}">{{ $val }}</p>
-                    <p class="text-xs text-gray-400 mt-0.5">{{ $label }}</p>
+                    <p class="text-xs text-gray-800 mt-0.5">{{ $label }}</p>
                 </div>
                 @endforeach
             </div>
             @if($avgRating)
             <div class="mt-4 pt-4 border-t border-gray-100 text-center">
-                <p class="text-xs text-gray-400 mb-2">Average Rating</p>
+                <p class="text-xs text-gray-800 mb-2">Average Rating</p>
                 <div class="flex items-center justify-center gap-1">
                     @for($i=1;$i<=5;$i++)
                     <div class="w-5 h-5 rounded-full {{ $i <= round($avgRating) ? 'bg-amber-400' : 'bg-gray-200' }}"></div>
@@ -148,7 +148,7 @@
                         <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div class="h-full lmt-gradient-bg rounded-full" style="width:{{ $en->progress }}%"></div>
                         </div>
-                        <span class="text-xs font-bold text-gray-500 w-8">{{ $en->progress }}%</span>
+                        <span class="text-xs font-bold text-gray-800 w-8">{{ $en->progress }}%</span>
                         @if($en->score !== null)
                         <span class="text-xs font-bold {{ $en->score >= 70 ? 'text-emerald-600' : 'text-red-500' }}">
                             {{ number_format($en->score,0) }}%
@@ -160,7 +160,7 @@
             @empty
             <div class="text-center py-12">
                 <i data-lucide="users" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-                <p class="text-sm text-gray-400">No enrollments yet</p>
+                <p class="text-sm text-gray-800">No enrollments yet</p>
             </div>
             @endforelse
         </div>
@@ -184,7 +184,7 @@
                         <div class="lmt-avatar-sm font-bold text-xs flex-shrink-0">{{ substr($emp->first_name,0,1) }}</div>
                         <div>
                             <p class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</p>
-                            @if($alreadyEnrolled)<span class="text-xs text-gray-400">Already enrolled</span>@endif
+                            @if($alreadyEnrolled)<span class="text-xs text-gray-800">Already enrolled</span>@endif
                         </div>
                     </label>
                     @endforeach

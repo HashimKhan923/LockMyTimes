@@ -28,7 +28,7 @@
 {{-- Header --}}
 <div class="text-center mb-10">
     <h2 class="text-3xl font-black text-gray-900">Choose the right plan for your team</h2>
-    <p class="text-gray-500 mt-2 text-base">Upgrade at any time. Changes take effect immediately.</p>
+    <p class="text-gray-800 mt-2 text-base">Upgrade at any time. Changes take effect immediately.</p>
     @if($currentPlan)
         <p class="text-sm text-indigo-600 font-medium mt-1">
             Current plan: <span class="capitalize font-bold">{{ $currentPlan }}</span>
@@ -70,12 +70,12 @@
 
         <div class="mb-4">
             <h3 class="text-xl font-black text-gray-900">{{ $plan->name }}</h3>
-            <p class="text-gray-500 text-sm mt-1">{{ $plan->description }}</p>
+            <p class="text-gray-800 text-sm mt-1">{{ $plan->description }}</p>
         </div>
 
         <div class="mb-6">
             <span class="text-4xl font-black text-gray-900">${{ number_format($plan->monthly_price, 0) }}</span>
-            <span class="text-gray-500 text-sm">/month</span>
+            <span class="text-gray-800 text-sm">/month</span>
         </div>
 
         {{-- Limits --}}
@@ -84,24 +84,24 @@
                 <p class="text-2xl font-black text-gray-900">
                     {{ $plan->max_employees >= 9999 ? '∞' : $plan->max_employees }}
                 </p>
-                <p class="text-xs text-gray-500">employees</p>
+                <p class="text-xs text-gray-800">employees</p>
             </div>
             <div class="text-center">
                 <p class="text-2xl font-black text-gray-900">{{ $plan->max_admins }}</p>
-                <p class="text-xs text-gray-500">admins</p>
+                <p class="text-xs text-gray-800">admins</p>
             </div>
         </div>
 
         {{-- Module list --}}
         <ul class="space-y-2 mb-8 flex-1">
             @foreach($modules as $name => $included)
-            <li class="flex items-center gap-2 text-sm {{ $included ? 'text-gray-700' : 'text-gray-400' }}">
+            <li class="flex items-center gap-2 text-sm {{ $included ? 'text-gray-700' : 'text-gray-800' }}">
                 @if($included)
                     <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                     </svg>
                 @else
-                    <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-gray-800 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
                 @endif
@@ -113,7 +113,7 @@
         {{-- CTA --}}
         @if($isCurrent)
             <button disabled
-                class="w-full py-3 rounded-xl font-bold text-sm bg-gray-200 text-gray-500 cursor-not-allowed">
+                class="w-full py-3 rounded-xl font-bold text-sm bg-gray-200 text-gray-800 cursor-not-allowed">
                 Current Plan
             </button>
         @else
@@ -141,7 +141,7 @@
     <div class="grid grid-cols-2 gap-4 text-center">
         <div>
             <p class="text-2xl font-black text-gray-900">{{ $currentTenant->employees_count }}</p>
-            <p class="text-xs text-gray-500">
+            <p class="text-xs text-gray-800">
                 of {{ $currentTenant->getPlanLimit('max_employees', '∞') }} employees
             </p>
             @php $maxEmp = $currentTenant->getPlanLimit('max_employees'); @endphp
@@ -154,7 +154,7 @@
         </div>
         <div>
             <p class="text-2xl font-black text-gray-900">{{ $currentTenant->admins_count }}</p>
-            <p class="text-xs text-gray-500">
+            <p class="text-xs text-gray-800">
                 of {{ $currentTenant->getPlanLimit('max_admins', '∞') }} admins
             </p>
         </div>

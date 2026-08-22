@@ -328,7 +328,7 @@
                 </div>
                 <div class="nav-label flex-1 min-w-0">
                     <p class="text-xs font-bold text-gray-900 truncate">{{ $u->name ?? 'Employee' }}</p>
-                    <p class="text-xs text-gray-400 truncate">
+                    <p class="text-xs text-gray-800 truncate">
                         @if($emp?->position)
                             {{ $emp->position->name ?? '' }}
                         @else
@@ -339,7 +339,7 @@
                 <form action="{{ route('employee.logout', $tenantSlug) }}" method="POST" class="nav-label">
                     @csrf
                     <button type="submit" title="Sign out"
-                            class="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-red-50">
+                            class="text-gray-800 hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-red-50">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                     </button>
                 </form>
@@ -360,19 +360,19 @@
                 {{-- Sidebar toggle (desktop) --}}
                 <button @click="sidebarOpen=!sidebarOpen"
                         class="hidden lg:flex w-9 h-9 rounded-xl hover:bg-gray-100 items-center justify-center transition-colors">
-                    <i data-lucide="panel-left" class="w-5 h-5 text-gray-500"></i>
+                    <i data-lucide="panel-left" class="w-5 h-5 text-gray-800"></i>
                 </button>
 
                 {{-- Hamburger (mobile) --}}
                 <button @click="mobileOpen=!mobileOpen"
                         class="lg:hidden w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors">
-                    <i data-lucide="menu" class="w-5 h-5 text-gray-500"></i>
+                    <i data-lucide="menu" class="w-5 h-5 text-gray-800"></i>
                 </button>
 
                 {{-- Breadcrumb --}}
                 <div class="flex items-center gap-2 text-sm">
-                    <span class="hidden sm:block text-gray-400 font-medium">{{ $currentTenant->company_name ?? '' }}</span>
-                    <i data-lucide="chevron-right" class="hidden sm:block w-4 h-4 text-gray-300"></i>
+                    <span class="hidden sm:block text-gray-800 font-medium">{{ $currentTenant->company_name ?? '' }}</span>
+                    <i data-lucide="chevron-right" class="hidden sm:block w-4 h-4 text-gray-800"></i>
                     <span class="font-bold text-gray-900">@yield('page-title','Home')</span>
                 </div>
             </div>
@@ -394,7 +394,7 @@
                 {{-- Dark mode --}}
                 <button @click="darkMode=!darkMode; localStorage.setItem('emp-dark-override', darkMode)"
                         class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors">
-                    <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-500"></i>
+                    <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-800"></i>
                 </button>
 
                 {{-- Notifications --}}
@@ -458,7 +458,7 @@
 
                     <button @click="open=!open; if(open) load()"
                             class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors relative">
-                        <i data-lucide="bell" class="w-4 h-4 text-gray-500"></i>
+                        <i data-lucide="bell" class="w-4 h-4 text-gray-800"></i>
                         <span x-show="unread > 0" x-cloak
                               class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full text-white text-[10px] font-bold flex items-center justify-center px-1"
                               style="background:var(--brand-500);" x-text="unread > 9 ? '9+' : unread"></span>
@@ -475,12 +475,12 @@
                             <div class="flex items-center gap-2">
                                 <span x-show="unread > 0" x-cloak class="lmt-badge-brand text-xs" x-text="unread + ' new'"></span>
                                 <button x-show="unread > 0" x-cloak @click="markAllRead()"
-                                        class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Mark all read</button>
+                                        class="text-xs text-gray-800 hover:text-gray-600 transition-colors">Mark all read</button>
                             </div>
                         </div>
 
                         <div class="max-h-80 overflow-y-auto">
-                            <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-gray-400 gap-2">
+                            <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-gray-800 gap-2">
                                 <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
@@ -489,8 +489,8 @@
                             </div>
 
                             <div x-show="!loading && items.length === 0"
-                                 class="flex flex-col items-center py-10 gap-2 text-sm text-gray-400">
-                                <i data-lucide="bell-off" class="w-8 h-8 text-gray-300"></i>
+                                 class="flex flex-col items-center py-10 gap-2 text-sm text-gray-800">
+                                <i data-lucide="bell-off" class="w-8 h-8 text-gray-800"></i>
                                 You're all caught up
                             </div>
 
@@ -504,7 +504,7 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-semibold text-gray-900 dark:text-slate-100 leading-snug" x-text="item.title"></p>
-                                        <p class="text-xs text-gray-400 mt-0.5" x-text="item.time"></p>
+                                        <p class="text-xs text-gray-800 mt-0.5" x-text="item.time"></p>
                                     </div>
                                     <span x-show="item.unread" class="w-2 h-2 rounded-full flex-shrink-0 mt-2" style="background:var(--brand-500);"></span>
                                 </div>
@@ -537,7 +537,7 @@
                         <span class="hidden md:block text-sm font-semibold text-gray-700 dark:text-slate-200 max-w-[120px] truncate">
                             {{ explode(' ', $u->name ?? 'You')[0] }}
                         </span>
-                        <i data-lucide="chevron-down" class="hidden md:block w-3.5 h-3.5 text-gray-400"></i>
+                        <i data-lucide="chevron-down" class="hidden md:block w-3.5 h-3.5 text-gray-800"></i>
                     </button>
                     <div x-show="open" x-cloak
                          x-transition:enter="transition ease-out duration-200"
@@ -546,7 +546,7 @@
                          class="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-pop border border-gray-100 dark:border-slate-700 overflow-hidden z-50 py-1">
                         <div class="px-4 py-3 border-b border-gray-100 dark:border-slate-700">
                             <p class="text-sm font-bold text-gray-900 dark:text-slate-100 truncate">{{ $u->name ?? '' }}</p>
-                            <p class="text-xs text-gray-400 truncate">{{ $u->email ?? '' }}</p>
+                            <p class="text-xs text-gray-800 truncate">{{ $u->email ?? '' }}</p>
                             @if($emp?->employee_code)
                                 <span class="lmt-badge-brand text-[10px] mt-1.5">{{ $emp->employee_code }}</span>
                             @endif
@@ -554,18 +554,18 @@
                         @if(\Route::has('employee.profile.index'))
                         <a href="{{ route('employee.profile.index', $tenantSlug) }}"
                            class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-700 dark:text-slate-200">
-                            <i data-lucide="user" class="w-4 h-4 text-gray-400"></i> My Profile
+                            <i data-lucide="user" class="w-4 h-4 text-gray-800"></i> My Profile
                         </a>
                         @endif
                         @if(\Route::has('employee.settings.index'))
                         <a href="{{ route('employee.settings.index', $tenantSlug) }}"
                            class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-700 dark:text-slate-200">
-                            <i data-lucide="settings" class="w-4 h-4 text-gray-400"></i> Settings
+                            <i data-lucide="settings" class="w-4 h-4 text-gray-800"></i> Settings
                         </a>
                         @endif
                         <a href="{{ route('employee.password.change', $tenantSlug) }}"
                            class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-700 dark:text-slate-200">
-                            <i data-lucide="key" class="w-4 h-4 text-gray-400"></i> Change Password
+                            <i data-lucide="key" class="w-4 h-4 text-gray-800"></i> Change Password
                         </a>
                         <div class="border-t border-gray-100 dark:border-slate-700 mt-1 pt-1">
                             <form action="{{ route('employee.logout', $tenantSlug) }}" method="POST">

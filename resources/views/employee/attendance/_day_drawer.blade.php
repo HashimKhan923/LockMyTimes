@@ -2,7 +2,7 @@
 
     {{-- Header --}}
     <div class="mb-6">
-        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">{{ $date->format('l') }}</p>
+        <p class="text-xs font-bold uppercase tracking-wider text-gray-800">{{ $date->format('l') }}</p>
         <h2 class="text-2xl font-black text-gray-900 dark:text-slate-100 mt-1" style="font-family:'Plus Jakarta Sans',sans-serif">
             {{ $date->format('F j, Y') }}
         </h2>
@@ -64,8 +64,8 @@
     {{-- Empty state --}}
     @if(! $att && ! $holiday)
         <div class="text-center py-12 border border-dashed border-gray-200 dark:border-slate-700 rounded-2xl">
-            <i data-lucide="moon" class="w-10 h-10 mx-auto text-gray-300 mb-3"></i>
-            <p class="text-sm text-gray-500">No attendance recorded for this day.</p>
+            <i data-lucide="moon" class="w-10 h-10 mx-auto text-gray-800 mb-3"></i>
+            <p class="text-sm text-gray-800">No attendance recorded for this day.</p>
         </div>
     @endif
 
@@ -73,16 +73,16 @@
         {{-- Key facts grid --}}
         <div class="grid grid-cols-2 gap-3 mb-6">
             <div class="p-4 rounded-2xl bg-gray-50 dark:bg-slate-800">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Clock In</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-800">Clock In</p>
                 <p class="font-mono text-lg font-black text-gray-900 dark:text-slate-100 mt-1">
                     {{ $att->clock_in_at ? \Carbon\Carbon::parse($att->clock_in_at)->format('h:i A') : '—' }}
                 </p>
                 @if($att->source)
-                    <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-wide">via {{ $att->source }}</p>
+                    <p class="text-[10px] text-gray-800 mt-1 uppercase tracking-wide">via {{ $att->source }}</p>
                 @endif
             </div>
             <div class="p-4 rounded-2xl bg-gray-50 dark:bg-slate-800">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Clock Out</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-800">Clock Out</p>
                 <p class="font-mono text-lg font-black text-gray-900 dark:text-slate-100 mt-1">
                     {{ $att->clock_out_at ? \Carbon\Carbon::parse($att->clock_out_at)->format('h:i A') : '—' }}
                 </p>
@@ -128,10 +128,10 @@
                 </div>
                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $att->location->name }}</p>
                 @if($att->location->address)
-                    <p class="text-xs text-gray-500 mt-0.5">{{ $att->location->address }}</p>
+                    <p class="text-xs text-gray-800 mt-0.5">{{ $att->location->address }}</p>
                 @endif
                 @if($att->clock_in_distance_meters !== null)
-                    <p class="text-xs text-gray-400 mt-2 font-mono">
+                    <p class="text-xs text-gray-800 mt-2 font-mono">
                         Distance at check-in: {{ (int) $att->clock_in_distance_meters }}m
                     </p>
                 @endif
@@ -153,7 +153,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100 capitalize">{{ $b->break_type ?? 'Break' }}</p>
-                                <p class="text-xs text-gray-500 font-mono">
+                                <p class="text-xs text-gray-800 font-mono">
                                     {{ \Carbon\Carbon::parse($b->start_at)->format('h:i A') }}
                                     @if($b->end_at) — {{ \Carbon\Carbon::parse($b->end_at)->format('h:i A') }} @else — ongoing @endif
                                 </p>
@@ -170,7 +170,7 @@
         {{-- Notes --}}
         @if($att->notes)
             <div class="p-4 rounded-2xl border border-gray-100 dark:border-slate-700">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Notes</h3>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-gray-800 mb-2">Notes</h3>
                 <p class="text-sm text-gray-700 dark:text-slate-200 whitespace-pre-line">{{ $att->notes }}</p>
             </div>
         @endif

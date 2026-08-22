@@ -18,7 +18,7 @@
         <form action="{{ route('superadmin.audit.index') }}" method="GET" class="flex flex-wrap items-end gap-3">
             <div class="relative flex-1 min-w-48">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <i data-lucide="search" class="w-4 h-4 text-gray-800"></i>
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}"
                        class="lmt-input pl-10 py-2 text-sm" placeholder="Search events, IP, URL…">
@@ -97,14 +97,14 @@
                             <span class="text-sm font-medium text-ink">{{ $log->superAdmin->name }}</span>
                         </div>
                         @else
-                        <span class="text-xs text-gray-400 italic">System</span>
+                        <span class="text-xs text-gray-800 italic">System</span>
                         @endif
                     </td>
                     <td>
                         @if($log->tenant)
                         <span class="text-sm text-ink">{{ $log->tenant->company_name }}</span>
                         @else
-                        <span class="text-gray-300">—</span>
+                        <span class="text-gray-800">—</span>
                         @endif
                     </td>
                     <td>
@@ -116,7 +116,7 @@
                             @endif
                         </div>
                         @else
-                        <span class="text-gray-300">—</span>
+                        <span class="text-gray-800">—</span>
                         @endif
                     </td>
                     <td>
@@ -147,7 +147,7 @@
                             @endif
                         </div>
                         @else
-                        <span class="text-gray-300">—</span>
+                        <span class="text-gray-800">—</span>
                         @endif
                     </td>
                 </tr>
@@ -155,10 +155,10 @@
                 <tr>
                     <td colspan="7" class="text-center py-16">
                         <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="shield-check" class="w-7 h-7 text-gray-300"></i>
+                            <i data-lucide="shield-check" class="w-7 h-7 text-gray-800"></i>
                         </div>
                         <p class="font-semibold text-ink-soft">No audit logs found</p>
-                        <p class="text-xs text-gray-400 mt-1">Actions will appear here as they happen</p>
+                        <p class="text-xs text-gray-800 mt-1">Actions will appear here as they happen</p>
                     </td>
                 </tr>
                 @endforelse

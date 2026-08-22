@@ -45,7 +45,7 @@
     ═══════════════════════════════════════════════════════════════ --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
         <a href="{{ route('employee.expenses.index', $tenantSlug) }}"
-           class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
+           class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>All Expenses</span>
         </a>
@@ -89,7 +89,7 @@
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-mono text-xs font-bold text-gray-400">{{ $expense->expense_number }}</span>
+                    <span class="font-mono text-xs font-bold text-gray-800">{{ $expense->expense_number }}</span>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold"
                           style="background:{{ $statusBg }};color:{{ $statusColor }};">
                         <i data-lucide="{{ $statusIcon }}" class="w-3 h-3"></i>
@@ -122,11 +122,11 @@
             </div>
 
             <div class="text-left lg:text-right flex-shrink-0">
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Amount</p>
+                <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Amount</p>
                 <p class="text-3xl lg:text-4xl font-black font-mono text-gray-900 dark:text-slate-100">
                     {{ $sym }}{{ number_format($expense->amount, 2) }}
                 </p>
-                <p class="text-xs text-gray-400 mt-0.5 font-mono uppercase">{{ $expense->currency }}</p>
+                <p class="text-xs text-gray-800 mt-0.5 font-mono uppercase">{{ $expense->currency }}</p>
             </div>
         </div>
     </div>
@@ -138,7 +138,7 @@
 
             {{-- Details card --}}
             <div class="lmt-card" data-lmt-anim="fade-up">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                     <i data-lucide="info" class="w-3.5 h-3.5"></i> Details
                 </h3>
                 <div class="space-y-3">
@@ -162,7 +162,7 @@
                     @endphp
                     @foreach($rows as [$label, $value, $icon])
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800 last:border-b-0">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="{{ $icon }}" class="w-3.5 h-3.5"></i>
                                 <span>{{ $label }}</span>
                             </div>
@@ -177,7 +177,7 @@
             {{-- Receipt card --}}
             <div class="lmt-card" data-lmt-anim="fade-up">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
                         <i data-lucide="paperclip" class="w-3.5 h-3.5"></i> Receipt
                     </h3>
                     @if($expense->receipt_path)
@@ -194,9 +194,9 @@
                 @if(! $expense->receipt_path)
                     <div class="text-center py-8">
                         <div class="w-12 h-12 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-2">
-                            <i data-lucide="image-off" class="w-5 h-5 text-gray-300"></i>
+                            <i data-lucide="image-off" class="w-5 h-5 text-gray-800"></i>
                         </div>
-                        <p class="text-xs text-gray-500">No receipt attached.</p>
+                        <p class="text-xs text-gray-800">No receipt attached.</p>
                     </div>
                 @elseif($isImage)
                     <a href="{{ route('employee.expenses.receipt', [$tenantSlug, $expense->id]) }}"
@@ -215,22 +215,22 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-sm text-gray-900 dark:text-slate-100">PDF receipt</p>
-                            <p class="text-xs text-gray-500 truncate">{{ basename($expense->receipt_path) }}</p>
+                            <p class="text-xs text-gray-800 truncate">{{ basename($expense->receipt_path) }}</p>
                         </div>
-                        <i data-lucide="external-link" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                        <i data-lucide="external-link" class="w-4 h-4 text-gray-800 flex-shrink-0"></i>
                     </a>
                 @else
                     <a href="{{ route('employee.expenses.receipt', [$tenantSlug, $expense->id]) }}"
                        target="_blank" rel="noopener"
                        class="flex items-center gap-3 p-4 rounded-xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
-                        <div class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-slate-800 text-gray-500 flex items-center justify-center flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-slate-800 text-gray-800 flex items-center justify-center flex-shrink-0">
                             <i data-lucide="file" class="w-5 h-5"></i>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-sm text-gray-900 dark:text-slate-100">Attachment</p>
-                            <p class="text-xs text-gray-500 truncate">{{ basename($expense->receipt_path) }}</p>
+                            <p class="text-xs text-gray-800 truncate">{{ basename($expense->receipt_path) }}</p>
                         </div>
-                        <i data-lucide="external-link" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                        <i data-lucide="external-link" class="w-4 h-4 text-gray-800 flex-shrink-0"></i>
                     </a>
                 @endif
             </div>
@@ -239,7 +239,7 @@
         {{-- ═════ RIGHT: timeline ═════ --}}
         <div class="space-y-5">
             <div class="lmt-card" data-lmt-anim="fade-up">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                     <i data-lucide="git-commit" class="w-3.5 h-3.5"></i> Activity
                 </h3>
 
@@ -267,9 +267,9 @@
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $event['title'] }}</p>
                                 @if(! empty($event['detail']))
-                                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5 whitespace-pre-line">{{ $event['detail'] }}</p>
+                                    <p class="text-xs text-gray-800 dark:text-slate-400 mt-0.5 whitespace-pre-line">{{ $event['detail'] }}</p>
                                 @endif
-                                <p class="text-[10px] text-gray-400 mt-1 font-semibold uppercase tracking-wider">
+                                <p class="text-[10px] text-gray-800 mt-1 font-semibold uppercase tracking-wider">
                                     {{ \Carbon\Carbon::parse($event['when'])->format('M j, Y · g:i A') }}
                                 </p>
                             </div>
@@ -281,7 +281,7 @@
             {{-- Approvals (if multiple levels) --}}
             @if($approvals->isNotEmpty())
                 <div class="lmt-card" data-lmt-anim="fade-up">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                         <i data-lucide="users" class="w-3.5 h-3.5"></i> Approval chain
                     </h3>
                     <div class="space-y-2.5">
@@ -303,7 +303,7 @@
                                         {{ $a->approver->name ?? 'Approver #' . $a->approver_id }}
                                     </p>
                                     @if($a->decided_at)
-                                        <p class="text-[10px] text-gray-400">
+                                        <p class="text-[10px] text-gray-800">
                                             {{ \Carbon\Carbon::parse($a->decided_at)->format('M j, Y') }}
                                         </p>
                                     @endif
@@ -330,7 +330,7 @@
                     <i data-lucide="alert-triangle" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Delete this expense?</h3>
-                <p class="text-sm text-gray-500 mt-2">
+                <p class="text-sm text-gray-800 mt-2">
                     Expense <span class="font-mono font-bold">{{ $expense->expense_number }}</span> will be permanently deleted. This cannot be undone.
                 </p>
             </div>

@@ -65,7 +65,7 @@
         <label class="lmt-label">Work Email</label>
         <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <i data-lucide="mail" class="w-4 h-4 text-gray-400"></i>
+                <i data-lucide="mail" class="w-4 h-4 text-gray-800"></i>
             </div>
             <input type="email" name="email" value="{{ old('email') }}"
                    class="lmt-input pl-10" placeholder="you@company.com" autofocus required/>
@@ -76,12 +76,12 @@
         <label class="lmt-label">Password</label>
         <div class="relative" x-data="{ show: false }">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <i data-lucide="lock" class="w-4 h-4 text-gray-400"></i>
+                <i data-lucide="lock" class="w-4 h-4 text-gray-800"></i>
             </div>
             <input :type="show ? 'text' : 'password'" name="password"
                    class="lmt-input pl-10 pr-10" placeholder="••••••••" required/>
             <button type="button" @click="show=!show"
-                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-800 hover:text-gray-600">
                 <i :data-lucide="show ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
             </button>
         </div>
@@ -99,7 +99,7 @@
 </form>
 
 <div class="mt-6 text-center">
-    <p class="text-sm text-gray-500">
+    <p class="text-sm text-gray-800">
         Are you an HR manager or admin?
         <a href="{{ route('admin.login', $tenantModel->slug) }}"
            class="font-semibold text-brand-600 hover:text-brand-700 transition-colors">

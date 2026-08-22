@@ -7,7 +7,7 @@
 <div class="max-w-4xl mx-auto">
 
     <a href="{{ route('admin.shifts.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Shifts
     </a>
@@ -20,7 +20,7 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-black text-gray-900">{{ $employee->full_name }}</h2>
-                    <p class="text-sm text-gray-500">{{ $employee->position?->title }} · {{ $employee->department?->name }}</p>
+                    <p class="text-sm text-gray-800">{{ $employee->position?->title }} · {{ $employee->department?->name }}</p>
                 </div>
             </div>
             <form method="GET">
@@ -38,14 +38,14 @@
             <div class="w-3 h-3 rounded-full flex-shrink-0" style="background:{{ $assignment->shift->color ?? '#6C7DF7' }}"></div>
             <div class="flex-1">
                 <p class="font-bold text-gray-900 text-sm">{{ $assignment->shift->name }}</p>
-                <p class="text-xs text-gray-400">
+                <p class="text-xs text-gray-800">
                     {{ \Carbon\Carbon::createFromFormat('H:i:s', $assignment->shift->start_time)->format('h:i A') }}
                     –
                     {{ \Carbon\Carbon::createFromFormat('H:i:s', $assignment->shift->end_time)->format('h:i A') }}
                     · {{ $assignment->shift->total_hours }}h/day
                 </p>
             </div>
-            <div class="text-right text-xs text-gray-500">
+            <div class="text-right text-xs text-gray-800">
                 <p>From: {{ \Carbon\Carbon::parse($assignment->start_date)->format('M j, Y') }}</p>
                 <p>{{ $assignment->end_date ? 'To: '.\Carbon\Carbon::parse($assignment->end_date)->format('M j, Y') : 'Ongoing' }}</p>
             </div>
@@ -60,7 +60,7 @@
         @empty
         <div class="text-center py-8">
             <i data-lucide="calendar-off" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-            <p class="text-sm text-gray-400">No shift assignments in this period</p>
+            <p class="text-sm text-gray-800">No shift assignments in this period</p>
         </div>
         @endforelse
     </div>

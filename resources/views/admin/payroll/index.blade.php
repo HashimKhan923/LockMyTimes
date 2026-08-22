@@ -31,7 +31,7 @@
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h3 class="font-black text-gray-900">Payroll Spend</h3>
-                <p class="text-xs text-gray-400">Net salary paid last 6 months</p>
+                <p class="text-xs text-gray-800">Net salary paid last 6 months</p>
             </div>
             <div class="flex items-center gap-2">
                 @include('exports.buttons', ['route' => 'admin.payroll.export', 'params' => [$tenant]])
@@ -46,13 +46,13 @@
             @php $max = $chart->max('amount') ?: 1; @endphp
             @foreach($chart as $c)
             <div class="flex-1 flex flex-col items-center gap-1">
-                <span class="text-xs font-bold text-gray-500">
+                <span class="text-xs font-bold text-gray-800">
                     {{ $c['amount'] > 0 ? '$'.number_format($c['amount']/1000,0).'k' : '—' }}
                 </span>
                 <div class="w-full rounded-t-lg transition-all duration-700 lmt-gradient-bg"
                      style="height:{{ $max > 0 ? round(($c['amount']/$max)*100) : 4 }}%; min-height:4px;">
                 </div>
-                <span class="text-xs font-semibold text-gray-400">{{ $c['label'] }}</span>
+                <span class="text-xs font-semibold text-gray-800">{{ $c['label'] }}</span>
             </div>
             @endforeach
         </div>
@@ -66,7 +66,7 @@
             </div>
             <div>
                 <h3 class="font-black text-gray-900 text-sm">Run Payroll</h3>
-                <p class="text-xs text-gray-400">Create a new payroll run</p>
+                <p class="text-xs text-gray-800">Create a new payroll run</p>
             </div>
         </div>
         <form action="{{ route('admin.payroll.run', $tenant) }}" method="POST" class="space-y-3">
@@ -199,8 +199,8 @@
                 <tr>
                     <td colspan="9" class="text-center py-16">
                         <i data-lucide="dollar-sign" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="font-semibold text-gray-400 mb-1">No payroll runs yet</p>
-                        <p class="text-sm text-gray-400">Use the form above to generate your first payroll</p>
+                        <p class="font-semibold text-gray-800 mb-1">No payroll runs yet</p>
+                        <p class="text-sm text-gray-800">Use the form above to generate your first payroll</p>
                     </td>
                 </tr>
                 @endforelse

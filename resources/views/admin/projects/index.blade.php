@@ -64,7 +64,7 @@
         'urgent' => 'text-red-500',
         'high'   => 'text-amber-500',
         'normal' => 'text-blue-500',
-        'low'    => 'text-gray-400',
+        'low'    => 'text-gray-800',
     ];
     @endphp
     <div class="lmt-card p-0 overflow-hidden hover:shadow-md transition-shadow group">
@@ -76,14 +76,14 @@
             <div class="flex items-start justify-between mb-3">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1">
-                        <code class="text-xs text-gray-400 font-mono">{{ $project->code }}</code>
+                        <code class="text-xs text-gray-800 font-mono">{{ $project->code }}</code>
                         <span class="{{ $statusColors[$project->status] ?? 'lmt-badge-gray' }} text-xs">
                             {{ ucfirst(str_replace('_',' ',$project->status)) }}
                         </span>
                     </div>
                     <h3 class="font-black text-gray-900 truncate">{{ $project->name }}</h3>
                     @if($project->description)
-                    <p class="text-xs text-gray-400 mt-1 line-clamp-2">{{ $project->description }}</p>
+                    <p class="text-xs text-gray-800 mt-1 line-clamp-2">{{ $project->description }}</p>
                     @endif
                 </div>
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black ml-3 flex-shrink-0"
@@ -95,7 +95,7 @@
             {{-- Progress --}}
             <div class="mb-3">
                 <div class="flex justify-between text-xs mb-1">
-                    <span class="text-gray-400">Progress</span>
+                    <span class="text-gray-800">Progress</span>
                     <span class="font-bold text-gray-700">{{ $project->progress }}%</span>
                 </div>
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -105,7 +105,7 @@
             </div>
 
             {{-- Meta --}}
-            <div class="flex items-center justify-between text-xs text-gray-400 mb-4">
+            <div class="flex items-center justify-between text-xs text-gray-800 mb-4">
                 <div class="flex items-center gap-3">
                     <span class="flex items-center gap-1">
                         <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
@@ -133,7 +133,7 @@
                 <div class="w-6 h-6 rounded-full lmt-gradient-bg flex items-center justify-center text-white text-xs font-bold">
                     {{ substr($project->manager->first_name, 0, 1) }}
                 </div>
-                <span class="text-xs text-gray-500">{{ $project->manager->full_name }}</span>
+                <span class="text-xs text-gray-800">{{ $project->manager->full_name }}</span>
             </div>
             @endif
         </div>
@@ -146,14 +146,14 @@
                 Open Board
             </a>
             <button onclick="openEditProject({{ $project->id }}, {{ json_encode($project) }})"
-                    class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
+                    class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
             </button>
             <form action="{{ route('admin.projects.destroy', [$tenant, $project->id]) }}"
                   method="POST" onsubmit="return confirm('Delete this project?')">
                 @csrf @method('DELETE')
                 <button type="submit"
-                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
             </form>
@@ -162,8 +162,8 @@
     @empty
     <div class="lmt-card text-center py-16 md:col-span-3">
         <i data-lucide="folder-open" class="w-12 h-12 text-gray-200 mx-auto mb-4"></i>
-        <p class="font-black text-gray-400 text-lg">No projects yet</p>
-        <p class="text-sm text-gray-300 mt-1 mb-5">Create your first project to get started</p>
+        <p class="font-black text-gray-800 text-lg">No projects yet</p>
+        <p class="text-sm text-gray-800 mt-1 mb-5">Create your first project to get started</p>
         <button onclick="openModal('add-project-modal')" class="lmt-btn-primary lmt-btn-sm inline-flex">
             <i data-lucide="plus" class="w-4 h-4"></i> Create Project
         </button>

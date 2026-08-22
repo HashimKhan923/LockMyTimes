@@ -86,16 +86,16 @@
                     <div class="flex items-start justify-between mb-3">
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2">
-                                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider truncate">{{ $b->name }}</p>
+                                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider truncate">{{ $b->name }}</p>
                                 @if(! $b->is_paid)
-                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 uppercase">Unpaid</span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-800 uppercase">Unpaid</span>
                                 @endif
                             </div>
                             <p class="text-3xl font-black text-gray-900 dark:text-slate-100 mt-1 font-mono">
                                 {{ $b->available }}
-                                <span class="text-sm text-gray-400 font-bold">/ {{ $b->total }}</span>
+                                <span class="text-sm text-gray-800 font-bold">/ {{ $b->total }}</span>
                             </p>
-                            <p class="text-xs text-gray-400 mt-0.5">days available</p>
+                            <p class="text-xs text-gray-800 mt-0.5">days available</p>
                         </div>
                         <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                              style="background:{{ $b->color }}1a; color:{{ $b->color }};">
@@ -106,7 +106,7 @@
                         <div class="h-full rounded-full transition-all"
                              style="width: {{ $b->used_pct }}%; background:{{ $b->color }};"></div>
                     </div>
-                    <div class="flex justify-between text-[11px] text-gray-500 font-semibold mt-2">
+                    <div class="flex justify-between text-[11px] text-gray-800 font-semibold mt-2">
                         <span>{{ $b->used }} used</span>
                         @if($b->pending > 0)
                             <span class="text-amber-600">{{ $b->pending }} pending</span>
@@ -130,7 +130,7 @@
                 <h2 class="text-base font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
                     Leave History
                 </h2>
-                <p class="text-xs text-gray-400 mt-0.5">{{ $requests->total() }} request{{ $requests->total() === 1 ? '' : 's' }} in {{ $year }}</p>
+                <p class="text-xs text-gray-800 mt-0.5">{{ $requests->total() }} request{{ $requests->total() === 1 ? '' : 's' }} in {{ $year }}</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
@@ -155,7 +155,7 @@
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                               {{ $isActive
                                     ? 'border-transparent text-white'
-                                    : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                                    : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                        @if($isActive) style="background:var(--brand-500);" @endif>
                         {{ $chip['label'] }}
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $isActive ? 'bg-white/20' : 'bg-gray-100 dark:bg-slate-700' }}">
@@ -185,9 +185,9 @@
         @if($requests->isEmpty())
             <div class="text-center py-16">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                    <i data-lucide="calendar-off" class="w-7 h-7 text-gray-300"></i>
+                    <i data-lucide="calendar-off" class="w-7 h-7 text-gray-800"></i>
                 </div>
-                <p class="text-sm text-gray-500">No leave requests found.</p>
+                <p class="text-sm text-gray-800">No leave requests found.</p>
                 <a href="{{ route('employee.leaves.create', $tenantSlug) }}" class="lmt-btn-primary lmt-btn-sm mt-4 inline-flex">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i> Apply Now
                 </a>
@@ -236,11 +236,11 @@
                                     <div class="text-sm text-gray-900 dark:text-slate-100">
                                         {{ $start->format('M j') }}
                                         @if($start->ne($end))
-                                            <span class="text-gray-400"></span> {{ $end->format('M j') }}
+                                            <span class="text-gray-800"></span> {{ $end->format('M j') }}
                                         @endif
                                     </div>
                                     @if($r->day_part && $r->day_part !== 'full')
-                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wide mt-0.5">
+                                        <p class="text-[10px] text-gray-800 font-semibold uppercase tracking-wide mt-0.5">
                                             {{ str_replace('_', ' ', $r->day_part) }}
                                         </p>
                                     @endif
@@ -249,7 +249,7 @@
                                     <span class="font-mono font-bold text-sm">{{ rtrim(rtrim(number_format($r->total_days, 1), '0'), '.') }}</span>
                                 </td>
                                 <td><span class="{{ $statusCls }}">{{ $statusLbl }}</span></td>
-                                <td class="hidden md:table-cell text-xs text-gray-500">
+                                <td class="hidden md:table-cell text-xs text-gray-800">
                                     {{ \Carbon\Carbon::parse($r->created_at)->format('M j, Y') }}
                                 </td>
                                 <td class="text-right">
@@ -297,10 +297,10 @@
 
             <button @click="closeDrawer()"
                     class="absolute top-3 right-3 w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors z-10">
-                <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+                <i data-lucide="x" class="w-5 h-5 text-gray-800"></i>
             </button>
 
-            <div x-show="drawerLoading" class="flex items-center justify-center py-20 text-sm text-gray-400 gap-2">
+            <div x-show="drawerLoading" class="flex items-center justify-center py-20 text-sm text-gray-800 gap-2">
                 <svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
@@ -324,7 +324,7 @@
                     <i data-lucide="alert-triangle" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Cancel this leave?</h3>
-                <p class="text-sm text-gray-500 mt-2">
+                <p class="text-sm text-gray-800 mt-2">
                     Request <span class="font-mono font-bold" x-text="cancelLabel"></span> will be cancelled and your balance restored. This cannot be undone.
                 </p>
             </div>
@@ -362,7 +362,7 @@ function leavesIndex() {
                 const url = "{{ rtrim(route('employee.leaves.show', [$tenantSlug, 'PLACEHOLDER']), '/') }}".replace('PLACEHOLDER', id);
                 const r = await fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
                 const d = await r.json();
-                this.drawerHtml = d.html || '<p class="p-6 text-sm text-gray-500">Could not load.</p>';
+                this.drawerHtml = d.html || '<p class="p-6 text-sm text-gray-800">Could not load.</p>';
             } catch (e) {
                 this.drawerHtml = '<p class="p-6 text-sm text-red-500">Failed to load details.</p>';
             } finally {

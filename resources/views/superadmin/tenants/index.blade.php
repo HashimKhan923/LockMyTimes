@@ -44,7 +44,7 @@
             @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
             <div class="relative flex-1 max-w-sm">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <i data-lucide="search" class="w-4 h-4 text-gray-800"></i>
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}"
                        class="lmt-input pl-10 py-2 text-sm"
@@ -157,7 +157,7 @@
                 @empty
                 <tr>
                     <td colspan="8" class="text-center py-12 text-ink-soft">
-                        <i data-lucide="building-2" class="w-8 h-8 mx-auto mb-3 text-gray-300"></i>
+                        <i data-lucide="building-2" class="w-8 h-8 mx-auto mb-3 text-gray-800"></i>
                         <p class="font-medium">No organizations found</p>
                         <p class="text-sm mt-1">Try adjusting your search or filters</p>
                     </td>

@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Leave Types</h2>
-        <p class="text-sm text-gray-400 mt-0.5">Configure your company's leave policies</p>
+        <p class="text-sm text-gray-800 mt-0.5">Configure your company's leave policies</p>
     </div>
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.leaves.index', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
@@ -41,12 +41,12 @@
                 </div>
                 <div>
                     <h3 class="font-black text-gray-900">{{ $type->name }}</h3>
-                    <p class="text-xs text-gray-400">{{ $type->code }}</p>
+                    <p class="text-xs text-gray-800">{{ $type->code }}</p>
                 </div>
             </div>
             <div class="flex items-center gap-1">
                 <button onclick="openEditType({{ $type->id }}, {{ json_encode($type) }})"
-                        class="w-7 h-7 rounded-lg bg-gray-100 text-gray-500 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
+                        class="w-7 h-7 rounded-lg bg-gray-100 text-gray-800 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
                     <i data-lucide="pencil" class="w-3 h-3"></i>
                 </button>
             </div>
@@ -55,11 +55,11 @@
         <div class="grid grid-cols-2 gap-2 text-xs mb-3">
             <div class="bg-gray-50 rounded-lg p-2 text-center">
                 <p class="font-black text-gray-900 text-lg">{{ $type->default_days_per_year }}</p>
-                <p class="text-gray-400">Days/year</p>
+                <p class="text-gray-800">Days/year</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-2 text-center">
                 <p class="font-black text-gray-900 text-lg">{{ $type->leave_requests_count }}</p>
-                <p class="text-gray-400">Requests</p>
+                <p class="text-gray-800">Requests</p>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
         </div>
 
         @if($type->notice_days_required)
-        <p class="text-xs text-gray-400 mt-2">
+        <p class="text-xs text-gray-800 mt-2">
             <i data-lucide="info" class="w-3 h-3 inline mr-1"></i>
             {{ $type->notice_days_required }} days notice required
         </p>
@@ -93,7 +93,7 @@
     @empty
     <div class="lmt-card text-center py-12 md:col-span-3">
         <i data-lucide="tag" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-        <p class="text-gray-400">No leave types configured yet</p>
+        <p class="text-gray-800">No leave types configured yet</p>
     </div>
     @endforelse
 </div>

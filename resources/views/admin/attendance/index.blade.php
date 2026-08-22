@@ -8,7 +8,7 @@
 <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Attendance</h2>
-        <p class="text-sm text-gray-400 mt-0.5">{{ $date->format('l, F j, Y') }}</p>
+        <p class="text-sm text-gray-800 mt-0.5">{{ $date->format('l, F j, Y') }}</p>
     </div>
     <div class="flex items-center gap-3 flex-wrap">
         {{-- Date picker --}}
@@ -44,7 +44,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-xl font-black text-gray-900">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -57,7 +57,7 @@
     <div class="flex items-center justify-between mb-3">
         <div>
             <h3 class="font-black text-gray-900">Attendance Rate</h3>
-            <p class="text-sm text-gray-400">{{ $date->format('M j, Y') }}</p>
+            <p class="text-sm text-gray-800">{{ $date->format('M j, Y') }}</p>
         </div>
         <span class="text-3xl font-black {{ $rate >= 80 ? 'text-emerald-600' : ($rate >= 60 ? 'text-amber-600' : 'text-red-600') }}">
             {{ $rate }}%
@@ -71,7 +71,7 @@
 
     {{-- 30-day trend chart --}}
     <div class="mt-5">
-        <p class="text-xs font-semibold text-gray-400 mb-3">Last 30 Days</p>
+        <p class="text-xs font-semibold text-gray-800 mb-3">Last 30 Days</p>
         <div class="flex items-end gap-0.5 h-12">
             @foreach($monthlyStats as $day)
             @php $dayRate = $totalActive > 0 ? ($day['present'] / max($totalActive,1)) * 100 : 0; @endphp
@@ -93,7 +93,7 @@
             <input type="hidden" name="date" value="{{ $date->toDateString() }}"/>
             <div class="relative flex-1 min-w-48 max-w-xs">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <i data-lucide="search" class="w-4 h-4 text-gray-800"></i>
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}"
                        class="lmt-input pl-10 py-2 text-sm" placeholder="Search employees…"/>
@@ -153,7 +153,7 @@
                                 <p class="font-semibold text-gray-900 text-sm">
                                     {{ $rec->employee->full_name ?? 'Unknown' }}
                                 </p>
-                                <p class="text-xs text-gray-400">
+                                <p class="text-xs text-gray-800">
                                     {{ $rec->employee->department?->name ?? '' }}
                                 </p>
                             </div>
@@ -186,7 +186,7 @@
                         @if($rec->overtime_hours > 0)
                         <span class="lmt-badge-amber text-xs">{{ number_format($rec->overtime_hours,1) }}h OT</span>
                         @else
-                        <span class="text-gray-400 text-sm">—</span>
+                        <span class="text-gray-800 text-sm">—</span>
                         @endif
                     </td>
                     <td>
@@ -202,7 +202,7 @@
                             {{ $rec->source }}
                         </span>
                         @if($rec->is_manual_entry)
-                        <span class="block text-xs text-gray-400 mt-0.5">Manual</span>
+                        <span class="block text-xs text-gray-800 mt-0.5">Manual</span>
                         @endif
                         @if($rec->is_remote_clockin)
                         <span class="block lmt-badge-brand text-xs mt-1">
@@ -213,7 +213,7 @@
                         </span>
                         @endif
                     </td>
-                    <td class="text-xs text-gray-400 max-w-24 truncate">
+                    <td class="text-xs text-gray-800 max-w-24 truncate">
                         {{ $rec->notes ?? '—' }}
                     </td>
                     <td>
@@ -227,7 +227,7 @@
                 <tr>
                     <td colspan="9" class="text-center py-16">
                         <i data-lucide="clock" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="font-semibold text-gray-400">No attendance records for {{ $date->format('M j, Y') }}</p>
+                        <p class="font-semibold text-gray-800">No attendance records for {{ $date->format('M j, Y') }}</p>
                     </td>
                 </tr>
                 @endforelse

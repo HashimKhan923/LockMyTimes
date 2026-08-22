@@ -7,7 +7,7 @@
 <div class="max-w-4xl mx-auto">
 
     <a href="{{ route('admin.attendance.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Attendance
     </a>
@@ -21,7 +21,7 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-black text-gray-900">{{ $employee->full_name }}</h2>
-                    <p class="text-sm text-gray-500">{{ $employee->position?->title }} · {{ $employee->department?->name }}</p>
+                    <p class="text-sm text-gray-800">{{ $employee->position?->title }} · {{ $employee->department?->name }}</p>
                 </div>
             </div>
             <form method="GET" action="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}">
@@ -41,7 +41,7 @@
             ] as $s)
             <div class="text-center">
                 <p class="text-2xl font-black {{ $s['color'] }}">{{ $s['value'] }}</p>
-                <p class="text-xs text-gray-400 mt-0.5">{{ $s['label'] }}</p>
+                <p class="text-xs text-gray-800 mt-0.5">{{ $s['label'] }}</p>
             </div>
             @endforeach
         </div>
@@ -52,7 +52,7 @@
         {{-- Day headers --}}
         <div class="grid grid-cols-7 mb-2">
             @foreach(['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $day)
-            <div class="text-center text-xs font-bold text-gray-400 py-2">{{ $day }}</div>
+            <div class="text-center text-xs font-bold text-gray-800 py-2">{{ $day }}</div>
             @endforeach
         </div>
 
@@ -91,13 +91,13 @@
             }
             @endphp
             <div class="rounded-xl p-2 text-center {{ $cellBg }} {{ $isToday ? 'ring-2 ring-brand-500' : '' }} min-h-16 flex flex-col">
-                <span class="text-xs font-bold {{ $isToday ? 'text-brand-600' : 'text-gray-500' }}">{{ $d }}</span>
+                <span class="text-xs font-bold {{ $isToday ? 'text-brand-600' : 'text-gray-800' }}">{{ $d }}</span>
                 @if($rec)
                 <span class="text-[10px] font-bold mt-auto {{ $rec->status === 'present' ? ($rec->is_late ? 'text-amber-600' : 'text-emerald-600') : ($rec->status === 'absent' ? 'text-red-500' : 'text-brand-600') }}">
                     {{ $rec->clock_in_at?->format('h:ia') ?? strtoupper(substr($rec->status,0,3)) }}
                 </span>
                 @if($rec->total_hours > 0)
-                <span class="text-[10px] text-gray-400">{{ number_format($rec->total_hours,1) }}h</span>
+                <span class="text-[10px] text-gray-800">{{ number_format($rec->total_hours,1) }}h</span>
                 @endif
                 @elseif(!$isWeekend && $dateKey < now()->toDateString())
                 <span class="text-[10px] text-red-400 mt-auto">Absent</span>
@@ -117,7 +117,7 @@
             ] as $leg)
             <div class="flex items-center gap-1.5">
                 <div class="w-4 h-4 rounded {{ $leg['color'] }}"></div>
-                <span class="text-gray-500">{{ $leg['label'] }}</span>
+                <span class="text-gray-800">{{ $leg['label'] }}</span>
             </div>
             @endforeach
         </div>

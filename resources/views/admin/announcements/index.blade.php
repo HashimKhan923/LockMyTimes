@@ -29,7 +29,7 @@
     @foreach(['announcements'=>' Announcements','polls'=>' Polls'] as $t=>$label)
     <a href="{{ route('admin.announcements.index', $tenant) }}?tab={{ $t }}"
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
-              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-800 hover:text-gray-700' }}">
         {{ $label }}
     </a>
     @endforeach
@@ -101,7 +101,7 @@
                         {{ strip_tags($ann->content) }}
                     </p>
 
-                    <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+                    <div class="flex flex-wrap items-center gap-4 text-xs text-gray-800">
                         <span class="flex items-center gap-1">
                             <i data-lucide="user" class="w-3.5 h-3.5"></i>
                             {{ $ann->creator->name ?? 'Admin' }}
@@ -132,14 +132,14 @@
                 {{-- Actions --}}
                 <div class="flex items-center gap-2 flex-shrink-0">
                     <button onclick="openEditModal({{ $ann->id }}, {{ json_encode(['title'=>$ann->title,'content'=>strip_tags($ann->content),'priority'=>$ann->priority,'status'=>$ann->status,'expires_at'=>$ann->expires_at?->toDateString()]) }})"
-                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
+                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                     </button>
                     <form action="{{ route('admin.announcements.destroy', [$tenant, $ann->id]) }}"
                           method="POST" onsubmit="return confirm('Delete this announcement?')">
                         @csrf @method('DELETE')
                         <button type="submit"
-                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         </button>
                     </form>
@@ -158,8 +158,8 @@
     @empty
     <div class="lmt-card text-center py-16">
         <i data-lucide="megaphone" class="w-12 h-12 text-gray-200 mx-auto mb-4"></i>
-        <p class="font-black text-gray-400 text-lg">No announcements yet</p>
-        <p class="text-sm text-gray-300 mt-1 mb-5">Share news and updates with your team</p>
+        <p class="font-black text-gray-800 text-lg">No announcements yet</p>
+        <p class="text-sm text-gray-800 mt-1 mb-5">Share news and updates with your team</p>
         <button onclick="openModal('add-announcement-modal')"
                 class="lmt-btn-primary lmt-btn-sm inline-flex">
             <i data-lucide="plus" class="w-4 h-4"></i> Create Announcement
@@ -206,7 +206,7 @@
                 </div>
                 <h3 class="font-black text-gray-900 leading-snug">{{ $poll->question }}</h3>
                 @if($poll->description)
-                <p class="text-xs text-gray-400 mt-1">{{ $poll->description }}</p>
+                <p class="text-xs text-gray-800 mt-1">{{ $poll->description }}</p>
                 @endif
             </div>
             <div class="flex items-center gap-1 ml-3 flex-shrink-0">
@@ -215,7 +215,7 @@
                       method="POST" onsubmit="return confirm('Close this poll?')">
                     @csrf @method('PATCH')
                     <button type="submit"
-                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors"
+                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-colors"
                             title="Close Poll">
                         <i data-lucide="square" class="w-3.5 h-3.5"></i>
                     </button>
@@ -225,7 +225,7 @@
                       method="POST" onsubmit="return confirm('Delete this poll?')">
                     @csrf @method('DELETE')
                     <button type="submit"
-                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                         <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     </button>
                 </form>
@@ -251,7 +251,7 @@
         </div>
 
         {{-- Footer --}}
-        <div class="flex items-center justify-between pt-3 border-t border-gray-100 text-xs text-gray-400">
+        <div class="flex items-center justify-between pt-3 border-t border-gray-100 text-xs text-gray-800">
             <span class="flex items-center gap-1">
                 <i data-lucide="users" class="w-3.5 h-3.5"></i>
                 {{ $totalVotes }} vote{{ $totalVotes !== 1 ? 's' : '' }}
@@ -279,7 +279,7 @@
     @empty
     <div class="lmt-card text-center py-14 md:col-span-2">
         <i data-lucide="bar-chart-2" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-        <p class="font-black text-gray-400">No polls yet</p>
+        <p class="font-black text-gray-800">No polls yet</p>
         <button onclick="openModal('add-poll-modal')"
                 class="lmt-btn-primary lmt-btn-sm inline-flex mt-4">
             <i data-lucide="plus" class="w-4 h-4"></i> Create Poll
@@ -299,7 +299,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">New Announcement</h3>
             <button onclick="closeModal('add-announcement-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -380,7 +380,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Edit Announcement</h3>
             <button onclick="closeModal('edit-announcement-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -431,7 +431,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Create Poll</h3>
             <button onclick="closeModal('add-poll-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -476,14 +476,14 @@
                     <div class="flex gap-2">
                         <input type="text" name="options[]" required class="lmt-input flex-1" placeholder="Option 1"/>
                         <button type="button" onclick="removeOption(this)"
-                                class="w-9 h-9 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors flex-shrink-0">
+                                class="w-9 h-9 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors flex-shrink-0">
                             <i data-lucide="x" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
                     <div class="flex gap-2">
                         <input type="text" name="options[]" required class="lmt-input flex-1" placeholder="Option 2"/>
                         <button type="button" onclick="removeOption(this)"
-                                class="w-9 h-9 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors flex-shrink-0">
+                                class="w-9 h-9 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors flex-shrink-0">
                             <i data-lucide="x" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
@@ -515,11 +515,11 @@
         <div class="flex items-center justify-between mb-2">
             <h3 class="font-black text-gray-900">Cast Your Vote</h3>
             <button onclick="closeModal('vote-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <p class="text-sm text-gray-500 mb-5" id="vote-question"></p>
+        <p class="text-sm text-gray-800 mb-5" id="vote-question"></p>
         <form id="vote-form" method="POST" class="space-y-4">
             @csrf
             <div id="vote-options" class="space-y-2"></div>
@@ -567,7 +567,7 @@ function addOption() {
     div.innerHTML = `
         <input type="text" name="options[]" required class="lmt-input flex-1" placeholder="Option ${optionCount}"/>
         <button type="button" onclick="removeOption(this)"
-                class="w-9 h-9 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors flex-shrink-0">
+                class="w-9 h-9 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors flex-shrink-0">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>`;
     document.getElementById('poll-options').appendChild(div);

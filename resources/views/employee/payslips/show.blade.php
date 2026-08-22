@@ -62,7 +62,7 @@
     ═══════════════════════════════════════════════════════════════ --}}
     <div class="flex items-center justify-between mb-5 ps-nav-bar">
         <a href="{{ route('employee.payslips.index', $tenantSlug) }}"
-           class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
+           class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>All Payslips</span>
         </a>
@@ -72,14 +72,14 @@
                 <a href="{{ route('employee.payslips.show', [$tenantSlug, $prev->id]) }}"
                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                    title="Previous payslip ({{ $prev->payslip_number }})">
-                    <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500"></i>
+                    <i data-lucide="chevron-left" class="w-4 h-4 text-gray-800"></i>
                 </a>
             @endif
             @if($next)
                 <a href="{{ route('employee.payslips.show', [$tenantSlug, $next->id]) }}"
                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                    title="Next payslip ({{ $next->payslip_number }})">
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800"></i>
                 </a>
             @endif
             <button type="button" onclick="window.print()"
@@ -132,7 +132,7 @@
         {{-- Employee + Period grid --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 pb-6 border-b border-gray-100 dark:border-slate-700">
             <div>
-                <p class="text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wider">Employee</p>
+                <p class="text-xs text-gray-800 mb-3 font-semibold uppercase tracking-wider">Employee</p>
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center font-black text-white"
                          style="background:linear-gradient(135deg,var(--brand-500),var(--brand-600));">
@@ -140,7 +140,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="font-black text-gray-900 dark:text-slate-100 truncate">{{ $payslip->employee->full_name }}</p>
-                        <p class="text-xs text-gray-400">{{ $payslip->employee->employee_code }}</p>
+                        <p class="text-xs text-gray-800">{{ $payslip->employee->employee_code }}</p>
                     </div>
                 </div>
                 <p class="text-xs text-gray-600 dark:text-slate-400">{{ $payslip->employee->position?->title ?? '—' }}</p>
@@ -148,7 +148,7 @@
             </div>
 
             <div>
-                <p class="text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wider">Pay Period</p>
+                <p class="text-xs text-gray-800 mb-3 font-semibold uppercase tracking-wider">Pay Period</p>
                 <div class="space-y-2 text-sm">
                     @foreach([
                         ['Period',    $payslip->period_start->format('M j') . ' – ' . $payslip->period_end->format('M j, Y')],
@@ -157,7 +157,7 @@
                         ['Payment',   ucfirst(str_replace('_', ' ', $payslip->payment_method))],
                     ] as [$k, $v])
                         <div class="flex justify-between gap-3">
-                            <span class="text-gray-400">{{ $k }}</span>
+                            <span class="text-gray-800">{{ $k }}</span>
                             <span class="font-semibold text-gray-900 dark:text-slate-100 text-right">{{ $v }}</span>
                         </div>
                     @endforeach
@@ -167,7 +167,7 @@
 
         {{-- ═════════ EARNINGS ═════════ --}}
         <div class="mb-5">
-            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                 <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-500"></i> Earnings
             </h4>
             <div class="space-y-1.5">
@@ -179,7 +179,7 @@
                         </span>
                     </div>
                 @empty
-                    <p class="text-xs text-gray-400 italic">No earnings on this payslip.</p>
+                    <p class="text-xs text-gray-800 italic">No earnings on this payslip.</p>
                 @endforelse
 
                 @foreach($extraEarnings as $item)
@@ -192,7 +192,7 @@
                 @endforeach
                 @foreach($extraReimburse as $item)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-400 font-bold uppercase">Reimbursement</span></span>
+                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Reimbursement</span></span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 font-mono">
                             {{ $sym }}{{ number_format($item->amount, 2) }}
                         </span>
@@ -210,7 +210,7 @@
 
         {{-- ═════════ DEDUCTIONS ═════════ --}}
         <div class="mb-5">
-            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                 <i data-lucide="trending-down" class="w-3.5 h-3.5 text-red-500"></i> Deductions
             </h4>
             <div class="space-y-1.5">
@@ -222,12 +222,12 @@
                         </span>
                     </div>
                 @empty
-                    <p class="text-xs text-gray-400 italic">No deductions on this payslip.</p>
+                    <p class="text-xs text-gray-800 italic">No deductions on this payslip.</p>
                 @endforelse
 
                 @foreach($extraTaxes as $item)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-400 font-bold uppercase">Tax</span></span>
+                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Tax</span></span>
                         <span class="text-sm font-semibold text-red-500 font-mono">−{{ $sym }}{{ number_format($item->amount, 2) }}</span>
                     </div>
                 @endforeach
@@ -270,7 +270,7 @@
             ] as [$label, $value, $color])
                 <div class="bg-gray-50 dark:bg-slate-800/60 rounded-xl p-3">
                     <p class="text-base font-black font-mono {{ $color }}">{{ $value }}</p>
-                    <p class="text-[10px] text-gray-400 mt-0.5 font-bold uppercase tracking-wider">{{ $label }}</p>
+                    <p class="text-[10px] text-gray-800 mt-0.5 font-bold uppercase tracking-wider">{{ $label }}</p>
                 </div>
             @endforeach
         </div>
@@ -288,8 +288,8 @@
             @foreach($hoursRows as $h)
                 <div class="bg-gray-50 dark:bg-slate-800/60 rounded-xl p-3">
                     <div class="flex items-center justify-center gap-1 mb-1">
-                        <i data-lucide="{{ $h['icon'] }}" class="w-3 h-3 text-gray-400"></i>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ $h['label'] }} hrs</p>
+                        <i data-lucide="{{ $h['icon'] }}" class="w-3 h-3 text-gray-800"></i>
+                        <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">{{ $h['label'] }} hrs</p>
                     </div>
                     <p class="text-base font-black font-mono {{ $h['class'] }}" @if($h['style']) style="{{ $h['style'] }}" @endif>
                         {{ $h['value'] }}
@@ -300,8 +300,8 @@
 
         {{-- ═════════ FOOTER ═════════ --}}
         <div class="mt-6 pt-4 border-t border-gray-100 dark:border-slate-700 text-center">
-            <p class="text-xs text-gray-400">Computer-generated payslip · No signature required</p>
-            <p class="text-[10px] text-gray-300 mt-1">
+            <p class="text-xs text-gray-800">Computer-generated payslip · No signature required</p>
+            <p class="text-[10px] text-gray-800 mt-1">
                 Generated by {{ $currentTenant->company_name ?? 'Lockmytimes' }} · {{ now()->format('M j, Y h:i A') }}
             </p>
         </div>

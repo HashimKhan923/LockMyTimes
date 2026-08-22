@@ -103,14 +103,14 @@
                     </div>
                     <span>500+ companies trust Lockmytimes</span>
                 </div>
-                <span class="hidden sm:block text-gray-300">·</span>
+                <span class="hidden sm:block text-gray-800">·</span>
                 <div class="flex items-center gap-1">
                     @for($i=0;$i<5;$i++)
                     <i data-lucide="star" class="w-4 h-4 fill-accent-500 text-accent-500"></i>
                     @endfor
                     <span class="ml-1">4.9/5 rating</span>
                 </div>
-                <span class="hidden sm:block text-gray-300">·</span>
+                <span class="hidden sm:block text-gray-800">·</span>
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
                     <span>SOC 2 compliant</span>

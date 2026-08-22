@@ -42,7 +42,7 @@
               class="flex flex-wrap items-end gap-3">
             <div class="relative flex-1 min-w-48">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <i data-lucide="search" class="w-4 h-4 text-gray-800"></i>
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}"
                        class="lmt-input pl-10 py-2 text-sm" placeholder="Company, email, Stripe ID…">
@@ -166,7 +166,7 @@
                             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                         </a>
                         @else
-                        <span class="text-gray-300">—</span>
+                        <span class="text-gray-800">—</span>
                         @endif
                     </td>
                 </tr>
@@ -174,10 +174,10 @@
                 <tr>
                     <td colspan="8" class="text-center py-16">
                         <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="credit-card" class="w-7 h-7 text-gray-300"></i>
+                            <i data-lucide="credit-card" class="w-7 h-7 text-gray-800"></i>
                         </div>
                         <p class="font-semibold text-ink-soft">No payments found</p>
-                        <p class="text-xs text-gray-400 mt-1">Try adjusting your filters</p>
+                        <p class="text-xs text-gray-800 mt-1">Try adjusting your filters</p>
                     </td>
                 </tr>
                 @endforelse

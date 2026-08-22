@@ -131,7 +131,7 @@
         @endphp
         @foreach($tabs as $t)
             <button @click="switchTab('{{ $t['key'] }}')"
-                    :class="tab==='{{ $t['key'] }}' ? 'text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-slate-300'"
+                    :class="tab==='{{ $t['key'] }}' ? 'text-white' : 'text-gray-800 hover:text-gray-700 dark:hover:text-slate-300'"
                     class="px-4 py-2.5 text-sm font-bold rounded-t-xl -mb-px transition-all whitespace-nowrap flex items-center gap-2"
                     :style="tab==='{{ $t['key'] }}' ? 'background:var(--brand-500);' : ''">
                 <i data-lucide="{{ $t['icon'] }}" class="w-4 h-4"></i>
@@ -150,28 +150,28 @@
 
             <div class="mb-5 pb-4 border-b border-gray-100 dark:border-slate-700">
                 <h2 class="text-base font-black text-gray-900 dark:text-slate-100">Personal Information</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Update your personal details. Legal name and email changes must go through HR.</p>
+                <p class="text-xs text-gray-800 mt-0.5">Update your personal details. Legal name and email changes must go through HR.</p>
             </div>
 
             {{-- Read-only legal name --}}
             <div class="grid sm:grid-cols-3 gap-4 mb-5">
                 <div>
-                    <label class="lmt-label">First name <span class="text-gray-400 text-[10px] uppercase font-bold ml-1">HR-locked</span></label>
+                    <label class="lmt-label">First name <span class="text-gray-800 text-[10px] uppercase font-bold ml-1">HR-locked</span></label>
                     <input type="text" value="{{ $emp->first_name }}" disabled class="lmt-input bg-gray-50 dark:bg-slate-800 cursor-not-allowed"/>
                 </div>
                 <div>
-                    <label class="lmt-label">Middle name <span class="text-gray-400 text-[10px] uppercase font-bold ml-1">HR-locked</span></label>
+                    <label class="lmt-label">Middle name <span class="text-gray-800 text-[10px] uppercase font-bold ml-1">HR-locked</span></label>
                     <input type="text" value="{{ $emp->middle_name }}" disabled class="lmt-input bg-gray-50 dark:bg-slate-800 cursor-not-allowed"/>
                 </div>
                 <div>
-                    <label class="lmt-label">Last name <span class="text-gray-400 text-[10px] uppercase font-bold ml-1">HR-locked</span></label>
+                    <label class="lmt-label">Last name <span class="text-gray-800 text-[10px] uppercase font-bold ml-1">HR-locked</span></label>
                     <input type="text" value="{{ $emp->last_name }}" disabled class="lmt-input bg-gray-50 dark:bg-slate-800 cursor-not-allowed"/>
                 </div>
             </div>
 
             <div class="grid sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                    <label class="lmt-label">Preferred name <span class="text-gray-400 font-normal">(optional)</span></label>
+                    <label class="lmt-label">Preferred name <span class="text-gray-800 font-normal">(optional)</span></label>
                     <input type="text" name="preferred_name" maxlength="100"
                            value="{{ old('preferred_name', $emp->preferred_name) }}"
                            class="lmt-input"
@@ -180,7 +180,7 @@
                     @error('preferred_name') <p class="lmt-err">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="lmt-label">Personal email <span class="text-gray-400 font-normal">(optional)</span></label>
+                    <label class="lmt-label">Personal email <span class="text-gray-800 font-normal">(optional)</span></label>
                     <input type="email" name="personal_email" maxlength="200"
                            value="{{ old('personal_email', $emp->personal_email) }}"
                            class="lmt-input"
@@ -192,7 +192,7 @@
 
             <div class="grid sm:grid-cols-2 gap-4 mb-5">
                 <div>
-                    <label class="lmt-label">Phone <span class="text-gray-400 font-normal">(work)</span></label>
+                    <label class="lmt-label">Phone <span class="text-gray-800 font-normal">(work)</span></label>
                     <input type="tel" name="phone" maxlength="50"
                            value="{{ old('phone', $emp->phone) }}"
                            class="lmt-input"
@@ -200,7 +200,7 @@
                     @error('phone') <p class="lmt-err">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="lmt-label">Mobile <span class="text-gray-400 font-normal">(personal)</span></label>
+                    <label class="lmt-label">Mobile <span class="text-gray-800 font-normal">(personal)</span></label>
                     <input type="tel" name="mobile" maxlength="50"
                            value="{{ old('mobile', $emp->mobile) }}"
                            class="lmt-input"
@@ -213,7 +213,7 @@
                 <div>
                     <label class="lmt-label">Date of birth
                         @if($emp->date_of_birth)
-                            <span class="text-gray-400 text-[10px] uppercase font-bold ml-1">Locked once set</span>
+                            <span class="text-gray-800 text-[10px] uppercase font-bold ml-1">Locked once set</span>
                         @endif
                     </label>
                     <input type="date" name="date_of_birth"
@@ -227,7 +227,7 @@
                     @error('date_of_birth') <p class="lmt-err">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="lmt-label">Marital status <span class="text-gray-400 font-normal">(optional)</span></label>
+                    <label class="lmt-label">Marital status <span class="text-gray-800 font-normal">(optional)</span></label>
                     <select name="marital_status" class="lmt-input">
                         <option value="">— Select —</option>
                         @foreach(['single' => 'Single', 'married' => 'Married', 'divorced' => 'Divorced', 'widowed' => 'Widowed', 'separated' => 'Separated', 'domestic_partnership' => 'Domestic partnership'] as $key => $label)
@@ -237,7 +237,7 @@
                     @error('marital_status') <p class="lmt-err">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="lmt-label">Nationality <span class="text-gray-400 font-normal">(optional)</span></label>
+                    <label class="lmt-label">Nationality <span class="text-gray-800 font-normal">(optional)</span></label>
                     <input type="text" name="nationality" maxlength="100"
                            value="{{ old('nationality', $emp->nationality) }}"
                            class="lmt-input"
@@ -265,7 +265,7 @@
 
             <div class="mb-5 pb-4 border-b border-gray-100 dark:border-slate-700">
                 <h2 class="text-base font-black text-gray-900 dark:text-slate-100">Home Address</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Where you live. Used for tax purposes and emergency notifications.</p>
+                <p class="text-xs text-gray-800 mt-0.5">Where you live. Used for tax purposes and emergency notifications.</p>
             </div>
 
             <div class="grid gap-4 mb-5">
@@ -278,7 +278,7 @@
                     @error('address_line1') <p class="lmt-err">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="lmt-label">Address line 2 <span class="text-gray-400 font-normal">(optional)</span></label>
+                    <label class="lmt-label">Address line 2 <span class="text-gray-800 font-normal">(optional)</span></label>
                     <input type="text" name="address_line2" maxlength="200"
                            value="{{ old('address_line2', $emp->address_line2) }}"
                            class="lmt-input"
@@ -347,7 +347,7 @@
             <div class="flex items-center justify-between mb-5 pb-4 border-b border-gray-100 dark:border-slate-700">
                 <div>
                     <h2 class="text-base font-black text-gray-900 dark:text-slate-100">Emergency Contacts</h2>
-                    <p class="text-xs text-gray-500 mt-0.5">People to call in case of an emergency. Up to 5.</p>
+                    <p class="text-xs text-gray-800 mt-0.5">People to call in case of an emergency. Up to 5.</p>
                 </div>
                 @if($emergencyContacts->count() < 5)
                     <button @click="openAdd()" type="button" class="lmt-btn-primary lmt-btn-sm">
@@ -360,10 +360,10 @@
             @if($emergencyContacts->isEmpty())
                 <div class="text-center py-12">
                     <div class="w-14 h-14 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                        <i data-lucide="phone-call" class="w-6 h-6 text-gray-300"></i>
+                        <i data-lucide="phone-call" class="w-6 h-6 text-gray-800"></i>
                     </div>
                     <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No emergency contacts yet</p>
-                    <p class="text-xs text-gray-500 mt-1">Add at least one person we can reach in an emergency.</p>
+                    <p class="text-xs text-gray-800 mt-1">Add at least one person we can reach in an emergency.</p>
                     <button @click="openAdd()" type="button" class="lmt-btn-primary lmt-btn-sm mt-4 inline-flex">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                         Add first contact
@@ -387,22 +387,22 @@
                                                       style="background:var(--brand-50);color:var(--brand-600);">Primary</span>
                                             @endif
                                         </div>
-                                        <p class="text-xs text-gray-500 mt-0.5">{{ ucfirst($c->relationship) }}</p>
+                                        <p class="text-xs text-gray-800 mt-0.5">{{ ucfirst($c->relationship) }}</p>
                                         <div class="flex flex-wrap gap-3 mt-2 text-xs text-gray-600 dark:text-slate-300">
                                             <span class="inline-flex items-center gap-1">
-                                                <i data-lucide="phone" class="w-3 h-3 text-gray-400"></i>
+                                                <i data-lucide="phone" class="w-3 h-3 text-gray-800"></i>
                                                 {{ $c->phone }}
                                             </span>
                                             @if($c->email)
                                                 <span class="inline-flex items-center gap-1">
-                                                    <i data-lucide="mail" class="w-3 h-3 text-gray-400"></i>
+                                                    <i data-lucide="mail" class="w-3 h-3 text-gray-800"></i>
                                                     {{ $c->email }}
                                                 </span>
                                             @endif
                                         </div>
                                         @if($c->address)
-                                            <p class="text-[11px] text-gray-500 mt-1 flex items-start gap-1">
-                                                <i data-lucide="map-pin" class="w-3 h-3 text-gray-400 mt-0.5 flex-shrink-0"></i>
+                                            <p class="text-[11px] text-gray-800 mt-1 flex items-start gap-1">
+                                                <i data-lucide="map-pin" class="w-3 h-3 text-gray-800 mt-0.5 flex-shrink-0"></i>
                                                 <span>{{ $c->address }}</span>
                                             </p>
                                         @endif
@@ -410,11 +410,11 @@
                                 </div>
                                 <div class="flex gap-1 flex-shrink-0">
                                     <button @click='openEdit(@json($c))' type="button"
-                                            class="p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                                            class="p-2 rounded-lg text-gray-800 hover:text-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                     </button>
                                     <button @click="openDelete({{ $c->id }}, '{{ addslashes($c->name) }}')" type="button"
-                                            class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                                            class="p-2 rounded-lg text-gray-800 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
                                         <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                     </button>
                                 </div>
@@ -432,7 +432,7 @@
                  x-transition:enter-start="opacity-0 scale-95"
                  x-transition:enter-end="opacity-100 scale-100">
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100 mb-1" x-text="editing ? 'Edit emergency contact' : 'Add emergency contact'"></h3>
-                <p class="text-xs text-gray-500 mb-5">All fields marked with * are required.</p>
+                <p class="text-xs text-gray-800 mb-5">All fields marked with * are required.</p>
 
                 <form :action="formAction" method="POST" class="space-y-4">
                     @csrf
@@ -472,7 +472,7 @@
                                    class="lmt-input"/>
                         </div>
                         <div>
-                            <label class="lmt-label">Email <span class="text-gray-400 font-normal">(optional)</span></label>
+                            <label class="lmt-label">Email <span class="text-gray-800 font-normal">(optional)</span></label>
                             <input type="email" name="email" maxlength="200"
                                    x-model="form.email"
                                    class="lmt-input"/>
@@ -480,7 +480,7 @@
                     </div>
 
                     <div>
-                        <label class="lmt-label">Address <span class="text-gray-400 font-normal">(optional)</span></label>
+                        <label class="lmt-label">Address <span class="text-gray-800 font-normal">(optional)</span></label>
                         <textarea name="address" rows="2" maxlength="500"
                                   x-model="form.address"
                                   placeholder="Street, city, postal code"
@@ -515,7 +515,7 @@
                         <i data-lucide="alert-triangle" class="w-7 h-7"></i>
                     </div>
                     <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Remove this contact?</h3>
-                    <p class="text-sm text-gray-500 mt-2">
+                    <p class="text-sm text-gray-800 mt-2">
                         <span class="font-bold" x-text="deleteName"></span> will be removed from your emergency contacts.
                     </p>
                 </div>
@@ -541,7 +541,7 @@
         <div class="lmt-card">
             <div class="mb-5 pb-4 border-b border-gray-100 dark:border-slate-700">
                 <h2 class="text-base font-black text-gray-900 dark:text-slate-100">Employment Information</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Read-only details about your role. Contact HR for changes.</p>
+                <p class="text-xs text-gray-800 mt-0.5">Read-only details about your role. Contact HR for changes.</p>
             </div>
 
             <div class="grid sm:grid-cols-2 gap-x-6 gap-y-4">
@@ -570,7 +570,7 @@
 
                 @foreach($rows as [$label, $value, $icon, $sensitive])
                     <div class="flex items-start justify-between gap-3 py-2 border-b border-gray-50 dark:border-slate-800">
-                        <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                        <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                             <i data-lucide="{{ $icon }}" class="w-3.5 h-3.5"></i>
                             <span>{{ $label }}</span>
                         </div>
@@ -593,7 +593,7 @@
         <div class="lmt-card">
             <div class="mb-5 pb-4 border-b border-gray-100 dark:border-slate-700">
                 <h2 class="text-base font-black text-gray-900 dark:text-slate-100">Security</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Change your password. Use something strong and unique.</p>
+                <p class="text-xs text-gray-800 mt-0.5">Change your password. Use something strong and unique.</p>
             </div>
 
             <form action="{{ route('employee.profile.password', $tenantSlug) }}" method="POST"
@@ -611,7 +611,7 @@
                                autocomplete="current-password"
                                class="lmt-input pr-10"/>
                         <button type="button" @click="showCurrent = !showCurrent"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-700">
                             <i :data-lucide="showCurrent ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -626,7 +626,7 @@
                                autocomplete="new-password"
                                class="lmt-input pr-10"/>
                         <button type="button" @click="showNew = !showNew"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-700">
                             <i :data-lucide="showNew ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -642,7 +642,7 @@
                                autocomplete="new-password"
                                class="lmt-input pr-10"/>
                         <button type="button" @click="showConfirm = !showConfirm"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-700">
                             <i :data-lucide="showConfirm ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
                         </button>
                     </div>

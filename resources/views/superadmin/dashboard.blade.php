@@ -228,7 +228,7 @@
         @if($recentTenants->isEmpty())
         <div class="text-center py-10">
             <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="building-2" class="w-6 h-6 text-gray-400"></i>
+                <i data-lucide="building-2" class="w-6 h-6 text-gray-800"></i>
             </div>
             <p class="text-sm text-ink-soft">No organizations yet</p>
         </div>

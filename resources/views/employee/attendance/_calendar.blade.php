@@ -8,7 +8,7 @@
     @endphp
     <div class="grid grid-cols-7 gap-2 mb-2">
         @foreach($weekDays as $d)
-            <div class="text-center text-[10px] font-black uppercase tracking-wider text-gray-400 py-2">{{ $d }}</div>
+            <div class="text-center text-[10px] font-black uppercase tracking-wider text-gray-800 py-2">{{ $d }}</div>
         @endforeach
     </div>
 
@@ -58,7 +58,7 @@
     </div>
 
     {{-- Legend --}}
-    <div class="flex items-center justify-center gap-3 mt-5 flex-wrap text-[11px] text-gray-500">
+    <div class="flex items-center justify-center gap-3 mt-5 flex-wrap text-[11px] text-gray-800">
         <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full st-present"></span>Present</span>
         <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full st-late"></span>Late</span>
         <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full st-absent"></span>Absent</span>

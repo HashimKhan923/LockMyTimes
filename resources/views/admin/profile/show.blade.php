@@ -13,8 +13,8 @@
         </div>
         <div>
             <p class="text-xl font-black text-gray-900 dark:text-slate-100">{{ $user->name }}</p>
-            <p class="text-sm text-gray-400">{{ $user->email }}</p>
-            <p class="text-xs text-gray-400 mt-0.5">
+            <p class="text-sm text-gray-800">{{ $user->email }}</p>
+            <p class="text-xs text-gray-800 mt-0.5">
                 @foreach($user->getRoleNames() as $role)
                     <span class="lmt-badge-brand mr-1">{{ str_replace('Tenant Admin', 'Organization Admin', $role) }}</span>
                 @endforeach

@@ -18,7 +18,7 @@
 
     {{-- Back nav --}}
     <a href="{{ route('employee.team.index', $tenantSlug) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-slate-200 transition-colors mb-4">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         <span>Back to team</span>
     </a>
@@ -28,7 +28,7 @@
             <h1 class="text-2xl lg:text-3xl font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
                 Expense Approvals
             </h1>
-            <p class="text-sm text-gray-500 mt-1">Review reimbursement claims from your team.</p>
+            <p class="text-sm text-gray-800 mt-1">Review reimbursement claims from your team.</p>
         </div>
         @if($pendingTotal > 0)
             <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-2xl px-4 py-3">
@@ -68,7 +68,7 @@
                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                       {{ $active
                             ? 'border-transparent text-white'
-                            : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                            : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                @if($active) style="background:var(--brand-500);" @endif>
                 {{ $chip['label'] }}
                 <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $active ? 'bg-white/20' : 'bg-gray-100 dark:bg-slate-700' }}">
@@ -82,12 +82,12 @@
     @if($expenses->isEmpty())
         <div class="lmt-card text-center py-16 px-5" data-lmt-anim="fade-up">
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                <i data-lucide="receipt" class="w-7 h-7 text-gray-300"></i>
+                <i data-lucide="receipt" class="w-7 h-7 text-gray-800"></i>
             </div>
             <p class="text-sm font-bold text-gray-700 dark:text-slate-200">
                 @if($status === 'submitted') Nothing to approve right now @else No expenses in this view @endif
             </p>
-            <p class="text-xs text-gray-500 mt-1">
+            <p class="text-xs text-gray-800 mt-1">
                 @if($status === 'submitted') You're all caught up. @else Try another filter. @endif
             </p>
         </div>
@@ -118,7 +118,7 @@
                                            class="font-bold text-sm text-gray-900 dark:text-slate-100 hover:underline">
                                             {{ $e->employee?->full_name }}
                                         </a>
-                                        <span class="font-mono text-[10px] text-gray-400">{{ $e->expense_number }}</span>
+                                        <span class="font-mono text-[10px] text-gray-800">{{ $e->expense_number }}</span>
                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold"
                                               style="background:{{ $eBg }};color:{{ $eColor }};">
                                             <i data-lucide="{{ $eIcon }}" class="w-2.5 h-2.5"></i>
@@ -128,42 +128,42 @@
                                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300 uppercase">Mileage</span>
                                         @endif
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-0.5">{{ $e->employee?->position?->title ?? 'No position' }}</p>
+                                    <p class="text-xs text-gray-800 mt-0.5">{{ $e->employee?->position?->title ?? 'No position' }}</p>
                                 </div>
                                 <div class="text-right flex-shrink-0">
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Amount</p>
+                                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Amount</p>
                                     <p class="text-lg font-black font-mono text-gray-900 dark:text-slate-100">{{ $sym }}{{ number_format($e->amount, 2) }}</p>
                                 </div>
                             </div>
 
                             <div class="mt-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
                                 <div>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Title</p>
+                                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Title</p>
                                     <p class="font-semibold text-gray-900 dark:text-slate-100 mt-0.5 truncate">{{ $e->title }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Category</p>
+                                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Category</p>
                                     <p class="font-semibold text-gray-900 dark:text-slate-100 mt-0.5">{{ $e->category?->name ?? '—' }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Date</p>
+                                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Date</p>
                                     <p class="font-semibold text-gray-900 dark:text-slate-100 mt-0.5">{{ $e->expense_date?->format('M j, Y') ?? '—' }}</p>
                                 </div>
                                 @if($e->merchant)
                                     <div>
-                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Merchant</p>
+                                        <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Merchant</p>
                                         <p class="font-semibold text-gray-900 dark:text-slate-100 mt-0.5">{{ $e->merchant }}</p>
                                     </div>
                                 @endif
                                 @if($e->payment_method)
                                     <div>
-                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment</p>
+                                        <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Payment</p>
                                         <p class="font-semibold text-gray-900 dark:text-slate-100 mt-0.5">{{ $e->payment_method }}</p>
                                     </div>
                                 @endif
                                 @if($e->project_code)
                                     <div>
-                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Project</p>
+                                        <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Project</p>
                                         <p class="font-semibold font-mono text-gray-900 dark:text-slate-100 mt-0.5">{{ $e->project_code }}</p>
                                     </div>
                                 @endif
@@ -171,7 +171,7 @@
 
                             @if($e->description)
                                 <div class="mt-3">
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Description</p>
+                                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Description</p>
                                     <p class="text-xs text-gray-700 dark:text-slate-200 mt-1 whitespace-pre-line">{{ $e->description }}</p>
                                 </div>
                             @endif
@@ -230,7 +230,7 @@
                     <i data-lucide="check-circle" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Approve this expense?</h3>
-                <p class="text-sm text-gray-500 mt-2">An optional note will be visible to the employee.</p>
+                <p class="text-sm text-gray-800 mt-2">An optional note will be visible to the employee.</p>
             </div>
             <form :action="approveUrl" method="POST" class="mt-5">
                 @csrf
@@ -261,7 +261,7 @@
                     <i data-lucide="x-circle" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Reject this expense?</h3>
-                <p class="text-sm text-gray-500 mt-2">A reason is required and will be visible to the employee.</p>
+                <p class="text-sm text-gray-800 mt-2">A reason is required and will be visible to the employee.</p>
             </div>
             <form :action="rejectUrl" method="POST" class="mt-5">
                 @csrf

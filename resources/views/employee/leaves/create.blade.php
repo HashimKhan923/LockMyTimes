@@ -8,7 +8,7 @@
 
     {{-- Back link --}}
     <a href="{{ route('employee.leaves.index', $tenantSlug) }}"
-       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors mb-4">
+       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-700 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to leaves
     </a>
@@ -17,7 +17,7 @@
         <h1 class="text-2xl lg:text-3xl font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
             Apply for Leave
         </h1>
-        <p class="text-sm text-gray-500 mt-1">Submit a new leave request. Your manager will be notified for approval if required.</p>
+        <p class="text-sm text-gray-800 mt-1">Submit a new leave request. Your manager will be notified for approval if required.</p>
     </div>
 
     @if($errors->any())
@@ -54,11 +54,11 @@
                                 <span class="w-3 h-3 rounded-full" style="background: {{ $t->color ?? '#6C7DF7' }};"></span>
                                 <span class="font-bold text-sm text-gray-900 dark:text-slate-100 flex-1">{{ $t->name }}</span>
                                 @if(! $t->is_paid)
-                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 uppercase">Unpaid</span>
+                                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-800 uppercase">Unpaid</span>
                                 @endif
                             </div>
                             <div class="flex items-center justify-between mt-2 text-xs">
-                                <span class="text-gray-400">Available</span>
+                                <span class="text-gray-800">Available</span>
                                 <span class="font-mono font-bold text-gray-900 dark:text-slate-100">
                                     {{ $t->_available }} / {{ $t->_total }} days
                                 </span>
@@ -113,7 +113,7 @@
                                x-model="form.day_part" @change="recalc()"
                                {{ old('day_part', 'full') === $key ? 'checked' : '' }}/>
                         <span class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
-                              :class="form.day_part === '{{ $key }}' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'">
+                              :class="form.day_part === '{{ $key }}' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-800'">
                             {{ $label }}
                         </span>
                     </label>
@@ -125,12 +125,12 @@
         <div class="rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden">
             <div class="px-4 py-2.5 bg-gray-50 dark:bg-slate-800 flex items-center gap-2 border-b border-gray-100 dark:border-slate-700">
                 <i data-lucide="calculator" class="w-4 h-4" style="color:var(--brand-500);"></i>
-                <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Calculation</span>
-                <span x-show="loading" class="ml-auto text-[10px] text-gray-400">computing…</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-800">Calculation</span>
+                <span x-show="loading" class="ml-auto text-[10px] text-gray-800">computing…</span>
             </div>
             <div class="p-4">
                 <template x-if="!calc">
-                    <p class="text-sm text-gray-400">Pick dates to see the day count and remaining balance.</p>
+                    <p class="text-sm text-gray-800">Pick dates to see the day count and remaining balance.</p>
                 </template>
 
                 <template x-if="calc">
@@ -141,7 +141,7 @@
                                 <p class="text-xl font-black font-mono mt-1" style="color:var(--brand-700);" x-text="calc.total"></p>
                             </div>
                             <div class="p-3 rounded-xl bg-gray-50 dark:bg-slate-800">
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Working days</p>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-800">Working days</p>
                                 <p class="text-xl font-black font-mono mt-1 text-gray-900 dark:text-slate-100" x-text="calc.workdays"></p>
                             </div>
                             <div class="p-3 rounded-xl"
@@ -157,7 +157,7 @@
                         </div>
 
                         <template x-if="calc.holidays.length">
-                            <div class="text-xs text-gray-500 mb-2">
+                            <div class="text-xs text-gray-800 mb-2">
                                 <span class="font-bold">Holidays in range:</span>
                                 <template x-for="(h, i) in calc.holidays" :key="i">
                                     <span class="inline-block ml-1 px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 font-bold text-[10px]"
@@ -193,7 +193,7 @@
 
         {{-- 5. Contact during leave --}}
         <div>
-            <label class="lmt-label">Contact during leave <span class="text-gray-400 font-normal">(optional)</span></label>
+            <label class="lmt-label">Contact during leave <span class="text-gray-800 font-normal">(optional)</span></label>
             <input type="text" name="contact_during_leave" maxlength="255"
                    class="lmt-input"
                    placeholder="e.g. +92 300 1234567 or alternate-email@example.com"
@@ -204,7 +204,7 @@
         <div>
             <label class="lmt-label">
                 Attachment
-                <span class="text-gray-400 font-normal" x-show="!selectedType?.requires_documentation">(optional)</span>
+                <span class="text-gray-800 font-normal" x-show="!selectedType?.requires_documentation">(optional)</span>
                 <span class="text-red-500" x-show="selectedType?.requires_documentation">*</span>
             </label>
             <input type="file" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"

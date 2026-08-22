@@ -86,7 +86,7 @@
         </div>
 
         {{-- Footer --}}
-        <p class="mt-8 text-xs text-gray-400 text-center">
+        <p class="mt-8 text-xs text-gray-800 text-center">
             © {{ date('Y') }} Lockmytimes ·
             <a href="#" class="hover:text-brand-500 transition-colors">Privacy</a> ·
             <a href="#" class="hover:text-brand-500 transition-colors">Terms</a>

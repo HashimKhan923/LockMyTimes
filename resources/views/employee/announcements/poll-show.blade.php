@@ -33,7 +33,7 @@
 
     {{-- Back nav --}}
     <a href="{{ route('employee.announcements.index', ['tenant' => $tenantSlug, 'filter' => 'polls']) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-slate-200 transition-colors mb-5">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors mb-5">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         <span>All polls</span>
     </a>
@@ -72,7 +72,7 @@
                         default           => ucfirst(str_replace('_',' ', $poll->type)),
                     };
                 @endphp
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ $typeLabel }}</span>
+                <span class="text-[10px] font-bold text-gray-800 uppercase tracking-wider">{{ $typeLabel }}</span>
                 @if($poll->is_anonymous)
                     <span class="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
                         <i data-lucide="eye-off" class="w-2.5 h-2.5"></i>
@@ -81,7 +81,7 @@
                 @endif
             </div>
             @if($poll->ends_at)
-                <span class="text-xs text-gray-500 inline-flex items-center gap-1.5">
+                <span class="text-xs text-gray-800 inline-flex items-center gap-1.5">
                     <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                     @if($isActive)
                         Ends {{ $poll->ends_at->diffForHumans() }}
@@ -101,7 +101,7 @@
             <p class="text-sm text-gray-600 dark:text-slate-400 mt-2 whitespace-pre-line leading-relaxed">{{ $poll->description }}</p>
         @endif
 
-        <div class="flex items-center gap-3 mt-3 text-[11px] text-gray-500">
+        <div class="flex items-center gap-3 mt-3 text-[11px] text-gray-800">
             @if($poll->creator)
                 <span class="inline-flex items-center gap-1.5">
                     <i data-lucide="user" class="w-3 h-3"></i>
@@ -125,7 +125,7 @@
 
             @if($showResults)
                 {{-- Results view --}}
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">
                     @if($hasVoted) Results &middot; <span style="color:var(--brand-600);">Your choices marked</span>
                     @else Final results
                     @endif
@@ -148,7 +148,7 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2 flex-shrink-0">
-                                    <span class="text-xs font-bold text-gray-500">{{ $r['votes'] }}</span>
+                                    <span class="text-xs font-bold text-gray-800">{{ $r['votes'] }}</span>
                                     <span class="font-mono font-black text-sm" style="color:var(--brand-600);">{{ $r['percent'] }}%</span>
                                 </div>
                             </div>

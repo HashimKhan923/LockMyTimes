@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">QR Code Management</h2>
-        <p class="text-sm text-gray-400 mt-0.5">Generate location-bound QR codes for geo-fenced clock-in</p>
+        <p class="text-sm text-gray-800 mt-0.5">Generate location-bound QR codes for geo-fenced clock-in</p>
     </div>
     <button onclick="document.getElementById('add-modal').classList.remove('hidden');document.getElementById('add-modal').classList.add('flex');"
             class="lmt-btn-primary lmt-btn-sm">
@@ -38,8 +38,8 @@
 @if($locations->isEmpty())
 <div class="lmt-card text-center py-16">
     <i data-lucide="map-pin" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-    <p class="font-semibold text-gray-500 mb-1">No locations set up yet</p>
-    <p class="text-sm text-gray-400 mb-4">You need at least one location before generating QR codes</p>
+    <p class="font-semibold text-gray-800 mb-1">No locations set up yet</p>
+    <p class="text-sm text-gray-800 mb-4">You need at least one location before generating QR codes</p>
     <a href="{{ route('admin.locations.index', $tenant) }}" class="lmt-btn-primary lmt-btn-sm inline-flex">
         <i data-lucide="map-pin" class="w-4 h-4"></i>
         Add Location First
@@ -54,7 +54,7 @@
         <div class="flex items-start justify-between mb-4">
             <div>
                 <h3 class="font-black text-gray-900">{{ $qr->label ?? $qr->location->name }}</h3>
-                <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                <p class="text-xs text-gray-800 mt-0.5 flex items-center gap-1">
                     <i data-lucide="map-pin" class="w-3 h-3"></i>
                     {{ $qr->location->name }}
                 </p>
@@ -71,7 +71,7 @@
 
         {{-- Token --}}
         <div class="bg-gray-50 rounded-xl p-3 mb-4">
-            <p class="text-xs text-gray-400 mb-1">Token</p>
+            <p class="text-xs text-gray-800 mb-1">Token</p>
             <code class="text-xs font-mono text-gray-700 break-all">{{ substr($qr->token, 0, 20) }}…</code>
         </div>
 
@@ -79,11 +79,11 @@
         <div class="grid grid-cols-2 gap-2 text-center mb-4">
             <div class="bg-gray-50 rounded-xl p-2">
                 <p class="text-sm font-black text-gray-900">{{ number_format($qr->scan_count) }}</p>
-                <p class="text-xs text-gray-400">Scans</p>
+                <p class="text-xs text-gray-800">Scans</p>
             </div>
             <div class="bg-gray-50 rounded-xl p-2">
                 <p class="text-sm font-black text-gray-900">{{ $qr->location->geofence_radius_meters }}m</p>
-                <p class="text-xs text-gray-400">Radius</p>
+                <p class="text-xs text-gray-800">Radius</p>
             </div>
         </div>
 
@@ -123,7 +123,7 @@
         </div>
 
         @if($qr->last_rotated_at)
-        <p class="text-xs text-gray-400 mt-2 text-center">
+        <p class="text-xs text-gray-800 mt-2 text-center">
             Last rotated: {{ $qr->last_rotated_at->diffForHumans() }}
         </p>
         @endif
@@ -131,7 +131,7 @@
     @empty
     <div class="lmt-card text-center py-16 md:col-span-3">
         <i data-lucide="qr-code" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-        <p class="font-semibold text-gray-500 mb-4">No QR codes yet</p>
+        <p class="font-semibold text-gray-800 mb-4">No QR codes yet</p>
         <button onclick="document.getElementById('add-modal').classList.remove('hidden');document.getElementById('add-modal').classList.add('flex');"
                 class="lmt-btn-primary lmt-btn-sm inline-flex">
             <i data-lucide="plus" class="w-4 h-4"></i>
@@ -166,7 +166,7 @@
                     <input type="checkbox" name="rotate_token" value="1" class="w-4 h-4 rounded"/>
                     <div>
                         <p class="text-sm font-semibold text-gray-900">Daily Token Rotation</p>
-                        <p class="text-xs text-gray-400">Token auto-rotates daily (prevents screenshot fraud)</p>
+                        <p class="text-xs text-gray-800">Token auto-rotates daily (prevents screenshot fraud)</p>
                     </div>
                 </label>
             </div>
@@ -204,7 +204,7 @@
                     <input type="checkbox" name="rotate_token" id="edit-qr-rotate-token" value="1" class="w-4 h-4 rounded"/>
                     <div>
                         <p class="text-sm font-semibold text-gray-900">Daily Token Rotation</p>
-                        <p class="text-xs text-gray-400">Token auto-rotates daily (prevents screenshot fraud)</p>
+                        <p class="text-xs text-gray-800">Token auto-rotates daily (prevents screenshot fraud)</p>
                     </div>
                 </label>
             </div>

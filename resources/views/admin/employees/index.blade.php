@@ -8,7 +8,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Team Members</h2>
-        <p class="text-sm text-gray-400 mt-0.5">{{ $stats['total'] }} total employees</p>
+        <p class="text-sm text-gray-800 mt-0.5">{{ $stats['total'] }} total employees</p>
     </div>
     <div class="flex items-center gap-3">
         <button onclick="document.getElementById('import-modal').classList.remove('hidden');document.getElementById('import-modal').classList.add('flex');"
@@ -41,7 +41,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-xl font-black text-gray-900">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -55,7 +55,7 @@
         <form action="{{ route('admin.employees.index', $tenant) }}" method="GET" class="flex flex-wrap gap-3 flex-1 mb-0 ">
             <div class="relative flex-1 min-w-48 max-w-sm">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <i data-lucide="search" class="w-4 h-4 text-gray-800"></i>
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}"
                        class="lmt-input pl-10 py-2 text-sm" placeholder="Search employees…"/>
@@ -115,7 +115,7 @@
                             </div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $emp->full_name }}</p>
-                                <p class="text-xs text-gray-400">{{ $emp->email }}</p>
+                                <p class="text-xs text-gray-800">{{ $emp->email }}</p>
                             </div>
                         </div>
                     </td>
@@ -132,7 +132,7 @@
                             {{ str_replace('_',' ',$emp->employment_status) }}
                         </span>
                     </td>
-                    <td class="text-sm text-gray-500">{{ $emp->hire_date->format('M j, Y') }}</td>
+                    <td class="text-sm text-gray-800">{{ $emp->hire_date->format('M j, Y') }}</td>
                     <td>
                         <div class="flex items-center gap-1.5">
                             <a href="{{ route('admin.employees.show', [$tenant, $emp->id]) }}"
@@ -150,10 +150,10 @@
                 <tr>
                     <td colspan="8" class="text-center py-16">
                         <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                            <i data-lucide="users" class="w-7 h-7 text-gray-300"></i>
+                            <i data-lucide="users" class="w-7 h-7 text-gray-800"></i>
                         </div>
-                        <p class="font-semibold text-gray-500 mb-1">No employees found</p>
-                        <p class="text-sm text-gray-400 mb-4">Add your first employee to get started</p>
+                        <p class="font-semibold text-gray-800 mb-1">No employees found</p>
+                        <p class="text-sm text-gray-800 mb-4">Add your first employee to get started</p>
                         <a href="{{ route('admin.employees.create', $tenant) }}" class="lmt-btn-primary lmt-btn-sm inline-flex">
                             <i data-lucide="user-plus" class="w-4 h-4"></i>
                             Add Employee

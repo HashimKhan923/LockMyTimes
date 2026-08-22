@@ -106,9 +106,9 @@
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <h3 class="text-sm font-black text-gray-900 dark:text-slate-100 uppercase tracking-wider">Top categories</h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Approved & paid in {{ $year }}</p>
+                    <p class="text-xs text-gray-800 mt-0.5">Approved & paid in {{ $year }}</p>
                 </div>
-                <i data-lucide="pie-chart" class="w-5 h-5 text-gray-300"></i>
+                <i data-lucide="pie-chart" class="w-5 h-5 text-gray-800"></i>
             </div>
             <div class="space-y-3">
                 @foreach($byCategory as $cb)
@@ -118,7 +118,7 @@
                             <div class="flex items-center gap-2 min-w-0">
                                 <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:var(--brand-500);"></span>
                                 <span class="text-sm font-bold text-gray-700 dark:text-slate-200 truncate">{{ $cb->category->name ?? 'Uncategorised' }}</span>
-                                <span class="text-[10px] text-gray-400 font-bold">&middot; {{ $cb->count }} {{ Str::plural('expense', $cb->count) }}</span>
+                                <span class="text-[10px] text-gray-800 font-bold">&middot; {{ $cb->count }} {{ Str::plural('expense', $cb->count) }}</span>
                             </div>
                             <span class="font-mono font-bold text-sm text-gray-900 dark:text-slate-100 ml-2 flex-shrink-0">
                                 {{ $sym }}{{ number_format($cb->total, 0) }}
@@ -142,7 +142,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-5 border-b border-gray-100 dark:border-slate-700">
             <div>
                 <h2 class="text-lg font-black text-gray-900 dark:text-slate-100">All Expenses</h2>
-                <p class="text-xs text-gray-500 mt-0.5">
+                <p class="text-xs text-gray-800 mt-0.5">
                     {{ (int) $counters->total }} expense{{ ($counters->total ?? 0) == 1 ? '' : 's' }} in {{ $year }}
                 </p>
             </div>
@@ -169,7 +169,7 @@
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                               {{ $isActive
                                     ? 'border-transparent text-white'
-                                    : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                                    : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                        @if($isActive) style="background:var(--brand-500);" @endif>
                         {{ $chip['label'] }}
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $isActive ? 'bg-white/20' : 'bg-gray-100 dark:bg-slate-700' }}">
@@ -199,10 +199,10 @@
         @if($expenses->isEmpty())
             <div class="text-center py-16 px-5">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                    <i data-lucide="wallet" class="w-7 h-7 text-gray-300"></i>
+                    <i data-lucide="wallet" class="w-7 h-7 text-gray-800"></i>
                 </div>
                 <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No expenses found</p>
-                <p class="text-xs text-gray-500 mt-1">Submit your first expense to get reimbursed.</p>
+                <p class="text-xs text-gray-800 mt-1">Submit your first expense to get reimbursed.</p>
                 <a href="{{ route('employee.expenses.create', $tenantSlug) }}" class="lmt-btn-primary lmt-btn-sm mt-4 inline-flex">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i> Submit Expense
                 </a>
@@ -247,7 +247,7 @@
                                             {{ $e->title }}
                                         </span>
                                         @if($e->receipt_path)
-                                            <i data-lucide="paperclip" class="w-3.5 h-3.5 text-gray-400" title="Has receipt"></i>
+                                            <i data-lucide="paperclip" class="w-3.5 h-3.5 text-gray-800" title="Has receipt"></i>
                                         @endif
                                         @if($e->is_mileage)
                                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300 uppercase">Mileage</span>
@@ -257,7 +257,7 @@
                                 <td class="hidden md:table-cell">
                                     <span class="text-xs text-gray-600 dark:text-slate-400">{{ $e->category?->name ?? '—' }}</span>
                                 </td>
-                                <td class="hidden lg:table-cell text-xs text-gray-500">
+                                <td class="hidden lg:table-cell text-xs text-gray-800">
                                     {{ $e->expense_date?->format('M j, Y') ?? '—' }}
                                 </td>
                                 <td class="text-right">
@@ -306,7 +306,7 @@
                     <i data-lucide="alert-triangle" class="w-7 h-7"></i>
                 </div>
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Delete this expense?</h3>
-                <p class="text-sm text-gray-500 mt-2">
+                <p class="text-sm text-gray-800 mt-2">
                     Expense <span class="font-mono font-bold" x-text="deleteLabel"></span> will be permanently deleted. This cannot be undone.
                 </p>
             </div>

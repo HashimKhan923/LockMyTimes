@@ -8,7 +8,7 @@
 
     {{-- Back --}}
     <a href="{{ route('admin.employees.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Employees
     </a>
@@ -39,11 +39,11 @@
                     </span>
                     <code class="text-xs bg-gray-100 px-2 py-1 rounded font-mono">{{ $employee->employee_code }}</code>
                 </div>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-gray-800">
                     {{ $employee->position?->title ?? 'No Position' }}
                     @if($employee->department)· {{ $employee->department->name }}@endif
                 </p>
-                <div class="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400">
+                <div class="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-800">
                     <span class="flex items-center gap-1"><i data-lucide="mail" class="w-3.5 h-3.5"></i>{{ $employee->email }}</span>
                     @if($employee->phone)
                     <span class="flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5"></i>{{ $employee->phone }}</span>
@@ -87,7 +87,7 @@
                         ['label'=>'Probation',  'value'=>$employee->probation_end_date?->format('M j, Y') ?? '—'],
                     ] as $row)
                     <div class="flex justify-between py-2 border-b border-gray-50 last:border-none">
-                        <span class="text-xs text-gray-400 font-medium">{{ $row['label'] }}</span>
+                        <span class="text-xs text-gray-800 font-medium">{{ $row['label'] }}</span>
                         <span class="text-xs font-semibold text-gray-700 text-right">{{ $row['value'] }}</span>
                     </div>
                     @endforeach
@@ -105,11 +105,11 @@
                     </div>
                     <div class="text-right">
                         <span class="text-sm font-black text-gray-900">{{ $balance->available }}</span>
-                        <span class="text-xs text-gray-400">/ {{ $balance->allocated + $balance->accrued }} days</span>
+                        <span class="text-xs text-gray-800">/ {{ $balance->allocated + $balance->accrued }} days</span>
                     </div>
                 </div>
                 @empty
-                <p class="text-xs text-gray-400 text-center py-4">No leave balances set up</p>
+                <p class="text-xs text-gray-800 text-center py-4">No leave balances set up</p>
                 @endforelse
             </div>
         </div>
@@ -130,7 +130,7 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-sm font-semibold text-gray-900">{{ $assignment->asset->name }}</p>
-                        <p class="text-xs text-gray-400">
+                        <p class="text-xs text-gray-800">
                             {{ $assignment->asset->category?->name }} ·
                             {{ $assignment->assigned_at->format('M j, Y') }}
                         </p>
@@ -140,7 +140,7 @@
                     </code>
                 </div>
                 @empty
-                <p class="text-sm text-gray-400 text-center py-6">No assets assigned</p>
+                <p class="text-sm text-gray-800 text-center py-6">No assets assigned</p>
                 @endforelse
             </div>
 
@@ -158,7 +158,7 @@
                             <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden max-w-24">
                                 <div class="h-full rounded-full" style="width:{{ $enrollment->progress }}%; background:#6C7DF7;"></div>
                             </div>
-                            <span class="text-xs text-gray-400">{{ $enrollment->progress }}%</span>
+                            <span class="text-xs text-gray-800">{{ $enrollment->progress }}%</span>
                         </div>
                     </div>
                     <span class="lmt-badge text-xs {{ $enrollment->status === 'completed' ? 'lmt-badge-green' : 'lmt-badge-brand' }}">
@@ -166,7 +166,7 @@
                     </span>
                 </div>
                 @empty
-                <p class="text-sm text-gray-400 text-center py-6">No training enrollments</p>
+                <p class="text-sm text-gray-800 text-center py-6">No training enrollments</p>
                 @endforelse
             </div>
 
@@ -178,11 +178,11 @@
                 <div class="flex items-center justify-between py-2.5 border-b border-gray-50">
                     <div>
                         <p class="text-sm font-semibold text-gray-900">{{ $loan->loanType->name }}</p>
-                        <p class="text-xs text-gray-400">{{ $loan->loan_number }}</p>
+                        <p class="text-xs text-gray-800">{{ $loan->loan_number }}</p>
                     </div>
                     <div class="text-right">
                         <p class="text-sm font-black text-red-500">${{ number_format($loan->amount_remaining,0) }}</p>
-                        <p class="text-xs text-gray-400">remaining</p>
+                        <p class="text-xs text-gray-800">remaining</p>
                     </div>
                 </div>
                 @endforeach
@@ -190,11 +190,11 @@
                 <div class="flex items-center justify-between py-2.5">
                     <div>
                         <p class="text-sm font-semibold text-gray-900">Salary Advance</p>
-                        <p class="text-xs text-gray-400">{{ $adv->advance_number }}</p>
+                        <p class="text-xs text-gray-800">{{ $adv->advance_number }}</p>
                     </div>
                     <div class="text-right">
                         <p class="text-sm font-black text-amber-500">${{ number_format($adv->amount_remaining,0) }}</p>
-                        <p class="text-xs text-gray-400">remaining</p>
+                        <p class="text-xs text-gray-800">remaining</p>
                     </div>
                 </div>
                 @endforeach
@@ -212,7 +212,7 @@
                 <i data-lucide="user-x" class="w-7 h-7"></i>
             </div>
             <h3 class="font-black text-gray-900">Terminate Employee</h3>
-            <p class="text-sm text-gray-500 mt-1">{{ $employee->full_name }}</p>
+            <p class="text-sm text-gray-800 mt-1">{{ $employee->full_name }}</p>
         </div>
         <form action="{{ route('admin.employees.terminate', [$tenant, $employee->id]) }}" method="POST">
             @csrf @method('PATCH')

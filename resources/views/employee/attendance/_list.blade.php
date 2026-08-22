@@ -10,8 +10,8 @@
 
     @if($rows->isEmpty())
         <div class="text-center py-16">
-            <i data-lucide="calendar-x" class="w-10 h-10 mx-auto text-gray-300 mb-3"></i>
-            <p class="text-sm text-gray-500">No records for this month.</p>
+            <i data-lucide="calendar-x" class="w-10 h-10 mx-auto text-gray-800 mb-3"></i>
+            <p class="text-sm text-gray-800">No records for this month.</p>
         </div>
     @else
         <div class="overflow-x-auto">
@@ -39,7 +39,7 @@
                         <tr class="hover:bg-gray-50/70 dark:hover:bg-slate-800/50">
                             <td>
                                 <div class="font-bold text-gray-900 dark:text-slate-100">{{ $d->format('M j') }}</div>
-                                <div class="text-xs text-gray-400">{{ $d->format('D') }}</div>
+                                <div class="text-xs text-gray-800">{{ $d->format('D') }}</div>
                             </td>
 
                             <td>
@@ -85,7 +85,7 @@
                             <td class="hidden lg:table-cell font-mono text-sm">
                                 {{ $att?->break_hours ? number_format((float) $att->break_hours, 2).'h' : '—' }}
                             </td>
-                            <td class="hidden md:table-cell text-sm text-gray-500">
+                            <td class="hidden md:table-cell text-sm text-gray-800">
                                 {{ $att?->location?->name ?? '—' }}
                             </td>
                             <td class="text-right">

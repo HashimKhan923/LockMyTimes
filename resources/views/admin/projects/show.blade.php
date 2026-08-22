@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
     <a href="{{ route('admin.projects.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         All Projects
     </a>
@@ -29,7 +29,7 @@
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <code class="text-xs text-gray-400 font-mono">{{ $project->code }}</code>
+                            <code class="text-xs text-gray-800 font-mono">{{ $project->code }}</code>
                             @php
                             $sc = ['planning'=>'lmt-badge-amber','active'=>'lmt-badge-green','on_hold'=>'lmt-badge-gray','completed'=>'lmt-badge-brand','cancelled'=>'lmt-badge-red'];
                             @endphp
@@ -38,7 +38,7 @@
                         </div>
                         <h2 class="text-2xl font-black text-gray-900">{{ $project->name }}</h2>
                         @if($project->description)
-                        <p class="text-gray-500 text-sm mt-2">{{ $project->description }}</p>
+                        <p class="text-gray-800 text-sm mt-2">{{ $project->description }}</p>
                         @endif
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                 {{-- Progress --}}
                 <div class="mb-4">
                     <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-500">Overall Progress</span>
+                        <span class="text-gray-800">Overall Progress</span>
                         <span class="font-black text-gray-900">{{ $project->progress }}%</span>
                     </div>
                     <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
@@ -65,7 +65,7 @@
                     ] as [$label,$val,$color])
                     <div class="bg-gray-50 rounded-xl p-3 text-center">
                         <p class="text-xl font-black {{ $color }}">{{ $val }}</p>
-                        <p class="text-xs text-gray-400 mt-0.5">{{ $label }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ $label }}</p>
                     </div>
                     @endforeach
                 </div>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="flex-1">
                         <p class="font-semibold text-gray-900 text-sm">{{ $ms->title }}</p>
-                        <p class="text-xs text-gray-400">Due: {{ $ms->due_date->format('M j, Y') }}</p>
+                        <p class="text-xs text-gray-800">Due: {{ $ms->due_date->format('M j, Y') }}</p>
                     </div>
                     <span class="{{ $msColors[$ms->status] ?? 'lmt-badge-gray' }} text-xs capitalize">{{ $ms->status }}</span>
                 </div>
@@ -130,7 +130,7 @@
                     ['Budget',     $project->budget_amount > 0 ? '$'.number_format($project->budget_amount,0) : '—'],
                 ] as [$k,$v])
                 <div class="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-none">
-                    <span class="text-xs text-gray-400">{{ $k }}</span>
+                    <span class="text-xs text-gray-800">{{ $k }}</span>
                     <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
                 </div>
                 @endforeach
@@ -152,14 +152,14 @@
                     <div class="lmt-avatar-sm font-bold text-xs">{{ substr($member->employee->first_name??'?',0,1) }}</div>
                     <div class="flex-1">
                         <p class="font-semibold text-gray-900 text-sm">{{ $member->employee->full_name }}</p>
-                        <p class="text-xs text-gray-400 capitalize">{{ $member->role }}</p>
+                        <p class="text-xs text-gray-800 capitalize">{{ $member->role }}</p>
                     </div>
                     @if($member->role !== 'owner')
                     <form action="{{ route('admin.projects.members.remove', [$tenant, $project->id, $member->id]) }}"
                           method="POST" onsubmit="return confirm('Remove member?')">
                         @csrf @method('DELETE')
                         <button type="submit"
-                                class="w-6 h-6 rounded text-gray-300 hover:text-red-500 flex items-center justify-center">
+                                class="w-6 h-6 rounded text-gray-800 hover:text-red-500 flex items-center justify-center">
                             <i data-lucide="x" class="w-3 h-3"></i>
                         </button>
                     </form>

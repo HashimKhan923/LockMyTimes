@@ -75,7 +75,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-5 border-b border-gray-100 dark:border-slate-700">
             <div>
                 <h2 class="text-lg font-black text-gray-900 dark:text-slate-100">Tasks</h2>
-                <p class="text-xs text-gray-500 mt-0.5">
+                <p class="text-xs text-gray-800 mt-0.5">
                     Showing {{ $tasks->total() }} task{{ $tasks->total() == 1 ? '' : 's' }}
                 </p>
             </div>
@@ -87,7 +87,7 @@
                 <input type="hidden" name="priority" value="{{ $priority }}">
 
                 <div class="relative flex-1 min-w-[180px]">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-800"></i>
                     <input type="search" name="q" value="{{ $search }}"
                            placeholder="Search tasks..."
                            class="lmt-input pl-9" style="min-width:180px;"/>
@@ -111,7 +111,7 @@
 
                 @if($search !== '' || $priority || $projectId)
                     <a href="{{ route('employee.tasks.index', ['tenant' => $tenantSlug, 'filter' => $filter]) }}"
-                       class="text-xs font-bold text-gray-500 hover:text-gray-700 px-2">Clear</a>
+                       class="text-xs font-bold text-gray-800 hover:text-gray-700 px-2">Clear</a>
                 @endif
             </form>
         </div>
@@ -143,7 +143,7 @@
                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                           {{ $active
                                 ? 'border-transparent text-white'
-                                : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                                : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                    @if($active) style="background:var(--brand-500);" @endif>
                     {{ $chip['label'] }}
                     <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $active ? 'bg-white/20' : 'bg-gray-100 dark:bg-slate-700' }}">
@@ -157,10 +157,10 @@
         @if($tasks->isEmpty())
             <div class="text-center py-16 px-5">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                    <i data-lucide="check-square" class="w-7 h-7 text-gray-300"></i>
+                    <i data-lucide="check-square" class="w-7 h-7 text-gray-800"></i>
                 </div>
                 <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No tasks found</p>
-                <p class="text-xs text-gray-500 mt-1">
+                <p class="text-xs text-gray-800 mt-1">
                     @if($filter === 'open')
                         You're all caught up. Take a moment to celebrate.
                     @elseif($filter === 'overdue')
@@ -188,8 +188,8 @@
                         [$priorityCls, $priorityIcon] = match($t->priority) {
                             'urgent' => ['text-red-600 bg-red-50 dark:bg-red-500/15 dark:text-red-300', 'alert-triangle'],
                             'high'   => ['text-amber-600 bg-amber-50 dark:bg-amber-500/15 dark:text-amber-300', 'arrow-up'],
-                            'low'    => ['text-gray-400 bg-gray-50 dark:bg-slate-700 dark:text-gray-400', 'arrow-down'],
-                            default  => ['text-gray-500 bg-gray-50 dark:bg-slate-700 dark:text-gray-400', 'minus'],
+                            'low'    => ['text-gray-800 bg-gray-50 dark:bg-slate-700 dark:text-gray-400', 'arrow-down'],
+                            default  => ['text-gray-800 bg-gray-50 dark:bg-slate-700 dark:text-gray-400', 'minus'],
                         };
 
                         $isOverdue = $t->due_date && $t->due_date->isPast() && ! in_array($t->status, ['done','cancelled']);
@@ -207,7 +207,7 @@
                                 <div class="flex items-start justify-between gap-3 flex-wrap">
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="font-mono text-[10px] font-bold text-gray-400">{{ $t->task_code }}</span>
+                                            <span class="font-mono text-[10px] font-bold text-gray-800">{{ $t->task_code }}</span>
                                             @if($t->priority !== 'normal')
                                                 <span class="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase {{ $priorityCls }}">
                                                     <i data-lucide="{{ $priorityIcon }}" class="w-2.5 h-2.5"></i>
@@ -221,7 +221,7 @@
                                         <p class="font-bold text-sm text-gray-900 dark:text-slate-100 mt-1 truncate">
                                             {{ $t->title }}
                                         </p>
-                                        <div class="flex items-center gap-3 mt-1.5 text-[11px] text-gray-500 flex-wrap">
+                                        <div class="flex items-center gap-3 mt-1.5 text-[11px] text-gray-800 flex-wrap">
                                             @if($t->project)
                                                 <span class="inline-flex items-center gap-1">
                                                     <i data-lucide="folder" class="w-3 h-3"></i>
@@ -263,7 +263,7 @@
                                                 <div class="w-16 h-1.5 rounded-full bg-gray-200 dark:bg-slate-700 overflow-hidden">
                                                     <div class="h-full rounded-full" style="width:{{ $t->progress }}%; background:var(--brand-500);"></div>
                                                 </div>
-                                                <span class="font-mono text-[10px] font-bold text-gray-500">{{ $t->progress }}%</span>
+                                                <span class="font-mono text-[10px] font-bold text-gray-800">{{ $t->progress }}%</span>
                                             </div>
                                         @endif
                                         <span class="{{ $statusCls }}">{{ $statusLbl }}</span>
@@ -282,7 +282,7 @@
                                             @endif
                                         @endforeach
                                         @if($t->assignees->count() > 4)
-                                            <span class="text-[10px] font-bold text-gray-400 ml-1">+{{ $t->assignees->count() - 4 }}</span>
+                                            <span class="text-[10px] font-bold text-gray-800 ml-1">+{{ $t->assignees->count() - 4 }}</span>
                                         @endif
                                     </div>
                                 @endif

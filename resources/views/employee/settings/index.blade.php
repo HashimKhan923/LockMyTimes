@@ -65,7 +65,7 @@
     <div class="flex gap-1 mb-6 bg-white border border-gray-200 rounded-xl p-1 w-fit overflow-x-auto shadow-sm" data-lmt-anim="fade-up">
         @foreach($tabs as $key => $meta)
         <button @click="switchTab('{{ $key }}')"
-                :class="tab==='{{ $key }}' ? 'bg-brand-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-800'"
+                :class="tab==='{{ $key }}' ? 'bg-brand-500 text-white shadow-sm' : 'text-gray-800 hover:text-gray-800'"
                 class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-shrink-0">
             <i data-lucide="{{ $meta['icon'] }}" class="w-4 h-4"></i>
             {{ $meta['label'] }}
@@ -90,7 +90,7 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-semibold text-gray-800">{{ __('employee.settings_regional') }}</h2>
-                        <p class="text-xs text-gray-500">{{ __('employee.settings_regional_desc') }}</p>
+                        <p class="text-xs text-gray-800">{{ __('employee.settings_regional_desc') }}</p>
                     </div>
                 </div>
 
@@ -98,7 +98,7 @@
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                     <div>
                         <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_language') }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ __('employee.settings_language_desc') }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_language_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2">
                         <select name="locale" class="lmt-input @error('locale') border-red-400 @enderror">
@@ -114,13 +114,13 @@
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                     <div>
                         <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_timezone') }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ __('employee.settings_timezone_desc') }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_timezone_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2">
                         @php $effectiveTz = $emp->attendanceTimezone(); @endphp
                         <div class="lmt-input bg-gray-50 text-gray-600 flex items-center justify-between">
                             <span>{{ str_replace('_', ' ', $effectiveTz) }}</span>
-                            <span class="text-xs text-gray-400">Set by your admin</span>
+                            <span class="text-xs text-gray-800">Set by your admin</span>
                         </div>
                         <p class="lmt-help mt-1.5">
                             {{ __('employee.settings_your_time') }}:
@@ -134,7 +134,7 @@
                      x-data="{ val: '{{ $curDateFmt }}' }">
                     <div>
                         <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_date_format') }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ __('employee.settings_date_format_desc') }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_date_format_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2 flex flex-wrap gap-3">
                         @foreach(['DMY' => 'DD / MM / YYYY', 'MDY' => 'MM / DD / YYYY', 'YMD' => 'YYYY-MM-DD'] as $v => $lbl)
@@ -151,7 +151,7 @@
                      x-data="{ val: '{{ $curTimeFmt }}' }">
                     <div>
                         <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_time_format') }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ __('employee.settings_time_format_desc') }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_time_format_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2 flex flex-wrap gap-3">
                         @foreach(['12' => '12-hour  (2:30 PM)', '24' => '24-hour  (14:30)'] as $v => $lbl)
@@ -168,7 +168,7 @@
                      x-data="{ val: '{{ $curTheme }}' }">
                     <div>
                         <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_theme') }}</p>
-                        <p class="text-xs text-gray-500 mt-0.5">{{ __('employee.settings_theme_desc') }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_theme_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2 flex flex-wrap gap-3">
                         @foreach(['light' => ['sun', __('employee.settings_theme_light')], 'dark' => ['moon', __('employee.settings_theme_dark')], 'system' => ['monitor', __('employee.settings_theme_system')]] as $v => [$icon,$lbl])
@@ -208,16 +208,16 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-semibold text-gray-800">Notification Preferences</h2>
-                        <p class="text-xs text-gray-500">Control which events notify you and through which channel</p>
+                        <p class="text-xs text-gray-800">Control which events notify you and through which channel</p>
                     </div>
                 </div>
 
                 {{-- Column headers --}}
                 <div class="px-6 py-2.5 flex items-center justify-between bg-gray-50">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Event</span>
+                    <span class="text-xs font-semibold text-gray-800 uppercase tracking-wide">Event</span>
                     <div class="flex items-center gap-6 pr-1">
-                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide w-14 text-center">In-app</span>
-                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide w-14 text-center">Email</span>
+                        <span class="text-xs font-semibold text-gray-800 uppercase tracking-wide w-14 text-center">In-app</span>
+                        <span class="text-xs font-semibold text-gray-800 uppercase tracking-wide w-14 text-center">Email</span>
                     </div>
                 </div>
 
@@ -240,7 +240,7 @@
                         </div>
                         <div class="min-w-0">
                             <p class="text-sm font-medium text-gray-800">{{ $row['label'] }}</p>
-                            <p class="text-xs text-gray-500 truncate">{{ $row['desc'] }}</p>
+                            <p class="text-xs text-gray-800 truncate">{{ $row['desc'] }}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-6 flex-shrink-0 pr-1">
@@ -259,7 +259,7 @@
                 @endforeach
 
                 <div class="px-6 py-4 flex items-center justify-between bg-gray-50 rounded-b-2xl">
-                    <p class="text-xs text-gray-500 flex items-center gap-1.5">
+                    <p class="text-xs text-gray-800 flex items-center gap-1.5">
                         <i data-lucide="info" class="w-3.5 h-3.5 flex-shrink-0"></i>
                         Changes apply to all future notifications immediately.
                     </p>
@@ -288,7 +288,7 @@
                     </div>
                     <div>
                         <h2 class="text-sm font-semibold text-gray-800">Privacy Settings</h2>
-                        <p class="text-xs text-gray-500">Control what colleagues see about you in the company directory</p>
+                        <p class="text-xs text-gray-800">Control what colleagues see about you in the company directory</p>
                     </div>
                 </div>
 
@@ -310,7 +310,7 @@
                         </div>
                         <div class="min-w-0">
                             <p class="text-sm font-medium text-gray-800">{{ $row['label'] }}</p>
-                            <p class="text-xs text-gray-500">{{ $row['desc'] }}</p>
+                            <p class="text-xs text-gray-800">{{ $row['desc'] }}</p>
                         </div>
                     </div>
                     <label class="lmt-toggle flex-shrink-0">
@@ -353,7 +353,7 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-semibold text-gray-800">Recent Login Activity</h2>
-                    <p class="text-xs text-gray-500">Your most recent account access details</p>
+                    <p class="text-xs text-gray-800">Your most recent account access details</p>
                 </div>
             </div>
 
@@ -363,7 +363,7 @@
                         <i data-lucide="log-in" class="w-4 h-4 text-green-600"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Last Login</p>
+                        <p class="text-xs text-gray-800 font-medium uppercase tracking-wide">Last Login</p>
                         <p class="text-sm font-semibold text-gray-800 mt-0.5">
                             @if($user->last_login_at)
                                 {{ $user->last_login_at->setTimezone($user->timezone ?? 'UTC')->format('D, d M Y  H:i T') }}
@@ -378,14 +378,14 @@
                         <i data-lucide="globe-2" class="w-4 h-4 text-blue-600"></i>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">IP Address</p>
+                        <p class="text-xs text-gray-800 font-medium uppercase tracking-wide">IP Address</p>
                         <p class="text-sm font-semibold text-gray-800 mt-0.5">{{ $user->last_login_ip ?? 'Unknown' }}</p>
                     </div>
                 </div>
             </div>
 
             <div class="px-6 py-3 bg-gray-50 rounded-b-2xl">
-                <p class="text-xs text-gray-500 flex items-center gap-1.5">
+                <p class="text-xs text-gray-800 flex items-center gap-1.5">
                     <i data-lucide="info" class="w-3.5 h-3.5 flex-shrink-0"></i>
                     If you don't recognise this activity, change your password immediately and contact HR.
                 </p>
@@ -401,7 +401,7 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-semibold text-gray-800">Active Sessions</h2>
-                    <p class="text-xs text-gray-500">Remotely end all other browser or device sessions</p>
+                    <p class="text-xs text-gray-800">Remotely end all other browser or device sessions</p>
                 </div>
             </div>
 
@@ -427,7 +427,7 @@
                         </div>
                         <div>
                             <h3 class="text-base font-semibold text-gray-800">Sign Out Other Sessions</h3>
-                            <p class="text-xs text-gray-500">Enter your password to confirm</p>
+                            <p class="text-xs text-gray-800">Enter your password to confirm</p>
                         </div>
                     </div>
                     <form action="{{ route('employee.settings.signout-other', $tenantSlug) }}" method="POST">
@@ -462,7 +462,7 @@
                     </div>
                     <div>
                         <p class="text-sm font-semibold text-gray-800">Password</p>
-                        <p class="text-xs text-gray-500">Change your login password</p>
+                        <p class="text-xs text-gray-800">Change your login password</p>
                     </div>
                 </div>
                 <a href="{{ route('employee.profile.index', $tenantSlug) }}#security"

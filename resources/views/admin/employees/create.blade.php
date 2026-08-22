@@ -8,7 +8,7 @@
 
     {{-- Back button --}}
     <a href="{{ route('admin.employees.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Employees
     </a>
@@ -158,7 +158,7 @@
                 </div>
 
                 <div>
-                    <label class="lmt-label">Work Location <span class="text-gray-400 font-normal">(primary)</span></label>
+                    <label class="lmt-label">Work Location <span class="text-gray-800 font-normal">(primary)</span></label>
                     <select name="location_id" class="lmt-select">
                         <option value="">— Select Location —</option>
                         @foreach($locations as $loc)
@@ -201,7 +201,7 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="lmt-label">Additional Locations <span class="text-gray-400 font-normal">(optional — for employees splitting time across branches)</span></label>
+                    <label class="lmt-label">Additional Locations <span class="text-gray-800 font-normal">(optional — for employees splitting time across branches)</span></label>
                     <div class="flex flex-wrap gap-3 mt-1">
                         @php $assignedIds = old('location_ids', $employee->exists ? $employee->locations->pluck('id')->all() : []); @endphp
                         @foreach($locations as $loc)
@@ -248,7 +248,7 @@
                 <div>
                     <label class="lmt-label">Base Salary / Rate</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 font-semibold text-sm">$</span>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-800 font-semibold text-sm">$</span>
                         <input type="number" name="base_salary" step="0.01" min="0"
                                value="{{ old('base_salary', $employee->base_salary ?? '') }}"
                                class="lmt-input pl-7"/>

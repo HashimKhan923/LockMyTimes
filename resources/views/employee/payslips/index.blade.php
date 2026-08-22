@@ -160,7 +160,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 p-5 border-b border-gray-100 dark:border-slate-700">
             <div>
                 <h2 class="text-lg font-black text-gray-900 dark:text-slate-100">All Payslips</h2>
-                <p class="text-xs text-gray-500 mt-0.5">
+                <p class="text-xs text-gray-800 mt-0.5">
                     {{ (int) $counters->total }} payslip{{ ($counters->total ?? 0) == 1 ? '' : 's' }} in {{ $year }}
                 </p>
             </div>
@@ -184,7 +184,7 @@
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                               {{ $isActive
                                     ? 'border-transparent text-white'
-                                    : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                                    : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                        @if($isActive) style="background:var(--brand-500);" @endif>
                         {{ $chip['label'] }}
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $isActive ? 'bg-white/20' : 'bg-gray-100 dark:bg-slate-700' }}">
@@ -199,10 +199,10 @@
         @if($payslips->isEmpty())
             <div class="text-center py-16 px-5">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                    <i data-lucide="receipt" class="w-7 h-7 text-gray-300"></i>
+                    <i data-lucide="receipt" class="w-7 h-7 text-gray-800"></i>
                 </div>
                 <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No payslips yet</p>
-                <p class="text-xs text-gray-500 mt-1">
+                <p class="text-xs text-gray-800 mt-1">
                     Your payslips will appear here once payroll is processed for {{ $year }}.
                 </p>
             </div>
@@ -241,16 +241,16 @@
                                 <td>
                                     <div class="text-sm text-gray-900 dark:text-slate-100">
                                         {{ $p->period_start->format('M j') }}
-                                        <span class="text-gray-400"></span>
+                                        <span class="text-gray-800"></span>
                                         {{ $p->period_end->format('M j, Y') }}
                                     </div>
                                     @if($p->payrollRun?->pay_schedule)
-                                        <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wide mt-0.5">
+                                        <p class="text-[10px] text-gray-800 font-semibold uppercase tracking-wide mt-0.5">
                                             {{ str_replace('_', ' ', $p->payrollRun->pay_schedule) }}
                                         </p>
                                     @endif
                                 </td>
-                                <td class="hidden md:table-cell text-xs text-gray-500">
+                                <td class="hidden md:table-cell text-xs text-gray-800">
                                     {{ $p->pay_date?->format('M j, Y') ?? '—' }}
                                 </td>
                                 <td class="text-right">
@@ -273,7 +273,7 @@
                                         </a>
                                         <a href="{{ route('employee.payslips.pdf', [$tenantSlug, $p->id]) }}"
                                            title="Download PDF"
-                                           class="inline-flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-500 hover:text-gray-700 transition-colors">
+                                           class="inline-flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-800 hover:text-gray-700 transition-colors">
                                             <i data-lucide="download" class="w-3.5 h-3.5"></i>
                                         </a>
                                     </div>

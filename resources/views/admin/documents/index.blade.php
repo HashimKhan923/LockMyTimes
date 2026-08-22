@@ -20,7 +20,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-xl font-black text-gray-900">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -40,7 +40,7 @@
 
             {{-- Sidebar header --}}
             <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Folders</span>
+                <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">Folders</span>
                 <button onclick="openModal('add-folder-modal')"
                         class="w-6 h-6 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white flex items-center justify-center transition-colors">
                     <i data-lucide="plus" class="w-3 h-3"></i>
@@ -65,15 +65,15 @@
                     <i data-lucide="{{ $folder->icon ?? 'folder' }}" class="w-4 h-4 flex-shrink-0"
                        style="color:{{ $folder->color ?? '#6C7DF7' }}"></i>
                     <span class="flex-1 truncate text-xs">{{ $folder->name }}</span>
-                    <span class="text-xs text-gray-400 flex-shrink-0">{{ $folder->documents_count }}</span>
+                    <span class="text-xs text-gray-800 flex-shrink-0">{{ $folder->documents_count }}</span>
                 </a>
                 @foreach($allFolders->where('parent_id', $folder->id) as $sub)
                 <a href="{{ route('admin.documents.index', $tenant) }}?folder={{ $sub->id }}"
                    class="flex items-center gap-2 pl-9 pr-4 py-1.5 text-xs font-medium transition-colors
-                          {{ $folderId == $sub->id ? 'text-brand-700 font-semibold bg-brand-50' : 'text-gray-500 hover:bg-gray-50' }}">
+                          {{ $folderId == $sub->id ? 'text-brand-700 font-semibold bg-brand-50' : 'text-gray-800 hover:bg-gray-50' }}">
                     <i data-lucide="folder" class="w-3 h-3 flex-shrink-0" style="color:{{ $sub->color ?? '#6C7DF7' }}"></i>
                     <span class="flex-1 truncate">{{ $sub->name }}</span>
-                    <span class="text-gray-400">{{ $sub->documents_count }}</span>
+                    <span class="text-gray-800">{{ $sub->documents_count }}</span>
                 </a>
                 @endforeach
                 @endforeach
@@ -82,14 +82,14 @@
 
             {{-- By Category --}}
             <div class="border-t border-gray-100 pt-1 pb-2">
-                <p class="px-4 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">By Category</p>
+                <p class="px-4 py-1.5 text-[10px] font-bold text-gray-800 uppercase tracking-widest">By Category</p>
                 @foreach([
                     'policy'   => ['shield',           'text-purple-500'],
                     'contract' => ['file-text',         'text-amber-500'],
                     'template' => ['layout-template',   'text-brand-500'],
                     'form'     => ['clipboard-list',    'text-emerald-500'],
                     'handbook' => ['book-open',          'text-blue-500'],
-                    'other'    => ['file',               'text-gray-400'],
+                    'other'    => ['file',               'text-gray-800'],
                 ] as $cat => [$icon, $color])
                 <a href="{{ route('admin.documents.index', $tenant) }}?category={{ $cat }}"
                    class="flex items-center gap-2.5 px-4 py-2 text-xs font-medium transition-colors capitalize
@@ -113,18 +113,18 @@
             {{-- Breadcrumb --}}
             <div class="flex items-center gap-1.5 text-sm min-w-0">
                 <a href="{{ route('admin.documents.index', $tenant) }}"
-                   class="text-gray-400 hover:text-brand-600 transition-colors flex-shrink-0">
+                   class="text-gray-800 hover:text-brand-600 transition-colors flex-shrink-0">
                     <i data-lucide="home" class="w-4 h-4"></i>
                 </a>
                 @foreach($breadcrumbs as $bc)
-                <span class="text-gray-300 flex-shrink-0">/</span>
+                <span class="text-gray-800 flex-shrink-0">/</span>
                 <a href="{{ route('admin.documents.index', $tenant) }}?folder={{ $bc->id }}"
                    class="font-semibold text-gray-700 hover:text-brand-600 transition-colors truncate">
                     {{ $bc->name }}
                 </a>
                 @endforeach
                 @if(request('category'))
-                <span class="text-gray-300 flex-shrink-0">/</span>
+                <span class="text-gray-800 flex-shrink-0">/</span>
                 <span class="font-semibold text-gray-700 capitalize">{{ request('category') }}</span>
                 @endif
             </div>
@@ -134,7 +134,7 @@
                 <form action="{{ route('admin.documents.index', $tenant) }}" method="GET">
                     @if($folderId)<input type="hidden" name="folder" value="{{ $folderId }}"/>@endif
                     <div class="relative">
-                        <i data-lucide="search" class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-gray-800 absolute left-3 top-1/2 -translate-y-1/2"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
                                placeholder="Search…"
                                class="lmt-input pl-8 py-2 text-sm w-40"/>
@@ -153,10 +153,10 @@
             @if($documents->isEmpty() && $folders->isEmpty())
             <div class="text-center py-20">
                 <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
+                    <i data-lucide="folder-open" class="w-8 h-8 text-gray-800"></i>
                 </div>
-                <p class="font-black text-gray-400 text-lg mb-1">No documents here</p>
-                <p class="text-sm text-gray-300 mb-5">Upload your first document to get started</p>
+                <p class="font-black text-gray-800 text-lg mb-1">No documents here</p>
+                <p class="text-sm text-gray-800 mb-5">Upload your first document to get started</p>
                 <button onclick="openModal('upload-modal')" class="lmt-btn-primary lmt-btn-sm inline-flex">
                     <i data-lucide="upload" class="w-4 h-4"></i> Upload Document
                 </button>
@@ -165,10 +165,10 @@
 
             {{-- Header --}}
             <div class="flex items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-                <div class="flex-1 min-w-0 text-xs font-bold text-gray-400 uppercase tracking-wider">Name</div>
-                <div class="w-28 flex-shrink-0 text-xs font-bold text-gray-400 uppercase tracking-wider">Category</div>
-                <div class="w-32 flex-shrink-0 text-xs font-bold text-gray-400 uppercase tracking-wider">Date</div>
-                <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Actions</div>
+                <div class="flex-1 min-w-0 text-xs font-bold text-gray-800 uppercase tracking-wider">Name</div>
+                <div class="w-28 flex-shrink-0 text-xs font-bold text-gray-800 uppercase tracking-wider">Category</div>
+                <div class="w-32 flex-shrink-0 text-xs font-bold text-gray-800 uppercase tracking-wider">Date</div>
+                <div class="w-24 flex-shrink-0 text-xs font-bold text-gray-800 uppercase tracking-wider text-right">Actions</div>
             </div>
 
             <div class="divide-y divide-gray-100">
@@ -186,15 +186,15 @@
                         </div>
                         <div class="min-w-0">
                             <p class="font-semibold text-gray-900 text-sm truncate">{{ $folder->name }}</p>
-                            <p class="text-xs text-gray-400">{{ $folder->documents_count }} {{ Str::plural('item', $folder->documents_count) }}</p>
+                            <p class="text-xs text-gray-800">{{ $folder->documents_count }} {{ Str::plural('item', $folder->documents_count) }}</p>
                         </div>
                     </div>
                     <div class="w-28 flex-shrink-0">
-                        <span class="text-xs text-gray-400">Folder</span>
+                        <span class="text-xs text-gray-800">Folder</span>
                     </div>
-                    <div class="w-32 flex-shrink-0 text-xs text-gray-400">{{ $folder->updated_at->format('M j, Y') }}</div>
+                    <div class="w-32 flex-shrink-0 text-xs text-gray-800">{{ $folder->updated_at->format('M j, Y') }}</div>
                     <div class="w-24 flex-shrink-0 flex justify-end">
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 group-hover:text-brand-400 transition-colors"></i>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 group-hover:text-brand-400 transition-colors"></i>
                     </div>
                 </a>
                 @endforeach
@@ -232,7 +232,7 @@
                         </div>
                         <div class="min-w-0">
                             <p class="font-semibold text-gray-900 text-sm truncate">{{ $doc->title }}</p>
-                            <p class="text-xs text-gray-400 truncate">
+                            <p class="text-xs text-gray-800 truncate">
                                 {{ $doc->file_size_human }}
                                 @if($doc->uploader) · {{ $doc->uploader->name }}@endif
                                 @if($doc->expiry_date)
@@ -250,7 +250,7 @@
                     </div>
 
                     {{-- Date --}}
-                    <div class="w-32 flex-shrink-0 text-xs text-gray-500">
+                    <div class="w-32 flex-shrink-0 text-xs text-gray-800">
                         {{ $doc->created_at->format('M j, Y') }}
                     </div>
 
@@ -272,7 +272,7 @@
                               method="POST" onsubmit="return confirm('Delete \'{{ addslashes($doc->title) }}\'?')">
                             @csrf @method('DELETE')
                             <button type="submit"
-                                    class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors"
+                                    class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors"
                                     title="Delete">
                                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                             </button>
@@ -298,7 +298,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Upload Document</h3>
             <button onclick="closeModal('upload-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -390,7 +390,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Create Folder</h3>
             <button onclick="closeModal('add-folder-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -444,11 +444,11 @@
         <div class="flex items-center justify-between mb-1">
             <h3 class="font-black text-gray-900">Send for Signature</h3>
             <button onclick="closeModal('send-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <p class="text-sm text-gray-400 mb-5" id="send-doc-name"></p>
+        <p class="text-sm text-gray-800 mb-5" id="send-doc-name"></p>
         <form id="send-form" method="POST" class="space-y-4">
             @csrf
             <div>
@@ -463,7 +463,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</p>
-                            <p class="text-xs text-gray-400">{{ $emp->department?->name }}</p>
+                            <p class="text-xs text-gray-800">{{ $emp->department?->name }}</p>
                         </div>
                     </label>
                     @endforeach

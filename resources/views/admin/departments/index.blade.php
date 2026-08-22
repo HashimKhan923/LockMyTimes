@@ -49,7 +49,7 @@
             </td>
         </tr>
         @empty
-        <tr><td colspan="6" class="text-center py-12 text-gray-400">
+        <tr><td colspan="6" class="text-center py-12 text-gray-800">
             <i data-lucide="git-branch" class="w-8 h-8 mx-auto mb-2 text-gray-200"></i>
             No departments yet
         </td></tr>

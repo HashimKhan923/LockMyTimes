@@ -10,14 +10,14 @@
         [$priLbl, $priCls, $priIcon] = match($announcement->priority) {
             'urgent' => ['Urgent', 'text-red-600 bg-red-50 dark:bg-red-500/15 dark:text-red-300', 'alert-triangle'],
             'high'   => ['High',   'text-amber-600 bg-amber-50 dark:bg-amber-500/15 dark:text-amber-300', 'arrow-up'],
-            'low'    => ['Low',    'text-gray-400 bg-gray-50 dark:bg-slate-700', 'arrow-down'],
-            default  => ['Normal', 'text-gray-500 bg-gray-50 dark:bg-slate-700', 'minus'],
+            'low'    => ['Low',    'text-gray-800 bg-gray-50 dark:bg-slate-700', 'arrow-down'],
+            default  => ['Normal', 'text-gray-800 bg-gray-50 dark:bg-slate-700', 'minus'],
         };
     @endphp
 
     {{-- Back nav --}}
     <a href="{{ route('employee.announcements.index', $tenantSlug) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-slate-200 transition-colors mb-5">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors mb-5">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         <span>All announcements</span>
     </a>
@@ -87,7 +87,7 @@
         </h1>
 
         {{-- Meta --}}
-        <div class="flex items-center gap-4 mt-3 pb-5 border-b border-gray-100 dark:border-slate-700 text-xs text-gray-500 flex-wrap">
+        <div class="flex items-center gap-4 mt-3 pb-5 border-b border-gray-100 dark:border-slate-700 text-xs text-gray-800 flex-wrap">
             @if($announcement->creator)
                 <span class="inline-flex items-center gap-2">
                     <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black text-white" style="background:var(--brand-500);">

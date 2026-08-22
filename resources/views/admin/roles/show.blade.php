@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.roles.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         All Roles
     </a>
@@ -27,7 +27,7 @@
             </div>
             <div>
                 <h2 class="text-xl font-black text-gray-900">{{ str_replace('Tenant Admin', 'Organization Admin', $role->name) }}</h2>
-                <p class="text-sm text-gray-400">
+                <p class="text-sm text-gray-800">
                     {{ count($rolePermissions) }} permission{{ count($rolePermissions) !== 1 ? 's' : '' }} ·
                     {{ $users->count() }} user{{ $users->count() !== 1 ? 's' : '' }} assigned
                 </p>
@@ -60,9 +60,9 @@
                                 class="text-xs font-semibold text-brand-600 hover:text-brand-700">
                             Select All
                         </button>
-                        <span class="text-gray-300">|</span>
+                        <span class="text-gray-800">|</span>
                         <button type="button" onclick="toggleAll(false)"
-                                class="text-xs font-semibold text-gray-500 hover:text-gray-700">
+                                class="text-xs font-semibold text-gray-800 hover:text-gray-700">
                             Clear All
                         </button>
                     </div>
@@ -70,7 +70,7 @@
                 </div>
 
                 {{-- Column headers (actions) --}}
-                <div class="flex items-center px-4 py-2.5 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                <div class="flex items-center px-4 py-2.5 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-800 uppercase tracking-wider">
                     <div class="flex-1 min-w-0">Module</div>
                     @foreach(['view'=>'View','create'=>'Create','edit'=>'Edit','delete'=>'Delete','approve'=>'Approve','export'=>'Export'] as $action=>$label)
                     <div class="w-16 flex-shrink-0 text-center">{{ $label }}</div>
@@ -124,7 +124,7 @@
 
                 @if(!$isProtected)
                 <div class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50">
-                    <p class="text-xs text-gray-400">
+                    <p class="text-xs text-gray-800">
                         <span id="selected-count">{{ count($rolePermissions) }}</span> permission(s) selected
                     </p>
                     <button type="submit" class="lmt-btn-primary lmt-btn-sm">
@@ -155,7 +155,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="font-semibold text-gray-900 text-sm truncate">{{ $user->name }}</p>
-                        <p class="text-xs text-gray-400 truncate">{{ $user->email }}</p>
+                        <p class="text-xs text-gray-800 truncate">{{ $user->email }}</p>
                     </div>
                     @if($role->name !== 'Tenant Admin' && $role->name !== 'super_admin')
                     <form action="{{ route('admin.roles.remove', $tenant) }}" method="POST"
@@ -164,7 +164,7 @@
                         <input type="hidden" name="user_id" value="{{ $user->id }}"/>
                         <input type="hidden" name="role" value="{{ $role->name }}"/>
                         <button type="submit"
-                                class="w-7 h-7 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0">
+                                class="w-7 h-7 rounded-lg text-gray-800 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors flex-shrink-0">
                             <i data-lucide="x" class="w-3.5 h-3.5"></i>
                         </button>
                     </form>
@@ -173,7 +173,7 @@
                 @empty
                 <div class="text-center py-10">
                     <i data-lucide="user-x" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-                    <p class="text-sm text-gray-400">No users assigned yet</p>
+                    <p class="text-sm text-gray-800">No users assigned yet</p>
                 </div>
                 @endforelse
             </div>
@@ -182,7 +182,7 @@
         {{-- Quick legend --}}
         <div class="lmt-card">
             <h3 class="font-black text-gray-900 mb-3 text-sm">Permission Legend</h3>
-            <div class="space-y-2 text-xs text-gray-500">
+            <div class="space-y-2 text-xs text-gray-800">
                 <p><strong class="text-gray-700">View</strong> — See records and data</p>
                 <p><strong class="text-gray-700">Create</strong> — Add new records</p>
                 <p><strong class="text-gray-700">Edit</strong> — Modify existing records</p>
@@ -200,7 +200,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Assign User to {{ str_replace('Tenant Admin', 'Organization Admin', $role->name) }}</h3>
             <button onclick="closeModal('assign-user-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -233,7 +233,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Rename Role</h3>
             <button onclick="closeModal('rename-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>

@@ -107,7 +107,7 @@
             ];
             @endphp
             @foreach($featureMap as $field => $label)
-            <div class="flex items-center gap-2 text-sm {{ $plan->$field ? 'text-ink' : 'text-gray-300' }}">
+            <div class="flex items-center gap-2 text-sm {{ $plan->$field ? 'text-ink' : 'text-gray-800' }}">
                 <i data-lucide="{{ $plan->$field ? 'check-circle' : 'x-circle' }}"
                    class="w-4 h-4 flex-shrink-0 {{ $plan->$field ? 'text-emerald-500' : 'text-gray-200' }}"></i>
                 {{ $label }}

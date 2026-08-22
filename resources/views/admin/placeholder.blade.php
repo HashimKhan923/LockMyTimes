@@ -8,7 +8,7 @@
         <i data-lucide="construction" class="w-8 h-8 text-white"></i>
     </div>
     <h3 class="text-xl font-black text-gray-900 mb-2">{{ $title }}</h3>
-    <p class="text-gray-400 text-sm max-w-sm mx-auto">
+    <p class="text-gray-800 text-sm max-w-sm mx-auto">
         This module is being built. It will be fully functional in an upcoming phase.
     </p>
     <a href="{{ route('admin.dashboard', $tenantSlug) }}"

@@ -29,12 +29,12 @@
         <label class="lmt-label">New Password</label>
         <div class="relative" x-data="{ show: false }">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <i data-lucide="lock" class="w-4 h-4 text-gray-400"></i>
+                <i data-lucide="lock" class="w-4 h-4 text-gray-800"></i>
             </div>
             <input :type="show ? 'text' : 'password'" name="password"
                    class="lmt-input pl-10 pr-10 @error('password') lmt-input-error @enderror"
                    placeholder="Min 8 characters" required/>
-            <button type="button" @click="show=!show" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400">
+            <button type="button" @click="show=!show" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-800">
                 <i :data-lucide="show ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
             </button>
         </div>
@@ -45,7 +45,7 @@
         <label class="lmt-label">Confirm Password</label>
         <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <i data-lucide="lock" class="w-4 h-4 text-gray-400"></i>
+                <i data-lucide="lock" class="w-4 h-4 text-gray-800"></i>
             </div>
             <input type="password" name="password_confirmation"
                    class="lmt-input pl-10" placeholder="Repeat your password" required/>

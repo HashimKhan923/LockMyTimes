@@ -8,7 +8,7 @@
     <div class="flex items-center justify-between mb-5" data-lmt-anim="fade-up">
         <div>
             <a href="{{ route('employee.team.index', $tenantSlug) }}"
-               class="inline-flex items-center gap-1 text-xs font-bold text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 mb-1">
+               class="inline-flex items-center gap-1 text-xs font-bold text-gray-800 hover:text-gray-600 dark:hover:text-slate-300 mb-1">
                 <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> My Team
             </a>
             <h1 class="text-xl font-black text-gray-900 dark:text-slate-100">Leave Approvals</h1>
@@ -58,7 +58,7 @@
                    class="px-4 py-2.5 text-sm font-semibold rounded-t-lg whitespace-nowrap transition-all
                           {{ $status === $val
                               ? 'bg-white dark:bg-slate-800 border-t border-l border-r border-gray-200 dark:border-slate-700 text-brand-600 -mb-px'
-                              : 'text-gray-500 hover:text-gray-700 dark:hover:text-slate-300' }}">
+                              : 'text-gray-800 hover:text-gray-700 dark:hover:text-slate-300' }}">
                     {{ $label }}
                     @if($val === 'pending' && $counters->pending > 0)
                     <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $counters->pending }}</span>
@@ -106,7 +106,7 @@
                                      class="w-8 h-8 rounded-full object-cover flex-shrink-0"/>
                                 <div>
                                     <p class="font-semibold text-gray-900 dark:text-slate-100 text-sm">{{ $req->employee?->full_name ?? '—' }}</p>
-                                    <p class="text-xs text-gray-400">{{ $req->employee?->position?->title }}</p>
+                                    <p class="text-xs text-gray-800">{{ $req->employee?->position?->title }}</p>
                                 </div>
                             </div>
                         </td>
@@ -139,7 +139,7 @@
                         <td>
                             <span class="text-sm font-bold text-gray-900 dark:text-slate-100">
                                 {{ (float) $req->total_days }}
-                                <span class="font-normal text-gray-400">day{{ (float) $req->total_days != 1 ? 's' : '' }}</span>
+                                <span class="font-normal text-gray-800">day{{ (float) $req->total_days != 1 ? 's' : '' }}</span>
                             </span>
                         </td>
                         <td class="text-sm">
@@ -148,7 +148,7 @@
                                     {{ number_format($req->_available_balance, 1) }}
                                 </span>
                             @else
-                                <span class="text-gray-300">—</span>
+                                <span class="text-gray-800">—</span>
                             @endif
                         </td>
                         <td>
@@ -180,7 +180,7 @@
                                 </button>
                             </div>
                             @else
-                            <span class="text-xs text-gray-300">—</span>
+                            <span class="text-xs text-gray-800">—</span>
                             @endif
                         </td>
                     </tr>
@@ -188,7 +188,7 @@
                     <tr>
                         <td colspan="7" class="text-center py-14">
                             <i data-lucide="calendar-check" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                            <p class="font-semibold text-gray-400">No {{ $status === 'all' ? '' : $status }} leave requests</p>
+                            <p class="font-semibold text-gray-800">No {{ $status === 'all' ? '' : $status }} leave requests</p>
                         </td>
                     </tr>
                     @endforelse

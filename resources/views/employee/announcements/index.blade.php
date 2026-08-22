@@ -81,7 +81,7 @@
                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all
                       {{ $active
                             ? 'border-transparent text-white'
-                            : 'border-gray-200 dark:border-slate-700 text-gray-500 hover:border-gray-300' }}"
+                            : 'border-gray-200 dark:border-slate-700 text-gray-800 hover:border-gray-300' }}"
                @if($active) style="background:var(--brand-500);" @endif>
                 <i data-lucide="{{ $chip['icon'] }}" class="w-3.5 h-3.5"></i>
                 {{ $chip['label'] }}
@@ -99,7 +99,7 @@
             @if($announcements->isEmpty())
                 <div class="lmt-card text-center py-16 px-5" data-lmt-anim="fade-up">
                     <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
-                        <i data-lucide="megaphone" class="w-7 h-7 text-gray-300"></i>
+                        <i data-lucide="megaphone" class="w-7 h-7 text-gray-800"></i>
                     </div>
                     <p class="text-sm font-bold text-gray-700 dark:text-slate-200">
                         @if($filter === 'unread') Nothing unread — nice
@@ -107,7 +107,7 @@
                         @else No announcements yet
                         @endif
                     </p>
-                    <p class="text-xs text-gray-500 mt-1">
+                    <p class="text-xs text-gray-800 mt-1">
                         @if($filter !== 'all')
                             <a href="{{ route('employee.announcements.index', $tenantSlug) }}" class="hover:underline" style="color:var(--brand-500);">View all announcements</a>
                         @else
@@ -121,7 +121,7 @@
                         [$priLbl, $priCls, $priIcon] = match($a->priority) {
                             'urgent' => ['Urgent', 'text-red-600 bg-red-50 dark:bg-red-500/15 dark:text-red-300', 'alert-triangle'],
                             'high'   => ['High',   'text-amber-600 bg-amber-50 dark:bg-amber-500/15 dark:text-amber-300', 'arrow-up'],
-                            'low'    => ['Low',    'text-gray-400 bg-gray-50 dark:bg-slate-700', 'arrow-down'],
+                            'low'    => ['Low',    'text-gray-800 bg-gray-50 dark:bg-slate-700', 'arrow-down'],
                             default  => ['',       '', ''],
                         };
                     @endphp
@@ -182,7 +182,7 @@
                                     {{ Str::limit(strip_tags($a->content), 180) }}
                                 </p>
 
-                                <div class="flex items-center gap-3 mt-3 text-[11px] text-gray-500 flex-wrap">
+                                <div class="flex items-center gap-3 mt-3 text-[11px] text-gray-800 flex-wrap">
                                     @if($a->creator)
                                         <span class="inline-flex items-center gap-1.5">
                                             <i data-lucide="user" class="w-3 h-3"></i>
@@ -200,7 +200,7 @@
                                 </div>
                             </div>
 
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 mt-1 flex-shrink-0"></i>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 mt-1 flex-shrink-0"></i>
                         </div>
                     </a>
                 @endforeach
@@ -216,7 +216,7 @@
             <div class="lmt-card" data-lmt-anim="fade-up">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm font-black text-gray-900 dark:text-slate-100 flex items-center gap-1.5">
-                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-gray-400"></i>
+                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-gray-800"></i>
                         Active polls
                     </h3>
                     @if($activePolls->count() > 0)
@@ -227,8 +227,8 @@
 
                 @if($activePolls->isEmpty())
                     <div class="text-center py-8">
-                        <i data-lucide="bar-chart-2" class="w-6 h-6 text-gray-300 mx-auto mb-2"></i>
-                        <p class="text-xs text-gray-500">No active polls right now.</p>
+                        <i data-lucide="bar-chart-2" class="w-6 h-6 text-gray-800 mx-auto mb-2"></i>
+                        <p class="text-xs text-gray-800">No active polls right now.</p>
                     </div>
                 @else
                     <div class="space-y-3">
@@ -246,11 +246,11 @@
                                         </span>
                                     @endif
                                     @if($p->ends_at)
-                                        <span class="text-[10px] text-gray-400">Ends {{ $p->ends_at->diffForHumans() }}</span>
+                                        <span class="text-[10px] text-gray-800">Ends {{ $p->ends_at->diffForHumans() }}</span>
                                     @endif
                                 </div>
                                 <p class="font-bold text-sm text-gray-900 dark:text-slate-100 line-clamp-2">{{ $p->question }}</p>
-                                <p class="text-[10px] text-gray-400 mt-1">
+                                <p class="text-[10px] text-gray-800 mt-1">
                                     {{ count($p->options ?? []) }} option{{ count($p->options ?? []) === 1 ? '' : 's' }}
                                     @if($p->is_anonymous) &middot; Anonymous @endif
                                 </p>

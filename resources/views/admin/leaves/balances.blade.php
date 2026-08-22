@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Leave Balances — {{ now()->year }}</h2>
-        <p class="text-sm text-gray-400 mt-0.5">View and adjust employee leave allocations</p>
+        <p class="text-sm text-gray-800 mt-0.5">View and adjust employee leave allocations</p>
     </div>
     <a href="{{ route('admin.leaves.index', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -27,7 +27,7 @@
                             <div class="w-2 h-2 rounded-full" style="background:{{ $lt->color }}"></div>
                             {{ $lt->name }}
                         </div>
-                        <div class="text-xs font-normal text-gray-400 mt-0.5">{{ $lt->days_allowed }}d/yr</div>
+                        <div class="text-xs font-normal text-gray-800 mt-0.5">{{ $lt->days_allowed }}d/yr</div>
                     </th>
                     @endforeach
                     <th>Actions</th>
@@ -41,7 +41,7 @@
                             <div class="lmt-avatar-sm font-bold text-xs">{{ substr($emp->first_name,0,1) }}</div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $emp->full_name }}</p>
-                                <p class="text-xs text-gray-400">{{ $emp->department?->name }}</p>
+                                <p class="text-xs text-gray-800">{{ $emp->department?->name }}</p>
                             </div>
                         </div>
                     </td>
@@ -58,7 +58,7 @@
                             <span class="text-sm font-black {{ $available <= 0 ? 'text-red-500' : ($available <= 2 ? 'text-amber-600' : 'text-gray-900') }}">
                                 {{ $available }}
                             </span>
-                            <span class="text-xs text-gray-400">/ {{ $allocated }}</span>
+                            <span class="text-xs text-gray-800">/ {{ $allocated }}</span>
                             <div class="w-16 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
                                 <div class="h-full rounded-full transition-all"
                                      style="width:{{ $pct }}%; background:{{ $lt->color ?? '#6C7DF7' }}"></div>
@@ -86,7 +86,7 @@
 <div id="adjust-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
         <h3 class="font-black text-gray-900 mb-1">Adjust Leave Balance</h3>
-        <p class="text-sm text-gray-400 mb-5" id="adjust-employee-name"></p>
+        <p class="text-sm text-gray-800 mb-5" id="adjust-employee-name"></p>
         <form action="{{ route('admin.leaves.balance.update', $tenant) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="employee_id" id="adjust-employee-id"/>

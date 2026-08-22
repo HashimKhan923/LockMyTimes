@@ -18,7 +18,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
     <div class="flex items-center gap-4">
         <a href="{{ route('superadmin.organizations.index') }}"
            class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
-            <i data-lucide="arrow-left" class="w-4 h-4 text-gray-500"></i>
+            <i data-lucide="arrow-left" class="w-4 h-4 text-gray-800"></i>
         </a>
         <div class="w-14 h-14 rounded-2xl lmt-gradient-bg flex items-center justify-center text-white text-xl font-black flex-shrink-0">
             {{ substr($tenant->company_name, 0, 1) }}
@@ -194,7 +194,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                             <td>
                                 @if($pay->card_brand)
                                 <span class="text-xs text-ink-soft capitalize">{{ $pay->card_brand }} ••••{{ $pay->card_last4 }}</span>
-                                @else<span class="text-gray-300">—</span>@endif
+                                @else<span class="text-gray-800">—</span>@endif
                             </td>
                             <td class="text-sm text-ink-soft">{{ $pay->paid_at?->format('M j, Y') ?? '—' }}</td>
                             <td>
@@ -202,7 +202,7 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
                                 <a href="{{ $pay->receipt_url }}" target="_blank" class="text-brand-500 hover:text-brand-700">
                                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                                 </a>
-                                @else<span class="text-gray-300">—</span>@endif
+                                @else<span class="text-gray-800">—</span>@endif
                             </td>
                         </tr>
                         @endforeach

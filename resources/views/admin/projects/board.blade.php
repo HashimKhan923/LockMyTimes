@@ -138,7 +138,7 @@
 <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.projects.index', $tenant) }}"
-           class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">
+           class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-800 hover:bg-gray-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
         </a>
         <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-black"
@@ -150,7 +150,7 @@
                 <h1 class="font-black text-gray-900 text-lg">{{ $project->name }}</h1>
                 <span class="lmt-badge-gray text-xs capitalize">{{ str_replace('_',' ',$project->status) }}</span>
             </div>
-            <p class="text-xs text-gray-400">{{ $project->code }}
+            <p class="text-xs text-gray-800">{{ $project->code }}
                 @if($project->manager) · PM: {{ $project->manager->full_name }} @endif
             </p>
         </div>
@@ -165,7 +165,7 @@
         ] as [$label, $count, $color])
         <div class="bg-gray-100 rounded-xl px-3 py-1.5 text-center">
             <p class="text-sm font-black {{ $color }}">{{ $count }}</p>
-            <p class="text-[10px] text-gray-400">{{ $label }}</p>
+            <p class="text-[10px] text-gray-800">{{ $label }}</p>
         </div>
         @endforeach
 
@@ -213,12 +213,12 @@
                 <span class="text-xs text-amber-600 font-semibold">WIP: {{ $list->wip_limit }}</span>
                 @endif
                 <button onclick="quickAddTask({{ $list->id }})"
-                        class="w-6 h-6 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 flex items-center justify-center transition-colors"
+                        class="w-6 h-6 rounded-lg text-gray-800 hover:text-brand-600 hover:bg-brand-50 flex items-center justify-center transition-colors"
                         title="Quick Add">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                 </button>
                 <button onclick="deleteColumn({{ $list->id }}, this)"
-                        class="w-6 h-6 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors"
+                        class="w-6 h-6 rounded-lg text-gray-800 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors"
                         title="Delete Column">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
@@ -252,7 +252,7 @@
                     </span>
                     <div class="flex items-center gap-1">
                         @if($task->due_date)
-                        <span class="text-[10px] {{ $task->is_overdue ? 'text-red-500 font-bold' : 'text-gray-400' }} flex items-center gap-0.5">
+                        <span class="text-[10px] {{ $task->is_overdue ? 'text-red-500 font-bold' : 'text-gray-800' }} flex items-center gap-0.5">
                             <i data-lucide="calendar" class="w-2.5 h-2.5"></i>
                             {{ $task->due_date->format('M j') }}
                         </span>
@@ -286,7 +286,7 @@
                     </div>
 
                     {{-- Meta icons --}}
-                    <div class="flex items-center gap-2 text-gray-400">
+                    <div class="flex items-center gap-2 text-gray-800">
                         @if($task->comments_count > 0)
                         <span class="flex items-center gap-0.5 text-[10px]">
                             <i data-lucide="message-circle" class="w-3 h-3"></i>
@@ -331,7 +331,7 @@
     {{-- Add column button --}}
     <div class="flex-shrink-0 w-64">
         <button onclick="openAddColumnModal()"
-                class="w-full h-12 rounded-xl border-2 border-dashed border-gray-300 text-gray-400 text-sm font-semibold hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all flex items-center justify-center gap-2">
+                class="w-full h-12 rounded-xl border-2 border-dashed border-gray-300 text-gray-800 text-sm font-semibold hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all flex items-center justify-center gap-2">
             <i data-lucide="plus" class="w-4 h-4"></i>
             Add Column
         </button>
@@ -350,7 +350,7 @@
             {{-- Loading state --}}
             <div id="task-modal-loading" class="text-center py-10">
                 <div class="w-8 h-8 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin mx-auto"></div>
-                <p class="text-sm text-gray-400 mt-3">Loading task…</p>
+                <p class="text-sm text-gray-800 mt-3">Loading task…</p>
             </div>
 
             {{-- Task content --}}
@@ -360,10 +360,10 @@
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
                         <span id="tmd-type" class="text-xs font-bold px-2 py-1 rounded-full"></span>
-                        <span id="tmd-code" class="text-xs text-gray-400 font-mono"></span>
+                        <span id="tmd-code" class="text-xs text-gray-800 font-mono"></span>
                     </div>
                     <button onclick="closeTaskModal()"
-                            class="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                            class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -379,7 +379,7 @@
 
                         {{-- Description --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Description</p>
+                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Description</p>
                             <textarea id="tmd-description" rows="3"
                                       class="lmt-textarea text-sm w-full"
                                       placeholder="Add a description…"></textarea>
@@ -387,7 +387,7 @@
 
                         {{-- Attachments --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Attachments</p>
+                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Attachments</p>
                             <div id="tmd-attachments" class="space-y-1.5 mb-2"></div>
                             <label class="flex items-center gap-2 cursor-pointer w-fit">
                                 <input type="file" id="attachment-input" class="hidden" multiple
@@ -402,8 +402,8 @@
                         {{-- Checklist --}}
                         <div id="tmd-checklist-section">
                             <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Checklist</p>
-                                <span id="tmd-checklist-progress" class="text-xs font-bold text-gray-500"></span>
+                                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider">Checklist</p>
+                                <span id="tmd-checklist-progress" class="text-xs font-bold text-gray-800"></span>
                             </div>
                             <div id="tmd-checklist" class="space-y-1.5 mb-3"></div>
                             <div class="flex gap-2">
@@ -417,7 +417,7 @@
 
                         {{-- Comments --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Comments</p>
+                            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Comments</p>
                             <div id="tmd-comments" class="space-y-3 max-h-48 overflow-y-auto mb-3"></div>
                             <div class="flex gap-2">
                                 <textarea id="comment-input" rows="2"
@@ -433,7 +433,7 @@
 
                         {{-- Status --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Status</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Status</p>
                             <select id="tmd-status" onchange="updateTaskField('status', this.value)"
                                     class="lmt-select py-2 text-sm w-full">
                                 @foreach(['backlog'=>'Backlog','todo'=>'To Do','in_progress'=>'In Progress','in_review'=>'In Review','on_hold'=>'On Hold','done'=>'Done','cancelled'=>'Cancelled'] as $v=>$l)
@@ -444,7 +444,7 @@
 
                         {{-- Priority --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Priority</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Priority</p>
                             <select id="tmd-priority" onchange="updateTaskField('priority', this.value)"
                                     class="lmt-select py-2 text-sm w-full">
                                 @foreach(['low'=>'Low','normal'=>'Normal','high'=>'High','urgent'=>'Urgent'] as $v=>$l)
@@ -455,12 +455,12 @@
 
                         {{-- Assignees --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-2">Assignees</p>
+                            <p class="text-xs font-bold text-gray-800 mb-2">Assignees</p>
                             <div id="tmd-assignees" class="flex flex-wrap gap-1.5 mb-2"></div>
                             {{-- Assignee picker dropdown --}}
                             <div class="relative" id="assignee-picker-wrap">
                                 <button type="button" onclick="toggleAssigneePicker()"
-                                        class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-dashed border-gray-300 text-xs text-gray-400 hover:border-brand-400 hover:text-brand-600 transition-colors">
+                                        class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-dashed border-gray-300 text-xs text-gray-800 hover:border-brand-400 hover:text-brand-600 transition-colors">
                                     <i data-lucide="user-plus" class="w-3 h-3"></i>
                                     Assign member
                                 </button>
@@ -484,20 +484,20 @@
 
                         {{-- Due Date --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Due Date</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Due Date</p>
                             <input type="date" id="tmd-due" class="lmt-input py-1.5 text-sm w-full"/>
                         </div>
 
                         {{-- Estimated Hours --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Estimated Hours</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Estimated Hours</p>
                             <input type="number" id="tmd-hours" min="0" step="0.5"
                                    class="lmt-input py-1.5 text-sm w-full" placeholder="0"/>
                         </div>
 
                         {{-- Progress --}}
                         <div>
-                            <p class="text-xs font-bold text-gray-400 mb-1">Progress</p>
+                            <p class="text-xs font-bold text-gray-800 mb-1">Progress</p>
                             <div class="flex items-center gap-2">
                                 <input type="range" id="tmd-progress" min="0" max="100" step="5"
                                        class="flex-1 h-2 accent-brand-600"
@@ -859,7 +859,7 @@ function addTaskCardToDOM(task, listId) {
             <div class="flex -space-x-1.5 card-assignees">
                 ${(task.assignees||[]).slice(0,3).map(a=>`<div class="w-6 h-6 rounded-full border-2 border-white lmt-gradient-bg flex items-center justify-center text-white text-[9px] font-bold" title="${a.employee?.full_name??''}">${(a.employee?.first_name??'?')[0]}</div>`).join('')}
             </div>
-            <div class="flex items-center gap-2 text-gray-400"></div>
+            <div class="flex items-center gap-2 text-gray-800"></div>
         </div>`;
 
     // Insert before quick-add form
@@ -949,7 +949,7 @@ function renderChecklist(items) {
             <input type="checkbox" ${item.is_completed ? 'checked' : ''}
                    onchange="toggleChecklist(${item.id}, this.checked)"
                    class="w-4 h-4 rounded cursor-pointer"/>
-            <span class="text-sm text-gray-700 flex-1 ${item.is_completed ? 'line-through text-gray-400' : ''}">${item.item}</span>`;
+            <span class="text-sm text-gray-700 flex-1 ${item.is_completed ? 'line-through text-gray-800' : ''}">${item.item}</span>`;
         container.appendChild(div);
     });
 }
@@ -958,7 +958,7 @@ function renderComments(comments) {
     const container = document.getElementById('tmd-comments');
     container.innerHTML = '';
     if (comments.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-300 text-center py-3">No comments yet</p>';
+        container.innerHTML = '<p class="text-xs text-gray-800 text-center py-3">No comments yet</p>';
         return;
     }
     comments.forEach(c => {
@@ -971,7 +971,7 @@ function renderComments(comments) {
             <div class="flex-1 bg-gray-50 rounded-xl p-2.5">
                 <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-semibold text-gray-700">${c.user?.name ?? 'User'}</span>
-                    <span class="text-[10px] text-gray-400">${new Date(c.created_at).toLocaleDateString()}</span>
+                    <span class="text-[10px] text-gray-800">${new Date(c.created_at).toLocaleDateString()}</span>
                 </div>
                 <p class="text-sm text-gray-600">${c.content}</p>
             </div>`;
@@ -1023,7 +1023,7 @@ function syncAssignees() {
     const checked = [...document.querySelectorAll('.assignee-cb:checked')];
     const el = document.getElementById('tmd-assignees');
     el.innerHTML = checked.length === 0
-        ? '<span class="text-xs text-gray-400 italic">No assignees</span>'
+        ? '<span class="text-xs text-gray-800 italic">No assignees</span>'
         : checked.map(cb => `
             <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold">
                 <div class="w-4 h-4 rounded-full bg-brand-200 text-brand-800 text-[9px] font-black flex items-center justify-center">${cb.dataset.name[0]}</div>
@@ -1048,17 +1048,17 @@ function renderAttachments(attachments) {
     const container = document.getElementById('tmd-attachments');
     container.innerHTML = '';
     if (!attachments.length) {
-        container.innerHTML = '<p class="text-xs text-gray-300 italic">No attachments yet.</p>';
+        container.innerHTML = '<p class="text-xs text-gray-800 italic">No attachments yet.</p>';
         return;
     }
     attachments.forEach(a => {
         const div = document.createElement('div');
         div.className = 'flex items-center gap-2 text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-1.5';
         div.innerHTML = `
-            <i data-lucide="paperclip" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
+            <i data-lucide="paperclip" class="w-3.5 h-3.5 text-gray-800 flex-shrink-0"></i>
             <a href="/storage/${a.file_path}" target="_blank" class="flex-1 truncate hover:text-brand-600">${a.file_name}</a>
-            <span class="text-xs text-gray-400 flex-shrink-0">${a.file_size_human ?? ''}</span>
-            <button onclick="deleteAttachment(${a.id}, this)" class="text-gray-300 hover:text-red-500 flex-shrink-0">
+            <span class="text-xs text-gray-800 flex-shrink-0">${a.file_size_human ?? ''}</span>
+            <button onclick="deleteAttachment(${a.id}, this)" class="text-gray-800 hover:text-red-500 flex-shrink-0">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
             </button>`;
         container.appendChild(div);

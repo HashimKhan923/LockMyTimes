@@ -6,7 +6,7 @@
 
 <div class="max-w-md mx-auto">
     <a href="{{ route('admin.qrcodes.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to QR Codes
     </a>
@@ -23,7 +23,7 @@
         <h2 class="text-2xl font-black text-gray-900 mb-1">
             {{ $qrCode->label ?? $qrCode->location->name }}
         </h2>
-        <p class="text-sm text-gray-500 mb-6">Scan to Clock In / Clock Out</p>
+        <p class="text-sm text-gray-800 mb-6">Scan to Clock In / Clock Out</p>
 
         {{-- QR Code --}}
         <div class="flex justify-center mb-6">
@@ -36,16 +36,16 @@
         <div class="bg-gray-50 rounded-xl p-4 mb-5 text-left">
             <div class="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                    <p class="text-xs text-gray-400">Location</p>
+                    <p class="text-xs text-gray-800">Location</p>
                     <p class="font-semibold text-gray-900">{{ $qrCode->location->name }}</p>
                 </div>
                 <div>
-                    <p class="text-xs text-gray-400">Geo-fence</p>
+                    <p class="text-xs text-gray-800">Geo-fence</p>
                     <p class="font-semibold text-gray-900">{{ $qrCode->location->geofence_radius_meters }}m radius</p>
                 </div>
                 @if($qrCode->location->address_line1)
                 <div class="col-span-2">
-                    <p class="text-xs text-gray-400">Address</p>
+                    <p class="text-xs text-gray-800">Address</p>
                     <p class="font-semibold text-gray-900">
                         {{ $qrCode->location->address_line1 }}, {{ $qrCode->location->city }}
                     </p>
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <p class="text-xs text-gray-400">
+        <p class="text-xs text-gray-800">
             Token ID: <code>{{ substr($qrCode->token, 0, 12) }}…</code>
         </p>
     </div>

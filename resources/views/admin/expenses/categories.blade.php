@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Expense Categories</h2>
-        <p class="text-sm text-gray-400">{{ $categories->count() }} categories configured</p>
+        <p class="text-sm text-gray-800">{{ $categories->count() }} categories configured</p>
     </div>
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.expenses.index', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
@@ -32,12 +32,12 @@
                 </div>
                 <div>
                     <h3 class="font-black text-gray-900">{{ $cat->name }}</h3>
-                    <p class="text-xs text-gray-400">{{ $cat->code }}</p>
+                    <p class="text-xs text-gray-800">{{ $cat->code }}</p>
                 </div>
             </div>
             <div class="flex items-center gap-1">
                 <button onclick="openEditCat({{ $cat->id }}, {{ json_encode($cat) }})"
-                        class="w-7 h-7 rounded-lg bg-gray-100 text-gray-500 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
+                        class="w-7 h-7 rounded-lg bg-gray-100 text-gray-800 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
                     <i data-lucide="pencil" class="w-3 h-3"></i>
                 </button>
             </div>
@@ -46,13 +46,13 @@
         <div class="grid grid-cols-2 gap-2 mb-3 text-center">
             <div class="bg-gray-50 rounded-xl p-2">
                 <p class="font-black text-gray-900 text-lg">{{ $cat->expenses_count }}</p>
-                <p class="text-xs text-gray-400">Expenses</p>
+                <p class="text-xs text-gray-800">Expenses</p>
             </div>
             <div class="bg-gray-50 rounded-xl p-2">
                 <p class="font-black text-gray-900 text-sm">
                     {{ $cat->max_amount ? '$'.number_format($cat->max_amount,0) : '∞' }}
                 </p>
-                <p class="text-xs text-gray-400">Max Amount</p>
+                <p class="text-xs text-gray-800">Max Amount</p>
             </div>
         </div>
 
@@ -69,13 +69,13 @@
         </div>
 
         @if($cat->description)
-        <p class="text-xs text-gray-400 mt-2">{{ $cat->description }}</p>
+        <p class="text-xs text-gray-800 mt-2">{{ $cat->description }}</p>
         @endif
     </div>
     @empty
     <div class="lmt-card text-center py-12 md:col-span-3">
         <i data-lucide="tag" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-        <p class="text-gray-400">No categories yet</p>
+        <p class="text-gray-800">No categories yet</p>
     </div>
     @endforelse
 </div>

@@ -8,7 +8,7 @@
     <div class="flex items-center justify-between mb-6">
         <div>
             <h2 class="text-xl font-black text-gray-900 dark:text-slate-100">Notifications</h2>
-            <p class="text-sm text-gray-500 mt-0.5">{{ $notifications->total() }} total</p>
+            <p class="text-sm text-gray-800 mt-0.5">{{ $notifications->total() }} total</p>
         </div>
         @if($notifications->total() > 0)
         <div class="flex items-center gap-2">
@@ -34,10 +34,10 @@
     @if($notifications->isEmpty())
     <div class="lmt-card flex flex-col items-center py-16 text-center gap-3">
         <div class="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-slate-700 flex items-center justify-center">
-            <i data-lucide="bell-off" class="w-7 h-7 text-gray-400"></i>
+            <i data-lucide="bell-off" class="w-7 h-7 text-gray-800"></i>
         </div>
         <p class="font-bold text-gray-900 dark:text-slate-100">No notifications</p>
-        <p class="text-sm text-gray-400">You're all caught up!</p>
+        <p class="text-sm text-gray-800">You're all caught up!</p>
     </div>
     @else
     <div class="lmt-card p-0 divide-y divide-gray-100 dark:divide-slate-700">
@@ -56,7 +56,7 @@
                 <p class="text-sm font-semibold text-gray-900 dark:text-slate-100 leading-snug">
                     {{ $notif->title }}
                 </p>
-                <p class="text-xs text-gray-400 mt-0.5">{{ $notif->created_at->diffForHumans() }}</p>
+                <p class="text-xs text-gray-800 mt-0.5">{{ $notif->created_at->diffForHumans() }}</p>
             </div>
 
             {{-- Actions --}}
@@ -65,21 +65,21 @@
                 <form action="{{ route('admin.notifications.read', [$tenant, $notif->id]) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" title="Mark as read"
-                            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-600 flex items-center justify-center transition-colors text-gray-400">
+                            class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-600 flex items-center justify-center transition-colors text-gray-800">
                         <i data-lucide="check" class="w-3.5 h-3.5"></i>
                     </button>
                 </form>
                 @endif
                 @if($notif->action_url)
                 <a href="{{ $notif->action_url }}"
-                   class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-600 flex items-center justify-center transition-colors text-gray-400">
+                   class="w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-600 flex items-center justify-center transition-colors text-gray-800">
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 </a>
                 @endif
                 <form action="{{ route('admin.notifications.destroy', [$tenant, $notif->id]) }}" method="POST">
                     @csrf @method('DELETE')
                     <button type="submit" title="Delete"
-                            class="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center transition-colors text-gray-300 hover:text-red-400">
+                            class="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center transition-colors text-gray-800 hover:text-red-400">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
                 </form>

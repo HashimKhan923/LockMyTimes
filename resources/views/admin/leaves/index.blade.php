@@ -38,7 +38,7 @@
                        class="px-4 py-2.5 text-sm font-semibold rounded-t-lg whitespace-nowrap transition-all
                               {{ $status === $val
                                   ? 'bg-white border-t border-l border-r border-gray-200 text-brand-600 -mb-px'
-                                  : 'text-gray-500 hover:text-gray-700' }}">
+                                  : 'text-gray-800 hover:text-gray-700' }}">
                         {{ $label }}
                         @if($val === 'pending' && $stats['pending'] > 0)
                         <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $stats['pending'] }}</span>
@@ -112,7 +112,7 @@
                                     </div>
                                     <div>
                                         <p class="font-semibold text-gray-900 text-sm">{{ $req->employee->full_name ?? '—' }}</p>
-                                        <p class="text-xs text-gray-400">{{ $req->employee->department?->name }}</p>
+                                        <p class="text-xs text-gray-800">{{ $req->employee->department?->name }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -145,7 +145,7 @@
                             <td>
                                 <span class="text-sm font-bold text-gray-900">
                                     {{ $req->total_days }}
-                                    <span class="font-normal text-gray-400">day{{ $req->total_days != 1 ? 's' : '' }}</span>
+                                    <span class="font-normal text-gray-800">day{{ $req->total_days != 1 ? 's' : '' }}</span>
                                 </span>
                             </td>
                             <td>
@@ -154,7 +154,7 @@
                                         {{ $req->status }}
                                     </span>
                                     @if($req->status === 'approved' && $req->approver)
-                                    <p class="text-xs text-gray-400 mt-0.5">by {{ $req->approver->name }}</p>
+                                    <p class="text-xs text-gray-800 mt-0.5">by {{ $req->approver->name }}</p>
                                     @endif
                                     @if($req->status === 'rejected' && $req->rejection_reason)
                                     <p class="text-xs text-red-400 mt-0.5 max-w-28 truncate" title="{{ $req->rejection_reason }}">
@@ -163,7 +163,7 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="text-xs text-gray-500">
+                            <td class="text-xs text-gray-800">
                                 {{ $req->created_at->diffForHumans() }}
                             </td>
                             <td>
@@ -188,7 +188,7 @@
                                           onsubmit="return confirm('Cancel this leave?')">
                                         @csrf @method('PATCH')
                                         <button type="submit"
-                                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-500 hover:text-white flex items-center justify-center transition-colors"
+                                                class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-500 hover:text-white flex items-center justify-center transition-colors"
                                                 title="Cancel">
                                             <i data-lucide="ban" class="w-3.5 h-3.5"></i>
                                         </button>
@@ -201,7 +201,7 @@
                         <tr>
                             <td colspan="7" class="text-center py-14">
                                 <i data-lucide="calendar-check" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                                <p class="font-semibold text-gray-400">No {{ $status === 'all' ? '' : $status }} leave requests</p>
+                                <p class="font-semibold text-gray-800">No {{ $status === 'all' ? '' : $status }} leave requests</p>
                             </td>
                         </tr>
                         @endforelse
@@ -232,7 +232,7 @@
                 {{-- Day labels --}}
                 <div class="grid grid-cols-7 mb-1">
                     @foreach(['S','M','T','W','T','F','S'] as $d)
-                    <div class="text-center text-xs font-bold text-gray-400 py-1">{{ $d }}</div>
+                    <div class="text-center text-xs font-bold text-gray-800 py-1">{{ $d }}</div>
                     @endforeach
                 </div>
 
@@ -257,7 +257,7 @@
                         => $l->start_date->lte($date) && $l->end_date->gte($date));
                     @endphp
                     <div class="relative rounded-lg min-h-8 flex flex-col items-center py-1 {{ $isToday ? 'ring-2 ring-brand-500 bg-brand-50' : ($isWeekend ? 'bg-gray-50' : '') }}">
-                        <span class="text-xs {{ $isToday ? 'font-black text-brand-600' : 'text-gray-500' }}">{{ $d }}</span>
+                        <span class="text-xs {{ $isToday ? 'font-black text-brand-600' : 'text-gray-800' }}">{{ $d }}</span>
                         @if($leavesOnDay->count() > 0)
                         <div class="flex flex-col gap-0.5 w-full px-0.5 mt-0.5">
                             @foreach($leavesOnDay->take(2) as $lv)
@@ -267,7 +267,7 @@
                             </div>
                             @endforeach
                             @if($leavesOnDay->count() > 2)
-                            <span class="text-[9px] text-gray-400 text-center">+{{ $leavesOnDay->count() - 2 }}</span>
+                            <span class="text-[9px] text-gray-800 text-center">+{{ $leavesOnDay->count() - 2 }}</span>
                             @endif
                         </div>
                         @endif
@@ -302,7 +302,7 @@
                         <i data-lucide="{{ $link['icon'] }}" class="w-4 h-4"></i>
                     </div>
                     <span class="text-sm font-semibold text-gray-700">{{ $link['label'] }}</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 ml-auto"></i>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 ml-auto"></i>
                 </a>
                 @endforeach
 
@@ -315,7 +315,7 @@
                             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         </div>
                         <span class="text-sm font-semibold text-gray-700">Sync Balances</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-300 ml-auto"></i>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 ml-auto"></i>
                     </button>
                 </form>
             </div>

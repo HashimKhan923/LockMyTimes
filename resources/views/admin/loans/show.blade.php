@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.loans.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Loans
     </a>
@@ -58,7 +58,7 @@
                 </div>
                 <div>
                     <p class="font-semibold text-gray-900 text-sm">{{ $loan->employee->full_name }}</p>
-                    <p class="text-xs text-gray-400">{{ $loan->employee->department?->name }} · {{ $loan->employee->employee_code }}</p>
+                    <p class="text-xs text-gray-800">{{ $loan->employee->department?->name }} · {{ $loan->employee->employee_code }}</p>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
                     ['Purpose',      $loan->purpose ?? '—'],
                 ] as [$k,$v])
                 <div class="flex justify-between py-2 border-b border-gray-50 last:border-none">
-                    <span class="text-xs text-gray-400 font-medium">{{ $k }}</span>
+                    <span class="text-xs text-gray-800 font-medium">{{ $k }}</span>
                     <span class="text-xs font-semibold text-gray-700 text-right max-w-36">{{ $v }}</span>
                 </div>
                 @endforeach
@@ -90,7 +90,7 @@
                 ? round(((float)$loan->amount_paid / (float)$loan->total_amount) * 100) : 0;
             @endphp
             <div class="flex items-center justify-between mb-2">
-                <span class="text-sm text-gray-500">Paid</span>
+                <span class="text-sm text-gray-800">Paid</span>
                 <span class="text-sm font-black text-emerald-600">{{ $pct }}%</span>
             </div>
             <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-3">
@@ -100,15 +100,15 @@
             <div class="grid grid-cols-3 gap-3 text-center">
                 <div class="bg-emerald-50 rounded-xl p-2">
                     <p class="text-sm font-black text-emerald-700">${{ number_format($loan->amount_paid, 0) }}</p>
-                    <p class="text-xs text-gray-400">Paid</p>
+                    <p class="text-xs text-gray-800">Paid</p>
                 </div>
                 <div class="bg-red-50 rounded-xl p-2">
                     <p class="text-sm font-black text-red-600">${{ number_format($loan->amount_remaining, 0) }}</p>
-                    <p class="text-xs text-gray-400">Remaining</p>
+                    <p class="text-xs text-gray-800">Remaining</p>
                 </div>
                 <div class="bg-gray-50 rounded-xl p-2">
                     <p class="text-sm font-black text-gray-900">{{ $loan->installments_paid }}/{{ $loan->tenure_months }}</p>
-                    <p class="text-xs text-gray-400">Installments</p>
+                    <p class="text-xs text-gray-800">Installments</p>
                 </div>
             </div>
         </div>
@@ -146,15 +146,15 @@
                     $isOverdue = $rep->status === 'pending' && $rep->due_date->isPast();
                     @endphp
                     <tr class="{{ $isOverdue ? 'bg-red-50/30' : '' }}">
-                        <td class="text-sm font-bold text-gray-500">{{ $rep->installment_number }}</td>
+                        <td class="text-sm font-bold text-gray-800">{{ $rep->installment_number }}</td>
                         <td class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-700' }}">
                             {{ $rep->due_date->format('M j, Y') }}
                             @if($isOverdue)<span class="block text-xs text-red-400">Overdue</span>@endif
                         </td>
                         <td class="text-sm text-gray-700">${{ number_format($rep->principal_component, 2) }}</td>
-                        <td class="text-sm text-gray-500">${{ number_format($rep->interest_component, 2) }}</td>
+                        <td class="text-sm text-gray-800">${{ number_format($rep->interest_component, 2) }}</td>
                         <td class="text-sm font-bold text-gray-900">${{ number_format($rep->emi_amount, 2) }}</td>
-                        <td class="text-sm text-gray-500">${{ number_format($rep->balance_after, 2) }}</td>
+                        <td class="text-sm text-gray-800">${{ number_format($rep->balance_after, 2) }}</td>
                         <td>
                             <span class="{{ $repColors[$rep->status] ?? 'lmt-badge-gray' }} text-xs">
                                 {{ $rep->paid_date ? $rep->paid_date->format('M j') : ucfirst($rep->status) }}
@@ -172,7 +172,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-10 text-gray-400">
+                        <td colspan="8" class="text-center py-10 text-gray-800">
                             Schedule will be generated upon disbursement
                         </td>
                     </tr>

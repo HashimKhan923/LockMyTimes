@@ -18,7 +18,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-xl font-black text-gray-900">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -32,7 +32,7 @@
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
               {{ $tab === $t
                   ? 'border-brand-500 text-brand-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                  : 'border-transparent text-gray-800 hover:text-gray-700' }}">
         {{ $label }}
         @if($t === 'reviews' && $stats['pending_reviews'] > 0)
         <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $stats['pending_reviews'] }}</span>
@@ -87,7 +87,7 @@
                             <div class="lmt-avatar-sm font-bold text-xs">{{ substr($review->employee->first_name??'E',0,1) }}</div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $review->employee->full_name ?? '—' }}</p>
-                                <p class="text-xs text-gray-400">{{ $review->employee->department?->name }}</p>
+                                <p class="text-xs text-gray-800">{{ $review->employee->department?->name }}</p>
                             </div>
                         </div>
                     </td>
@@ -113,7 +113,7 @@
                             <span class="text-xs font-bold ml-1">{{ number_format($review->overall_rating,1) }}</span>
                         </div>
                         @else
-                        <span class="text-xs text-gray-400">Not rated</span>
+                        <span class="text-xs text-gray-800">Not rated</span>
                         @endif
                     </td>
                     <td>
@@ -132,8 +132,8 @@
                 <tr>
                     <td colspan="8" class="text-center py-14">
                         <i data-lucide="clipboard-list" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="text-gray-400">No performance reviews yet</p>
-                        <p class="text-sm text-gray-300 mt-1">Create a review cycle to get started</p>
+                        <p class="text-gray-800">No performance reviews yet</p>
+                        <p class="text-sm text-gray-800 mt-1">Create a review cycle to get started</p>
                     </td>
                 </tr>
                 @endforelse
@@ -186,13 +186,13 @@
                     <td>
                         <p class="font-semibold text-gray-900 text-sm max-w-48 truncate">{{ $goal->title }}</p>
                         @if($goal->key_results)
-                        <p class="text-xs text-gray-400 mt-0.5">{{ count((array)$goal->key_results) }} key results</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ count((array)$goal->key_results) }} key results</p>
                         @endif
                     </td>
                     <td>
                         @if($goal->category)
                         <span class="lmt-badge-gray text-xs">{{ $goal->category }}</span>
-                        @else<span class="text-gray-300 text-xs">—</span>@endif
+                        @else<span class="text-gray-800 text-xs">—</span>@endif
                     </td>
                     <td>
                         <span class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-600' }}">
@@ -225,7 +225,7 @@
                                   method="POST" onsubmit="return confirm('Delete this goal?')">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </form>
@@ -236,7 +236,7 @@
                 <tr>
                     <td colspan="7" class="text-center py-14">
                         <i data-lucide="target" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="text-gray-400">No goals set yet</p>
+                        <p class="text-gray-800">No goals set yet</p>
                     </td>
                 </tr>
                 @endforelse
@@ -268,7 +268,7 @@
               onsubmit="return confirm('Remove this kudo?')">
             @csrf @method('DELETE')
             <button type="submit"
-                    class="w-7 h-7 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors">
+                    class="w-7 h-7 rounded-lg text-gray-800 hover:text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors">
                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
             </button>
         </form>
@@ -287,9 +287,9 @@
                 <div class="lmt-avatar-sm font-bold text-xs">
                     {{ substr($kudo->fromEmployee->first_name??'?',0,1) }}
                 </div>
-                <span class="text-xs text-gray-500">{{ $kudo->fromEmployee->first_name ?? '?' }}</span>
+                <span class="text-xs text-gray-800">{{ $kudo->fromEmployee->first_name ?? '?' }}</span>
             </div>
-            <i data-lucide="arrow-right" class="w-4 h-4 text-gray-300"></i>
+            <i data-lucide="arrow-right" class="w-4 h-4 text-gray-800"></i>
             <div class="flex items-center gap-2">
                 <span class="text-xs font-bold text-brand-600">{{ $kudo->toEmployee->first_name ?? '?' }}</span>
                 <div class="lmt-avatar-sm font-bold text-xs" style="background:linear-gradient(135deg,#6C7DF7,#4A5BE8);">
@@ -297,13 +297,13 @@
                 </div>
             </div>
         </div>
-        <p class="text-xs text-gray-300 text-right mt-2">{{ $kudo->created_at->diffForHumans() }}</p>
+        <p class="text-xs text-gray-800 text-right mt-2">{{ $kudo->created_at->diffForHumans() }}</p>
     </div>
     @empty
     <div class="lmt-card text-center py-14 md:col-span-3">
         <p class="text-4xl mb-3"></p>
-        <p class="font-semibold text-gray-400">No kudos yet</p>
-        <p class="text-sm text-gray-300 mt-1">Be the first to recognise a team member!</p>
+        <p class="font-semibold text-gray-800">No kudos yet</p>
+        <p class="text-sm text-gray-800 mt-1">Be the first to recognise a team member!</p>
         <button onclick="openModal('add-kudo-modal')"
                 class="lmt-btn-primary lmt-btn-sm inline-flex mt-4">
             <i data-lucide="star" class="w-4 h-4"></i> Give First Kudos
@@ -329,7 +329,7 @@
         <div class="flex items-start justify-between mb-3">
             <div>
                 <h3 class="font-black text-gray-900">{{ $cycle->name }}</h3>
-                <p class="text-xs text-gray-400 mt-0.5 capitalize">{{ str_replace('_',' ',$cycle->type) }}</p>
+                <p class="text-xs text-gray-800 mt-0.5 capitalize">{{ str_replace('_',' ',$cycle->type) }}</p>
             </div>
             <span class="{{ $cycle->status === 'active' ? 'lmt-badge-green' : 'lmt-badge-gray' }} text-xs">
                 {{ ucfirst($cycle->status) }}
@@ -338,25 +338,25 @@
         <div class="grid grid-cols-2 gap-2 text-xs mb-3">
             <div class="bg-gray-50 rounded-lg p-2 text-center">
                 <p class="font-black text-gray-900 text-base">{{ $cycle->reviews()->count() }}</p>
-                <p class="text-gray-400">Reviews</p>
+                <p class="text-gray-800">Reviews</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-2 text-center">
                 <p class="font-black text-emerald-600 text-base">{{ $cycle->reviews()->where('status','completed')->count() }}</p>
-                <p class="text-gray-400">Completed</p>
+                <p class="text-gray-800">Completed</p>
             </div>
         </div>
-        <div class="text-xs text-gray-400 space-y-1">
+        <div class="text-xs text-gray-800 space-y-1">
             <p> {{ $cycle->start_date?->format('M j') }} – {{ $cycle->end_date?->format('M j, Y') }}</p>
             <p>⏰ Due: {{ $cycle->due_date?->format('M j, Y') }}</p>
         </div>
         @if($cycle->description)
-        <p class="text-xs text-gray-400 mt-2">{{ $cycle->description }}</p>
+        <p class="text-xs text-gray-800 mt-2">{{ $cycle->description }}</p>
         @endif
     </div>
     @empty
     <div class="lmt-card text-center py-12 md:col-span-3">
         <i data-lucide="refresh-cw" class="w-8 h-8 text-gray-200 mx-auto mb-3"></i>
-        <p class="text-gray-400">No review cycles created yet</p>
+        <p class="text-gray-800">No review cycles created yet</p>
     </div>
     @endforelse
 </div>
@@ -504,9 +504,9 @@
                        class="w-full h-2 rounded-full appearance-none bg-gray-200 cursor-pointer"
                        oninput="document.getElementById('progress-val').textContent=this.value+'%'"/>
                 <div class="flex justify-between mt-2">
-                    <span class="text-xs text-gray-400">0%</span>
+                    <span class="text-xs text-gray-800">0%</span>
                     <span class="text-sm font-black text-brand-600" id="progress-val">0%</span>
-                    <span class="text-xs text-gray-400">100%</span>
+                    <span class="text-xs text-gray-800">100%</span>
                 </div>
             </div>
             <div class="flex gap-3">
@@ -521,7 +521,7 @@
 <div id="add-kudo-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
         <h3 class="font-black text-gray-900 mb-1">Give Kudos </h3>
-        <p class="text-sm text-gray-400 mb-5">Recognise a team member's great work</p>
+        <p class="text-sm text-gray-800 mb-5">Recognise a team member's great work</p>
         <form action="{{ route('admin.performance.kudos.store', $tenant) }}" method="POST" class="space-y-4">
             @csrf
             <div>

@@ -99,7 +99,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -114,12 +114,12 @@
         <div class="flex items-end gap-2 h-36">
             @foreach($payrollTrend as $m)
             <div class="flex-1 flex flex-col items-center gap-1">
-                <span class="text-[10px] text-gray-400">
+                <span class="text-[10px] text-gray-800">
                     {{ $m['amount'] > 0 ? '$'.number_format($m['amount']/1000,0).'k' : '' }}
                 </span>
                 <div class="w-full rounded-t-lg lmt-gradient-bg transition-all"
                      style="height:{{ max(4, round($m['amount']/$maxPay*100)) }}%; min-height:4px"></div>
-                <span class="text-[10px] text-gray-400 font-semibold">{{ $m['label'] }}</span>
+                <span class="text-[10px] text-gray-800 font-semibold">{{ $m['label'] }}</span>
             </div>
             @endforeach
         </div>
@@ -161,7 +161,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -249,7 +249,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -278,7 +278,7 @@
                 <tr>
                     <td>
                         <p class="font-semibold text-gray-900 text-sm">{{ $row['name'] }}</p>
-                        <p class="text-xs text-gray-400">{{ $row['department'] }}</p>
+                        <p class="text-xs text-gray-800">{{ $row['department'] }}</p>
                     </td>
                     <td class="text-center text-sm font-bold text-emerald-600">{{ $row['present'] }}</td>
                     <td class="text-center text-sm font-bold text-red-500">{{ $row['absent'] }}</td>
@@ -295,7 +295,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="text-center py-10 text-gray-400">No attendance data for this period.</td></tr>
+                <tr><td colspan="6" class="text-center py-10 text-gray-800">No attendance data for this period.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -324,7 +324,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-lg font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -346,7 +346,7 @@
                     <td class="text-sm text-gray-600">{{ $m['count'] }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="text-center py-8 text-gray-400">No payroll runs in period.</td></tr>
+                <tr><td colspan="4" class="text-center py-8 text-gray-800">No payroll runs in period.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -366,7 +366,7 @@
                     <td class="text-sm font-bold text-emerald-600">${{ number_format($d['total'],0) }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="text-center py-8 text-gray-400">No data.</td></tr>
+                <tr><td colspan="4" class="text-center py-8 text-gray-800">No data.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -390,7 +390,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -427,7 +427,7 @@
                 @foreach($topTakers as $t)
                 <tr>
                     <td class="text-sm font-semibold text-gray-900">{{ $t['name'] }}</td>
-                    <td class="text-xs text-gray-500">{{ $t['dept'] }}</td>
+                    <td class="text-xs text-gray-800">{{ $t['dept'] }}</td>
                     <td class="text-center text-sm font-bold text-gray-900">{{ $t['count'] }}</td>
                     <td class="text-center text-sm font-bold text-brand-600">{{ $t['days'] }}</td>
                 </tr>
@@ -454,7 +454,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -519,7 +519,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -565,7 +565,7 @@
             @endforeach
         </div>
         @else
-        <p class="text-sm text-gray-400 text-center py-8">No source data available.</p>
+        <p class="text-sm text-gray-800 text-center py-8">No source data available.</p>
         @endif
     </div>
 </div>
@@ -587,7 +587,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -650,7 +650,7 @@
             <i data-lucide="{{ $icon }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $label }}</p>
+            <p class="text-xs text-gray-800">{{ $label }}</p>
             <p class="text-xl font-black text-gray-900">{{ $value }}</p>
         </div>
     </div>
@@ -672,7 +672,7 @@
                     <td class="text-center text-sm text-gray-700">{{ $t['avg_score'] ? $t['avg_score'].'%' : '—' }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="text-center py-8 text-gray-400">No training data.</td></tr>
+                <tr><td colspan="4" class="text-center py-8 text-gray-800">No training data.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -691,7 +691,7 @@
                     <td class="text-center text-sm font-bold text-emerald-600">{{ $d['completed'] }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="3" class="text-center py-8 text-gray-400">No data.</td></tr>
+                <tr><td colspan="3" class="text-center py-8 text-gray-800">No data.</td></tr>
                 @endforelse
             </tbody>
         </table>

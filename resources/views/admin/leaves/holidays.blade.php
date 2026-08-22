@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Holiday Calendar</h2>
-        <p class="text-sm text-gray-400 mt-0.5">{{ $holidays->count() }} holidays in {{ $year }}</p>
+        <p class="text-sm text-gray-800 mt-0.5">{{ $holidays->count() }} holidays in {{ $year }}</p>
     </div>
     <div class="flex items-center gap-3">
         <form method="GET" class="flex items-center gap-2">
@@ -65,7 +65,7 @@ $typeColors = [
                         <div>
                             <p class="font-semibold text-gray-900 text-sm">{{ $holiday->name }}</p>
                             @if($holiday->description)
-                            <p class="text-xs text-gray-400">{{ $holiday->description }}</p>
+                            <p class="text-xs text-gray-800">{{ $holiday->description }}</p>
                             @endif
                         </div>
                     </div>
@@ -86,9 +86,9 @@ $typeColors = [
                     @if($holiday->date->isToday())
                     <span class="lmt-badge-brand text-xs">Today</span>
                     @elseif(!$isPast)
-                    <span class="text-xs text-gray-500">In {{ today()->diffInDays($holiday->date) }} days</span>
+                    <span class="text-xs text-gray-800">In {{ today()->diffInDays($holiday->date) }} days</span>
                     @else
-                    <span class="text-xs text-gray-400">Past</span>
+                    <span class="text-xs text-gray-800">Past</span>
                     @endif
                 </td>
                 <td>
@@ -107,7 +107,7 @@ $typeColors = [
             <tr>
                 <td colspan="7" class="text-center py-14">
                     <i data-lucide="calendar" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                    <p class="text-gray-400">No holidays added for {{ $year }}</p>
+                    <p class="text-gray-800">No holidays added for {{ $year }}</p>
                 </td>
             </tr>
             @endforelse

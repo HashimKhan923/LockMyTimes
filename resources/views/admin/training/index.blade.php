@@ -18,7 +18,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-xl font-black text-gray-900">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -30,7 +30,7 @@
     @foreach(['courses'=>' Courses','enrollments'=>' Enrollments','certifications'=>' Certifications'] as $t=>$label)
     <a href="{{ route('admin.training.index', $tenant) }}?tab={{ $t }}"
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
-              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-800 hover:text-gray-700' }}">
         {{ $label }}
     </a>
     @endforeach
@@ -108,10 +108,10 @@
         <div class="p-4">
             <h3 class="font-black text-gray-900 mb-1 line-clamp-2">{{ $training->title }}</h3>
             @if($training->instructor)
-            <p class="text-xs text-gray-400 mb-2">by {{ $training->instructor }}</p>
+            <p class="text-xs text-gray-800 mb-2">by {{ $training->instructor }}</p>
             @endif
 
-            <div class="flex flex-wrap gap-3 text-xs text-gray-500 mb-3">
+            <div class="flex flex-wrap gap-3 text-xs text-gray-800 mb-3">
                 <span class="flex items-center gap-1">
                     <i data-lucide="{{ $typeIcons[$training->type] ?? 'book-open' }}" class="w-3.5 h-3.5"></i>
                     {{ ucfirst(str_replace('_',' ',$training->type)) }}
@@ -132,7 +132,7 @@
 
             {{-- Dates --}}
             @if($training->start_date)
-            <p class="text-xs text-gray-400 mb-3">
+            <p class="text-xs text-gray-800 mb-3">
                 <i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>
                 {{ $training->start_date->format('M j, Y') }}
                 @if($training->end_date && $training->end_date->ne($training->start_date))
@@ -143,7 +143,7 @@
 
             {{-- Enrollment bar --}}
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs text-gray-400">
+                <span class="text-xs text-gray-800">
                     {{ $training->enrollments_count }} enrolled
                     @if($training->max_participants)
                     / {{ $training->max_participants }}
@@ -175,7 +175,7 @@
     @empty
     <div class="lmt-card text-center py-16 md:col-span-3">
         <i data-lucide="book-open" class="w-12 h-12 text-gray-200 mx-auto mb-4"></i>
-        <p class="font-black text-gray-400 text-lg">No courses yet</p>
+        <p class="font-black text-gray-800 text-lg">No courses yet</p>
         <button onclick="openModal('add-training-modal')" class="lmt-btn-primary lmt-btn-sm inline-flex mt-4">
             <i data-lucide="plus" class="w-4 h-4"></i> Create Course
         </button>
@@ -221,15 +221,15 @@
                             <div class="lmt-avatar-sm font-bold text-xs">{{ substr($en->employee->first_name??'E',0,1) }}</div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $en->employee->full_name ?? '—' }}</p>
-                                <p class="text-xs text-gray-400">{{ $en->employee->department?->name }}</p>
+                                <p class="text-xs text-gray-800">{{ $en->employee->department?->name }}</p>
                             </div>
                         </div>
                     </td>
                     <td>
                         <p class="font-semibold text-gray-900 text-sm max-w-40 truncate">{{ $en->training->title ?? '—' }}</p>
-                        <p class="text-xs text-gray-400 capitalize">{{ str_replace('_',' ',$en->training->category??'') }}</p>
+                        <p class="text-xs text-gray-800 capitalize">{{ str_replace('_',' ',$en->training->category??'') }}</p>
                     </td>
-                    <td class="text-xs text-gray-500">{{ $en->enrolled_at->format('M j, Y') }}</td>
+                    <td class="text-xs text-gray-800">{{ $en->enrolled_at->format('M j, Y') }}</td>
                     <td class="min-w-28">
                         <div class="flex items-center gap-2">
                             <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -244,7 +244,7 @@
                             {{ number_format($en->score,1) }}%
                         </span>
                         @else
-                        <span class="text-gray-300 text-sm">—</span>
+                        <span class="text-gray-800 text-sm">—</span>
                         @endif
                     </td>
                     <td>
@@ -252,7 +252,7 @@
                             {{ str_replace('_',' ',$en->status) }}
                         </span>
                         @if($en->completed_at)
-                        <p class="text-xs text-gray-400 mt-0.5">{{ $en->completed_at->format('M j') }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">{{ $en->completed_at->format('M j') }}</p>
                         @endif
                     </td>
                     <td>
@@ -263,7 +263,7 @@
                             @endfor
                         </div>
                         @else
-                        <span class="text-gray-300 text-xs">—</span>
+                        <span class="text-gray-800 text-xs">—</span>
                         @endif
                     </td>
                     <td>
@@ -277,7 +277,7 @@
                 <tr>
                     <td colspan="8" class="text-center py-14">
                         <i data-lucide="users" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="text-gray-400">No enrollments yet</p>
+                        <p class="text-gray-800">No enrollments yet</p>
                     </td>
                 </tr>
                 @endforelse
@@ -330,7 +330,7 @@
                     <td>
                         <p class="font-semibold text-gray-900 text-sm">{{ $cert->name }}</p>
                         @if($cert->credential_id)
-                        <p class="text-xs text-gray-400 font-mono">{{ $cert->credential_id }}</p>
+                        <p class="text-xs text-gray-800 font-mono">{{ $cert->credential_id }}</p>
                         @endif
                     </td>
                     <td class="text-sm text-gray-600">{{ $cert->issuer }}</td>
@@ -344,7 +344,7 @@
                         <span class="block text-xs text-amber-500">Expires in {{ now()->diffInDays($cert->expiry_date) }}d</span>
                         @endif
                         @else
-                        <span class="text-gray-400 text-sm">No expiry</span>
+                        <span class="text-gray-800 text-sm">No expiry</span>
                         @endif
                     </td>
                     <td>
@@ -371,7 +371,7 @@
                                   method="POST" onsubmit="return confirm('Remove certification?')">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </form>
@@ -382,7 +382,7 @@
                 <tr>
                     <td colspan="7" class="text-center py-14">
                         <i data-lucide="award" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="text-gray-400">No certifications recorded</p>
+                        <p class="text-gray-800">No certifications recorded</p>
                     </td>
                 </tr>
                 @endforelse
@@ -487,7 +487,7 @@
 <div id="enroll-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
         <h3 class="font-black text-gray-900 mb-1">Enroll Employees</h3>
-        <p class="text-sm text-gray-400 mb-5" id="enroll-training-name"></p>
+        <p class="text-sm text-gray-800 mb-5" id="enroll-training-name"></p>
         <form id="enroll-form" method="POST" class="space-y-4">
             @csrf
             <div>
@@ -499,7 +499,7 @@
                         <div class="lmt-avatar-sm font-bold text-xs flex-shrink-0">{{ substr($emp->first_name,0,1) }}</div>
                         <div>
                             <p class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</p>
-                            <p class="text-xs text-gray-400">{{ $emp->department?->name }}</p>
+                            <p class="text-xs text-gray-800">{{ $emp->department?->name }}</p>
                         </div>
                     </label>
                     @endforeach

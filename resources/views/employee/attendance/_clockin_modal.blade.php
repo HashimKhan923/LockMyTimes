@@ -8,7 +8,7 @@
             <h3 class="text-lg font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
                 <span x-text="clockMode === 'in' ? 'Clock In' : 'Clock Out'"></span>
             </h3>
-            <button @click="closeClockModal()" class="text-gray-400 hover:text-gray-600">
+            <button @click="closeClockModal()" class="text-gray-800 hover:text-gray-600">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
@@ -16,12 +16,12 @@
         {{-- Method tabs --}}
         <div class="inline-flex p-1 bg-gray-100 dark:bg-slate-800 rounded-xl text-xs font-bold mb-5">
             <button @click="clockTab='web'"
-                    :class="clockTab==='web' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
+                    :class="clockTab==='web' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-800'"
                     class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
                 <i data-lucide="laptop" class="w-3.5 h-3.5"></i> Web
             </button>
             <button @click="clockTab='qr'"
-                    :class="clockTab==='qr' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500'"
+                    :class="clockTab==='qr' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-800'"
                     class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
                 <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> QR Code
             </button>
@@ -36,7 +36,7 @@
                 <p class="font-bold" x-show="!clockGeo.lat && !clockGeo.err">Getting your location…</p>
                 <p class="font-bold" x-show="clockGeo.lat && !clockGeo.err">
                     Location captured
-                    <span class="font-mono text-[10px] ml-1 text-gray-400" x-text="`(±${clockGeo.accuracy}m)`"></span>
+                    <span class="font-mono text-[10px] ml-1 text-gray-800" x-text="`(±${clockGeo.accuracy}m)`"></span>
                 </p>
                 <p class="font-bold" x-show="clockGeo.err" x-text="clockGeo.err"></p>
             </div>
@@ -73,7 +73,7 @@
 
         {{-- Notes --}}
         <div class="mt-4">
-            <label class="lmt-label">Notes <span class="text-gray-400 font-normal">(optional)</span></label>
+            <label class="lmt-label">Notes <span class="text-gray-800 font-normal">(optional)</span></label>
             <input type="text" class="lmt-input" x-model="clockNotes" maxlength="255"
                    placeholder="e.g. Working from client site today"/>
         </div>

@@ -271,12 +271,12 @@
                 </div>
                 <div class="nav-label flex-1 min-w-0">
                     <p class="text-xs font-bold text-gray-900 truncate">{{ Auth::user()->name ?? 'Admin' }}</p>
-                    <p class="text-xs text-gray-400 truncate">{{ Auth::user()->email ?? '' }}</p>
+                    <p class="text-xs text-gray-800 truncate">{{ Auth::user()->email ?? '' }}</p>
                 </div>
                 <form action="{{ route('admin.logout', $tenantSlug) }}" method="POST" class="nav-label">
                     @csrf
                     <button type="submit" title="Sign out"
-                            class="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-red-50">
+                            class="text-gray-800 hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-red-50">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                     </button>
                 </form>
@@ -297,19 +297,19 @@
                 {{-- Sidebar toggle (desktop) --}}
                 <button @click="sidebarOpen=!sidebarOpen"
                         class="hidden lg:flex w-9 h-9 rounded-xl hover:bg-gray-100 items-center justify-center transition-colors">
-                    <i data-lucide="panel-left" class="w-5 h-5 text-gray-500"></i>
+                    <i data-lucide="panel-left" class="w-5 h-5 text-gray-800"></i>
                 </button>
 
                 {{-- Hamburger (mobile) --}}
                 <button @click="mobileOpen=!mobileOpen"
                         class="lg:hidden w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors">
-                    <i data-lucide="menu" class="w-5 h-5 text-gray-500"></i>
+                    <i data-lucide="menu" class="w-5 h-5 text-gray-800"></i>
                 </button>
 
                 {{-- Breadcrumb --}}
                 <div class="flex items-center gap-2 text-sm">
-                    <span class="hidden sm:block text-gray-400 font-medium">{{ $currentTenant->company_name ?? '' }}</span>
-                    <i data-lucide="chevron-right" class="hidden sm:block w-4 h-4 text-gray-300"></i>
+                    <span class="hidden sm:block text-gray-800 font-medium">{{ $currentTenant->company_name ?? '' }}</span>
+                    <i data-lucide="chevron-right" class="hidden sm:block w-4 h-4 text-gray-800"></i>
                     <span class="font-bold text-gray-900">@yield('page-title','Dashboard')</span>
                 </div>
             </div>
@@ -320,7 +320,7 @@
                 <!-- <div x-data="quickSearch('{{ route('admin.search', $tenantSlug) }}')" @keydown.window="onKey($event)">
                     {{-- Trigger button --}}
                   <button @click="open=true; $nextTick(()=>$refs.input.focus())"
-                            class="hidden md:flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-sm text-gray-400 cursor-pointer hover:border-brand-300 transition-colors">
+                            class="hidden md:flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-sm text-gray-800 cursor-pointer hover:border-brand-300 transition-colors">
                         <i data-lucide="search" class="w-4 h-4"></i>
                         <span class="text-xs">Quick search…</span>
                         <kbd class="text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded font-mono ml-2">⌘K</kbd>
@@ -329,7 +329,7 @@
                     {{-- Mobile trigger --}}
                     <button @click="open=true; $nextTick(()=>$refs.input.focus())"
                             class="md:hidden w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors">
-                        <i data-lucide="search" class="w-4 h-4 text-gray-500"></i>
+                        <i data-lucide="search" class="w-4 h-4 text-gray-800"></i>
                     </button>
 
                     {{-- Modal overlay --}}
@@ -346,19 +346,19 @@
 
                             {{-- Input row --}}
                             <div class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100 dark:border-slate-700">
-                                <i data-lucide="search" class="w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                                <i data-lucide="search" class="w-5 h-5 text-gray-800 flex-shrink-0"></i>
                                 <input x-ref="input" type="text" x-model="query"
                                        @input.debounce.250ms="doSearch()"
                                        placeholder="Search employees, assets, documents, jobs…"
                                        class="flex-1 bg-transparent outline-none text-sm text-gray-900 dark:text-slate-100 placeholder-gray-400"/>
                                 <button @click="close()"
-                                        class="text-[10px] font-mono bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-400 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600">ESC</button>
+                                        class="text-[10px] font-mono bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-400 px-1.5 py-0.5 rounded border border-gray-200 dark:border-slate-600">ESC</button>
                             </div>
 
                             {{-- Results --}}
                             <div class="max-h-96 overflow-y-auto">
                                 {{-- Loading --}}
-                                <div x-show="loading" class="flex items-center justify-center py-10 gap-3 text-sm text-gray-400">
+                                <div x-show="loading" class="flex items-center justify-center py-10 gap-3 text-sm text-gray-800">
                                     <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
@@ -368,14 +368,14 @@
 
                                 {{-- Empty --}}
                                 <div x-show="!loading && query.length >= 2 && results.length === 0"
-                                     class="flex flex-col items-center py-10 text-sm text-gray-400 gap-2">
-                                    <i data-lucide="search-x" class="w-8 h-8 text-gray-300"></i>
+                                     class="flex flex-col items-center py-10 text-sm text-gray-800 gap-2">
+                                    <i data-lucide="search-x" class="w-8 h-8 text-gray-800"></i>
                                     No results for "<span x-text="query" class="font-semibold"></span>"
                                 </div>
 
                                 {{-- Hint --}}
                                 <div x-show="!loading && query.length < 2"
-                                     class="px-4 py-6 text-xs text-gray-400 dark:text-slate-500 text-center">
+                                     class="px-4 py-6 text-xs text-gray-800 dark:text-slate-500 text-center">
                                     Type at least 2 characters to search
                                 </div>
 
@@ -389,15 +389,15 @@
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <p class="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate" x-text="item.title"></p>
-                                            <p class="text-xs text-gray-400 dark:text-slate-400 truncate" x-text="item.subtitle"></p>
+                                            <p class="text-xs text-gray-800 dark:text-slate-400 truncate" x-text="item.subtitle"></p>
                                         </div>
-                                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 flex-shrink-0" x-text="item.type"></span>
+                                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-400 flex-shrink-0" x-text="item.type"></span>
                                     </a>
                                 </template>
                             </div>
 
                             {{-- Footer --}}
-                            <div class="px-4 py-2 border-t border-gray-100 dark:border-slate-700 flex items-center gap-4 text-[11px] text-gray-400">
+                            <div class="px-4 py-2 border-t border-gray-100 dark:border-slate-700 flex items-center gap-4 text-[11px] text-gray-800">
                                 <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded"></kbd> navigate</span>
                                 <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded"></kbd> open</span>
                                 <span><kbd class="font-mono bg-gray-100 dark:bg-slate-700 px-1 rounded">ESC</kbd> close</span>
@@ -409,7 +409,7 @@
                 {{-- Dark mode --}}
                 <button @click="darkMode=!darkMode"
                         class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors">
-                    <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-500"></i>
+                    <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-4 h-4 text-gray-800"></i>
                 </button>
 
                 {{-- Notifications --}}
@@ -420,7 +420,7 @@
                     {{-- Bell button --}}
                     <button @click="open=!open; if(open) loadFeed()"
                             class="w-9 h-9 rounded-xl hover:bg-gray-100 flex items-center justify-center transition-colors relative">
-                        <i data-lucide="bell" class="w-4 h-4 text-gray-500"></i>
+                        <i data-lucide="bell" class="w-4 h-4 text-gray-800"></i>
                         <span x-show="unread > 0" x-cloak
                               class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full text-white text-[10px] font-bold flex items-center justify-center px-1"
                               style="background:var(--brand-500);" x-text="unread > 9 ? '9+' : unread"></span>
@@ -439,7 +439,7 @@
                             <div class="flex items-center gap-2">
                                 <span x-show="unread > 0" x-cloak class="lmt-badge-brand text-xs" x-text="unread + ' new'"></span>
                                 <button x-show="unread > 0" x-cloak @click="markAllRead()"
-                                        class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Mark all read</button>
+                                        class="text-xs text-gray-800 hover:text-gray-600 transition-colors">Mark all read</button>
                             </div>
                         </div>
 
@@ -447,7 +447,7 @@
                         <div class="max-h-80 overflow-y-auto">
 
                             {{-- Loading --}}
-                            <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-gray-400 gap-2">
+                            <div x-show="loading" class="flex items-center justify-center py-8 text-sm text-gray-800 gap-2">
                                 <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
@@ -457,8 +457,8 @@
 
                             {{-- Empty --}}
                             <div x-show="!loading && items.length === 0"
-                                 class="flex flex-col items-center py-10 gap-2 text-sm text-gray-400">
-                                <i data-lucide="bell-off" class="w-8 h-8 text-gray-300"></i>
+                                 class="flex flex-col items-center py-10 gap-2 text-sm text-gray-800">
+                                <i data-lucide="bell-off" class="w-8 h-8 text-gray-800"></i>
                                 No notifications
                             </div>
 
@@ -473,7 +473,7 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-semibold text-gray-900 dark:text-slate-100 leading-snug" x-text="item.title"></p>
-                                        <p class="text-xs text-gray-400 mt-0.5" x-text="item.time"></p>
+                                        <p class="text-xs text-gray-800 mt-0.5" x-text="item.time"></p>
                                     </div>
                                     <span x-show="item.unread" class="w-2 h-2 rounded-full flex-shrink-0 mt-2" style="background:var(--brand-500);"></span>
                                 </div>
@@ -501,7 +501,7 @@
                         <span class="hidden md:block text-sm font-semibold text-gray-700">
                             {{ Auth::user()->name ?? 'Admin' }}
                         </span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-800"></i>
                     </button>
                     <div x-show="open" x-cloak
                          x-transition:enter="transition ease-out duration-200"
@@ -510,16 +510,16 @@
                          class="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-pop border border-gray-100 overflow-hidden z-50 py-1">
                         <div class="px-4 py-3 border-b border-gray-100">
                             <p class="text-sm font-bold text-gray-900">{{ Auth::user()->name ?? '' }}</p>
-                            <p class="text-xs text-gray-400 truncate">{{ Auth::user()->email ?? '' }}</p>
+                            <p class="text-xs text-gray-800 truncate">{{ Auth::user()->email ?? '' }}</p>
                         </div>
                         <a href="{{ route('admin.profile', $tenantSlug) }}"
                            class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-sm text-gray-700">
-                            <i data-lucide="user" class="w-4 h-4 text-gray-400"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-gray-800"></i>
                             My Profile
                         </a>
                         <a href="{{ route('admin.settings.index', $tenantSlug) }}"
                            class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-sm text-gray-700">
-                            <i data-lucide="settings" class="w-4 h-4 text-gray-400"></i>
+                            <i data-lucide="settings" class="w-4 h-4 text-gray-800"></i>
                             Settings
                         </a>
                         <div class="border-t border-gray-100 mt-1 pt-1">

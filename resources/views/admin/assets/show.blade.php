@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.assets.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Assets
     </a>
@@ -48,7 +48,7 @@
                         <i data-lucide="{{ $asset->category->icon ?? 'package' }}"
                            class="w-8 h-8" style="color:{{ $asset->category->color ?? '#6C7DF7' }}"></i>
                     </div>
-                    <p class="text-sm text-gray-400">{{ $asset->category->name }}</p>
+                    <p class="text-sm text-gray-800">{{ $asset->category->name }}</p>
                 </div>
                 @endif
                 {{-- Status --}}
@@ -65,7 +65,7 @@
 
             <div class="p-5">
                 <h2 class="text-xl font-black text-gray-900 mb-1">{{ $asset->name }}</h2>
-                <p class="text-sm text-gray-400 mb-4">
+                <p class="text-sm text-gray-800 mb-4">
                     <code class="bg-gray-100 px-2 py-0.5 rounded font-mono text-xs">{{ $asset->asset_code }}</code>
                 </p>
 
@@ -79,7 +79,7 @@
                         ['Condition',  ucfirst($asset->condition)],
                     ] as [$k,$v])
                     <div class="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-none">
-                        <span class="text-xs text-gray-400">{{ $k }}</span>
+                        <span class="text-xs text-gray-800">{{ $k }}</span>
                         <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
                     </div>
                     @endforeach
@@ -99,7 +99,7 @@
                     ['Invoice #',      $asset->invoice_number ?? '—'],
                 ] as [$k,$v])
                 <div class="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-none">
-                    <span class="text-xs text-gray-400">{{ $k }}</span>
+                    <span class="text-xs text-gray-800">{{ $k }}</span>
                     <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
                 </div>
                 @endforeach
@@ -124,14 +124,14 @@
                 </div>
                 <div class="flex-1">
                     <p class="font-black text-gray-900 text-lg">{{ $ca->employee->full_name }}</p>
-                    <p class="text-sm text-gray-500">{{ $ca->employee->department?->name }} · {{ $ca->employee->position?->title }}</p>
+                    <p class="text-sm text-gray-800">{{ $ca->employee->department?->name }} · {{ $ca->employee->position?->title }}</p>
                     <p class="text-xs text-amber-700 mt-1">
                         Since {{ $ca->assigned_at->format('M j, Y') }}
                         ({{ $ca->assigned_at->diffForHumans() }})
                     </p>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs text-gray-400 mb-1">Condition at Assignment</p>
+                    <p class="text-xs text-gray-800 mb-1">Condition at Assignment</p>
                     <span class="lmt-badge-gray text-xs capitalize">{{ $ca->condition_at_assignment }}</span>
                 </div>
             </div>
@@ -159,11 +159,11 @@
                             </div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $assignment->employee->full_name ?? '—' }}</p>
-                                <p class="text-xs text-gray-400">
+                                <p class="text-xs text-gray-800">
                                     {{ $assignment->assigned_at->format('M j, Y') }}
                                     @if($assignment->returned_at)
                                      {{ $assignment->returned_at->format('M j, Y') }}
-                                    <span class="text-gray-300">({{ $assignment->assigned_at->diffInDays($assignment->returned_at) }} days)</span>
+                                    <span class="text-gray-800">({{ $assignment->assigned_at->diffInDays($assignment->returned_at) }} days)</span>
                                     @else
                                     <span class="text-amber-600 font-semibold"> Present</span>
                                     @endif
@@ -174,20 +174,20 @@
                             <div class="flex items-center gap-2 justify-end">
                                 <span class="lmt-badge-gray capitalize">{{ $assignment->condition_at_assignment }}</span>
                                 @if($assignment->condition_at_return)
-                                <i data-lucide="arrow-right" class="w-3 h-3 text-gray-300"></i>
+                                <i data-lucide="arrow-right" class="w-3 h-3 text-gray-800"></i>
                                 <span class="lmt-badge-gray capitalize">{{ $assignment->condition_at_return }}</span>
                                 @endif
                             </div>
                         </div>
                     </div>
                     @if($assignment->return_notes)
-                    <p class="text-xs text-gray-500 mt-2 pl-9">{{ $assignment->return_notes }}</p>
+                    <p class="text-xs text-gray-800 mt-2 pl-9">{{ $assignment->return_notes }}</p>
                     @endif
                 </div>
                 @empty
                 <div class="text-center py-10">
                     <i data-lucide="history" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-                    <p class="text-sm text-gray-400">No assignment history</p>
+                    <p class="text-sm text-gray-800">No assignment history</p>
                 </div>
                 @endforelse
             </div>
@@ -201,7 +201,7 @@
             <p class="text-sm text-gray-700 mb-2">{{ $asset->description }}</p>
             @endif
             @if($asset->notes)
-            <p class="text-sm text-gray-500">{{ $asset->notes }}</p>
+            <p class="text-sm text-gray-800">{{ $asset->notes }}</p>
             @endif
         </div>
         @endif

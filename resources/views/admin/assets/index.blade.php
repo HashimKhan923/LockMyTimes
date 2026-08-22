@@ -88,7 +88,7 @@
                     <i data-lucide="{{ $asset->category->icon ?? 'package' }}"
                        class="w-6 h-6" style="color:{{ $asset->category->color ?? '#6C7DF7' }}"></i>
                 </div>
-                <p class="text-xs text-gray-400">{{ $asset->category->name ?? 'Asset' }}</p>
+                <p class="text-xs text-gray-800">{{ $asset->category->name ?? 'Asset' }}</p>
             </div>
             @endif
             {{-- Status badge --}}
@@ -110,7 +110,7 @@
             <div class="flex items-start justify-between mb-2">
                 <div class="flex-1 min-w-0">
                     <p class="font-black text-gray-900 truncate">{{ $asset->name }}</p>
-                    <p class="text-xs text-gray-400 mt-0.5">
+                    <p class="text-xs text-gray-800 mt-0.5">
                         <code>{{ $asset->asset_code }}</code>
                         @if($asset->brand) · {{ $asset->brand }}@endif
                         @if($asset->model) {{ $asset->model }}@endif
@@ -120,7 +120,7 @@
 
             {{-- Condition --}}
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs text-gray-400">Condition</span>
+                <span class="text-xs text-gray-800">Condition</span>
                 <span class="text-xs font-bold capitalize {{ $conditionColors[$asset->condition] ?? 'text-gray-600' }}">
                     {{ ucfirst($asset->condition) }}
                 </span>
@@ -145,7 +145,7 @@
 
             {{-- Purchase value --}}
             @if($asset->purchase_cost)
-            <p class="text-xs text-gray-400 mb-3">
+            <p class="text-xs text-gray-800 mb-3">
                 Value: <span class="font-bold text-gray-700">${{ number_format($asset->purchase_cost, 0) }}</span>
             </p>
             @endif
@@ -176,8 +176,8 @@
     @empty
     <div class="lmt-card text-center py-16 md:col-span-4">
         <i data-lucide="package" class="w-12 h-12 text-gray-200 mx-auto mb-4"></i>
-        <p class="font-black text-gray-400 text-lg">No assets found</p>
-        <p class="text-sm text-gray-300 mt-1 mb-5">Add your first asset to get started</p>
+        <p class="font-black text-gray-800 text-lg">No assets found</p>
+        <p class="text-sm text-gray-800 mt-1 mb-5">Add your first asset to get started</p>
         <button onclick="openModal('add-asset-modal')" class="lmt-btn-primary lmt-btn-sm inline-flex">
             <i data-lucide="plus" class="w-4 h-4"></i> Add Asset
         </button>
@@ -286,7 +286,7 @@
 <div id="assign-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
         <h3 class="font-black text-gray-900 mb-1">Assign Asset</h3>
-        <p class="text-sm text-gray-400 mb-5" id="assign-asset-name"></p>
+        <p class="text-sm text-gray-800 mb-5" id="assign-asset-name"></p>
         <form id="assign-form" method="POST" class="space-y-4">
             @csrf
             <div>
@@ -329,7 +329,7 @@
 <div id="return-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
         <h3 class="font-black text-gray-900 mb-1">Return Asset</h3>
-        <p class="text-sm text-gray-400 mb-5" id="return-asset-name"></p>
+        <p class="text-sm text-gray-800 mb-5" id="return-asset-name"></p>
         <form id="return-form" method="POST" class="space-y-4">
             @csrf
             <div>

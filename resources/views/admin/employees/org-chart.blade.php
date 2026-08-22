@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Organizational Chart</h2>
-        <p class="text-sm text-gray-400 mt-0.5">{{ $employees->count() }} active employees</p>
+        <p class="text-sm text-gray-800 mt-0.5">{{ $employees->count() }} active employees</p>
     </div>
     <a href="{{ route('admin.employees.index', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
         <i data-lucide="list" class="w-4 h-4"></i>
@@ -46,7 +46,7 @@ function renderNode(emp) {
                 <p class="font-bold text-gray-900 text-xs text-center leading-tight truncate w-full text-center">
                     ${emp.first_name} ${emp.last_name}
                 </p>
-                <p class="text-gray-400 text-[10px] text-center truncate w-full mt-0.5">
+                <p class="text-gray-800 text-[10px] text-center truncate w-full mt-0.5">
                     ${emp.position?.title || 'No Position'}
                 </p>
             </a>

@@ -65,7 +65,7 @@
 <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.recruitment.index', $tenant) }}"
-           class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">
+           class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-800 hover:bg-gray-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
         </a>
         <div>
@@ -78,7 +78,7 @@
                     {{ $job->status }}
                 </span>
             </div>
-            <p class="text-xs text-gray-400 mt-0.5">
+            <p class="text-xs text-gray-800 mt-0.5">
                 @if($job->department) {{ $job->department->name }} · @endif
                 {{ str_replace('_',' ', $job->employment_type) }} ·
                 {{ str_replace('_',' ', $job->work_mode) }}
@@ -92,7 +92,7 @@
         @if($stageCounts[$st] > 0)
         <div class="text-center">
             <p class="text-sm font-black" style="color:{{ $color }}">{{ $stageCounts[$st] }}</p>
-            <p class="text-[10px] text-gray-400 capitalize">{{ $st }}</p>
+            <p class="text-[10px] text-gray-800 capitalize">{{ $st }}</p>
         </div>
         @endif
         @endforeach
@@ -147,14 +147,14 @@ $stageConfig = [
                     </div>
                     <div class="min-w-0">
                         <p class="font-bold text-gray-900 text-sm truncate leading-snug">{{ $cand->full_name }}</p>
-                        <p class="text-xs text-gray-400 truncate">{{ $cand->email }}</p>
+                        <p class="text-xs text-gray-800 truncate">{{ $cand->email }}</p>
                     </div>
                 </div>
 
                 {{-- Meta --}}
                 <div class="space-y-1">
                     @if($cand->source)
-                    <p class="text-xs text-gray-400 flex items-center gap-1">
+                    <p class="text-xs text-gray-800 flex items-center gap-1">
                         <i data-lucide="link" class="w-3 h-3"></i>
                         {{ $cand->source }}
                     </p>
@@ -166,7 +166,7 @@ $stageConfig = [
                     </p>
                     @endif
                     @if($cand->expected_salary)
-                    <p class="text-xs text-gray-400 flex items-center gap-1">
+                    <p class="text-xs text-gray-800 flex items-center gap-1">
                         <i data-lucide="dollar-sign" class="w-3 h-3"></i>
                         ${{ number_format($cand->expected_salary, 0) }}
                     </p>
@@ -183,11 +183,11 @@ $stageConfig = [
                 @endif
 
                 {{-- Applied date --}}
-                <p class="text-[10px] text-gray-300 mt-2">{{ $cand->created_at->diffForHumans() }}</p>
+                <p class="text-[10px] text-gray-800 mt-2">{{ $cand->created_at->diffForHumans() }}</p>
             </div>
             @empty
             <div class="text-center py-6">
-                <p class="text-xs text-gray-300">No candidates</p>
+                <p class="text-xs text-gray-800">No candidates</p>
             </div>
             @endforelse
         </div>
@@ -201,7 +201,7 @@ $stageConfig = [
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Add Candidate</h3>
             <button onclick="closeModal('add-candidate-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>

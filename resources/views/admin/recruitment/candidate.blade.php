@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.recruitment.show', [$tenant, $candidate->job_posting_id]) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Pipeline
     </a>
@@ -34,9 +34,9 @@
                     {{ $candidate->initials }}
                 </div>
                 <h2 class="text-xl font-black text-gray-900">{{ $candidate->full_name }}</h2>
-                <p class="text-sm text-gray-500 mt-1">{{ $candidate->email }}</p>
+                <p class="text-sm text-gray-800 mt-1">{{ $candidate->email }}</p>
                 @if($candidate->phone)
-                <p class="text-sm text-gray-400">{{ $candidate->phone }}</p>
+                <p class="text-sm text-gray-800">{{ $candidate->phone }}</p>
                 @endif
             </div>
 
@@ -52,7 +52,7 @@
                 @for($i=1;$i<=5;$i++)
                 <button onclick="setRating({{ $i }})"
                         class="w-7 h-7 rounded-full flex items-center justify-center transition-all
-                               {{ $i <= ($candidate->rating ?? 0) ? 'bg-amber-400 text-white' : 'bg-gray-100 text-gray-400' }}">
+                               {{ $i <= ($candidate->rating ?? 0) ? 'bg-amber-400 text-white' : 'bg-gray-100 text-gray-800' }}">
                     {{ $i }}
                 </button>
                 @endfor
@@ -67,7 +67,7 @@
                     ['Applied',      $candidate->created_at->format('M j, Y')],
                 ] as [$k,$v])
                 <div class="flex justify-between py-1.5 border-b border-gray-50 last:border-none">
-                    <span class="text-gray-400 font-medium">{{ $k }}</span>
+                    <span class="text-gray-800 font-medium">{{ $k }}</span>
                     <span class="text-gray-700 font-semibold text-right max-w-36 truncate">{{ $v }}</span>
                 </div>
                 @endforeach
@@ -118,10 +118,10 @@
                 @foreach($candidate->stageHistory->take(8) as $hist)
                 <div class="flex items-center gap-2 text-xs">
                     <div class="w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0"></div>
-                    <span class="text-gray-500 capitalize">{{ $hist->from_stage ?? 'start' }}</span>
-                    <i data-lucide="arrow-right" class="w-3 h-3 text-gray-300 flex-shrink-0"></i>
+                    <span class="text-gray-800 capitalize">{{ $hist->from_stage ?? 'start' }}</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3 text-gray-800 flex-shrink-0"></i>
                     <span class="font-bold text-gray-700 capitalize">{{ $hist->to_stage }}</span>
-                    <span class="text-gray-300 ml-auto">{{ $hist->created_at->diffForHumans() }}</span>
+                    <span class="text-gray-800 ml-auto">{{ $hist->created_at->diffForHumans() }}</span>
                 </div>
                 @endforeach
             </div>
@@ -164,7 +164,7 @@
                                 {{ str_replace('_',' ', $interview->status) }}
                             </span>
                         </div>
-                        <div class="flex flex-wrap gap-3 text-xs text-gray-500">
+                        <div class="flex flex-wrap gap-3 text-xs text-gray-800">
                             <span class="flex items-center gap-1">
                                 <i data-lucide="calendar" class="w-3 h-3"></i>
                                 {{ $interview->scheduled_at->format('M j, Y h:i A') }}
@@ -188,7 +188,7 @@
                         <p class="text-xs text-gray-600 mt-2 italic">"{{ $interview->feedback }}"</p>
                         @endif
                         @if($interview->recommendation)
-                        <span class="text-xs font-bold capitalize {{ $recColors[$interview->recommendation] ?? 'text-gray-500' }} mt-1 block">
+                        <span class="text-xs font-bold capitalize {{ $recColors[$interview->recommendation] ?? 'text-gray-800' }} mt-1 block">
                             Recommendation: {{ str_replace('_',' ', $interview->recommendation) }}
                         </span>
                         @endif
@@ -205,7 +205,7 @@
             @empty
             <div class="text-center py-10">
                 <i data-lucide="calendar" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-                <p class="text-sm text-gray-400">No interviews scheduled</p>
+                <p class="text-sm text-gray-800">No interviews scheduled</p>
             </div>
             @endforelse
         </div>
@@ -218,7 +218,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Move to Stage</h3>
             <button onclick="closeModal('move-stage-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -259,7 +259,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Schedule Interview</h3>
             <button onclick="closeModal('schedule-interview-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -313,7 +313,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Interview Feedback</h3>
             <button onclick="closeModal('feedback-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -372,7 +372,7 @@ function setRating(val) {
         const isActive = i < val;
         btn.className = btn.className.replace(/bg-\w+-\d+|text-\w+-\d+/g, '');
         btn.classList.add(isActive ? 'bg-amber-400' : 'bg-gray-100');
-        btn.classList.add(isActive ? 'text-white' : 'text-gray-400');
+        btn.classList.add(isActive ? 'text-white' : 'text-gray-800');
     });
 }
 

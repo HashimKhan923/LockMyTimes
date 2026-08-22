@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Salary Components</h2>
-        <p class="text-sm text-gray-400">Define earnings, deductions, and benefits</p>
+        <p class="text-sm text-gray-800">Define earnings, deductions, and benefits</p>
     </div>
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.payroll.index', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
@@ -34,7 +34,7 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','tax'=>
             <div class="flex items-center gap-3">
                 <span class="{{ $typeColors[$type] ?? 'lmt-badge-gray' }} text-xs">{{ $label }}</span>
             </div>
-            <span class="text-xs text-gray-400">{{ $grouped->get($type, collect())->count() }} components</span>
+            <span class="text-xs text-gray-800">{{ $grouped->get($type, collect())->count() }} components</span>
         </div>
         <div class="divide-y divide-gray-50">
             @forelse($grouped->get($type, collect()) as $comp)
@@ -43,9 +43,9 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','tax'=>
                     <p class="font-semibold text-gray-900 text-sm">{{ $comp->name }}</p>
                     <div class="flex items-center gap-2 mt-0.5">
                         <code class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded font-mono">{{ $comp->code }}</code>
-                        <span class="text-xs text-gray-400 capitalize">{{ $comp->calculation }}</span>
+                        <span class="text-xs text-gray-800 capitalize">{{ $comp->calculation }}</span>
                         @if($comp->default_amount)
-                        <span class="text-xs text-gray-400">
+                        <span class="text-xs text-gray-800">
                             · {{ $comp->calculation === 'percentage' ? $comp->default_amount.'%' : '$'.$comp->default_amount }}
                         </span>
                         @endif
@@ -61,11 +61,11 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','tax'=>
                     <span class="{{ $comp->is_active ? 'lmt-badge-green' : 'lmt-badge-gray' }} text-xs">
                         {{ $comp->is_active ? 'Active' : 'Off' }}
                     </span>
-                    <span class="text-xs text-gray-400">{{ $comp->employee_salary_components_count }} staff</span>
+                    <span class="text-xs text-gray-800">{{ $comp->employee_salary_components_count }} staff</span>
                 </div>
             </div>
             @empty
-            <div class="px-4 py-6 text-center text-sm text-gray-400">
+            <div class="px-4 py-6 text-center text-sm text-gray-800">
                 No {{ strtolower($label) }} defined
             </div>
             @endforelse

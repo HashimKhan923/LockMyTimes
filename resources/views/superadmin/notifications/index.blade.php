@@ -65,21 +65,21 @@
                 <form action="{{ route('superadmin.notifications.read', $notif->id) }}" method="POST">
                     @csrf @method('PATCH')
                     <button type="submit" title="Mark as read"
-                            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors text-gray-400">
+                            class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors text-gray-800">
                         <i data-lucide="check" class="w-3.5 h-3.5"></i>
                     </button>
                 </form>
                 @endif
                 @if($notif->action_url)
                 <a href="{{ $notif->action_url }}"
-                   class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors text-gray-400">
+                   class="w-7 h-7 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors text-gray-800">
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 </a>
                 @endif
                 <form action="{{ route('superadmin.notifications.destroy', $notif->id) }}" method="POST">
                     @csrf @method('DELETE')
                     <button type="submit" title="Delete"
-                            class="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center transition-colors text-gray-300 hover:text-red-400">
+                            class="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center transition-colors text-gray-800 hover:text-red-400">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
                 </form>

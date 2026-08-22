@@ -175,14 +175,14 @@
             <div class="flex items-center gap-2">
                 <a href="{{ route('employee.attendance.index', [$tenantSlug, 'month' => $prevMonth, 'view' => $view]) }}"
                    class="w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <i data-lucide="chevron-left" class="w-4 h-4 text-gray-500"></i>
+                    <i data-lucide="chevron-left" class="w-4 h-4 text-gray-800"></i>
                 </a>
                 <div class="text-base lg:text-lg font-black text-gray-900 dark:text-slate-100 min-w-[170px] text-center">
                     {{ $month->format('F Y') }}
                 </div>
                 <a href="{{ route('employee.attendance.index', [$tenantSlug, 'month' => $nextMonth, 'view' => $view]) }}"
                    class="w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-500"></i>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800"></i>
                 </a>
                 @if(! $isCurrent)
                     <a href="{{ route('employee.attendance.index', [$tenantSlug, 'view' => $view]) }}"
@@ -198,12 +198,12 @@
                 <div class="inline-flex p-1 bg-gray-100 dark:bg-slate-800 rounded-xl text-xs font-bold">
                     <a href="{{ route('employee.attendance.index', [$tenantSlug, 'view' => 'calendar', 'month' => $month->format('Y-m')]) }}"
                        class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition
-                              {{ $view === 'calendar' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500' }}">
+                              {{ $view === 'calendar' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-800' }}">
                         <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> Calendar
                     </a>
                     <a href="{{ route('employee.attendance.index', [$tenantSlug, 'view' => 'list', 'month' => $month->format('Y-m')]) }}"
                        class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition
-                              {{ $view === 'list' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-500' }}">
+                              {{ $view === 'list' ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' : 'text-gray-800' }}">
                         <i data-lucide="list" class="w-3.5 h-3.5"></i> List
                     </a>
                 </div>
@@ -244,10 +244,10 @@
 
             <button @click="closeDrawer()"
                     class="absolute top-3 right-3 w-9 h-9 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors z-10">
-                <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+                <i data-lucide="x" class="w-5 h-5 text-gray-800"></i>
             </button>
 
-            <div x-show="drawerLoading" class="flex items-center justify-center py-20 text-sm text-gray-400 gap-2">
+            <div x-show="drawerLoading" class="flex items-center justify-center py-20 text-sm text-gray-800 gap-2">
                 <svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
@@ -274,12 +274,12 @@
              x-transition:enter-end="opacity-100 scale-100">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Start a Break</h3>
-                <button @click="breakOpen=false" class="text-gray-400 hover:text-gray-600">
+                <button @click="breakOpen=false" class="text-gray-800 hover:text-gray-600">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <p class="text-sm text-gray-500 mb-4">Pick a break type. We'll start the timer right away.</p>
+            <p class="text-sm text-gray-800 mb-4">Pick a break type. We'll start the timer right away.</p>
 
             <div class="space-y-2 mb-5">
                 @php
@@ -295,7 +295,7 @@
                             :class="breakType==='{{ $b['key'] }}' ? 'border-brand-500 bg-brand-50' : 'border-gray-200 hover:border-gray-300'"
                             class="w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left">
                         <div class="w-9 h-9 rounded-lg flex items-center justify-center"
-                             :class="breakType==='{{ $b['key'] }}' ? 'bg-brand-100 text-brand-700' : 'bg-gray-100 text-gray-500'">
+                             :class="breakType==='{{ $b['key'] }}' ? 'bg-brand-100 text-brand-700' : 'bg-gray-100 text-gray-800'">
                             <i data-lucide="{{ $b['icon'] }}" class="w-4 h-4"></i>
                         </div>
                         <span class="font-bold text-sm text-gray-900 dark:text-slate-100">{{ $b['label'] }}</span>
@@ -523,7 +523,7 @@ function attendancePage() {
                 const url = @json($attendanceDayBaseUrl).replace('PLACEHOLDER', date);
                 const r = await fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
                 const d = await r.json();
-                this.drawerHtml = d.html || '<p class="p-6 text-sm text-gray-500">Could not load.</p>';
+                this.drawerHtml = d.html || '<p class="p-6 text-sm text-gray-800">Could not load.</p>';
             } catch(e) {
                 this.drawerHtml = '<p class="p-6 text-sm text-red-500">Failed to load day details.</p>';
             } finally {

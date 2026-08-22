@@ -17,7 +17,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-xl font-black text-gray-900">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -47,7 +47,7 @@
                                  style="background:{{ $shift->color ?? '#6C7DF7' }}"></div>
                             <div>
                                 <p class="font-bold text-gray-900 text-sm">{{ $shift->name }}</p>
-                                <p class="text-xs text-gray-500 mt-0.5">
+                                <p class="text-xs text-gray-800 mt-0.5">
                                     {{ Carbon\Carbon::createFromFormat('H:i:s', $shift->start_time)->format('h:i A') }}
                                     –
                                     {{ Carbon\Carbon::createFromFormat('H:i:s', $shift->end_time)->format('h:i A') }}
@@ -61,7 +61,7 @@
                                     @endphp
                                     @foreach($days as $i => $d)
                                     <span class="w-5 h-5 rounded text-[10px] font-bold flex items-center justify-center
-                                        {{ in_array($i, $workingDays) ? 'text-white' : 'bg-gray-100 text-gray-400' }}"
+                                        {{ in_array($i, $workingDays) ? 'text-white' : 'bg-gray-100 text-gray-800' }}"
                                           style="{{ in_array($i, $workingDays) ? 'background:'.$shift->color.';' : '' }}">
                                         {{ $d }}
                                     </span>
@@ -72,7 +72,7 @@
                         <div class="flex items-center gap-1 flex-shrink-0">
                             <span class="lmt-badge-gray text-xs">{{ $shift->assignments_count }} staff</span>
                             <button onclick="openEditShift({{ $shift->id }}, {{ json_encode($shift) }})"
-                                    class="w-7 h-7 rounded-lg bg-gray-100 text-gray-500 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
+                                    class="w-7 h-7 rounded-lg bg-gray-100 text-gray-800 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
                                 <i data-lucide="pencil" class="w-3 h-3"></i>
                             </button>
                             @if($shift->assignments_count === 0)
@@ -97,8 +97,8 @@
                 @empty
                 <div class="p-8 text-center">
                     <i data-lucide="calendar-days" class="w-8 h-8 text-gray-200 mx-auto mb-2"></i>
-                    <p class="text-sm text-gray-400">No shifts yet</p>
-                    <p class="text-xs text-gray-300 mt-1">Create your first shift template</p>
+                    <p class="text-sm text-gray-800">No shifts yet</p>
+                    <p class="text-xs text-gray-800 mt-1">Create your first shift template</p>
                 </div>
                 @endforelse
             </div>
@@ -111,7 +111,7 @@
             <div class="flex items-center justify-between p-4 border-b border-gray-100">
                 <div>
                     <h3 class="font-black text-gray-900">This Week's Schedule</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">
+                    <p class="text-xs text-gray-800 mt-0.5">
                         {{ $weekDays->first()->format('M j') }} – {{ $weekDays->last()->format('M j, Y') }}
                     </p>
                 </div>
@@ -126,9 +126,9 @@
                     {{-- Day headers --}}
                     <thead>
                         <tr class="bg-gray-50">
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 w-36">Employee</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-800 w-36">Employee</th>
                             @foreach($weekDays as $day)
-                            <th class="px-2 py-3 text-center text-xs font-semibold {{ $day->isToday() ? 'text-brand-600' : 'text-gray-500' }} min-w-20">
+                            <th class="px-2 py-3 text-center text-xs font-semibold {{ $day->isToday() ? 'text-brand-600' : 'text-gray-800' }} min-w-20">
                                 <span class="block">{{ $day->format('D') }}</span>
                                 <span class="block text-base font-black {{ $day->isToday() ? 'text-brand-600' : 'text-gray-900' }}">
                                     {{ $day->format('j') }}
@@ -148,7 +148,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-semibold text-gray-900 text-xs truncate">{{ $emp->first_name ?? 'Employee' }}</p>
-                                        <p class="text-gray-400 text-[10px] truncate">{{ $emp->department?->name }}</p>
+                                        <p class="text-gray-800 text-[10px] truncate">{{ $emp->department?->name }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -180,7 +180,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-12 text-gray-400 text-sm">
+                            <td colspan="8" class="text-center py-12 text-gray-800 text-sm">
                                 <i data-lucide="calendar-off" class="w-8 h-8 mx-auto mb-2 text-gray-200"></i>
                                 No shift assignments yet
                             </td>
@@ -214,7 +214,7 @@
                         {{ $swap->requester->full_name ?? 'Employee' }} wants to swap with
                         <span class="text-brand-600">{{ $swap->targetEmployee->full_name ?? 'Employee' }}</span>
                     </p>
-                    <p class="text-xs text-gray-400 mt-0.5">
+                    <p class="text-xs text-gray-800 mt-0.5">
                         <span class="font-medium" style="color:{{ $swap->requesterShift->color ?? '#6C7DF7' }}">
                             {{ $swap->requesterShift->name ?? 'Shift' }}
                         </span>
@@ -226,7 +226,7 @@
                     </p>
                 </div>
             </div>
-            <p class="text-xs text-gray-400 flex-shrink-0">{{ $swap->created_at->diffForHumans() }}</p>
+            <p class="text-xs text-gray-800 flex-shrink-0">{{ $swap->created_at->diffForHumans() }}</p>
             <div class="flex items-center gap-2 flex-shrink-0">
                 <form action="{{ route('admin.shifts.swap.approve', [$tenant, $swap->id]) }}" method="POST">
                     @csrf @method('PATCH')
@@ -304,7 +304,7 @@
                         <input type="checkbox" name="working_days[]" value="{{ $val }}"
                                {{ in_array($val,[1,2,3,4,5]) ? 'checked' : '' }}
                                class="sr-only peer"/>
-                        <span class="w-10 h-10 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 flex items-center justify-center
+                        <span class="w-10 h-10 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-800 flex items-center justify-center
                                      peer-checked:border-brand-500 peer-checked:bg-brand-500 peer-checked:text-white transition-all cursor-pointer">
                             {{ $label }}
                         </span>
@@ -368,7 +368,7 @@
                     <label class="cursor-pointer">
                         <input type="checkbox" name="working_days[]" value="{{ $val }}"
                                class="sr-only peer edit-day-cb" data-day="{{ $val }}"/>
-                        <span class="w-10 h-10 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-500 flex items-center justify-center
+                        <span class="w-10 h-10 rounded-xl border-2 border-gray-200 text-xs font-bold text-gray-800 flex items-center justify-center
                                      peer-checked:border-brand-500 peer-checked:bg-brand-500 peer-checked:text-white transition-all cursor-pointer">
                             {{ $label }}
                         </span>
@@ -388,7 +388,7 @@
 <div id="assign-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal max-w-lg">
         <h3 class="font-black text-gray-900 mb-1">Assign to <span id="assign-shift-name" class="text-brand-600"></span></h3>
-        <p class="text-sm text-gray-400 mb-5">Select employees and set the assignment period</p>
+        <p class="text-sm text-gray-800 mb-5">Select employees and set the assignment period</p>
         <form action="{{ route('admin.shifts.assign', $tenant) }}" method="POST" class="space-y-4">
             @csrf
             <input type="hidden" name="shift_id" id="assign-shift-id"/>
@@ -403,7 +403,7 @@
                         <div class="lmt-avatar-sm font-bold text-xs flex-shrink-0">{{ substr($emp->first_name,0,1) }}</div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-gray-900 truncate">{{ $emp->full_name }}</p>
-                            <p class="text-xs text-gray-400">{{ $emp->department?->name ?? 'No dept' }}</p>
+                            <p class="text-xs text-gray-800">{{ $emp->department?->name ?? 'No dept' }}</p>
                         </div>
                     </label>
                     @endforeach

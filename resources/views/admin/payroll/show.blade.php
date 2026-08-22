@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.payroll.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Payroll
     </a>
@@ -65,22 +65,22 @@
     <div class="absolute top-0 right-0 w-48 h-48 rounded-full lmt-gradient-bg opacity-5 -translate-y-1/2 translate-x-1/2"></div>
     <div class="relative grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div>
-            <p class="text-xs text-gray-400 mb-1">Run Number</p>
+            <p class="text-xs text-gray-800 mb-1">Run Number</p>
             <code class="font-black text-gray-900 text-lg">{{ $payrollRun->run_number }}</code>
         </div>
         <div>
-            <p class="text-xs text-gray-400 mb-1">Period</p>
+            <p class="text-xs text-gray-800 mb-1">Period</p>
             <p class="font-bold text-gray-900">
                 {{ Carbon\Carbon::parse($payrollRun->period_start)->format('M j') }}
                 – {{ Carbon\Carbon::parse($payrollRun->period_end)->format('M j, Y') }}
             </p>
         </div>
         <div>
-            <p class="text-xs text-gray-400 mb-1">Pay Date</p>
+            <p class="text-xs text-gray-800 mb-1">Pay Date</p>
             <p class="font-bold text-gray-900">{{ $payrollRun->pay_date?->format('F j, Y') }}</p>
         </div>
         <div>
-            <p class="text-xs text-gray-400 mb-1">Status</p>
+            <p class="text-xs text-gray-800 mb-1">Status</p>
             @php
             $statusColors = ['draft'=>'lmt-badge-gray','finalized'=>'lmt-badge-brand','paid'=>'lmt-badge-green'];
             @endphp
@@ -104,7 +104,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-lg font-black {{ $s['color'] }}">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -141,7 +141,7 @@
                                 </div>
                                 <div>
                                     <p class="font-semibold text-gray-900 text-sm">{{ $ps->employee->full_name ?? '—' }}</p>
-                                    <p class="text-xs text-gray-400">{{ $ps->employee->department?->name }}</p>
+                                    <p class="text-xs text-gray-800">{{ $ps->employee->department?->name }}</p>
                                 </div>
                             </div>
                         </td>
@@ -182,7 +182,7 @@
                              style="width:{{ $payrollRun->total_net > 0 ? round(($data['net_total']/$payrollRun->total_net)*100) : 0 }}%">
                         </div>
                     </div>
-                    <span class="text-xs text-gray-400 w-8 text-right">{{ $data['count'] }}</span>
+                    <span class="text-xs text-gray-800 w-8 text-right">{{ $data['count'] }}</span>
                 </div>
             </div>
             @endforeach
@@ -190,7 +190,7 @@
 
         @if($payrollRun->notes)
         <div class="mt-5 pt-5 border-t border-gray-100">
-            <p class="text-xs text-gray-400 mb-1">Notes</p>
+            <p class="text-xs text-gray-800 mb-1">Notes</p>
             <p class="text-sm text-gray-700">{{ $payrollRun->notes }}</p>
         </div>
         @endif

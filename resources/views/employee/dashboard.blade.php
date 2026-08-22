@@ -14,7 +14,7 @@
             <i data-lucide="alert-triangle" class="w-8 h-8"></i>
         </div>
         <h2 class="text-xl font-black text-gray-900 mb-2">No employee profile linked</h2>
-        <p class="text-gray-500 text-sm">Please contact your HR administrator to link your user account to an employee record.</p>
+        <p class="text-gray-800 text-sm">Please contact your HR administrator to link your user account to an employee record.</p>
     </div>
 @else
 
@@ -168,7 +168,7 @@
         <div class="flex-1">
             <p class="lmt-stat-label">Today's Hours</p>
             <p class="lmt-stat-value font-mono">{{ sprintf('%d:%02d', $hh, $mm) }}</p>
-            <p class="text-xs text-gray-400 mt-1">
+            <p class="text-xs text-gray-800 mt-1">
                 {{ $attendance?->clock_in_at ? 'Since '.\Carbon\Carbon::parse($attendance->clock_in_at)->format('h:i A') : 'Not started' }}
             </p>
         </div>
@@ -207,9 +207,9 @@
         <div class="flex-1">
             <p class="lmt-stat-label">This Month</p>
             <p class="lmt-stat-value">
-                {{ (int) ($monthStats->present_days ?? 0) }}<span class="text-base text-gray-400 font-bold">/{{ $workingDaysInMonth }}</span>
+                {{ (int) ($monthStats->present_days ?? 0) }}<span class="text-base text-gray-800 font-bold">/{{ $workingDaysInMonth }}</span>
             </p>
-            <p class="text-xs text-gray-400 mt-1">days present</p>
+            <p class="text-xs text-gray-800 mt-1">days present</p>
         </div>
         <div class="lmt-stat-icon bg-violet-50 text-violet-600">
             <i data-lucide="calendar-check" class="w-5 h-5"></i>
@@ -225,7 +225,7 @@
                     +{{ number_format($monthStats->overtime_hours, 1) }}h overtime
                 </p>
             @else
-                <p class="text-xs text-gray-400 mt-1">No overtime</p>
+                <p class="text-xs text-gray-800 mt-1">No overtime</p>
             @endif
         </div>
         <div class="lmt-stat-icon bg-amber-50 text-amber-600">
@@ -247,7 +247,7 @@
             <div class="flex items-center justify-between mb-5">
                 <div>
                     <h3 class="text-base font-black text-gray-900">Last 7 Days</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Your attendance pattern at a glance</p>
+                    <p class="text-xs text-gray-800 mt-0.5">Your attendance pattern at a glance</p>
                 </div>
                 @if(\Route::has('employee.attendance.index'))
                     <a href="{{ route('employee.attendance.index', $tenantSlug) }}"
@@ -276,7 +276,7 @@
                          @if($day->is_today) style="background:var(--brand-50); --tw-ring-color: var(--brand-500);" @endif
                          title="{{ $day->date->format('D, M j') }} · {{ $day->tooltip }}">
                         <p class="text-[10px] font-bold uppercase tracking-wide
-                                  {{ $day->is_today ? '' : 'text-gray-400' }}"
+                                  {{ $day->is_today ? '' : 'text-gray-800' }}"
                            @if($day->is_today) style="color:var(--brand-700);" @endif>
                             {{ $day->date->format('D') }}
                         </p>
@@ -287,14 +287,14 @@
                         </p>
                         <div class="w-2 h-2 rounded-full mx-auto mt-2" style="{{ $dotStyle }}"></div>
                         @if($day->hours > 0)
-                            <p class="text-[9px] text-gray-400 font-mono mt-1">{{ number_format($day->hours, 1) }}h</p>
+                            <p class="text-[9px] text-gray-800 font-mono mt-1">{{ number_format($day->hours, 1) }}h</p>
                         @endif
                     </div>
                 @endforeach
             </div>
 
             {{-- Legend --}}
-            <div class="flex items-center justify-center gap-4 mt-5 flex-wrap text-[11px] text-gray-500">
+            <div class="flex items-center justify-center gap-4 mt-5 flex-wrap text-[11px] text-gray-800">
                 <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Present</span>
                 <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Late</span>
                 <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500"></span>Absent</span>
@@ -310,7 +310,7 @@
                 <div class="flex items-center justify-between mb-5">
                     <div>
                         <h3 class="text-base font-black text-gray-900">Leave Balances</h3>
-                        <p class="text-xs text-gray-400 mt-0.5">Available days for {{ now()->year }}</p>
+                        <p class="text-xs text-gray-800 mt-0.5">Available days for {{ now()->year }}</p>
                     </div>
                     @if(\Route::has('employee.leaves.create'))
                         <a href="{{ route('employee.leaves.create', $tenantSlug) }}"
@@ -326,10 +326,10 @@
                         <div class="border border-gray-100 dark:border-slate-700 rounded-2xl p-4 transition-all hover:shadow-soft">
                             <div class="flex items-start justify-between mb-3">
                                 <div class="min-w-0">
-                                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider truncate">{{ $b->name }}</p>
+                                    <p class="text-xs font-bold text-gray-800 uppercase tracking-wider truncate">{{ $b->name }}</p>
                                     <p class="text-2xl font-black text-gray-900 dark:text-slate-100 mt-1 font-mono">
                                         {{ $b->available }}
-                                        <span class="text-sm text-gray-400 font-bold">/ {{ $b->total }}</span>
+                                        <span class="text-sm text-gray-800 font-bold">/ {{ $b->total }}</span>
                                     </p>
                                 </div>
                                 <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -341,7 +341,7 @@
                                 <div class="h-full rounded-full transition-all"
                                      style="width: {{ $b->used_pct }}%; background:{{ $b->color }};"></div>
                             </div>
-                            <div class="flex justify-between text-[10px] text-gray-400 font-semibold mt-1.5">
+                            <div class="flex justify-between text-[10px] text-gray-800 font-semibold mt-1.5">
                                 <span>{{ $b->used }} used</span>
                                 @if($b->pending > 0)
                                     <span class="text-amber-500">{{ $b->pending }} pending</span>
@@ -376,7 +376,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-base font-black text-gray-900">My Tasks</h3>
-                        <p class="text-xs text-gray-400 mt-0.5">Coming up soon</p>
+                        <p class="text-xs text-gray-800 mt-0.5">Coming up soon</p>
                     </div>
                     @if(\Route::has('employee.tasks.index'))
                         <a href="{{ route('employee.tasks.index', $tenantSlug) }}"
@@ -411,14 +411,14 @@
                                 <div class="flex items-center gap-2 mt-0.5 text-xs">
                                     <span class="px-1.5 py-0.5 rounded-full font-bold {{ $priorityColor }}">{{ ucfirst($task->priority) }}</span>
                                     @if($task->due_label)
-                                        <span class="text-gray-400 {{ $task->overdue ? 'text-red-500 font-bold' : '' }}">
+                                        <span class="text-gray-800 {{ $task->overdue ? 'text-red-500 font-bold' : '' }}">
                                             <i data-lucide="clock" class="w-3 h-3 inline -mt-0.5"></i>
                                             {{ $task->overdue ? 'Overdue ' : '' }}{{ $task->due_label }}
                                         </span>
                                     @endif
                                 </div>
                             </div>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 flex-shrink-0"></i>
                         </a>
                     @endforeach
                 </div>
@@ -445,8 +445,8 @@
             </div>
 
             @if($announcements->isEmpty())
-                <div class="text-center py-8 text-sm text-gray-400">
-                    <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+                <div class="text-center py-8 text-sm text-gray-800">
+                    <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-gray-800"></i>
                     No announcements yet
                 </div>
             @else
@@ -463,9 +463,9 @@
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100 leading-snug">{{ $a->title }}</p>
                                 @if($a->excerpt)
-                                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">{{ $a->excerpt }}</p>
+                                    <p class="text-xs text-gray-800 dark:text-slate-400 mt-1 leading-relaxed">{{ $a->excerpt }}</p>
                                 @endif
-                                <p class="text-[10px] text-gray-400 mt-1.5 font-semibold uppercase tracking-wide">{{ $a->when }}</p>
+                                <p class="text-[10px] text-gray-800 mt-1.5 font-semibold uppercase tracking-wide">{{ $a->when }}</p>
                             </div>
                         </div>
                     @endforeach
@@ -495,11 +495,11 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100">{{ $lr->leaveType?->name ?? 'Leave' }}</p>
-                                <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                                <p class="text-xs text-gray-800 dark:text-slate-400 mt-0.5">
                                     {{ $start->format('M j') }} {{ $start->ne($end) ? ' '.$end->format('M j') : '' }}
                                     · {{ $lr->total_days }} day{{ $lr->total_days > 1 ? 's' : '' }}
                                 </p>
-                                <p class="text-[10px] text-gray-400 mt-1 font-semibold uppercase tracking-wide">
+                                <p class="text-[10px] text-gray-800 mt-1 font-semibold uppercase tracking-wide">
                                     Starts {{ $start->diffForHumans() }}
                                 </p>
                             </div>
@@ -521,7 +521,7 @@
                             <img src="{{ $bd->avatar }}" alt="" class="w-8 h-8 rounded-full object-cover flex-shrink-0"/>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-bold text-gray-900 dark:text-slate-100 truncate">{{ $bd->name }}</p>
-                                <p class="text-xs text-gray-400">{{ $bd->date }}</p>
+                                <p class="text-xs text-gray-800">{{ $bd->date }}</p>
                             </div>
                             <span class="text-[11px] font-bold px-2 py-0.5 rounded-full
                                          {{ $bd->when === 'Today' ? 'bg-pink-100 text-pink-700' : 'bg-gray-100 text-gray-600' }}">

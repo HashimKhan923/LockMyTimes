@@ -18,7 +18,7 @@
             <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
         </div>
         <div>
-            <p class="text-xs text-gray-400">{{ $s['label'] }}</p>
+            <p class="text-xs text-gray-800">{{ $s['label'] }}</p>
             <p class="text-xl font-black text-gray-900">{{ $s['value'] }}</p>
         </div>
     </div>
@@ -74,12 +74,12 @@
                         <span class="w-1.5 h-1.5 rounded-full {{ $sc['dot'] }}"></span>
                         {{ ucfirst($job->status) }}
                     </span>
-                    <span class="text-xs text-gray-400 capitalize">
+                    <span class="text-xs text-gray-800 capitalize">
                         {{ str_replace('_',' ', $job->employment_type) }}
                     </span>
                 </div>
                 <h3 class="font-black text-gray-900 text-base leading-tight">{{ $job->title }}</h3>
-                <p class="text-xs text-gray-500 mt-1">
+                <p class="text-xs text-gray-800 mt-1">
                     @if($job->department) {{ $job->department->name }} @endif
                     @if($job->location) · {{ $job->location->name }} @endif
                 </p>
@@ -111,12 +111,12 @@
 
         {{-- Applicants progress --}}
         <div class="flex items-center justify-between text-xs mb-4">
-            <div class="flex items-center gap-1.5 text-gray-500">
+            <div class="flex items-center gap-1.5 text-gray-800">
                 <i data-lucide="users" class="w-3.5 h-3.5"></i>
                 <span><strong class="text-gray-900">{{ $job->candidates_count }}</strong> applicants</span>
             </div>
             @if($job->closing_date)
-            <span class="{{ $job->is_closing ? 'text-red-500 font-semibold' : 'text-gray-400' }}">
+            <span class="{{ $job->is_closing ? 'text-red-500 font-semibold' : 'text-gray-800' }}">
                 Closes {{ $job->closing_date->format('M j, Y') }}
             </span>
             @endif
@@ -127,7 +127,7 @@
             <div class="w-6 h-6 rounded-full lmt-gradient-bg flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                 {{ substr($job->hiringManager->first_name, 0, 1) }}
             </div>
-            <span class="text-xs text-gray-500 truncate">{{ $job->hiringManager->full_name }}</span>
+            <span class="text-xs text-gray-800 truncate">{{ $job->hiringManager->full_name }}</span>
         </div>
         @endif
 
@@ -139,14 +139,14 @@
                 Pipeline
             </a>
             <button onclick="openEditJob({{ $job->id }}, {{ json_encode($job) }})"
-                    class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
+                    class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
             </button>
             <form action="{{ route('admin.recruitment.destroy', [$tenant, $job->id]) }}"
                   method="POST" onsubmit="return confirm('Delete this job posting?')">
                 @csrf @method('DELETE')
                 <button type="submit"
-                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
             </form>
@@ -155,8 +155,8 @@
     @empty
     <div class="lmt-card text-center py-16 md:col-span-3">
         <i data-lucide="briefcase" class="w-12 h-12 text-gray-200 mx-auto mb-4"></i>
-        <p class="font-black text-gray-400 text-lg">No job postings yet</p>
-        <p class="text-sm text-gray-300 mt-1 mb-5">Create your first job posting to start recruiting</p>
+        <p class="font-black text-gray-800 text-lg">No job postings yet</p>
+        <p class="text-sm text-gray-800 mt-1 mb-5">Create your first job posting to start recruiting</p>
         <button onclick="openModal('add-job-modal')" class="lmt-btn-primary lmt-btn-sm inline-flex">
             <i data-lucide="plus" class="w-4 h-4"></i> Post a Job
         </button>
@@ -176,7 +176,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Post a New Job</h3>
             <button onclick="closeModal('add-job-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -296,7 +296,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Edit Job Posting</h3>
             <button onclick="closeModal('edit-job-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>

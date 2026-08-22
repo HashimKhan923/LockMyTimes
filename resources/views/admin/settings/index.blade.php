@@ -46,7 +46,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">General Settings</h2>
-                    <p class="text-xs text-gray-400">Organization information, regional, and date/time preferences</p>
+                    <p class="text-xs text-gray-800">Organization information, regional, and date/time preferences</p>
                 </div>
             </div>
 
@@ -121,7 +121,7 @@
                     </div>
                     <div>
                         <h2 class="font-black text-gray-900">Logo & Favicon</h2>
-                        <p class="text-xs text-gray-400">Upload your company branding assets</p>
+                        <p class="text-xs text-gray-800">Upload your company branding assets</p>
                     </div>
                 </div>
                 <form action="{{ route('admin.settings.branding.update', $tenant) }}" method="POST"
@@ -134,7 +134,7 @@
                                 @if($currentTenant->logo)
                                 <img src="{{ asset('storage/'.$currentTenant->logo) }}" class="h-16 mx-auto mb-3 object-contain"/>
                                 @else
-                                <i data-lucide="image" class="w-10 h-10 text-gray-300 mx-auto mb-3"></i>
+                                <i data-lucide="image" class="w-10 h-10 text-gray-800 mx-auto mb-3"></i>
                                 @endif
                                 <input type="file" name="logo" accept="image/*" class="text-sm w-full"/>
                                 <p class="lmt-help mt-2">Recommended: 200×60px PNG with transparent background</p>
@@ -146,7 +146,7 @@
                                 @if($currentTenant->favicon)
                                 <img src="{{ asset('storage/'.$currentTenant->favicon) }}" class="h-10 w-10 mx-auto mb-3 object-contain"/>
                                 @else
-                                <i data-lucide="image" class="w-10 h-10 text-gray-300 mx-auto mb-3"></i>
+                                <i data-lucide="image" class="w-10 h-10 text-gray-800 mx-auto mb-3"></i>
                                 @endif
                                 <input type="file" name="favicon" accept="image/*" class="text-sm w-full"/>
                                 <p class="lmt-help mt-2">Recommended: 32×32px square PNG</p>
@@ -167,7 +167,7 @@
                     </div>
                     <div>
                         <h2 class="font-black text-gray-900">Theme Colors</h2>
-                        <p class="text-xs text-gray-400">Customize your portal's color scheme</p>
+                        <p class="text-xs text-gray-800">Customize your portal's color scheme</p>
                     </div>
                 </div>
                 <form action="{{ route('admin.settings.update', [$tenant, 'theme']) }}" method="POST" class="space-y-5">
@@ -200,7 +200,7 @@
                              style="background:linear-gradient(135deg,{{ $theme['primary_color'] ?? '#6C7DF7' }},{{ $theme['secondary_color'] ?? '#FFB547' }})">
                             A
                         </div>
-                        <p class="text-sm text-gray-500">Live preview of your brand gradient</p>
+                        <p class="text-sm text-gray-800">Live preview of your brand gradient</p>
                     </div>
                     <button type="submit" class="lmt-btn-primary">
                         <i data-lucide="save" class="w-4 h-4"></i>
@@ -219,14 +219,14 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">Attendance Settings</h2>
-                    <p class="text-xs text-gray-400">Clock-in methods, lateness, and overtime rules</p>
+                    <p class="text-xs text-gray-800">Clock-in methods, lateness, and overtime rules</p>
                 </div>
             </div>
 
             <form action="{{ route('admin.settings.update', [$tenant, 'attendance']) }}" method="POST" class="space-y-5">
                 @csrf @method('PATCH')
 
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Clock-In Methods</p>
+                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider">Clock-In Methods</p>
                 <div class="grid grid-cols-3 gap-3">
                     @foreach([
                         'allow_qr'     => ['QR Code Scan', 'qr-code'],
@@ -237,13 +237,13 @@
                                   {{ ($attendance[$field] ?? false) ? 'border-brand-400 bg-brand-50' : 'border-gray-200 hover:bg-gray-50' }}">
                         <input type="checkbox" name="{{ $field }}" value="1" class="w-4 h-4 rounded"
                                {{ ($attendance[$field] ?? false) ? 'checked' : '' }}/>
-                        <i data-lucide="{{ $icon }}" class="w-4 h-4 text-gray-500"></i>
+                        <i data-lucide="{{ $icon }}" class="w-4 h-4 text-gray-800"></i>
                         <span class="text-sm font-semibold text-gray-700">{{ $label }}</span>
                     </label>
                     @endforeach
                 </div>
 
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider pt-2">Verification & Rules</p>
+                <p class="text-xs font-bold text-gray-800 uppercase tracking-wider pt-2">Verification & Rules</p>
                 <div class="grid grid-cols-2 gap-3">
                     <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
                         <span class="text-sm font-medium text-gray-700">Strict Geofencing</span>
@@ -253,7 +253,7 @@
                     <label class="col-span-2 flex items-start justify-between gap-4 p-3 rounded-xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50 transition-colors cursor-pointer">
                         <div>
                             <span class="text-sm font-semibold text-gray-800">Enforce Shift Window</span>
-                            <p class="text-xs text-gray-500 mt-0.5">Employees can only clock in during their assigned shift hours. Clock-in outside the shift window will be blocked.</p>
+                            <p class="text-xs text-gray-800 mt-0.5">Employees can only clock in during their assigned shift hours. Clock-in outside the shift window will be blocked.</p>
                         </div>
                         <input type="checkbox" name="shift_window_strict" value="1" class="w-4 h-4 rounded mt-0.5 shrink-0"
                                {{ ($attendance['shift_window_strict'] ?? true) ? 'checked' : '' }}/>
@@ -305,7 +305,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">Payroll Configuration</h2>
-                    <p class="text-xs text-gray-400">Pay schedule, overtime, FICA, and mileage rates</p>
+                    <p class="text-xs text-gray-800">Pay schedule, overtime, FICA, and mileage rates</p>
                 </div>
             </div>
 
@@ -324,25 +324,25 @@
                         <label class="lmt-label">Overtime Multiplier</label>
                         <div class="relative">
                             <input type="text" name="overtime_rate" class="lmt-input" value="{{ $payroll['overtime_rate'] ?? '1.5' }}"/>
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">×</span>
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-800">×</span>
                         </div>
                     </div>
 
                     <div class="col-span-2 pt-2">
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">FICA Rates (US)</p>
+                        <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">FICA Rates (US)</p>
                     </div>
                     <div>
                         <label class="lmt-label">Social Security Rate</label>
                         <div class="relative">
                             <input type="text" name="fica_ss_rate" class="lmt-input" value="{{ $payroll['fica_ss_rate'] ?? '6.2' }}"/>
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">%</span>
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-800">%</span>
                         </div>
                     </div>
                     <div>
                         <label class="lmt-label">Medicare Rate</label>
                         <div class="relative">
                             <input type="text" name="fica_medicare_rate" class="lmt-input" value="{{ $payroll['fica_medicare_rate'] ?? '1.45' }}"/>
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">%</span>
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-800">%</span>
                         </div>
                     </div>
                     <div>
@@ -374,7 +374,7 @@
                     </div>
                     <div>
                         <h2 class="font-black text-gray-900">Tax Settings</h2>
-                        <p class="text-xs text-gray-400">Federal, state, and local tax configurations by year</p>
+                        <p class="text-xs text-gray-800">Federal, state, and local tax configurations by year</p>
                     </div>
                 </div>
                 <button onclick="openModal('add-tax-modal')" class="lmt-btn-primary lmt-btn-sm">
@@ -400,7 +400,7 @@
                     <tr>
                         <td class="font-bold text-gray-900 text-sm">{{ $tax->year }}</td>
                         <td class="text-sm text-gray-700">{{ $tax->tax_type_label }}</td>
-                        <td class="text-sm text-gray-500">{{ $tax->state ?? '—' }}</td>
+                        <td class="text-sm text-gray-800">{{ $tax->state ?? '—' }}</td>
                         <td class="text-sm text-gray-700">
                             @if($tax->flat_rate)
                                 {{ $tax->flat_rate }}%
@@ -421,14 +421,14 @@
                                   onsubmit="return confirm('Delete this tax setting?')">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="7" class="text-center py-12 text-gray-400">No tax settings configured yet.</td></tr>
+                    <tr><td colspan="7" class="text-center py-12 text-gray-800">No tax settings configured yet.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -443,7 +443,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">Leave Policy</h2>
-                    <p class="text-xs text-gray-400">Approval rules and balance handling</p>
+                    <p class="text-xs text-gray-800">Approval rules and balance handling</p>
                 </div>
             </div>
 
@@ -458,7 +458,7 @@
                 <label class="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
                     <div>
                         <p class="text-sm font-semibold text-gray-700">Allow Negative Leave Balance</p>
-                        <p class="text-xs text-gray-400 mt-0.5">Employees can request leave even with insufficient balance</p>
+                        <p class="text-xs text-gray-800 mt-0.5">Employees can request leave even with insufficient balance</p>
                     </div>
                     <input type="checkbox" name="allow_negative_balance" value="1" class="w-4 h-4 rounded"
                            {{ ($leaves['allow_negative_balance'] ?? false) ? 'checked' : '' }}/>
@@ -481,7 +481,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">Notification Channels</h2>
-                    <p class="text-xs text-gray-400">Choose how the system communicates with employees</p>
+                    <p class="text-xs text-gray-800">Choose how the system communicates with employees</p>
                 </div>
             </div>
 
@@ -495,11 +495,11 @@
                 <label class="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                            <i data-lucide="{{ $icon }}" class="w-4 h-4 text-gray-500"></i>
+                            <i data-lucide="{{ $icon }}" class="w-4 h-4 text-gray-800"></i>
                         </div>
                         <div>
                             <p class="text-sm font-semibold text-gray-700">{{ $title }}</p>
-                            <p class="text-xs text-gray-400">{{ $desc }}</p>
+                            <p class="text-xs text-gray-800">{{ $desc }}</p>
                         </div>
                     </div>
                     <input type="checkbox" name="{{ $field }}" value="1" class="w-5 h-5 rounded"
@@ -527,7 +527,7 @@
                         </div>
                         <div>
                             <p class="font-bold text-gray-900 text-sm">{{ $template->name }}</p>
-                            <p class="text-xs text-gray-400">{{ $template->category ?? 'General' }} · <code class="text-[10px]">{{ $template->slug }}</code></p>
+                            <p class="text-xs text-gray-800">{{ $template->category ?? 'General' }} · <code class="text-[10px]">{{ $template->slug }}</code></p>
                         </div>
                     </div>
                     <span class="{{ $template->is_active ? 'lmt-badge-green' : 'lmt-badge-gray' }} text-xs">
@@ -569,7 +569,7 @@
             @empty
             <div class="lmt-card text-center py-16">
                 <i data-lucide="mail" class="w-12 h-12 text-gray-200 mx-auto mb-4"></i>
-                <p class="font-black text-gray-400">No email templates found</p>
+                <p class="font-black text-gray-800">No email templates found</p>
             </div>
             @endforelse
         </div>
@@ -583,7 +583,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">Payroll Relief (AccountantsWorld)</h2>
-                    <p class="text-xs text-gray-400">Optional — pull finished payslips from your Payroll Relief account into LockMyTimes</p>
+                    <p class="text-xs text-gray-800">Optional — pull finished payslips from your Payroll Relief account into LockMyTimes</p>
                 </div>
                 @if($payrollIntegration && $payrollIntegration->status === 'connected')
                     <span class="lmt-badge-green text-xs ml-auto">Connected</span>
@@ -594,7 +594,7 @@
                 @endif
             </div>
 
-            <p class="text-sm text-gray-500 mb-6">
+            <p class="text-sm text-gray-800 mb-6">
                 This is entirely optional. If you don't connect anything here, your team keeps using LockMyTimes's
                 own built-in payroll system exactly as before — nothing changes. Connecting only adds the ability
                 to automatically pull payslips already finalized in Payroll Relief into LockMyTimes so employees
@@ -610,13 +610,13 @@
             @if($payrollIntegration && $payrollIntegration->isConnected())
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="rounded-xl bg-gray-50 p-4">
-                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Last synced</p>
+                        <p class="text-xs text-gray-800 font-semibold uppercase tracking-wider mb-1">Last synced</p>
                         <p class="font-bold text-gray-900 text-sm">
                             {{ $payrollIntegration->last_synced_at?->format('M j, Y g:i A') ?? 'Never yet' }}
                         </p>
                     </div>
                     <div class="rounded-xl bg-gray-50 p-4">
-                        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Imported so far</p>
+                        <p class="text-xs text-gray-800 font-semibold uppercase tracking-wider mb-1">Imported so far</p>
                         <p class="font-bold text-gray-900 text-sm">
                             {{ $payrollIntegration->employees_synced }} employee(s) · {{ $payrollIntegration->payslips_synced }} payslip(s)
                         </p>
@@ -654,7 +654,7 @@
                     </p>
                 </div>
                 <div>
-                    <label class="lmt-label">API Base URL <span class="text-gray-400 font-normal">(optional — only if AccountantsWorld gave you a different one)</span></label>
+                    <label class="lmt-label">API Base URL <span class="text-gray-800 font-normal">(optional — only if AccountantsWorld gave you a different one)</span></label>
                     <input type="url" name="base_url" class="lmt-input" placeholder="https://api.accountantsworld.com/payrollrelief/v1"
                            value="{{ $payrollIntegration?->base_url }}"/>
                 </div>
@@ -678,7 +678,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Add Tax Setting</h3>
             <button onclick="closeModal('add-tax-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 flex items-center justify-center">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:bg-gray-100 flex items-center justify-center">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>

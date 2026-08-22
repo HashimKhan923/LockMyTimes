@@ -21,8 +21,8 @@
         [$priorityCls, $priorityIcon] = match($task->priority) {
             'urgent' => ['text-red-600 bg-red-50 dark:bg-red-500/15 dark:text-red-300', 'alert-triangle'],
             'high'   => ['text-amber-600 bg-amber-50 dark:bg-amber-500/15 dark:text-amber-300', 'arrow-up'],
-            'low'    => ['text-gray-400 bg-gray-50 dark:bg-slate-700', 'arrow-down'],
-            default  => ['text-gray-500 bg-gray-50 dark:bg-slate-700', 'minus'],
+            'low'    => ['text-gray-800 bg-gray-50 dark:bg-slate-700', 'arrow-down'],
+            default  => ['text-gray-800 bg-gray-50 dark:bg-slate-700', 'minus'],
         };
 
         $isOverdue = $task->due_date && $task->due_date->isPast() && ! in_array($task->status, ['done','cancelled']);
@@ -40,14 +40,14 @@
     {{-- Top nav --}}
     <div class="flex items-center justify-between mb-5">
         <a href="{{ route('employee.tasks.index', $tenantSlug) }}"
-           class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
+           class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>All Tasks</span>
         </a>
 
         @if($task->project)
             <a href="{{ route('employee.projects.show', [$tenantSlug, $task->project_id]) }}"
-               class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-700 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-gray-300 transition-all">
+               class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-800 hover:text-gray-700 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-gray-300 transition-all">
                 <span class="w-2 h-2 rounded-full" style="background:{{ $task->project->color }};"></span>
                 {{ $task->project->name }}
                 <i data-lucide="external-link" class="w-3 h-3"></i>
@@ -73,7 +73,7 @@
     ═══════════════════════════════════════════════════════════════ --}}
     <div class="lmt-card mb-5" data-lmt-anim="fade-up">
         <div class="flex items-center gap-2 flex-wrap mb-2">
-            <span class="font-mono text-xs font-bold text-gray-400">{{ $task->task_code }}</span>
+            <span class="font-mono text-xs font-bold text-gray-800">{{ $task->task_code }}</span>
             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold"
                   style="background:{{ $statusBg }};color:{{ $statusColor }};">
                 <i data-lucide="{{ $statusIcon }}" class="w-3 h-3"></i>
@@ -109,7 +109,7 @@
             {{-- Status changer + progress slider --}}
             @if($canEdit)
                 <div class="lmt-card" data-lmt-anim="fade-up">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                         <i data-lucide="settings" class="w-3.5 h-3.5"></i> Update task
                     </h3>
 
@@ -160,7 +160,7 @@
                         <div class="grid grid-cols-5 gap-1 mt-2">
                             @foreach([0, 25, 50, 75, 100] as $pct)
                                 <button type="button" @click="progress={{ $pct }}"
-                                        class="text-[10px] font-bold text-gray-400 hover:text-gray-700 dark:hover:text-slate-300 py-1">
+                                        class="text-[10px] font-bold text-gray-800 hover:text-gray-700 dark:hover:text-slate-300 py-1">
                                     {{ $pct }}%
                                 </button>
                             @endforeach
@@ -173,10 +173,10 @@
             @if($task->checklists->isNotEmpty())
                 <div class="lmt-card" data-lmt-anim="fade-up">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
                             <i data-lucide="list-checks" class="w-3.5 h-3.5"></i> Checklist
                         </h3>
-                        <span class="text-xs font-bold text-gray-500">
+                        <span class="text-xs font-bold text-gray-800">
                             {{ $checklistDone }}/{{ $checklistTotal }}
                             <span class="font-mono ml-1" style="color:var(--brand-600);">({{ $checklistPct }}%)</span>
                         </span>
@@ -217,11 +217,11 @@
                                 @endif
 
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm {{ $item->is_completed ? 'line-through text-gray-400' : 'text-gray-700 dark:text-slate-200' }}">
+                                    <p class="text-sm {{ $item->is_completed ? 'line-through text-gray-800' : 'text-gray-700 dark:text-slate-200' }}">
                                         {{ $item->item }}
                                     </p>
                                     @if($item->is_completed && $item->completed_at)
-                                        <p class="text-[10px] text-gray-400 mt-0.5">
+                                        <p class="text-[10px] text-gray-800 mt-0.5">
                                             Completed {{ $item->completed_at->diffForHumans() }}
                                         </p>
                                     @endif
@@ -235,9 +235,9 @@
             {{-- Attachments --}}
             @if($task->attachments->isNotEmpty())
                 <div class="lmt-card" data-lmt-anim="fade-up">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                         <i data-lucide="paperclip" class="w-3.5 h-3.5"></i> Attachments
-                        <span class="font-mono text-[10px] text-gray-300 ml-1">({{ $task->attachments->count() }})</span>
+                        <span class="font-mono text-[10px] text-gray-800 ml-1">({{ $task->attachments->count() }})</span>
                     </h3>
                     <div class="grid sm:grid-cols-2 gap-2">
                         @foreach($task->attachments as $att)
@@ -249,14 +249,14 @@
                             <a href="{{ route('employee.tasks.attachment', [$tenantSlug, $task->id, $att->id]) }}"
                                class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                                 <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0
-                                            {{ $isImage ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/10' : 'bg-gray-50 text-gray-500 dark:bg-slate-700' }}">
+                                            {{ $isImage ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/10' : 'bg-gray-50 text-gray-800 dark:bg-slate-700' }}">
                                     <i data-lucide="{{ $isImage ? 'image' : 'file-text' }}" class="w-4 h-4"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs font-bold text-gray-900 dark:text-slate-100 truncate">{{ $att->file_name }}</p>
-                                    <p class="text-[10px] text-gray-400 font-mono">{{ $sizeLabel }}</p>
+                                    <p class="text-[10px] text-gray-800 font-mono">{{ $sizeLabel }}</p>
                                 </div>
-                                <i data-lucide="download" class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"></i>
+                                <i data-lucide="download" class="w-3.5 h-3.5 text-gray-800 flex-shrink-0"></i>
                             </a>
                         @endforeach
                     </div>
@@ -265,13 +265,13 @@
 
             {{-- Comments --}}
             <div class="lmt-card" data-lmt-anim="fade-up">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                     <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Comments
-                    <span class="font-mono text-[10px] text-gray-300 ml-1">({{ $task->comments->count() }})</span>
+                    <span class="font-mono text-[10px] text-gray-800 ml-1">({{ $task->comments->count() }})</span>
                 </h3>
 
                 @if($task->comments->isEmpty())
-                    <p class="text-xs text-gray-400 mb-4">No comments yet. Be the first to start the discussion.</p>
+                    <p class="text-xs text-gray-800 mb-4">No comments yet. Be the first to start the discussion.</p>
                 @else
                     <div class="space-y-4 mb-5">
                         @foreach($task->comments as $comment)
@@ -283,9 +283,9 @@
                                 <div class="flex-1 min-w-0 bg-gray-50 dark:bg-slate-800/60 rounded-xl p-3">
                                     <div class="flex items-center gap-2 mb-1 flex-wrap">
                                         <span class="font-bold text-xs text-gray-900 dark:text-slate-100">{{ $comment->user?->name ?? 'Unknown' }}</span>
-                                        <span class="text-[10px] text-gray-400 font-semibold">{{ $comment->created_at->diffForHumans() }}</span>
+                                        <span class="text-[10px] text-gray-800 font-semibold">{{ $comment->created_at->diffForHumans() }}</span>
                                         @if($comment->is_edited)
-                                            <span class="text-[9px] text-gray-400 italic">(edited)</span>
+                                            <span class="text-[9px] text-gray-800 italic">(edited)</span>
                                         @endif
                                     </div>
                                     <div class="text-sm text-gray-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">{!! nl2br(e($comment->content)) !!}</div>
@@ -319,27 +319,27 @@
 
             {{-- Details --}}
             <div class="lmt-card" data-lmt-anim="fade-up">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-1.5">
                     <i data-lucide="info" class="w-3.5 h-3.5"></i> Details
                 </h3>
                 <div class="space-y-3">
                     @if($task->due_date)
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                                 <span>Due date</span>
                             </div>
                             <span class="text-sm font-semibold {{ $isOverdue ? 'text-red-600' : 'text-gray-900 dark:text-slate-100' }} text-right">
                                 {{ $task->due_date->format('M j, Y') }}
                                 @if($task->due_date->format('H:i') !== '00:00')
-                                    <span class="text-xs text-gray-400 ml-1">{{ $task->due_date->format('g:i A') }}</span>
+                                    <span class="text-xs text-gray-800 ml-1">{{ $task->due_date->format('g:i A') }}</span>
                                 @endif
                             </span>
                         </div>
                     @endif
                     @if($task->start_date)
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="play" class="w-3.5 h-3.5"></i>
                                 <span>Start date</span>
                             </div>
@@ -348,7 +348,7 @@
                     @endif
                     @if($task->estimated_hours > 0)
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                                 <span>Estimated</span>
                             </div>
@@ -357,7 +357,7 @@
                     @endif
                     @if($task->logged_hours > 0)
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="timer" class="w-3.5 h-3.5"></i>
                                 <span>Logged</span>
                             </div>
@@ -366,7 +366,7 @@
                     @endif
                     @if($task->taskList)
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="columns-3" class="w-3.5 h-3.5"></i>
                                 <span>Column</span>
                             </div>
@@ -375,7 +375,7 @@
                     @endif
                     @if($task->parent)
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
                                 <span>Parent task</span>
                             </div>
@@ -387,7 +387,7 @@
                     @endif
                     @if($task->completed_at)
                         <div class="flex items-start justify-between gap-3 py-1.5 border-b border-gray-50 dark:border-slate-800">
-                            <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                                 <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
                                 <span>Completed</span>
                             </div>
@@ -395,7 +395,7 @@
                         </div>
                     @endif
                     <div class="flex items-start justify-between gap-3 py-1.5">
-                        <div class="flex items-center gap-2 text-gray-500 dark:text-slate-400 text-xs">
+                        <div class="flex items-center gap-2 text-gray-800 dark:text-slate-400 text-xs">
                             <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
                             <span>Created</span>
                         </div>
@@ -407,7 +407,7 @@
             {{-- Assignees --}}
             @if($task->assignees->isNotEmpty())
                 <div class="lmt-card" data-lmt-anim="fade-up">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                         <i data-lucide="users" class="w-3.5 h-3.5"></i> Assignees
                     </h3>
                     <div class="space-y-2">
@@ -424,7 +424,7 @@
                                             @endif
                                         </p>
                                         @if($a->is_primary)
-                                            <p class="text-[10px] text-gray-400 font-bold uppercase">Primary</p>
+                                            <p class="text-[10px] text-gray-800 font-bold uppercase">Primary</p>
                                         @endif
                                     </div>
                                 </div>
@@ -437,7 +437,7 @@
             {{-- Activity log --}}
             @if($activities->isNotEmpty())
                 <div class="lmt-card" data-lmt-anim="fade-up">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                         <i data-lucide="git-commit" class="w-3.5 h-3.5"></i> Activity
                     </h3>
                     <div class="relative">
@@ -466,7 +466,7 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs text-gray-700 dark:text-slate-200">{!! $a->summary !!}</p>
-                                    <p class="text-[10px] text-gray-400 font-semibold">{{ $a->created_at->diffForHumans() }}</p>
+                                    <p class="text-[10px] text-gray-800 font-semibold">{{ $a->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                         @endforeach

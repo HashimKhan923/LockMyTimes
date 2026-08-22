@@ -23,7 +23,7 @@
 
     {{-- Back link --}}
     <a href="{{ route('employee.loans.index', ['tenant' => $tenantSlug, 'tab' => 'advances']) }}"
-       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors mb-4">
+       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-700 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to advances
     </a>
@@ -32,7 +32,7 @@
         <h1 class="text-2xl lg:text-3xl font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
             Request a Salary Advance
         </h1>
-        <p class="text-sm text-gray-500 mt-1">A quick advance against your salary, repaid via payroll deductions.</p>
+        <p class="text-sm text-gray-800 mt-1">A quick advance against your salary, repaid via payroll deductions.</p>
     </div>
 
     @if($hasActiveAdvance)
@@ -75,11 +75,11 @@
                     <i data-lucide="dollar-sign" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Maximum advance</p>
+                    <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Maximum advance</p>
                     <p class="text-sm font-black text-gray-900 dark:text-slate-100 font-mono">
                         {{ $sym }}{{ number_format($baseSalary, 2) }}
                     </p>
-                    <p class="text-[10px] text-gray-500">Capped at one month's base salary</p>
+                    <p class="text-[10px] text-gray-800">Capped at one month's base salary</p>
                 </div>
             </div>
         @endif
@@ -93,7 +93,7 @@
             <div>
                 <label class="lmt-label">Advance amount <span class="text-red-500">*</span></label>
                 <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 pointer-events-none">{{ $sym }}</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-800 pointer-events-none">{{ $sym }}</span>
                     <input type="number" name="amount" required min="1" step="0.01"
                            @if($baseSalary > 0) max="{{ $baseSalary }}" @endif
                            class="lmt-input pl-8 font-mono"
@@ -120,10 +120,10 @@
                         <div class="p-3 rounded-2xl border-2 transition-all"
                              :class="form.repayment_type === 'one_time' ? 'border-brand-500 bg-brand-50/40' : 'border-gray-200 hover:border-gray-300 dark:border-slate-700'">
                             <div class="flex items-center gap-2">
-                                <i data-lucide="zap" class="w-4 h-4 text-gray-500"></i>
+                                <i data-lucide="zap" class="w-4 h-4 text-gray-800"></i>
                                 <span class="font-bold text-sm text-gray-900 dark:text-slate-100">One-time deduction</span>
                             </div>
-                            <p class="text-[11px] text-gray-500 dark:text-slate-400 mt-1.5">Repay in full from your next payslip.</p>
+                            <p class="text-[11px] text-gray-800 dark:text-slate-400 mt-1.5">Repay in full from your next payslip.</p>
                         </div>
                     </label>
                     <label class="block cursor-pointer">
@@ -135,10 +135,10 @@
                         <div class="p-3 rounded-2xl border-2 transition-all"
                              :class="form.repayment_type === 'installments' ? 'border-brand-500 bg-brand-50/40' : 'border-gray-200 hover:border-gray-300 dark:border-slate-700'">
                             <div class="flex items-center gap-2">
-                                <i data-lucide="calendar-days" class="w-4 h-4 text-gray-500"></i>
+                                <i data-lucide="calendar-days" class="w-4 h-4 text-gray-800"></i>
                                 <span class="font-bold text-sm text-gray-900 dark:text-slate-100">Spread over installments</span>
                             </div>
-                            <p class="text-[11px] text-gray-500 dark:text-slate-400 mt-1.5">Repay across multiple payslips (max 12).</p>
+                            <p class="text-[11px] text-gray-800 dark:text-slate-400 mt-1.5">Repay across multiple payslips (max 12).</p>
                         </div>
                     </label>
                 </div>
@@ -163,7 +163,7 @@
                  style="background:linear-gradient(135deg,var(--brand-50),#ede9fe);">
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <div>
-                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Per-installment deduction</p>
+                        <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Per-installment deduction</p>
                         <p class="text-xl font-black font-mono mt-1" style="color:var(--brand-600);">
                             {{ $sym }}<span x-text="formatNumber(perInstallment)"></span>
                         </p>

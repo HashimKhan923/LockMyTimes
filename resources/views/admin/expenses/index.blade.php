@@ -31,7 +31,7 @@
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h3 class="font-black text-gray-900">Expense Spend</h3>
-                <p class="text-xs text-gray-400">Approved expenses last 6 months</p>
+                <p class="text-xs text-gray-800">Approved expenses last 6 months</p>
             </div>
             <div class="flex items-center gap-2">
                 @include('exports.buttons', ['route' => 'admin.expenses.export', 'params' => [$tenant]])
@@ -51,12 +51,12 @@
             @php $max = $chart->max('amount') ?: 1; @endphp
             @foreach($chart as $c)
             <div class="flex-1 flex flex-col items-center gap-1.5">
-                <span class="text-xs font-bold text-gray-400">
+                <span class="text-xs font-bold text-gray-800">
                     {{ $c['amount'] > 0 ? '$'.number_format($c['amount']/1000,1).'k' : '—' }}
                 </span>
                 <div class="w-full rounded-t-lg lmt-gradient-bg"
                      style="height:{{ $max > 0 ? max(round(($c['amount']/$max)*100),4) : 4 }}%; min-height:4px;"></div>
-                <span class="text-xs text-gray-400 font-semibold">{{ $c['label'] }}</span>
+                <span class="text-xs text-gray-800 font-semibold">{{ $c['label'] }}</span>
             </div>
             @endforeach
         </div>
@@ -64,7 +64,7 @@
         {{-- Category breakdown --}}
         @if($categoryBreakdown->isNotEmpty())
         <div class="mt-5 pt-5 border-t border-gray-100">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">By Category (YTD)</p>
+            <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">By Category (YTD)</p>
             <div class="space-y-2">
                 @foreach($categoryBreakdown as $cb)
                 @php $pct = $stats['total_ytd'] > 0 ? round(($cb->total/$stats['total_ytd'])*100) : 0; @endphp
@@ -111,7 +111,7 @@
 
         {{-- Filter by date --}}
         <div class="mt-4 pt-4 border-t border-gray-100">
-            <p class="text-xs font-semibold text-gray-400 uppercase mb-3">Filter by Date</p>
+            <p class="text-xs font-semibold text-gray-800 uppercase mb-3">Filter by Date</p>
             <form action="{{ route('admin.expenses.index', $tenant) }}" method="GET" class="space-y-2">
                 <input type="hidden" name="status" value="{{ $status }}"/>
                 <div>
@@ -139,7 +139,7 @@
                class="px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-t-lg
                       {{ $status === $val
                           ? 'bg-white border-t border-l border-r border-gray-200 text-brand-600 -mb-px'
-                          : 'text-gray-500 hover:text-gray-700' }}">
+                          : 'text-gray-800 hover:text-gray-700' }}">
                 {{ $label }}
                 @if($val === 'submitted' && $stats['pending'] > 0)
                 <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $stats['pending'] }}</span>
@@ -212,7 +212,7 @@
                             </div>
                             <div>
                                 <p class="font-semibold text-gray-900 text-sm">{{ $exp->employee->full_name ?? '—' }}</p>
-                                <p class="text-xs text-gray-400">{{ $exp->employee->department?->name }}</p>
+                                <p class="text-xs text-gray-800">{{ $exp->employee->department?->name }}</p>
                             </div>
                         </div>
                     </td>
@@ -248,7 +248,7 @@
                             <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
                         </a>
                         @else
-                        <span class="text-xs text-gray-300">—</span>
+                        <span class="text-xs text-gray-800">—</span>
                         @endif
                     </td>
                     <td>
@@ -293,7 +293,7 @@
                                   method="POST" onsubmit="return confirm('Delete this expense?')">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors"
+                                        class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors"
                                         title="Delete">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
@@ -306,7 +306,7 @@
                 <tr>
                     <td colspan="9" class="text-center py-14">
                         <i data-lucide="receipt" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="font-semibold text-gray-400">No {{ $status === 'all' ? '' : $status }} expenses</p>
+                        <p class="font-semibold text-gray-800">No {{ $status === 'all' ? '' : $status }} expenses</p>
                     </td>
                 </tr>
                 @endforelse

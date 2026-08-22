@@ -7,7 +7,7 @@
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-xl font-black text-gray-900">Asset Categories</h2>
-        <p class="text-sm text-gray-400">{{ $categories->count() }} categories</p>
+        <p class="text-sm text-gray-800">{{ $categories->count() }} categories</p>
     </div>
     <div class="flex items-center gap-3">
         <a href="{{ route('admin.assets.index', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
@@ -28,19 +28,19 @@
                class="w-7 h-7" style="color:{{ $cat->color ?? '#6C7DF7' }}"></i>
         </div>
         <h3 class="font-black text-gray-900">{{ $cat->name }}</h3>
-        <p class="text-xs text-gray-400 mt-0.5 mb-3">{{ $cat->code }}</p>
+        <p class="text-xs text-gray-800 mt-0.5 mb-3">{{ $cat->code }}</p>
         <p class="text-3xl font-black mb-1" style="color:{{ $cat->color ?? '#6C7DF7' }}">
             {{ $cat->assets_count }}
         </p>
-        <p class="text-xs text-gray-400 mb-3">assets</p>
+        <p class="text-xs text-gray-800 mb-3">assets</p>
         @if($cat->description)
-        <p class="text-xs text-gray-400">{{ $cat->description }}</p>
+        <p class="text-xs text-gray-800">{{ $cat->description }}</p>
         @endif
     </div>
     @empty
     <div class="lmt-card text-center py-12 md:col-span-4">
         <i data-lucide="tag" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-        <p class="text-gray-400">No categories yet</p>
+        <p class="text-gray-800">No categories yet</p>
     </div>
     @endforelse
 </div>
