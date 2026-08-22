@@ -56,6 +56,29 @@ class Employee extends TenantModel
         ];
     }
 
+    /* ============ Employee code generation ============ */
+    public static function generateNextCode(): string
+    {
+        $prefix  = Setting::get('general.employee_code_prefix', 'EMP-');
+        $padding = max(1, (int) Setting::get('general.employee_code_padding', 4));
+
+        $likePrefix = str_replace(['%', '_'], ['\\%', '\\_'], $prefix);
+        $lastCode = static::withTrashed()
+            ->where('employee_code', 'like', $likePrefix.'%')
+            ->orderByDesc('id')
+            ->value('employee_code');
+
+        $nextNum = 1;
+        if ($lastCode) {
+            $suffix = substr($lastCode, strlen($prefix));
+            if (ctype_digit($suffix)) {
+                $nextNum = ((int) $suffix) + 1;
+            }
+        }
+
+        return $prefix.str_pad((string) $nextNum, $padding, '0', STR_PAD_LEFT);
+    }
+
     /* ============ Privacy helpers ============ */
     public static function defaultPrivacySettings(): array
     {

@@ -15,8 +15,12 @@
     <div class="lmt-card text-center" id="print-card">
         <div class="lmt-gradient-bg rounded-xl p-4 mb-5 mx-auto w-fit">
             <div class="flex items-center gap-2 text-white">
-                <i data-lucide="clock" class="w-5 h-5"></i>
-                <span class="font-black text-lg">Lockmytimes</span>
+                @if(isset($currentTenant) && $currentTenant->logo)
+                    <img src="{{ $currentTenant->logo_url }}" class="w-6 h-6 rounded-lg object-cover flex-shrink-0" alt="{{ $currentTenant->company_name }} logo"/>
+                @else
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                @endif
+                <span class="font-black text-lg">{{ $currentTenant->company_name ?? 'Lockmytimes' }}</span>
             </div>
         </div>
 

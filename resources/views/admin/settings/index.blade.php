@@ -101,6 +101,23 @@
                         <input type="text" name="fiscal_year_start" class="lmt-input" placeholder="01-01"
                                value="{{ $general['fiscal_year_start'] ?? '' }}"/>
                     </div>
+                    <div>
+                        <label class="lmt-label">Employee ID Prefix</label>
+                        <input type="text" name="employee_code_prefix" class="lmt-input" placeholder="EMP-"
+                               value="{{ $general['employee_code_prefix'] ?? 'EMP-' }}"/>
+                        <p class="lmt-help mt-1">e.g. "EMP-", "WORKER-", "SK-"</p>
+                    </div>
+                    <div>
+                        <label class="lmt-label">Employee ID Digits</label>
+                        <select name="employee_code_padding" class="lmt-select">
+                            @foreach([3,4,5,6] as $digits)
+                            <option value="{{ $digits }}" {{ (int) ($general['employee_code_padding'] ?? 4) === $digits ? 'selected':'' }}>
+                                {{ $digits }} digits (e.g. {{ ($general['employee_code_prefix'] ?? 'EMP-').str_pad('1', $digits, '0', STR_PAD_LEFT) }})
+                            </option>
+                            @endforeach
+                        </select>
+                        <p class="lmt-help mt-1">Applies to new employees only — existing IDs are not renumbered.</p>
+                    </div>
                 </div>
                 <div class="pt-2">
                     <button type="submit" class="lmt-btn-primary">

@@ -101,6 +101,8 @@ class SettingController extends Controller
                 'time_format'       => 'string',
                 'week_starts_on'    => 'string',
                 'fiscal_year_start' => 'string',
+                'employee_code_prefix'  => 'string',
+                'employee_code_padding' => 'integer',
             ],
             'attendance' => [
                 'allow_qr'               => 'boolean',

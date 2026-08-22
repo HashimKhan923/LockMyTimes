@@ -74,9 +74,10 @@ class EmployeeController extends Controller
         $managers    = Employee::active()->orderBy('first_name')->get();
         $employee    = new \App\Models\Tenant\Employee();
         $generalTimezone = Setting::get('general.timezone', config('app.timezone'));
+        $suggestedCode = Employee::generateNextCode();
 
         return view('admin.employees.create',
-            compact('departments', 'positions', 'locations', 'managers', 'employee', 'tenant', 'generalTimezone'));
+            compact('departments', 'positions', 'locations', 'managers', 'employee', 'tenant', 'generalTimezone', 'suggestedCode'));
     }
 
     /* ================================================================
@@ -88,6 +89,7 @@ class EmployeeController extends Controller
             'first_name'        => 'required|string|max:100',
             'last_name'         => 'required|string|max:100',
             'email'             => 'required|email|unique:employees,email',
+            'employee_code'     => 'nullable|string|max:30|unique:employees,employee_code',
             'phone'             => 'nullable|string|max:30',
             'date_of_birth'     => 'nullable|date|before:today',
             'gender'            => 'nullable|in:male,female,non_binary,prefer_not_to_say',
@@ -112,6 +114,7 @@ class EmployeeController extends Controller
         $locationIds = $validated['location_ids'] ?? [];
         unset($validated['location_ids']);
         $validated['base_salary'] = $validated['base_salary'] ?? 0;
+        $validated['employee_code'] = ($validated['employee_code'] ?? null) ?: null;
         $timezone = $validated['timezone'] ?? null;
         unset($validated['timezone']);
 
@@ -125,10 +128,8 @@ class EmployeeController extends Controller
 
         DB::beginTransaction();
         try {
-            // Generate employee code
-            $lastCode = Employee::orderByDesc('id')->value('employee_code');
-            $nextNum  = $lastCode ? ((int) substr($lastCode, 4)) + 1 : 1;
-            $validated['employee_code'] = 'EMP-'.str_pad($nextNum, 4, '0', STR_PAD_LEFT);
+            // Generate employee code only if the admin didn't manually enter one
+            $validated['employee_code'] = $validated['employee_code'] ?: Employee::generateNextCode();
 
             // Handle avatar upload
             if ($request->hasFile('avatar')) {
@@ -226,6 +227,7 @@ class EmployeeController extends Controller
             'first_name'        => 'required|string|max:100',
             'last_name'         => 'required|string|max:100',
             'email'             => 'required|email|unique:employees,email,'.$employee->id,
+            'employee_code'     => 'required|string|max:30|unique:employees,employee_code,'.$employee->id,
             'phone'             => 'nullable|string|max:30',
             'date_of_birth'     => 'nullable|date|before:today',
             'gender'            => 'nullable|in:male,female,non_binary,prefer_not_to_say',
@@ -331,11 +333,8 @@ class EmployeeController extends Controller
         foreach ($rows as $i => $row) {
             $data = array_combine($headers, $row);
             try {
-                $lastCode = Employee::orderByDesc('id')->value('employee_code');
-                $nextNum  = $lastCode ? ((int) substr($lastCode, 4)) + 1 : 1;
-
                 Employee::create([
-                    'employee_code'     => 'EMP-'.str_pad($nextNum, 4, '0', STR_PAD_LEFT),
+                    'employee_code'     => Employee::generateNextCode(),
                     'first_name'        => trim($data['first_name'] ?? ''),
                     'last_name'         => trim($data['last_name'] ?? ''),
                     'email'             => trim($data['email'] ?? ''),

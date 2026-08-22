@@ -70,6 +70,15 @@
                 </div>
 
                 <div>
+                    <label class="lmt-label">Employee ID</label>
+                    <input type="text" name="employee_code"
+                           value="{{ old('employee_code', $employee->employee_code ?? $suggestedCode ?? '') }}"
+                           class="lmt-input @error('employee_code') lmt-input-error @enderror"/>
+                    @error('employee_code')<p class="lmt-err">{{ $message }}</p>@enderror
+                    <p class="lmt-help">Auto-generated, but you can edit it. Must be unique.</p>
+                </div>
+
+                <div>
                     <label class="lmt-label">Phone</label>
                     <input type="tel" name="phone" value="{{ old('phone', $employee->phone ?? '') }}"
                            class="lmt-input" placeholder="+1 (555) 000-0000"/>
