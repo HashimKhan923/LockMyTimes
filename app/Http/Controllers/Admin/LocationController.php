@@ -29,6 +29,10 @@ class LocationController extends Controller
             'geofence_radius_meters' => 'nullable|integer|min:10|max:5000',
             'is_headquarters'        => 'boolean',
         ]);
+        // Empty/omitted = inherit the company's General Settings timezone
+        // dynamically (see Employee::attendanceTimezone()) rather than
+        // freezing a wrong default at creation time.
+        $data['timezone'] = ($data['timezone'] ?? null) ?: null;
         Location::create(array_merge($data, ['is_active' => true, 'country' => 'US']));
         return back()->with('success', 'Location created.');
     }
@@ -48,6 +52,7 @@ class LocationController extends Controller
             'is_headquarters'        => 'boolean',
             'is_active'              => 'boolean',
         ]);
+        $data['timezone'] = ($data['timezone'] ?? null) ?: null;
         $location->update($data);
         return back()->with('success', 'Location updated.');
     }

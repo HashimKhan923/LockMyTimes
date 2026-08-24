@@ -505,8 +505,9 @@ class AttendanceController extends Controller
         if (! $assignment?->shift) return null;
         $s = $assignment->shift;
 
-        $start = Carbon::parse($date->toDateString().' '.$s->start_time);
-        $end   = Carbon::parse($date->toDateString().' '.$s->end_time);
+        $tz = $emp->attendanceTimezone();
+        $start = Carbon::parse($date->toDateString().' '.$s->start_time, $tz);
+        $end   = Carbon::parse($date->toDateString().' '.$s->end_time, $tz);
         if ($end->lte($start)) $end->addDay();
 
         return (object) [

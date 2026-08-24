@@ -128,8 +128,9 @@
                 <div>
                     <label class="lmt-label">Timezone</label>
                     <select name="timezone" id="loc-timezone-input" class="lmt-select">
-                        @foreach(['America/New_York'=>'Eastern','America/Chicago'=>'Central','America/Denver'=>'Mountain','America/Los_Angeles'=>'Pacific','America/Anchorage'=>'Alaska','Pacific/Honolulu'=>'Hawaii'] as $tz=>$label)
-                        <option value="{{ $tz }}">{{ $label }}</option>
+                        <option value="">— Company Default —</option>
+                        @foreach(\DateTimeZone::listIdentifiers() as $tz)
+                        <option value="{{ $tz }}">{{ $tz }}</option>
                         @endforeach
                     </select>
                 </div>
