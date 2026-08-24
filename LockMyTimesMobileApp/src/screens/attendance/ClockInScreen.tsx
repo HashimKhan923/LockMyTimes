@@ -37,10 +37,13 @@ export function ClockInScreen({ route, navigation }: Props) {
     enabled: mode === 'in',
   });
 
-  const assignedLocations = indexData?.assigned_locations ?? [];
+  const isRemote = indexData?.employment_mode === 'remote';
+  // Remote employees keep a primary location on file for reporting/timezone
+  // purposes only (see Employee::skipsGeofence()) — it must never drive the
+  // clock-in UI (no location card, no QR requirement, no camera).
+  const assignedLocations = isRemote ? [] : (indexData?.assigned_locations ?? []);
   const hasAssignedLocations = assignedLocations.length > 0;
   const needsLocationPicker = assignedLocations.length > 1;
-  const isRemote = indexData?.employment_mode === 'remote';
 
   // A single assigned location needs no picker at all — select it automatically
   // so the employee can clock in with one tap.
@@ -197,7 +200,7 @@ export function ClockInScreen({ route, navigation }: Props) {
                     </Text>
                   )}
                 </>
-              ) : (
+              ) : isRemote ? null : (
                 <View style={[styles.noLocationCard, { backgroundColor: theme.surfaceAlt }]}>
                   <Text style={[typography.body, { color: theme.text, fontWeight: '600' }]}>
                     No location assigned to your account
