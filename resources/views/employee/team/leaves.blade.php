@@ -8,7 +8,7 @@
     <div class="flex items-center justify-between mb-5" data-lmt-anim="fade-up">
         <div>
             <a href="{{ route('employee.team.index', $tenantSlug) }}"
-               class="inline-flex items-center gap-1 text-xs font-bold text-gray-800 hover:text-gray-600 dark:hover:text-slate-300 mb-1">
+               class="inline-flex items-center gap-1 text-xs font-bold text-gray-800 hover:text-gray-800 dark:hover:text-slate-300 mb-1">
                 <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> My Team
             </a>
             <h1 class="text-xl font-black text-gray-900 dark:text-slate-100">Leave Approvals</h1>
@@ -31,7 +31,7 @@
     {{-- Counters --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" data-lmt-anim="fade-up">
         @foreach([
-            ['label'=>'Total',    'value'=>$counters->total,    'icon'=>'calendar',      'bg'=>'bg-gray-100',   'text'=>'text-gray-600',    'status'=>'all'],
+            ['label'=>'Total',    'value'=>$counters->total,    'icon'=>'calendar',      'bg'=>'bg-gray-100',   'text'=>'text-gray-800',    'status'=>'all'],
             ['label'=>'Pending',  'value'=>$counters->pending,  'icon'=>'clock',         'bg'=>'bg-amber-50',   'text'=>'text-amber-600',   'status'=>'pending'],
             ['label'=>'Approved', 'value'=>$counters->approved, 'icon'=>'check-circle',  'bg'=>'bg-emerald-50', 'text'=>'text-emerald-600', 'status'=>'approved'],
             ['label'=>'Rejected', 'value'=>$counters->rejected, 'icon'=>'x-circle',      'bg'=>'bg-red-50',     'text'=>'text-red-500',     'status'=>'rejected'],
@@ -58,7 +58,7 @@
                    class="px-4 py-2.5 text-sm font-semibold rounded-t-lg whitespace-nowrap transition-all
                           {{ $status === $val
                               ? 'bg-white dark:bg-slate-800 border-t border-l border-r border-gray-200 dark:border-slate-700 text-brand-600 -mb-px'
-                              : 'text-gray-800 hover:text-gray-700 dark:hover:text-slate-300' }}">
+                              : 'text-gray-800 hover:text-gray-800 dark:hover:text-slate-300' }}">
                     {{ $label }}
                     @if($val === 'pending' && $counters->pending > 0)
                     <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $counters->pending }}</span>
@@ -113,7 +113,7 @@
                         <td>
                             <div class="flex items-center gap-2">
                                 <div class="w-2.5 h-2.5 rounded-full" style="background:{{ $req->leaveType->color ?? '#6C7DF7' }}"></div>
-                                <span class="text-sm text-gray-700 dark:text-slate-300">{{ $req->leaveType->name ?? '—' }}</span>
+                                <span class="text-sm text-gray-800 dark:text-slate-300">{{ $req->leaveType->name ?? '—' }}</span>
                                 @if($req->day_part && $req->day_part !== 'full_day')
                                 <span class="lmt-badge-brand text-xs">½ Day</span>
                                 @endif
@@ -144,7 +144,7 @@
                         </td>
                         <td class="text-sm">
                             @if($req->_available_balance !== null)
-                                <span class="{{ $req->_available_balance < 0 ? 'text-red-500' : 'text-gray-700 dark:text-slate-300' }} font-semibold">
+                                <span class="{{ $req->_available_balance < 0 ? 'text-red-500' : 'text-gray-800 dark:text-slate-300' }} font-semibold">
                                     {{ number_format($req->_available_balance, 1) }}
                                 </span>
                             @else
@@ -156,7 +156,7 @@
                                 {{ $statusLabels[$req->status] ?? ucfirst($req->status) }}
                             </span>
                             @if($req->status === 'rejected' && $req->rejection_reason)
-                            <p class="text-xs text-red-400 mt-0.5 max-w-40 truncate" title="{{ $req->rejection_reason }}">
+                            <p class="text-xs text-red-600 mt-0.5 max-w-40 truncate" title="{{ $req->rejection_reason }}">
                                 {{ $req->rejection_reason }}
                             </p>
                             @endif

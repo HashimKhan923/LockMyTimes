@@ -19,7 +19,7 @@
         @forelse($positions as $pos)
         <tr>
             <td class="font-semibold text-gray-900 text-sm">{{ $pos->title }}</td>
-            <td class="text-sm text-gray-600">{{ $pos->department?->name ?? '—' }}</td>
+            <td class="text-sm text-gray-800">{{ $pos->department?->name ?? '—' }}</td>
             <td class="text-sm font-semibold text-gray-900">{{ $pos->employees_count }}</td>
             <td>
                 <form action="{{ route('admin.positions.destroy', [$tenant, $pos->id]) }}" method="POST"

@@ -101,7 +101,7 @@
                     <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                         <i data-lucide="megaphone" class="w-7 h-7 text-gray-800"></i>
                     </div>
-                    <p class="text-sm font-bold text-gray-700 dark:text-slate-200">
+                    <p class="text-sm font-bold text-gray-800 dark:text-slate-200">
                         @if($filter === 'unread') Nothing unread — nice
                         @elseif($filter === 'acknowledgments') No pending acknowledgments
                         @else No announcements yet
@@ -178,7 +178,7 @@
                                     {{ $a->title }}
                                 </h3>
 
-                                <p class="text-sm text-gray-600 dark:text-slate-400 mt-1 line-clamp-2">
+                                <p class="text-sm text-gray-800 dark:text-slate-400 mt-1 line-clamp-2">
                                     {{ Str::limit(strip_tags($a->content), 180) }}
                                 </p>
 

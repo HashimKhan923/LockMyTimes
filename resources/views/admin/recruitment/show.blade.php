@@ -72,9 +72,9 @@
             <div class="flex items-center gap-2">
                 <h1 class="font-black text-gray-900 text-xl">{{ $job->title }}</h1>
                 @php
-                $sc = ['published'=>'bg-emerald-100 text-emerald-700','draft'=>'bg-gray-100 text-gray-600','paused'=>'bg-amber-100 text-amber-700','closed'=>'bg-red-100 text-red-700','filled'=>'bg-brand-100 text-brand-700'];
+                $sc = ['published'=>'bg-emerald-100 text-emerald-700','draft'=>'bg-gray-100 text-gray-800','paused'=>'bg-amber-100 text-amber-700','closed'=>'bg-red-100 text-red-700','filled'=>'bg-brand-100 text-brand-700'];
                 @endphp
-                <span class="px-2.5 py-1 rounded-full text-xs font-bold capitalize {{ $sc[$job->status] ?? 'bg-gray-100 text-gray-600' }}">
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold capitalize {{ $sc[$job->status] ?? 'bg-gray-100 text-gray-800' }}">
                     {{ $job->status }}
                 </span>
             </div>
@@ -129,7 +129,7 @@ $stageConfig = [
             <div class="flex items-center gap-2">
                 <div class="w-2.5 h-2.5 rounded-full" style="background:{{ $cfg['color'] }}"></div>
                 <span class="text-sm font-bold text-gray-800">{{ $cfg['label'] }}</span>
-                <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-xs font-bold flex items-center justify-center">
+                <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-800 text-xs font-bold flex items-center justify-center">
                     {{ $stageCands->count() }}
                 </span>
             </div>

@@ -15,6 +15,7 @@ return [
     /* ── Navigation items ── */
     'nav_home'          => 'Home',
     'nav_attendance'    => 'Attendance',
+    'nav_corrections'   => 'Corrections',
     'nav_leaves'        => 'Leaves',
     'nav_payslips'      => 'Payslips',
     'nav_expenses'      => 'Expenses',

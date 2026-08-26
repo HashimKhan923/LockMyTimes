@@ -74,7 +74,7 @@
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                 <i data-lucide="bar-chart-2" class="w-7 h-7 text-gray-800"></i>
             </div>
-            <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No polls yet</p>
+            <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No polls yet</p>
             <p class="text-xs text-gray-800 mt-1">Polls will show up here when they're posted.</p>
         </div>
     @else

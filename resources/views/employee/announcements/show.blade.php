@@ -94,7 +94,7 @@
                         {{ strtoupper(substr($announcement->creator->name, 0, 1)) }}
                     </div>
                     <span>
-                        Posted by <span class="font-bold text-gray-700 dark:text-slate-200">{{ $announcement->creator->name }}</span>
+                        Posted by <span class="font-bold text-gray-800 dark:text-slate-200">{{ $announcement->creator->name }}</span>
                     </span>
                 </span>
             @endif
@@ -109,7 +109,7 @@
         </div>
 
         {{-- Content --}}
-        <div class="prose prose-sm dark:prose-invert max-w-none mt-5 text-gray-700 dark:text-slate-200 leading-relaxed">
+        <div class="prose prose-sm dark:prose-invert max-w-none mt-5 text-gray-800 dark:text-slate-200 leading-relaxed">
             {!! nl2br(e($announcement->content)) !!}
         </div>
 

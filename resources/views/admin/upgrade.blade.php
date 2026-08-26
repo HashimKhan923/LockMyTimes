@@ -95,7 +95,7 @@
         {{-- Module list --}}
         <ul class="space-y-2 mb-8 flex-1">
             @foreach($modules as $name => $included)
-            <li class="flex items-center gap-2 text-sm {{ $included ? 'text-gray-700' : 'text-gray-800' }}">
+            <li class="flex items-center gap-2 text-sm {{ $included ? 'text-gray-800' : 'text-gray-800' }}">
                 @if($included)
                     <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>

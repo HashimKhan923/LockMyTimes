@@ -10,7 +10,7 @@
         ['label'=>'Pending Approval', 'value'=>$stats['pending'],       'icon'=>'clock',        'bg'=>'bg-amber-50',  'text'=>'text-amber-600',  'route'=>'?status=pending'],
         ['label'=>'On Leave Today',   'value'=>$stats['on_leave_today'],'icon'=>'user-minus',   'bg'=>'bg-red-50',    'text'=>'text-red-600',    'route'=>'?status=approved'],
         ['label'=>'Approved (Month)', 'value'=>$stats['approved'],      'icon'=>'check-circle', 'bg'=>'bg-emerald-50','text'=>'text-emerald-600','route'=>'?status=approved'],
-        ['label'=>'Rejected (Month)', 'value'=>$stats['rejected'],      'icon'=>'x-circle',     'bg'=>'bg-gray-100',  'text'=>'text-gray-600',   'route'=>'?status=rejected'],
+        ['label'=>'Rejected (Month)', 'value'=>$stats['rejected'],      'icon'=>'x-circle',     'bg'=>'bg-gray-100',  'text'=>'text-gray-800',   'route'=>'?status=rejected'],
     ] as $s)
     <a href="{{ route('admin.leaves.index', $tenant) }}{{ $s['route'] }}" class="lmt-stat">
         <div>
@@ -38,7 +38,7 @@
                        class="px-4 py-2.5 text-sm font-semibold rounded-t-lg whitespace-nowrap transition-all
                               {{ $status === $val
                                   ? 'bg-white border-t border-l border-r border-gray-200 text-brand-600 -mb-px'
-                                  : 'text-gray-800 hover:text-gray-700' }}">
+                                  : 'text-gray-800 hover:text-gray-800' }}">
                         {{ $label }}
                         @if($val === 'pending' && $stats['pending'] > 0)
                         <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $stats['pending'] }}</span>
@@ -120,7 +120,7 @@
                                 <div class="flex items-center gap-2">
                                     <div class="w-2.5 h-2.5 rounded-full"
                                          style="background:{{ $req->leaveType->color ?? '#6C7DF7' }}"></div>
-                                    <span class="text-sm text-gray-700">{{ $req->leaveType->name ?? '—' }}</span>
+                                    <span class="text-sm text-gray-800">{{ $req->leaveType->name ?? '—' }}</span>
                                     @if($req->is_half_day)
                                     <span class="lmt-badge-brand text-xs">½ Day</span>
                                     @endif
@@ -157,7 +157,7 @@
                                     <p class="text-xs text-gray-800 mt-0.5">by {{ $req->approver->name }}</p>
                                     @endif
                                     @if($req->status === 'rejected' && $req->rejection_reason)
-                                    <p class="text-xs text-red-400 mt-0.5 max-w-28 truncate" title="{{ $req->rejection_reason }}">
+                                    <p class="text-xs text-red-600 mt-0.5 max-w-28 truncate" title="{{ $req->rejection_reason }}">
                                         {{ $req->rejection_reason }}
                                     </p>
                                     @endif
@@ -280,7 +280,7 @@
                     @foreach($leaveTypes->take(5) as $lt)
                     <div class="flex items-center gap-2 text-xs">
                         <div class="w-3 h-3 rounded-full flex-shrink-0" style="background:{{ $lt->color ?? '#6C7DF7' }}"></div>
-                        <span class="text-gray-600 truncate">{{ $lt->name }}</span>
+                        <span class="text-gray-800 truncate">{{ $lt->name }}</span>
                     </div>
                     @endforeach
                 </div>
@@ -301,7 +301,7 @@
                     <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 group-hover:bg-brand-500 group-hover:text-white flex items-center justify-center transition-all">
                         <i data-lucide="{{ $link['icon'] }}" class="w-4 h-4"></i>
                     </div>
-                    <span class="text-sm font-semibold text-gray-700">{{ $link['label'] }}</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ $link['label'] }}</span>
                     <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 ml-auto"></i>
                 </a>
                 @endforeach
@@ -314,7 +314,7 @@
                         <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white flex items-center justify-center transition-all">
                             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         </div>
-                        <span class="text-sm font-semibold text-gray-700">Sync Balances</span>
+                        <span class="text-sm font-semibold text-gray-800">Sync Balances</span>
                         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 ml-auto"></i>
                     </button>
                 </form>
@@ -359,7 +359,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_half_day" value="1" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Half Day</span>
+                <span class="text-sm font-medium text-gray-800">Half Day</span>
             </label>
             <div>
                 <label class="lmt-label">Reason</label>

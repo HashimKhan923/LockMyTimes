@@ -8,7 +8,7 @@
 
     {{-- Back button --}}
     <a href="{{ route('admin.employees.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Employees
     </a>

@@ -30,7 +30,7 @@
     @foreach(['courses'=>' Courses','enrollments'=>' Enrollments','certifications'=>' Certifications'] as $t=>$label)
     <a href="{{ route('admin.training.index', $tenant) }}?tab={{ $t }}"
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
-              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-800 hover:text-gray-700' }}">
+              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-800 hover:text-gray-800' }}">
         {{ $label }}
     </a>
     @endforeach
@@ -70,7 +70,7 @@
         'soft_skills' => ['bg'=>'bg-purple-100', 'text'=>'text-purple-700'],
         'leadership'  => ['bg'=>'bg-amber-100',  'text'=>'text-amber-700'],
         'safety'      => ['bg'=>'bg-orange-100', 'text'=>'text-orange-700'],
-        'other'       => ['bg'=>'bg-gray-100',   'text'=>'text-gray-700'],
+        'other'       => ['bg'=>'bg-gray-100',   'text'=>'text-gray-800'],
     ];
     $cc = $catColors[$training->category] ?? $catColors['other'];
     $typeIcons = ['online'=>'monitor','in_person'=>'users','hybrid'=>'layout','self_paced'=>'book-open'];
@@ -235,7 +235,7 @@
                             <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                                 <div class="h-full lmt-gradient-bg rounded-full" style="width:{{ $en->progress }}%"></div>
                             </div>
-                            <span class="text-xs font-bold text-gray-600">{{ $en->progress }}%</span>
+                            <span class="text-xs font-bold text-gray-800">{{ $en->progress }}%</span>
                         </div>
                     </td>
                     <td>
@@ -333,11 +333,11 @@
                         <p class="text-xs text-gray-800 font-mono">{{ $cert->credential_id }}</p>
                         @endif
                     </td>
-                    <td class="text-sm text-gray-600">{{ $cert->issuer }}</td>
-                    <td class="text-sm text-gray-600">{{ $cert->issue_date->format('M j, Y') }}</td>
+                    <td class="text-sm text-gray-800">{{ $cert->issuer }}</td>
+                    <td class="text-sm text-gray-800">{{ $cert->issue_date->format('M j, Y') }}</td>
                     <td>
                         @if($cert->expiry_date)
-                        <span class="text-sm {{ $isExpired ? 'text-red-600 font-bold' : ($isExpiringSoon ? 'text-amber-600 font-semibold' : 'text-gray-600') }}">
+                        <span class="text-sm {{ $isExpired ? 'text-red-600 font-bold' : ($isExpiringSoon ? 'text-amber-600 font-semibold' : 'text-gray-800') }}">
                             {{ $cert->expiry_date->format('M j, Y') }}
                         </span>
                         @if($isExpiringSoon)
@@ -470,7 +470,7 @@
                 @foreach([['is_mandatory','Mandatory Training'],['issues_certificate','Issues Certificate']] as [$n,$l])
                 <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50">
                     <input type="checkbox" name="{{ $n }}" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-xs font-medium text-gray-700">{{ $l }}</span>
+                    <span class="text-xs font-medium text-gray-800">{{ $l }}</span>
                 </label>
                 @endforeach
             </div>
@@ -610,7 +610,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_verified" value="1" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Mark as Verified</span>
+                <span class="text-sm font-medium text-gray-800">Mark as Verified</span>
             </label>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Add Certification</button>

@@ -24,7 +24,7 @@
     $firstName = $emp->display_name ?? explode(' ', auth()->user()->name)[0];
 
     $statusMeta = match($clockStatus) {
-        'not_clocked_in' => ['label'=>'Not clocked in', 'dot'=>'#94a3b8', 'pill'=>'bg-gray-100 text-gray-700 border-gray-200'],
+        'not_clocked_in' => ['label'=>'Not clocked in', 'dot'=>'#94a3b8', 'pill'=>'bg-gray-100 text-gray-800 border-gray-200'],
         'clocked_in'     => ['label'=>'Clocked in',     'dot'=>'#10b981', 'pill'=>'bg-emerald-50 text-emerald-700 border-emerald-200'],
         'on_break'       => ['label'=>'On break',       'dot'=>'#f59e0b', 'pill'=>'bg-amber-50 text-amber-700 border-amber-200'],
         'clocked_out'    => ['label'=>'Day complete',   'dot'=>'#6366f1', 'pill'=>'bg-indigo-50 text-indigo-700 border-indigo-200'],
@@ -392,13 +392,13 @@
                             $priorityColor = match($task->priority) {
                                 'urgent', 'high'   => 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300',
                                 'medium' => 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
-                                default  => 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-300',
+                                default  => 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-slate-300',
                             };
                             $statusColor = match($task->status) {
                                 'in_progress', 'doing'   => 'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300',
                                 'review'                 => 'bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
                                 'blocked'                => 'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300',
-                                default                  => 'bg-gray-50 text-gray-600 dark:bg-slate-700 dark:text-slate-300',
+                                default                  => 'bg-gray-50 text-gray-800 dark:bg-slate-700 dark:text-slate-300',
                             };
                         @endphp
                         <a href="{{ \Route::has('employee.tasks.show') ? route('employee.tasks.show', [$tenantSlug, $task->id]) : '#' }}"
@@ -524,7 +524,7 @@
                                 <p class="text-xs text-gray-800">{{ $bd->date }}</p>
                             </div>
                             <span class="text-[11px] font-bold px-2 py-0.5 rounded-full
-                                         {{ $bd->when === 'Today' ? 'bg-pink-100 text-pink-700' : 'bg-gray-100 text-gray-600' }}">
+                                         {{ $bd->when === 'Today' ? 'bg-pink-100 text-pink-700' : 'bg-gray-100 text-gray-800' }}">
                                 {{ $bd->when }}
                             </span>
                         </div>

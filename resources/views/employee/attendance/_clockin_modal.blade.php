@@ -8,7 +8,7 @@
             <h3 class="text-lg font-black text-gray-900 dark:text-slate-100" style="font-family:'Plus Jakarta Sans',sans-serif">
                 <span x-text="clockMode === 'in' ? 'Clock In' : 'Clock Out'"></span>
             </h3>
-            <button @click="closeClockModal()" class="text-gray-800 hover:text-gray-600">
+            <button @click="closeClockModal()" class="text-gray-800 hover:text-gray-800">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
@@ -29,7 +29,7 @@
 
         {{-- Geo banner --}}
         <div class="mb-4 p-3 rounded-xl flex items-start gap-3 text-xs"
-             :class="clockGeo.err ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 dark:bg-slate-800 text-gray-600 dark:text-slate-300'">
+             :class="clockGeo.err ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-gray-50 dark:bg-slate-800 text-gray-800 dark:text-slate-300'">
             <i :data-lucide="clockGeo.err ? 'map-pin-off' : (clockGeo.lat ? 'map-pin' : 'loader')"
                class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
             <div class="flex-1">

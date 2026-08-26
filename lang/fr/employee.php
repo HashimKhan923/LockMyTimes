@@ -15,6 +15,7 @@ return [
     /* ── Éléments de navigation ── */
     'nav_home'          => 'Accueil',
     'nav_attendance'    => 'Présence',
+    'nav_corrections'   => 'Corrections',
     'nav_leaves'        => 'Congés',
     'nav_payslips'      => 'Fiches de paie',
     'nav_expenses'      => 'Dépenses',

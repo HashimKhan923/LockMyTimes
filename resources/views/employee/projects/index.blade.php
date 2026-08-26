@@ -90,7 +90,7 @@
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                 <i data-lucide="folder-kanban" class="w-7 h-7 text-gray-800"></i>
             </div>
-            <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No projects found</p>
+            <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No projects found</p>
             <p class="text-xs text-gray-800 mt-1">
                 @if($search !== '')
                     No projects match "{{ $search }}". Try a different search.
@@ -139,7 +139,7 @@
                         <div class="mb-3">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[10px] font-bold text-gray-800 uppercase tracking-wider">Project progress</span>
-                                <span class="font-mono text-[10px] font-bold text-gray-700 dark:text-slate-300">{{ $p->progress }}%</span>
+                                <span class="font-mono text-[10px] font-bold text-gray-800 dark:text-slate-300">{{ $p->progress }}%</span>
                             </div>
                             <div class="h-1.5 rounded-full bg-gray-100 dark:bg-slate-700 overflow-hidden">
                                 <div class="h-full rounded-full" style="width:{{ $p->progress }}%; background:{{ $p->color }};"></div>

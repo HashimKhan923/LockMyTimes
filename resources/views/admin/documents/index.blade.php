@@ -50,7 +50,7 @@
             {{-- All Documents --}}
             <a href="{{ route('admin.documents.index', $tenant) }}"
                class="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold transition-colors
-                      {{ !$folderId && !request('category') ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:bg-gray-50' }}">
+                      {{ !$folderId && !request('category') ? 'bg-brand-50 text-brand-700' : 'text-gray-800 hover:bg-gray-50' }}">
                 <i data-lucide="layout-grid" class="w-4 h-4 flex-shrink-0"></i>
                 <span class="truncate">All Documents</span>
             </a>
@@ -61,7 +61,7 @@
                 @foreach($allFolders->where('parent_id', null) as $folder)
                 <a href="{{ route('admin.documents.index', $tenant) }}?folder={{ $folder->id }}"
                    class="flex items-center gap-2.5 px-4 py-2 text-sm font-medium transition-colors
-                          {{ $folderId == $folder->id ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-gray-600 hover:bg-gray-50' }}">
+                          {{ $folderId == $folder->id ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-gray-800 hover:bg-gray-50' }}">
                     <i data-lucide="{{ $folder->icon ?? 'folder' }}" class="w-4 h-4 flex-shrink-0"
                        style="color:{{ $folder->color ?? '#6C7DF7' }}"></i>
                     <span class="flex-1 truncate text-xs">{{ $folder->name }}</span>
@@ -93,7 +93,7 @@
                 ] as $cat => [$icon, $color])
                 <a href="{{ route('admin.documents.index', $tenant) }}?category={{ $cat }}"
                    class="flex items-center gap-2.5 px-4 py-2 text-xs font-medium transition-colors capitalize
-                          {{ request('category') === $cat ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-gray-600 hover:bg-gray-50' }}">
+                          {{ request('category') === $cat ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-gray-800 hover:bg-gray-50' }}">
                     <i data-lucide="{{ $icon }}" class="w-3.5 h-3.5 flex-shrink-0 {{ $color }}"></i>
                     {{ str_replace('_', ' ', $cat) }}
                 </a>
@@ -119,13 +119,13 @@
                 @foreach($breadcrumbs as $bc)
                 <span class="text-gray-800 flex-shrink-0">/</span>
                 <a href="{{ route('admin.documents.index', $tenant) }}?folder={{ $bc->id }}"
-                   class="font-semibold text-gray-700 hover:text-brand-600 transition-colors truncate">
+                   class="font-semibold text-gray-800 hover:text-brand-600 transition-colors truncate">
                     {{ $bc->name }}
                 </a>
                 @endforeach
                 @if(request('category'))
                 <span class="text-gray-800 flex-shrink-0">/</span>
-                <span class="font-semibold text-gray-700 capitalize">{{ request('category') }}</span>
+                <span class="font-semibold text-gray-800 capitalize">{{ request('category') }}</span>
                 @endif
             </div>
 
@@ -208,8 +208,8 @@
                         'template' => 'bg-blue-100 text-blue-700',
                         'form'     => 'bg-emerald-100 text-emerald-700',
                         'handbook' => 'bg-indigo-100 text-indigo-700',
-                        'other'    => 'bg-gray-100 text-gray-600',
-                    ][$doc->category] ?? 'bg-gray-100 text-gray-600';
+                        'other'    => 'bg-gray-100 text-gray-800',
+                    ][$doc->category] ?? 'bg-gray-100 text-gray-800';
 
                     $ext = strtolower(pathinfo($doc->file_name, PATHINFO_EXTENSION));
                     [$extBg, $extColor] = match($ext) {
@@ -298,7 +298,7 @@
         <div class="flex items-center justify-between mb-5">
             <h3 class="font-black text-gray-900">Upload Document</h3>
             <button onclick="closeModal('upload-modal')"
-                    class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                    class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-800 hover:bg-gray-100 flex items-center justify-center transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -365,11 +365,11 @@
             <div class="grid grid-cols-2 gap-3">
                 <label class="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
                     <input type="checkbox" name="requires_acknowledgment" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-sm font-medium text-gray-700">Requires Acknowledgment</span>
+                    <span class="text-sm font-medium text-gray-800">Requires Acknowledgment</span>
                 </label>
                 <label class="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
                     <input type="checkbox" name="requires_signature" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-sm font-medium text-gray-700">Requires Signature</span>
+                    <span class="text-sm font-medium text-gray-800">Requires Signature</span>
                 </label>
             </div>
 

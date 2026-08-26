@@ -85,7 +85,7 @@
                     {{ $loan->loanType?->name ?? 'Loan' }}
                 </h1>
                 @if($loan->purpose)
-                    <p class="text-sm text-gray-600 dark:text-slate-400 mt-2 whitespace-pre-line">{{ $loan->purpose }}</p>
+                    <p class="text-sm text-gray-800 dark:text-slate-400 mt-2 whitespace-pre-line">{{ $loan->purpose }}</p>
                 @endif
 
                 {{-- Rejection reason --}}
@@ -240,13 +240,13 @@
                                             <span class="font-mono font-bold text-xs">{{ $r->installment_number }}</span>
                                         </td>
                                         <td>
-                                            <span class="text-xs text-gray-700 dark:text-slate-200">{{ $r->due_date?->format('M j, Y') ?? '—' }}</span>
+                                            <span class="text-xs text-gray-800 dark:text-slate-200">{{ $r->due_date?->format('M j, Y') ?? '—' }}</span>
                                             @if($r->paid_date)
                                                 <p class="text-[10px] text-emerald-600 font-bold mt-0.5">Paid {{ $r->paid_date->format('M j') }}</p>
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            <span class="font-mono text-xs text-gray-700 dark:text-slate-200">{{ $sym }}{{ number_format($r->principal_component, 2) }}</span>
+                                            <span class="font-mono text-xs text-gray-800 dark:text-slate-200">{{ $sym }}{{ number_format($r->principal_component, 2) }}</span>
                                         </td>
                                         <td class="text-right">
                                             <span class="font-mono text-xs text-gray-800">{{ $sym }}{{ number_format($r->interest_component, 2) }}</span>

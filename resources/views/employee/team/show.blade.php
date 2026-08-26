@@ -306,7 +306,7 @@
                         @endphp
                         <div>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-xs font-bold text-gray-700 dark:text-slate-300">{{ $bal->leaveType?->name ?? 'Unknown' }}</span>
+                                <span class="text-xs font-bold text-gray-800 dark:text-slate-300">{{ $bal->leaveType?->name ?? 'Unknown' }}</span>
                                 <span class="text-xs">
                                     <span class="font-mono font-bold text-gray-900 dark:text-slate-100">{{ number_format($available, 1) }}</span>
                                     <span class="text-gray-800">/ {{ number_format($totalAllocated, 0) }} day{{ $totalAllocated === 1.0 ? '' : 's' }}</span>

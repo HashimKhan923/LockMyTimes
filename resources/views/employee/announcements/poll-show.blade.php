@@ -98,7 +98,7 @@
         </h1>
 
         @if($poll->description)
-            <p class="text-sm text-gray-600 dark:text-slate-400 mt-2 whitespace-pre-line leading-relaxed">{{ $poll->description }}</p>
+            <p class="text-sm text-gray-800 dark:text-slate-400 mt-2 whitespace-pre-line leading-relaxed">{{ $poll->description }}</p>
         @endif
 
         <div class="flex items-center gap-3 mt-3 text-[11px] text-gray-800">

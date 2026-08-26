@@ -106,7 +106,7 @@
                     {{ $expense->title }}
                 </h1>
                 @if($expense->description)
-                    <p class="text-sm text-gray-600 dark:text-slate-400 mt-2 whitespace-pre-line">{{ $expense->description }}</p>
+                    <p class="text-sm text-gray-800 dark:text-slate-400 mt-2 whitespace-pre-line">{{ $expense->description }}</p>
                 @endif
 
                 {{-- Rejection reason callout --}}

@@ -111,7 +111,7 @@
 
                 @if($search !== '' || $priority || $projectId)
                     <a href="{{ route('employee.tasks.index', ['tenant' => $tenantSlug, 'filter' => $filter]) }}"
-                       class="text-xs font-bold text-gray-800 hover:text-gray-700 px-2">Clear</a>
+                       class="text-xs font-bold text-gray-800 hover:text-gray-800 px-2">Clear</a>
                 @endif
             </form>
         </div>
@@ -159,7 +159,7 @@
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                     <i data-lucide="check-square" class="w-7 h-7 text-gray-800"></i>
                 </div>
-                <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No tasks found</p>
+                <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No tasks found</p>
                 <p class="text-xs text-gray-800 mt-1">
                     @if($filter === 'open')
                         You're all caught up. Take a moment to celebrate.

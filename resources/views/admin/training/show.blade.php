@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.training.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Training
     </a>
@@ -61,7 +61,7 @@
                     ] as [$k,$v])
                     <div class="flex justify-between py-1.5 border-b border-gray-50 last:border-none">
                         <span class="text-xs text-gray-800">{{ $k }}</span>
-                        <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
+                        <span class="text-xs font-semibold text-gray-800">{{ $v }}</span>
                     </div>
                     @endforeach
                 </div>

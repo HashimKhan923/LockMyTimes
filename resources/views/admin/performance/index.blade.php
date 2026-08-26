@@ -32,7 +32,7 @@
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
               {{ $tab === $t
                   ? 'border-brand-500 text-brand-600'
-                  : 'border-transparent text-gray-800 hover:text-gray-700' }}">
+                  : 'border-transparent text-gray-800 hover:text-gray-800' }}">
         {{ $label }}
         @if($t === 'reviews' && $stats['pending_reviews'] > 0)
         <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $stats['pending_reviews'] }}</span>
@@ -91,18 +91,18 @@
                             </div>
                         </div>
                     </td>
-                    <td class="text-sm text-gray-600">{{ $review->reviewer->full_name ?? 'Self' }}</td>
-                    <td class="text-sm text-gray-600 max-w-32 truncate">{{ $review->cycle?->name ?? '—' }}</td>
+                    <td class="text-sm text-gray-800">{{ $review->reviewer->full_name ?? 'Self' }}</td>
+                    <td class="text-sm text-gray-800 max-w-32 truncate">{{ $review->cycle?->name ?? '—' }}</td>
                     <td>
                         <span class="lmt-badge-gray text-xs capitalize">
                             {{ str_replace('_',' ', $review->review_type ?? 'annual') }}
                         </span>
                     </td>
                     <td>
-                        <span class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-600' }}">
+                        <span class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-800' }}">
                             {{ $review->due_date?->format('M j, Y') ?? '—' }}
                         </span>
-                        @if($isOverdue)<span class="block text-xs text-red-400">Overdue</span>@endif
+                        @if($isOverdue)<span class="block text-xs text-red-600">Overdue</span>@endif
                     </td>
                     <td>
                         @if($review->overall_rating)
@@ -195,7 +195,7 @@
                         @else<span class="text-gray-800 text-xs">—</span>@endif
                     </td>
                     <td>
-                        <span class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-600' }}">
+                        <span class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-800' }}">
                             {{ $goal->end_date?->format('M j, Y') ?? '—' }}
                         </span>
                     </td>
@@ -207,7 +207,7 @@
                                             background:{{ $goal->progress >= 100 ? '#10B981' : ($goal->progress >= 50 ? '#6C7DF7' : '#F59E0B') }}">
                                 </div>
                             </div>
-                            <span class="text-xs font-bold text-gray-700 w-8">{{ $goal->progress }}%</span>
+                            <span class="text-xs font-bold text-gray-800 w-8">{{ $goal->progress }}%</span>
                         </div>
                     </td>
                     <td>
@@ -279,7 +279,7 @@
         @endif
 
         {{-- Message --}}
-        <p class="text-sm text-gray-700 italic mb-4 leading-relaxed">"{{ $kudo->message }}"</p>
+        <p class="text-sm text-gray-800 italic mb-4 leading-relaxed">"{{ $kudo->message }}"</p>
 
         {{-- From To --}}
         <div class="flex items-center justify-between">
@@ -558,7 +558,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_public" value="1" checked class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Show on Kudos Wall</span>
+                <span class="text-sm font-medium text-gray-800">Show on Kudos Wall</span>
             </label>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Send Kudos </button>

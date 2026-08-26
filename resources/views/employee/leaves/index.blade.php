@@ -222,7 +222,7 @@
                             @endphp
                             <tr class="hover:bg-gray-50/70 dark:hover:bg-slate-800/50">
                                 <td>
-                                    <span class="font-mono text-xs font-bold text-gray-700 dark:text-slate-200">
+                                    <span class="font-mono text-xs font-bold text-gray-800 dark:text-slate-200">
                                         {{ $r->request_number }}
                                     </span>
                                 </td>

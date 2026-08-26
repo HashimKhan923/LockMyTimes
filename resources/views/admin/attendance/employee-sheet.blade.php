@@ -7,7 +7,7 @@
 <div class="max-w-4xl mx-auto">
 
     <a href="{{ route('admin.attendance.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Attendance
     </a>
@@ -100,7 +100,7 @@
                 <span class="text-[10px] text-gray-800">{{ number_format($rec->total_hours,1) }}h</span>
                 @endif
                 @elseif(!$isWeekend && $dateKey < now()->toDateString())
-                <span class="text-[10px] text-red-400 mt-auto">Absent</span>
+                <span class="text-[10px] text-red-600 mt-auto">Absent</span>
                 @endif
             </div>
             @endfor

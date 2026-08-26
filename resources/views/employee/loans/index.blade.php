@@ -119,7 +119,7 @@
     ═══════════════════════════════════════════════════════════════ --}}
     <div class="flex items-center gap-1 mb-5 border-b border-gray-200 dark:border-slate-700">
         <button @click="tab='loans'"
-                :class="tab==='loans' ? 'text-white' : 'text-gray-800 hover:text-gray-700 dark:hover:text-slate-300'"
+                :class="tab==='loans' ? 'text-white' : 'text-gray-800 hover:text-gray-800 dark:hover:text-slate-300'"
                 class="px-4 py-2.5 text-sm font-bold rounded-t-xl -mb-px transition-all relative"
                 :style="tab==='loans' ? 'background:var(--brand-500);' : ''">
             <i data-lucide="hand-coins" class="w-4 h-4 inline -mt-0.5"></i>
@@ -130,7 +130,7 @@
             </span>
         </button>
         <button @click="tab='advances'"
-                :class="tab==='advances' ? 'text-white' : 'text-gray-800 hover:text-gray-700 dark:hover:text-slate-300'"
+                :class="tab==='advances' ? 'text-white' : 'text-gray-800 hover:text-gray-800 dark:hover:text-slate-300'"
                 class="px-4 py-2.5 text-sm font-bold rounded-t-xl -mb-px transition-all relative"
                 :style="tab==='advances' ? 'background:var(--brand-500);' : ''">
             <i data-lucide="zap" class="w-4 h-4 inline -mt-0.5"></i>
@@ -197,7 +197,7 @@
                     <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                         <i data-lucide="hand-coins" class="w-7 h-7 text-gray-800"></i>
                     </div>
-                    <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No loans yet</p>
+                    <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No loans yet</p>
                     <p class="text-xs text-gray-800 mt-1">Apply for your first loan to see it here.</p>
                     <a href="{{ route('employee.loans.create', $tenantSlug) }}" class="lmt-btn-primary lmt-btn-sm mt-4 inline-flex">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i> Apply for Loan
@@ -257,7 +257,7 @@
                                         </span>
                                     </td>
                                     <td class="text-right hidden md:table-cell">
-                                        <span class="font-mono text-sm text-gray-700 dark:text-slate-200">
+                                        <span class="font-mono text-sm text-gray-800 dark:text-slate-200">
                                             {{ $sym }}{{ number_format($ln->emi_amount, 2) }}
                                         </span>
                                     </td>
@@ -345,7 +345,7 @@
                     <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                         <i data-lucide="zap" class="w-7 h-7 text-gray-800"></i>
                     </div>
-                    <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No advances yet</p>
+                    <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No advances yet</p>
                     <p class="text-xs text-gray-800 mt-1">Request your first salary advance to see it here.</p>
                     <a href="{{ route('employee.loans.advance.create', $tenantSlug) }}" class="lmt-btn-primary lmt-btn-sm mt-4 inline-flex">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i> Request Advance
@@ -396,9 +396,9 @@
                                     </td>
                                     <td class="hidden md:table-cell">
                                         @if($adv->repayment_type === 'one_time')
-                                            <span class="text-xs text-gray-700 dark:text-slate-200">One-time deduction</span>
+                                            <span class="text-xs text-gray-800 dark:text-slate-200">One-time deduction</span>
                                         @else
-                                            <span class="text-xs text-gray-700 dark:text-slate-200">
+                                            <span class="text-xs text-gray-800 dark:text-slate-200">
                                                 {{ $adv->installments_count }} × {{ $sym }}{{ number_format($adv->per_installment_amount, 2) }}
                                             </span>
                                         @endif

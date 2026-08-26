@@ -201,7 +201,7 @@
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                     <i data-lucide="receipt" class="w-7 h-7 text-gray-800"></i>
                 </div>
-                <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No payslips yet</p>
+                <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No payslips yet</p>
                 <p class="text-xs text-gray-800 mt-1">
                     Your payslips will appear here once payroll is processed for {{ $year }}.
                 </p>
@@ -254,7 +254,7 @@
                                     {{ $p->pay_date?->format('M j, Y') ?? '—' }}
                                 </td>
                                 <td class="text-right">
-                                    <span class="font-mono font-bold text-sm text-gray-700 dark:text-slate-200">
+                                    <span class="font-mono font-bold text-sm text-gray-800 dark:text-slate-200">
                                         {{ $sym }}{{ number_format($p->gross_pay, 2) }}
                                     </span>
                                 </td>
@@ -273,7 +273,7 @@
                                         </a>
                                         <a href="{{ route('employee.payslips.pdf', [$tenantSlug, $p->id]) }}"
                                            title="Download PDF"
-                                           class="inline-flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-800 hover:text-gray-700 transition-colors">
+                                           class="inline-flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-800 hover:text-gray-800 transition-colors">
                                             <i data-lucide="download" class="w-3.5 h-3.5"></i>
                                         </a>
                                     </div>

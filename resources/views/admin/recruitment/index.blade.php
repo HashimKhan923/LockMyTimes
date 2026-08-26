@@ -33,7 +33,7 @@
            class="px-3 py-1.5 rounded-lg text-sm font-semibold transition-all
                   {{ $status === $val
                       ? 'lmt-gradient-bg text-white'
-                      : 'bg-white border border-gray-200 text-gray-600 hover:border-brand-400' }}">
+                      : 'bg-white border border-gray-200 text-gray-800 hover:border-brand-400' }}">
             {{ $label }}
         </a>
         @endforeach
@@ -53,7 +53,7 @@
     @php
     $statusConfig = [
         'published' => ['badge'=>'bg-emerald-100 text-emerald-700', 'dot'=>'bg-emerald-500'],
-        'draft'     => ['badge'=>'bg-gray-100 text-gray-600',       'dot'=>'bg-gray-400'],
+        'draft'     => ['badge'=>'bg-gray-100 text-gray-800',       'dot'=>'bg-gray-400'],
         'paused'    => ['badge'=>'bg-amber-100 text-amber-700',     'dot'=>'bg-amber-500'],
         'closed'    => ['badge'=>'bg-red-100 text-red-700',         'dot'=>'bg-red-500'],
         'filled'    => ['badge'=>'bg-brand-100 text-brand-700',     'dot'=>'bg-brand-500'],
@@ -91,10 +91,10 @@
 
         {{-- Tags --}}
         <div class="flex flex-wrap gap-1.5 mb-4">
-            <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-lg capitalize font-medium">
+            <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-lg capitalize font-medium">
                 {{ str_replace('_',' ', $job->work_mode) }}
             </span>
-            <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-lg capitalize font-medium">
+            <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-lg capitalize font-medium">
                 {{ str_replace('_',' ', $job->experience_level) }}
             </span>
             @if($job->show_salary && ($job->salary_min || $job->salary_max))
@@ -264,7 +264,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="show_salary" value="1" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Show salary range publicly</span>
+                <span class="text-sm font-medium text-gray-800">Show salary range publicly</span>
             </label>
             <div>
                 <label class="lmt-label">Job Description <span class="text-red-500">*</span></label>

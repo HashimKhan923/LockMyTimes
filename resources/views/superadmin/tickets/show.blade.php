@@ -53,7 +53,7 @@ $statusMap   = ['open'=>'lmt-badge-brand','in_progress'=>'lmt-badge-amber','wait
         <div class="lmt-card {{ $reply->is_internal_note ? 'border-l-4 border-amber-400 bg-amber-50/30' : ($isAgent ? 'bg-brand-50/20' : '') }}">
             <div class="flex items-start gap-4">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-bold flex-shrink-0
-                            {{ $isAgent ? '' : 'bg-gray-200 text-gray-600' }}"
+                            {{ $isAgent ? '' : 'bg-gray-200 text-gray-800' }}"
                      style="{{ $isAgent ? 'background:linear-gradient(135deg,#6C7DF7,#4A5BE8);' : '' }}">
                     {{ substr($reply->author?->name ?? '?', 0, 1) }}
                 </div>

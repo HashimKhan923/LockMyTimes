@@ -246,6 +246,7 @@
                     ],
                     __('employee.nav_section_time_leave') => [
                         ['route'=>'employee.attendance.index',   'icon'=>'clock',          'label'=>__('employee.nav_attendance'),    'permission'=>'attendance.view'],
+                        ['route'=>'employee.attendance-corrections.index', 'icon'=>'edit-3', 'label'=>__('employee.nav_corrections'), 'permission'=>'attendance.view'],
                         ['route'=>'employee.leaves.index',       'icon'=>'calendar-off',   'label'=>__('employee.nav_leaves'),        'permission'=>'leaves.view'],
                     ],
                     __('employee.nav_section_money') => [
@@ -475,7 +476,7 @@
                             <div class="flex items-center gap-2">
                                 <span x-show="unread > 0" x-cloak class="lmt-badge-brand text-xs" x-text="unread + ' new'"></span>
                                 <button x-show="unread > 0" x-cloak @click="markAllRead()"
-                                        class="text-xs text-gray-800 hover:text-gray-600 transition-colors">Mark all read</button>
+                                        class="text-xs text-gray-800 hover:text-gray-800 transition-colors">Mark all read</button>
                             </div>
                         </div>
 
@@ -534,7 +535,7 @@
                                 {{ strtoupper(substr($u->name ?? 'U', 0, 1)) }}
                             @endif
                         </div>
-                        <span class="hidden md:block text-sm font-semibold text-gray-700 dark:text-slate-200 max-w-[120px] truncate">
+                        <span class="hidden md:block text-sm font-semibold text-gray-800 dark:text-slate-200 max-w-[120px] truncate">
                             {{ explode(' ', $u->name ?? 'You')[0] }}
                         </span>
                         <i data-lucide="chevron-down" class="hidden md:block w-3.5 h-3.5 text-gray-800"></i>
@@ -553,18 +554,18 @@
                         </div>
                         @if(\Route::has('employee.profile.index'))
                         <a href="{{ route('employee.profile.index', $tenantSlug) }}"
-                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-700 dark:text-slate-200">
+                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-800 dark:text-slate-200">
                             <i data-lucide="user" class="w-4 h-4 text-gray-800"></i> My Profile
                         </a>
                         @endif
                         @if(\Route::has('employee.settings.index'))
                         <a href="{{ route('employee.settings.index', $tenantSlug) }}"
-                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-700 dark:text-slate-200">
+                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-800 dark:text-slate-200">
                             <i data-lucide="settings" class="w-4 h-4 text-gray-800"></i> Settings
                         </a>
                         @endif
                         <a href="{{ route('employee.password.change', $tenantSlug) }}"
-                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-700 dark:text-slate-200">
+                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-sm text-gray-800 dark:text-slate-200">
                             <i data-lucide="key" class="w-4 h-4 text-gray-800"></i> Change Password
                         </a>
                         <div class="border-t border-gray-100 dark:border-slate-700 mt-1 pt-1">

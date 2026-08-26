@@ -82,7 +82,7 @@
                     Salary Advance
                 </h1>
                 @if($advance->reason)
-                    <p class="text-sm text-gray-600 dark:text-slate-400 mt-2 whitespace-pre-line">{{ $advance->reason }}</p>
+                    <p class="text-sm text-gray-800 dark:text-slate-400 mt-2 whitespace-pre-line">{{ $advance->reason }}</p>
                 @endif
 
                 @if($advance->status === 'rejected' && $advance->rejection_reason)
@@ -213,7 +213,7 @@
                                     @endphp
                                     <tr>
                                         <td><span class="font-mono font-bold text-xs">{{ $d->deduction_number }}</span></td>
-                                        <td><span class="text-xs text-gray-700 dark:text-slate-200">{{ $d->deduction_date?->format('M j, Y') ?? '—' }}</span></td>
+                                        <td><span class="text-xs text-gray-800 dark:text-slate-200">{{ $d->deduction_date?->format('M j, Y') ?? '—' }}</span></td>
                                         <td class="text-right">
                                             <span class="font-mono font-bold text-xs text-gray-900 dark:text-slate-100">{{ $sym }}{{ number_format($d->amount, 2) }}</span>
                                         </td>

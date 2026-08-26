@@ -110,7 +110,7 @@
     <div class="lmt-modal max-w-2xl w-full">
         <div class="flex items-center justify-between mb-5">
             <h3 id="loc-modal-title" class="font-black text-gray-900 text-lg">Add Work Location</h3>
-            <button type="button" onclick="closeAddModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-800 hover:text-gray-600 transition-colors">
+            <button type="button" onclick="closeAddModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-800 hover:text-gray-800 transition-colors">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
@@ -225,11 +225,11 @@
             <div class="flex items-center gap-6">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_headquarters" id="loc-hq-input" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-sm font-medium text-gray-700">This is the headquarters</span>
+                    <span class="text-sm font-medium text-gray-800">This is the headquarters</span>
                 </label>
                 <label id="loc-active-wrap" class="items-center gap-2 cursor-pointer hidden">
                     <input type="checkbox" name="is_active" id="loc-active-input" value="1" class="w-4 h-4 rounded" checked/>
-                    <span class="text-sm font-medium text-gray-700">Active</span>
+                    <span class="text-sm font-medium text-gray-800">Active</span>
                 </label>
             </div>
 

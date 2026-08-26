@@ -68,7 +68,7 @@
     <div class="mb-4">
         <p class="text-xs font-bold uppercase tracking-wider text-gray-800 mb-2">Reason</p>
         <div class="p-4 rounded-2xl bg-gray-50 dark:bg-slate-800">
-            <p class="text-sm text-gray-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">{{ $lr->reason }}</p>
+            <p class="text-sm text-gray-800 dark:text-slate-200 whitespace-pre-line leading-relaxed">{{ $lr->reason }}</p>
         </div>
     </div>
 
@@ -79,7 +79,7 @@
                 <i data-lucide="phone" class="w-4 h-4" style="color:var(--brand-500);"></i>
                 <p class="text-xs font-bold uppercase tracking-wider text-gray-800">Contact during leave</p>
             </div>
-            <p class="text-sm text-gray-700 dark:text-slate-200">{{ $lr->contact_during_leave }}</p>
+            <p class="text-sm text-gray-800 dark:text-slate-200">{{ $lr->contact_during_leave }}</p>
         </div>
     @endif
 

@@ -47,7 +47,7 @@
 
         @if($task->project)
             <a href="{{ route('employee.projects.show', [$tenantSlug, $task->project_id]) }}"
-               class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-800 hover:text-gray-700 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-gray-300 transition-all">
+               class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-800 hover:text-gray-800 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-gray-300 transition-all">
                 <span class="w-2 h-2 rounded-full" style="background:{{ $task->project->color }};"></span>
                 {{ $task->project->name }}
                 <i data-lucide="external-link" class="w-3 h-3"></i>
@@ -97,7 +97,7 @@
             {{ $task->title }}
         </h1>
         @if($task->description)
-            <div class="mt-3 text-sm text-gray-600 dark:text-slate-300 whitespace-pre-line leading-relaxed">{!! nl2br(e($task->description)) !!}</div>
+            <div class="mt-3 text-sm text-gray-800 dark:text-slate-300 whitespace-pre-line leading-relaxed">{!! nl2br(e($task->description)) !!}</div>
         @endif
     </div>
 
@@ -114,7 +114,7 @@
                     </h3>
 
                     {{-- Status grid --}}
-                    <p class="text-xs font-bold text-gray-700 dark:text-slate-300 mb-2">Status</p>
+                    <p class="text-xs font-bold text-gray-800 dark:text-slate-300 mb-2">Status</p>
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 mb-5">
                         @foreach($statusOptions as $key => [$label, $icon])
                             <form action="{{ route('employee.tasks.status', [$tenantSlug, $task->id]) }}" method="POST"
@@ -127,7 +127,7 @@
                                         class="w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-bold border-2 transition-all
                                                {{ $task->status === $key
                                                     ? 'border-transparent text-white'
-                                                    : 'border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:border-gray-300' }}"
+                                                    : 'border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-300 hover:border-gray-300' }}"
                                         @if($task->status === $key) style="background:var(--brand-500);" @endif>
                                     <i data-lucide="{{ $icon }}" class="w-3.5 h-3.5"></i>
                                     {{ $label }}
@@ -137,7 +137,7 @@
                     </div>
 
                     {{-- Progress slider --}}
-                    <p class="text-xs font-bold text-gray-700 dark:text-slate-300 mb-2">
+                    <p class="text-xs font-bold text-gray-800 dark:text-slate-300 mb-2">
                         Progress
                         <span class="font-mono text-base ml-1" style="color:var(--brand-600);" x-text="progress + '%'"></span>
                     </p>
@@ -160,7 +160,7 @@
                         <div class="grid grid-cols-5 gap-1 mt-2">
                             @foreach([0, 25, 50, 75, 100] as $pct)
                                 <button type="button" @click="progress={{ $pct }}"
-                                        class="text-[10px] font-bold text-gray-800 hover:text-gray-700 dark:hover:text-slate-300 py-1">
+                                        class="text-[10px] font-bold text-gray-800 hover:text-gray-800 dark:hover:text-slate-300 py-1">
                                     {{ $pct }}%
                                 </button>
                             @endforeach
@@ -217,7 +217,7 @@
                                 @endif
 
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm {{ $item->is_completed ? 'line-through text-gray-800' : 'text-gray-700 dark:text-slate-200' }}">
+                                    <p class="text-sm {{ $item->is_completed ? 'line-through text-gray-800' : 'text-gray-800 dark:text-slate-200' }}">
                                         {{ $item->item }}
                                     </p>
                                     @if($item->is_completed && $item->completed_at)
@@ -288,7 +288,7 @@
                                             <span class="text-[9px] text-gray-800 italic">(edited)</span>
                                         @endif
                                     </div>
-                                    <div class="text-sm text-gray-700 dark:text-slate-200 whitespace-pre-line leading-relaxed">{!! nl2br(e($comment->content)) !!}</div>
+                                    <div class="text-sm text-gray-800 dark:text-slate-200 whitespace-pre-line leading-relaxed">{!! nl2br(e($comment->content)) !!}</div>
                                 </div>
                             </div>
                         @endforeach
@@ -465,7 +465,7 @@
                                     <i data-lucide="{{ $ico }}" class="w-3 h-3"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-xs text-gray-700 dark:text-slate-200">{!! $a->summary !!}</p>
+                                    <p class="text-xs text-gray-800 dark:text-slate-200">{!! $a->summary !!}</p>
                                     <p class="text-[10px] text-gray-800 font-semibold">{{ $a->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>

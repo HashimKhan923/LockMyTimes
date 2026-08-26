@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\Attendance;
+use App\Models\Tenant\AttendanceCorrectionRequest;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Expense;
 use App\Models\Tenant\ExpenseApproval;
@@ -12,6 +13,7 @@ use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\Task;
 use App\Models\Tenant\TaskAssignee;
 use App\Models\Tenant\User;
+use App\Services\AttendanceCorrectionService;
 use App\Services\MailService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
@@ -74,6 +76,10 @@ class TeamController extends Controller
             ->where('status', 'submitted')
             ->count();
 
+        $pendingCorrections = AttendanceCorrectionRequest::whereIn('employee_id', $reportIds)
+            ->where('status', 'pending')
+            ->count();
+
         // On leave today
         $onLeaveTodayIds = LeaveRequest::whereIn('employee_id', $reportIds)
             ->where('status', 'approved')
@@ -129,17 +135,25 @@ class TeamController extends Controller
             ->limit(5)
             ->get();
 
+        $recentCorrections = AttendanceCorrectionRequest::with('employee')
+            ->whereIn('employee_id', $reportIds)
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
         return view('employee.team.index', [
-            'tenantSlug'      => $tenant,
-            'emp'             => $emp,
-            'reports'         => $reports,
-            'pendingLeaves'   => $pendingLeaves,
-            'pendingExpenses' => $pendingExpenses,
-            'headcount'       => $headcount,
-            'onLeaveCount'    => $onLeaveCount,
-            'clockedIn'       => $clockedIn,
-            'recentLeaves'    => $recentLeaves,
-            'recentExpenses'  => $recentExpenses,
+            'tenantSlug'         => $tenant,
+            'emp'                => $emp,
+            'reports'            => $reports,
+            'pendingLeaves'      => $pendingLeaves,
+            'pendingExpenses'    => $pendingExpenses,
+            'pendingCorrections' => $pendingCorrections,
+            'headcount'          => $headcount,
+            'onLeaveCount'       => $onLeaveCount,
+            'clockedIn'          => $clockedIn,
+            'recentLeaves'       => $recentLeaves,
+            'recentExpenses'     => $recentExpenses,
+            'recentCorrections'  => $recentCorrections,
         ]);
     }
 
@@ -449,6 +463,114 @@ class TeamController extends Controller
         }
 
         return back()->with('success', "Leave request rejected.");
+    }
+
+    /* ================================================================
+     | ATTENDANCE CORRECTION APPROVALS — QUEUE
+     |================================================================*/
+    public function correctionApprovals(string $tenant, Request $request)
+    {
+        $emp = auth()->user()->employee;
+        abort_unless($emp, 403);
+
+        $reportIds = $this->getReportIds($emp->id);
+
+        if ($reportIds->isEmpty()) {
+            return redirect()->route('employee.team.index', $tenant)
+                ->with('error', 'You do not have any direct reports.');
+        }
+
+        $status = $request->get('status', 'pending');
+
+        $query = AttendanceCorrectionRequest::with(['employee.position', 'approver'])
+            ->whereIn('employee_id', $reportIds);
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $corrections = $query->orderByRaw("FIELD(status, 'pending','approved','rejected','cancelled')")
+            ->orderByDesc('created_at')
+            ->paginate(15)
+            ->withQueryString();
+
+        $counters = AttendanceCorrectionRequest::whereIn('employee_id', $reportIds)
+            ->selectRaw("
+                COUNT(*) as total,
+                SUM(status = 'pending')   as pending,
+                SUM(status = 'approved')  as approved,
+                SUM(status = 'rejected')  as rejected
+            ")
+            ->first();
+
+        return view('employee.team.corrections', [
+            'tenantSlug'  => $tenant,
+            'emp'         => $emp,
+            'corrections' => $corrections,
+            'counters'    => $counters,
+            'status'      => $status,
+        ]);
+    }
+
+    /* ================================================================
+     | ATTENDANCE CORRECTION — APPROVE
+     |================================================================*/
+    public function approveCorrection(string $tenant, int $correction)
+    {
+        $emp = auth()->user()->employee;
+        abort_unless($emp, 403);
+
+        $correctionReq = AttendanceCorrectionRequest::findOrFail($correction);
+        $this->assertManagesEmployee($emp->id, $correctionReq->employee_id);
+
+        if ($correctionReq->status !== 'pending') {
+            return back()->with('error', 'This correction request has already been processed.');
+        }
+
+        AttendanceCorrectionService::approve($correctionReq, auth()->id());
+
+        $employeeUser = User::where('employee_id', $correctionReq->employee_id)->first();
+        if ($employeeUser) {
+            NotificationService::attendanceCorrectionApproved($employeeUser, auth()->user()->name,
+                route('employee.team.approvals.corrections', $tenant));
+        }
+
+        return back()->with('success', "{$correctionReq->employee->full_name}'s attendance correction approved.");
+    }
+
+    /* ================================================================
+     | ATTENDANCE CORRECTION — REJECT
+     |================================================================*/
+    public function rejectCorrection(string $tenant, Request $request, int $correction)
+    {
+        $emp = auth()->user()->employee;
+        abort_unless($emp, 403);
+
+        $correctionReq = AttendanceCorrectionRequest::findOrFail($correction);
+        $this->assertManagesEmployee($emp->id, $correctionReq->employee_id);
+
+        if ($correctionReq->status !== 'pending') {
+            return back()->with('error', 'This correction request has already been processed.');
+        }
+
+        $data = $request->validate([
+            'reason' => 'required|string|min:5|max:500',
+        ]);
+
+        $correctionReq->update([
+            'status'           => 'rejected',
+            'approved_by'      => auth()->id(),
+            'approved_at'      => now(),
+            'rejection_reason' => $data['reason'],
+        ]);
+
+        $employeeUser = User::where('employee_id', $correctionReq->employee_id)->first();
+        if ($employeeUser) {
+            NotificationService::attendanceCorrectionRejected($employeeUser, auth()->user()->name,
+                route('employee.team.approvals.corrections', $tenant));
+        }
+
+        return back()->with('success', 'Attendance correction request rejected.');
     }
 
     /* ================================================================

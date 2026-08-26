@@ -115,7 +115,7 @@
                     <i data-lucide="moon" class="w-4 h-4" style="color:var(--brand-500);"></i>
                     <h3 class="text-sm font-black text-gray-900 dark:text-slate-100">Scheduled Shift</h3>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-slate-300">{{ $shift->name }} · {{ $shift->label }}</p>
+                <p class="text-sm text-gray-800 dark:text-slate-300">{{ $shift->name }} · {{ $shift->label }}</p>
             </div>
         @endif
 
@@ -158,7 +158,7 @@
                                     @if($b->end_at) — {{ \Carbon\Carbon::parse($b->end_at)->format('h:i A') }} @else — ongoing @endif
                                 </p>
                             </div>
-                            <span class="font-mono text-xs font-bold text-gray-600 dark:text-slate-300">
+                            <span class="font-mono text-xs font-bold text-gray-800 dark:text-slate-300">
                                 {{ $b->end_at ? (int) $b->duration_minutes . ' min' : '…' }}
                             </span>
                         </div>
@@ -171,7 +171,7 @@
         @if($att->notes)
             <div class="p-4 rounded-2xl border border-gray-100 dark:border-slate-700">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-gray-800 mb-2">Notes</h3>
-                <p class="text-sm text-gray-700 dark:text-slate-200 whitespace-pre-line">{{ $att->notes }}</p>
+                <p class="text-sm text-gray-800 dark:text-slate-200 whitespace-pre-line">{{ $att->notes }}</p>
             </div>
         @endif
     @endif

@@ -72,7 +72,7 @@
         {{-- Token --}}
         <div class="bg-gray-50 rounded-xl p-3 mb-4">
             <p class="text-xs text-gray-800 mb-1">Token</p>
-            <code class="text-xs font-mono text-gray-700 break-all">{{ substr($qr->token, 0, 20) }}…</code>
+            <code class="text-xs font-mono text-gray-800 break-all">{{ substr($qr->token, 0, 20) }}…</code>
         </div>
 
         {{-- Stats --}}

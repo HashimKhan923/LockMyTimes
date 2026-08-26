@@ -33,7 +33,7 @@
 {{-- Today's KPI cards --}}
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     @foreach([
-        ['label'=>'Total Staff','value'=>$totalActive,'icon'=>'users','bg'=>'bg-gray-100','text'=>'text-gray-600'],
+        ['label'=>'Total Staff','value'=>$totalActive,'icon'=>'users','bg'=>'bg-gray-100','text'=>'text-gray-800'],
         ['label'=>'Present','value'=>$presentCount,'icon'=>'user-check','bg'=>'bg-emerald-50','text'=>'text-emerald-600'],
         ['label'=>'Absent','value'=>$absentCount,'icon'=>'user-x','bg'=>'bg-red-50','text'=>'text-red-600'],
         ['label'=>'Late','value'=>$lateCount,'icon'=>'clock','bg'=>'bg-amber-50','text'=>'text-amber-600'],
@@ -114,7 +114,7 @@
                 </option>
                 @endforeach
             </select>
-            <label class="flex items-center gap-2 text-sm text-gray-600 px-1">
+            <label class="flex items-center gap-2 text-sm text-gray-800 px-1">
                 <input type="checkbox" name="remote" value="1" {{ request('remote') ? 'checked' : '' }} onchange="this.form.submit()">
                 Remote only
             </label>

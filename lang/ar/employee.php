@@ -15,6 +15,7 @@ return [
     /* ── عناصر التنقل ── */
     'nav_home'          => 'الرئيسية',
     'nav_attendance'    => 'الحضور',
+    'nav_corrections'   => 'تصحيحات الحضور',
     'nav_leaves'        => 'الإجازات',
     'nav_payslips'      => 'كشوف الراتب',
     'nav_expenses'      => 'المصروفات',

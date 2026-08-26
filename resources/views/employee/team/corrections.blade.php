@@ -1,0 +1,205 @@
+@extends('layouts.employee')
+
+@section('title', 'Correction Approvals')
+@section('page-title', 'Correction Approvals')
+
+@section('content')
+<div>
+    <div class="flex items-center justify-between mb-5" data-lmt-anim="fade-up">
+        <div>
+            <a href="{{ route('employee.team.index', $tenantSlug) }}"
+               class="inline-flex items-center gap-1 text-xs font-bold text-gray-800 hover:text-gray-800 dark:hover:text-slate-300 mb-1">
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> My Team
+            </a>
+            <h1 class="text-xl font-black text-gray-900 dark:text-slate-100">Correction Approvals</h1>
+        </div>
+    </div>
+
+    @if(session('success'))
+        <div class="lmt-alert lmt-alert-success mb-5">
+            <i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i>
+            <p>{{ session('success') }}</p>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="lmt-alert lmt-alert-error mb-5">
+            <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
+            <p>{{ session('error') }}</p>
+        </div>
+    @endif
+
+    {{-- Counters --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" data-lmt-anim="fade-up">
+        @foreach([
+            ['label'=>'Total',    'value'=>$counters->total,    'icon'=>'clock',        'bg'=>'bg-gray-100',   'text'=>'text-gray-800',    'status'=>'all'],
+            ['label'=>'Pending',  'value'=>$counters->pending,  'icon'=>'clock',         'bg'=>'bg-amber-50',   'text'=>'text-amber-600',   'status'=>'pending'],
+            ['label'=>'Approved', 'value'=>$counters->approved, 'icon'=>'check-circle',  'bg'=>'bg-emerald-50', 'text'=>'text-emerald-600', 'status'=>'approved'],
+            ['label'=>'Rejected', 'value'=>$counters->rejected, 'icon'=>'x-circle',      'bg'=>'bg-red-50',     'text'=>'text-red-500',     'status'=>'rejected'],
+        ] as $s)
+        <a href="{{ route('employee.team.approvals.corrections', ['tenant' => $tenantSlug, 'status' => $s['status']]) }}" class="lmt-stat">
+            <div>
+                <p class="lmt-stat-label">{{ $s['label'] }}</p>
+                <p class="lmt-stat-value">{{ (int) $s['value'] }}</p>
+            </div>
+            <div class="lmt-stat-icon {{ $s['bg'] }} {{ $s['text'] }}">
+                <i data-lucide="{{ $s['icon'] }}" class="w-5 h-5"></i>
+            </div>
+        </a>
+        @endforeach
+    </div>
+
+    <div class="lmt-card p-0 overflow-hidden" data-lmt-anim="fade-up">
+
+        {{-- Status tabs --}}
+        <div class="border-b border-gray-100 dark:border-slate-700">
+            <div class="flex items-center gap-1 px-4 pt-3 overflow-x-auto">
+                @foreach(['pending'=>'Pending','approved'=>'Approved','rejected'=>'Rejected','all'=>'All'] as $val => $label)
+                <a href="{{ route('employee.team.approvals.corrections', ['tenant' => $tenantSlug, 'status' => $val]) }}"
+                   class="px-4 py-2.5 text-sm font-semibold rounded-t-lg whitespace-nowrap transition-all
+                          {{ $status === $val
+                              ? 'bg-white dark:bg-slate-800 border-t border-l border-r border-gray-200 dark:border-slate-700 text-brand-600 -mb-px'
+                              : 'text-gray-800 hover:text-gray-800 dark:hover:text-slate-300' }}">
+                    {{ $label }}
+                    @if($val === 'pending' && $counters->pending > 0)
+                    <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $counters->pending }}</span>
+                    @endif
+                </a>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="lmt-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Proposed Times</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($corrections as $req)
+                    @php
+                        $statusColors = [
+                            'pending'   => 'lmt-badge-amber',
+                            'approved'  => 'lmt-badge-green',
+                            'rejected'  => 'lmt-badge-red',
+                            'cancelled' => 'lmt-badge-gray',
+                        ];
+                    @endphp
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <img src="{{ $req->employee?->avatar_url }}" alt="{{ $req->employee?->full_name }}"
+                                     class="w-8 h-8 rounded-full object-cover flex-shrink-0"/>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-slate-100 text-sm">{{ $req->employee?->full_name ?? '—' }}</p>
+                                    <p class="text-xs text-gray-800">{{ $req->employee?->position?->title }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-sm text-gray-900 dark:text-slate-100">{{ $req->work_date->format('M j, Y') }}</td>
+                        <td class="text-sm text-gray-800 dark:text-slate-300">
+                            @if($req->proposed_clock_in)
+                            In: {{ \Carbon\Carbon::parse($req->proposed_clock_in)->format('h:i A') }}<br/>
+                            @endif
+                            @if($req->proposed_clock_out)
+                            Out: {{ \Carbon\Carbon::parse($req->proposed_clock_out)->format('h:i A') }}
+                            @endif
+                        </td>
+                        <td class="text-xs text-gray-800 max-w-48 truncate" title="{{ $req->reason }}">{{ $req->reason }}</td>
+                        <td>
+                            <span class="{{ $statusColors[$req->status] ?? 'lmt-badge-gray' }} text-xs capitalize">
+                                {{ $req->status }}
+                            </span>
+                            @if($req->status === 'rejected' && $req->rejection_reason)
+                            <p class="text-xs text-red-600 mt-0.5 max-w-40 truncate" title="{{ $req->rejection_reason }}">
+                                {{ $req->rejection_reason }}
+                            </p>
+                            @endif
+                        </td>
+                        <td>
+                            @if($req->status === 'pending')
+                            <div class="flex items-center gap-1.5">
+                                <form action="{{ route('employee.team.corrections.approve', [$tenantSlug, $req->id]) }}" method="POST">
+                                    @csrf @method('PATCH')
+                                    <button type="submit"
+                                            class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-colors"
+                                            title="Approve">
+                                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </form>
+                                <button type="button"
+                                        onclick="openRejectModal('{{ route('employee.team.corrections.reject', [$tenantSlug, $req->id]) }}')"
+                                        class="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors"
+                                        title="Reject">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                            @else
+                            <span class="text-xs text-gray-800">—</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center py-14">
+                            <i data-lucide="clock" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
+                            <p class="font-semibold text-gray-800">No {{ $status === 'all' ? '' : $status }} correction requests</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        @if($corrections->hasPages())
+        <div class="p-4 border-t border-gray-100 dark:border-slate-700">{{ $corrections->links() }}</div>
+        @endif
+    </div>
+</div>
+
+{{-- Reject Modal --}}
+<div id="reject-modal" class="lmt-modal-backdrop hidden">
+    <div class="lmt-modal">
+        <h3 class="font-black text-gray-900 mb-5">Reject Correction Request</h3>
+        <form id="reject-form" method="POST" class="space-y-4">
+            @csrf @method('PATCH')
+            <div>
+                <label class="lmt-label">Reason for Rejection <span class="text-red-500">*</span></label>
+                <textarea name="reason" required minlength="5" class="lmt-textarea" rows="3"
+                          placeholder="Explain why this correction is being rejected…"></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button type="submit" class="lmt-btn-danger flex-1">Reject Request</button>
+                <button type="button" onclick="closeModal('reject-modal')" class="lmt-btn-secondary flex-1">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => { if (window.lucide) lucide.createIcons(); });
+
+function openModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+    document.getElementById(id).classList.add('flex');
+}
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+    document.getElementById(id).classList.remove('flex');
+}
+function openRejectModal(actionUrl) {
+    document.getElementById('reject-form').action = actionUrl;
+    openModal('reject-modal');
+}
+document.getElementById('reject-modal')?.addEventListener('click', function (e) {
+    if (e.target === this) closeModal('reject-modal');
+});
+</script>
+@endpush
+
+@endsection

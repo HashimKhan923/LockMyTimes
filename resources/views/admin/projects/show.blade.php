@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
     <a href="{{ route('admin.projects.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         All Projects
     </a>
@@ -79,12 +79,12 @@
                 @foreach($project->taskLists as $list)
                 <div class="flex items-center gap-3">
                     <div class="w-3 h-3 rounded-full flex-shrink-0" style="background:{{ $list->color }}"></div>
-                    <span class="text-sm font-semibold text-gray-700 w-32">{{ $list->name }}</span>
+                    <span class="text-sm font-semibold text-gray-800 w-32">{{ $list->name }}</span>
                     <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                         @php $count = $list->tasks->count(); $maxCount = max($project->taskLists->max(fn($l)=>$l->tasks->count()), 1); @endphp
                         <div class="h-full rounded-full" style="width:{{ round(($count/$maxCount)*100) }}%; background:{{ $list->color }}"></div>
                     </div>
-                    <span class="text-sm font-bold text-gray-600 w-8 text-right">{{ $count }}</span>
+                    <span class="text-sm font-bold text-gray-800 w-8 text-right">{{ $count }}</span>
                 </div>
                 @endforeach
             </div>
@@ -131,7 +131,7 @@
                 ] as [$k,$v])
                 <div class="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-none">
                     <span class="text-xs text-gray-800">{{ $k }}</span>
-                    <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
+                    <span class="text-xs font-semibold text-gray-800">{{ $v }}</span>
                 </div>
                 @endforeach
             </div>
@@ -196,7 +196,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="can_manage_tasks" value="1" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Can Manage Tasks</span>
+                <span class="text-sm font-medium text-gray-800">Can Manage Tasks</span>
             </label>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Add Member</button>

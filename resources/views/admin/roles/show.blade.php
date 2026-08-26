@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.roles.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         All Roles
     </a>
@@ -62,7 +62,7 @@
                         </button>
                         <span class="text-gray-800">|</span>
                         <button type="button" onclick="toggleAll(false)"
-                                class="text-xs font-semibold text-gray-800 hover:text-gray-700">
+                                class="text-xs font-semibold text-gray-800 hover:text-gray-800">
                             Clear All
                         </button>
                     </div>
@@ -96,7 +96,7 @@
                                        data-row="{{ $moduleKey }}"
                                        onchange="toggleRow('{{ $moduleKey }}', this.checked)"
                                        {{ $isProtected ? 'disabled' : '' }}/>
-                                <span class="text-sm font-medium text-gray-700">{{ $module['label'] }}</span>
+                                <span class="text-sm font-medium text-gray-800">{{ $module['label'] }}</span>
                             </div>
                             @foreach(['view','create','edit','delete','approve','export'] as $action)
                             <div class="w-16 flex-shrink-0 text-center">
@@ -183,12 +183,12 @@
         <div class="lmt-card">
             <h3 class="font-black text-gray-900 mb-3 text-sm">Permission Legend</h3>
             <div class="space-y-2 text-xs text-gray-800">
-                <p><strong class="text-gray-700">View</strong> — See records and data</p>
-                <p><strong class="text-gray-700">Create</strong> — Add new records</p>
-                <p><strong class="text-gray-700">Edit</strong> — Modify existing records</p>
-                <p><strong class="text-gray-700">Delete</strong> — Remove records permanently</p>
-                <p><strong class="text-gray-700">Approve</strong> — Approve requests/submissions</p>
-                <p><strong class="text-gray-700">Export</strong> — Download/export data</p>
+                <p><strong class="text-gray-800">View</strong> — See records and data</p>
+                <p><strong class="text-gray-800">Create</strong> — Add new records</p>
+                <p><strong class="text-gray-800">Edit</strong> — Modify existing records</p>
+                <p><strong class="text-gray-800">Delete</strong> — Remove records permanently</p>
+                <p><strong class="text-gray-800">Approve</strong> — Approve requests/submissions</p>
+                <p><strong class="text-gray-800">Export</strong> — Download/export data</p>
             </div>
         </div>
     </div>

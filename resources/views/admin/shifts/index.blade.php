@@ -290,7 +290,7 @@
                     <label class="lmt-label">Overnight Shift?</label>
                     <label class="flex items-center gap-2 mt-2 cursor-pointer">
                         <input type="checkbox" name="is_overnight" value="1" class="w-4 h-4 rounded"/>
-                        <span class="text-sm text-gray-600">Crosses midnight</span>
+                        <span class="text-sm text-gray-800">Crosses midnight</span>
                     </label>
                 </div>
             </div>

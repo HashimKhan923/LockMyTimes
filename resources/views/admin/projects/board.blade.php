@@ -186,7 +186,7 @@
         </button>
 
         <button onclick="openAddColumnModal()"
-                class="w-9 h-9 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                class="w-9 h-9 rounded-xl bg-gray-100 text-gray-800 hover:bg-gray-200 flex items-center justify-center transition-colors"
                 title="Add Column">
             <i data-lucide="columns" class="w-4 h-4"></i>
         </button>
@@ -204,7 +204,7 @@
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full" style="background:{{ $list->color }}"></div>
                 <span class="font-bold text-gray-800 text-sm">{{ $list->name }}</span>
-                <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-xs font-bold flex items-center justify-center">
+                <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-800 text-xs font-bold flex items-center justify-center">
                     {{ $list->tasks->count() }}
                 </span>
             </div>
@@ -363,7 +363,7 @@
                         <span id="tmd-code" class="text-xs text-gray-800 font-mono"></span>
                     </div>
                     <button onclick="closeTaskModal()"
-                            class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                            class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-800 hover:bg-gray-100 flex items-center justify-center transition-colors">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -475,7 +475,7 @@
                                         <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-[10px] font-black flex items-center justify-center flex-shrink-0">
                                             {{ substr($emp->first_name, 0, 1) }}
                                         </div>
-                                        <span class="text-xs text-gray-700 truncate">{{ $emp->full_name }}</span>
+                                        <span class="text-xs text-gray-800 truncate">{{ $emp->full_name }}</span>
                                     </label>
                                     @endforeach
                                 </div>
@@ -502,7 +502,7 @@
                                 <input type="range" id="tmd-progress" min="0" max="100" step="5"
                                        class="flex-1 h-2 accent-brand-600"
                                        oninput="document.getElementById('tmd-progress-val').textContent=this.value+'%'"/>
-                                <span id="tmd-progress-val" class="text-xs font-bold text-gray-600 w-8">0%</span>
+                                <span id="tmd-progress-val" class="text-xs font-bold text-gray-800 w-8">0%</span>
                             </div>
                         </div>
 
@@ -581,7 +581,7 @@
                         <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-[10px] font-black flex items-center justify-center flex-shrink-0">
                             {{ substr($emp->first_name, 0, 1) }}
                         </div>
-                        <span class="text-sm text-gray-700">{{ $emp->full_name }}</span>
+                        <span class="text-sm text-gray-800">{{ $emp->full_name }}</span>
                     </label>
                     @endforeach
                 </div>
@@ -949,7 +949,7 @@ function renderChecklist(items) {
             <input type="checkbox" ${item.is_completed ? 'checked' : ''}
                    onchange="toggleChecklist(${item.id}, this.checked)"
                    class="w-4 h-4 rounded cursor-pointer"/>
-            <span class="text-sm text-gray-700 flex-1 ${item.is_completed ? 'line-through text-gray-800' : ''}">${item.item}</span>`;
+            <span class="text-sm text-gray-800 flex-1 ${item.is_completed ? 'line-through text-gray-800' : ''}">${item.item}</span>`;
         container.appendChild(div);
     });
 }
@@ -970,10 +970,10 @@ function renderComments(comments) {
             </div>
             <div class="flex-1 bg-gray-50 rounded-xl p-2.5">
                 <div class="flex items-center justify-between mb-1">
-                    <span class="text-xs font-semibold text-gray-700">${c.user?.name ?? 'User'}</span>
+                    <span class="text-xs font-semibold text-gray-800">${c.user?.name ?? 'User'}</span>
                     <span class="text-[10px] text-gray-800">${new Date(c.created_at).toLocaleDateString()}</span>
                 </div>
-                <p class="text-sm text-gray-600">${c.content}</p>
+                <p class="text-sm text-gray-800">${c.content}</p>
             </div>`;
         container.appendChild(div);
     });
@@ -1053,7 +1053,7 @@ function renderAttachments(attachments) {
     }
     attachments.forEach(a => {
         const div = document.createElement('div');
-        div.className = 'flex items-center gap-2 text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-1.5';
+        div.className = 'flex items-center gap-2 text-sm text-gray-800 bg-gray-50 rounded-lg px-3 py-1.5';
         div.innerHTML = `
             <i data-lucide="paperclip" class="w-3.5 h-3.5 text-gray-800 flex-shrink-0"></i>
             <a href="/storage/${a.file_path}" target="_blank" class="flex-1 truncate hover:text-brand-600">${a.file_name}</a>

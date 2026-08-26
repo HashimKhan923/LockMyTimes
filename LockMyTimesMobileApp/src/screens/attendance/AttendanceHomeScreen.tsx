@@ -259,6 +259,17 @@ export function AttendanceHomeScreen({ navigation }: Props) {
                 <Icon name="chevron-forward" size={16} color={theme.primary} />
               </Pressable>
             </View>
+
+            <View style={{ marginTop: spacing.sm }}>
+              <Pressable
+                onPress={() => navigation.navigate('CorrectionList')}
+                style={[styles.linkRow, { backgroundColor: theme.surface }, Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android]}
+              >
+                <Icon name="create-outline" size={18} color={theme.primary} />
+                <Text style={[typography.body, { color: theme.primary, flex: 1, fontWeight: '700' }]}>Request a Correction</Text>
+                <Icon name="chevron-forward" size={16} color={theme.primary} />
+              </Pressable>
+            </View>
           </>
         }
         ListEmptyComponent={

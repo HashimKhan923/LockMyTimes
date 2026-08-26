@@ -81,7 +81,7 @@
             <input :type="show ? 'text' : 'password'" name="password"
                    class="lmt-input pl-10 pr-10" placeholder="••••••••" required/>
             <button type="button" @click="show=!show"
-                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-800 hover:text-gray-600">
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-800 hover:text-gray-800">
                 <i :data-lucide="show ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
             </button>
         </div>
@@ -89,7 +89,7 @@
 
     <label class="flex items-center gap-2 cursor-pointer">
         <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300"/>
-        <span class="text-sm text-gray-600">Keep me signed in</span>
+        <span class="text-sm text-gray-800">Keep me signed in</span>
     </label>
 
     <button type="submit" class="lmt-btn-primary w-full lmt-btn-lg" style="background:linear-gradient(135deg,#10B981,#059669);">

@@ -26,13 +26,13 @@
                 </div>
             </td>
             <td><code class="text-xs bg-gray-100 px-2 py-1 rounded font-mono">{{ $dept->code ?? '—' }}</code></td>
-            <td class="text-sm text-gray-600">{{ $dept->manager?->full_name ?? '—' }}</td>
+            <td class="text-sm text-gray-800">{{ $dept->manager?->full_name ?? '—' }}</td>
             <td class="text-sm font-semibold text-gray-900">{{ $dept->employees_count }}</td>
             <td><span class="{{ $dept->is_active ? 'lmt-badge-green' : 'lmt-badge-gray' }} text-xs">{{ $dept->is_active ? 'Active' : 'Inactive' }}</span></td>
             <td>
                 <div class="flex items-center gap-1.5">
                     <button onclick="openEditDept({{ $dept->id }}, '{{ addslashes($dept->name) }}', '{{ addslashes($dept->code ?? '') }}', '{{ $dept->color }}', {{ $dept->manager_id ?? 'null' }}, {{ $dept->is_active ? 1 : 0 }})"
-                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-500 hover:text-white flex items-center justify-center transition-colors"
+                            class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-500 hover:text-white flex items-center justify-center transition-colors"
                             title="Edit">
                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                     </button>
@@ -127,7 +127,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_active" id="edit-dept-active" value="1" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Active</span>
+                <span class="text-sm font-medium text-gray-800">Active</span>
             </label>
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="lmt-btn-primary flex-1">Save Changes</button>

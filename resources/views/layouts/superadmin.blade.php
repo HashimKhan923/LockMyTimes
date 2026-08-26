@@ -289,7 +289,7 @@
                             <div class="flex items-center gap-2">
                                 <span x-show="unread > 0" x-cloak class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full" x-text="unread + ' new'"></span>
                                 <button x-show="unread > 0" x-cloak @click="markAllRead()"
-                                        class="text-xs text-gray-800 hover:text-gray-600 transition-colors">Mark all read</button>
+                                        class="text-xs text-gray-800 hover:text-gray-800 transition-colors">Mark all read</button>
                             </div>
                         </div>
 

@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.loans.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Loans
     </a>
@@ -76,7 +76,7 @@
                 ] as [$k,$v])
                 <div class="flex justify-between py-2 border-b border-gray-50 last:border-none">
                     <span class="text-xs text-gray-800 font-medium">{{ $k }}</span>
-                    <span class="text-xs font-semibold text-gray-700 text-right max-w-36">{{ $v }}</span>
+                    <span class="text-xs font-semibold text-gray-800 text-right max-w-36">{{ $v }}</span>
                 </div>
                 @endforeach
             </div>
@@ -147,11 +147,11 @@
                     @endphp
                     <tr class="{{ $isOverdue ? 'bg-red-50/30' : '' }}">
                         <td class="text-sm font-bold text-gray-800">{{ $rep->installment_number }}</td>
-                        <td class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-700' }}">
+                        <td class="text-sm {{ $isOverdue ? 'text-red-600 font-semibold' : 'text-gray-800' }}">
                             {{ $rep->due_date->format('M j, Y') }}
-                            @if($isOverdue)<span class="block text-xs text-red-400">Overdue</span>@endif
+                            @if($isOverdue)<span class="block text-xs text-red-600">Overdue</span>@endif
                         </td>
-                        <td class="text-sm text-gray-700">${{ number_format($rep->principal_component, 2) }}</td>
+                        <td class="text-sm text-gray-800">${{ number_format($rep->principal_component, 2) }}</td>
                         <td class="text-sm text-gray-800">${{ number_format($rep->interest_component, 2) }}</td>
                         <td class="text-sm font-bold text-gray-900">${{ number_format($rep->emi_amount, 2) }}</td>
                         <td class="text-sm text-gray-800">${{ number_format($rep->balance_after, 2) }}</td>

@@ -31,7 +31,7 @@
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px
               {{ $tab === $t
                   ? 'border-brand-500 text-brand-600'
-                  : 'border-transparent text-gray-800 hover:text-gray-700' }}">
+                  : 'border-transparent text-gray-800 hover:text-gray-800' }}">
         {{ $label }}
     </a>
     @endforeach
@@ -121,9 +121,9 @@
                             {{ $loan->loan_number }}
                         </a>
                     </td>
-                    <td class="text-sm text-gray-600">{{ $loan->loanType->name ?? '—' }}</td>
+                    <td class="text-sm text-gray-800">{{ $loan->loanType->name ?? '—' }}</td>
                     <td class="text-sm font-bold text-gray-900">${{ number_format($loan->total_amount, 0) }}</td>
-                    <td class="text-sm text-gray-600">${{ number_format($loan->emi_amount, 0) }}/mo</td>
+                    <td class="text-sm text-gray-800">${{ number_format($loan->emi_amount, 0) }}/mo</td>
                     <td>
                         <span class="text-sm font-bold {{ $loan->amount_remaining > 0 ? 'text-red-500' : 'text-emerald-600' }}">
                             ${{ number_format($loan->amount_remaining, 0) }}
@@ -242,8 +242,8 @@
                     </td>
                     <td><code class="text-xs bg-gray-100 px-2 py-1 rounded font-mono">{{ $adv->advance_number }}</code></td>
                     <td class="text-sm font-bold text-gray-900">${{ number_format($adv->amount, 0) }}</td>
-                    <td class="text-sm text-gray-600">${{ number_format($adv->per_installment_amount, 0) }}/mo</td>
-                    <td class="text-sm text-gray-600">{{ $adv->installments_count }} months</td>
+                    <td class="text-sm text-gray-800">${{ number_format($adv->per_installment_amount, 0) }}/mo</td>
+                    <td class="text-sm text-gray-800">{{ $adv->installments_count }} months</td>
                     <td>
                         <span class="text-sm font-bold text-red-500">
                             ${{ number_format($adv->amount_remaining ?? $adv->amount, 0) }}
@@ -538,7 +538,7 @@
                 @foreach([['requires_guarantor','Guarantor Required'],['auto_deduct_from_payroll','Auto Deduct from Payroll']] as [$n,$l])
                 <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50">
                     <input type="checkbox" name="{{ $n }}" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-xs font-medium text-gray-700">{{ $l }}</span>
+                    <span class="text-xs font-medium text-gray-800">{{ $l }}</span>
                 </label>
                 @endforeach
             </div>

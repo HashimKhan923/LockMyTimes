@@ -8,7 +8,7 @@
 
     <div class="flex items-center justify-between mb-6">
         <a href="{{ route('admin.payroll.show', [$tenant, $payslip->payroll_run_id]) }}"
-           class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+           class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             Back to Run
         </a>
@@ -53,8 +53,8 @@
                         <p class="text-xs text-gray-800">{{ $payslip->employee->employee_code }}</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-600">{{ $payslip->employee->position?->title ?? 'N/A' }}</p>
-                <p class="text-xs text-gray-600">{{ $payslip->employee->department?->name ?? 'N/A' }}</p>
+                <p class="text-xs text-gray-800">{{ $payslip->employee->position?->title ?? 'N/A' }}</p>
+                <p class="text-xs text-gray-800">{{ $payslip->employee->department?->name ?? 'N/A' }}</p>
             </div>
             <div>
                 <p class="text-xs text-gray-800 mb-3 font-semibold uppercase tracking-wider">Pay Period</p>
@@ -87,7 +87,7 @@
                 ] as [$label, $amount])
                 @if($amount > 0)
                 <div class="flex items-center justify-between py-1.5">
-                    <span class="text-sm text-gray-700">{{ $label }}</span>
+                    <span class="text-sm text-gray-800">{{ $label }}</span>
                     <span class="text-sm font-semibold text-gray-900">${{ number_format($amount, 2) }}</span>
                 </div>
                 @endif
@@ -114,7 +114,7 @@
                 ] as [$label, $amount])
                 @if($amount > 0)
                 <div class="flex items-center justify-between py-1.5">
-                    <span class="text-sm text-gray-700">{{ $label }}</span>
+                    <span class="text-sm text-gray-800">{{ $label }}</span>
                     <span class="text-sm font-semibold text-red-500">-${{ number_format($amount, 2) }}</span>
                 </div>
                 @endif

@@ -69,7 +69,7 @@
                 ['This Year',   now()->startOfYear()->toDateString(), now()->toDateString()],
             ] as [$label, $f, $t])
             <a href="{{ route('admin.reports.index', $tenant) }}?report={{ $report }}&from={{ $f }}&to={{ $t }}"
-               class="px-2.5 py-3 rounded-xl text-xs font-semibold border border-gray-200 text-gray-600
+               class="px-2.5 py-3 rounded-xl text-xs font-semibold border border-gray-200 text-gray-800
                       hover:border-brand-400 hover:text-brand-600 transition-colors whitespace-nowrap">
                 {{ $label }}
             </a>
@@ -132,7 +132,7 @@
         <div class="space-y-2.5">
             @foreach($byDepartment as $dept)
             <div class="flex items-center gap-3">
-                <span class="text-xs text-gray-600 w-28 truncate font-medium">{{ $dept['name'] }}</span>
+                <span class="text-xs text-gray-800 w-28 truncate font-medium">{{ $dept['name'] }}</span>
                 <div class="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <div class="h-full lmt-gradient-bg rounded-full"
                          style="width:{{ round($dept['count']/$maxDept*100) }}%"></div>
@@ -154,7 +154,7 @@
         ['Active',     $byStatus['active'] ?? 0,         'user-check',   'bg-emerald-50','text-emerald-600'],
         ['New Hires',  count($newHires),                  'user-plus',    'bg-brand-50',  'text-brand-600'],
         ['Terminated', count($terminated),                'user-minus',   'bg-red-50',    'text-red-600'],
-        ['Total',      count($employees),                 'users',        'bg-gray-100',  'text-gray-700'],
+        ['Total',      count($employees),                 'users',        'bg-gray-100',  'text-gray-800'],
     ] as [$label,$value,$icon,$bg,$text])
     <div class="lmt-card flex items-center gap-3 p-4">
         <div class="w-10 h-10 rounded-xl {{ $bg }} {{ $text }} flex items-center justify-center flex-shrink-0">
@@ -175,7 +175,7 @@
         <div class="space-y-2">
             @foreach($byType as $type => $count)
             <div class="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-none">
-                <span class="text-sm text-gray-600 capitalize">{{ str_replace('_',' ',$type ?? 'Unknown') }}</span>
+                <span class="text-sm text-gray-800 capitalize">{{ str_replace('_',' ',$type ?? 'Unknown') }}</span>
                 <span class="text-sm font-black text-gray-900">{{ $count }}</span>
             </div>
             @endforeach
@@ -188,7 +188,7 @@
         <div class="space-y-2">
             @foreach($byGender as $gender => $count)
             <div class="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-none">
-                <span class="text-sm text-gray-600 capitalize">{{ $gender ?? 'Not Specified' }}</span>
+                <span class="text-sm text-gray-800 capitalize">{{ $gender ?? 'Not Specified' }}</span>
                 <span class="text-sm font-black text-gray-900">{{ $count }}</span>
             </div>
             @endforeach
@@ -201,7 +201,7 @@
         <div class="space-y-2">
             @foreach($tenureGroups as $group => $count)
             <div class="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-none">
-                <span class="text-sm text-gray-600">{{ $group }}</span>
+                <span class="text-sm text-gray-800">{{ $group }}</span>
                 <span class="text-sm font-black text-gray-900">{{ $count }}</span>
             </div>
             @endforeach
@@ -221,9 +221,9 @@
             @foreach($newHires as $emp)
             <tr>
                 <td><div class="flex items-center gap-2"><div class="lmt-avatar-sm font-bold text-xs">{{ substr($emp->first_name,0,1) }}</div><span class="text-sm font-semibold text-gray-900">{{ $emp->full_name }}</span></div></td>
-                <td class="text-sm text-gray-600">{{ $emp->department?->name ?? '—' }}</td>
-                <td class="text-sm text-gray-600">{{ $emp->position?->title ?? '—' }}</td>
-                <td class="text-sm text-gray-600">{{ $emp->hire_date?->format('M j, Y') }}</td>
+                <td class="text-sm text-gray-800">{{ $emp->department?->name ?? '—' }}</td>
+                <td class="text-sm text-gray-800">{{ $emp->position?->title ?? '—' }}</td>
+                <td class="text-sm text-gray-800">{{ $emp->hire_date?->format('M j, Y') }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -283,14 +283,14 @@
                     <td class="text-center text-sm font-bold text-emerald-600">{{ $row['present'] }}</td>
                     <td class="text-center text-sm font-bold text-red-500">{{ $row['absent'] }}</td>
                     <td class="text-center text-sm font-bold text-amber-600">{{ $row['late'] }}</td>
-                    <td class="text-center text-sm text-gray-700">{{ $row['overtime'] }}</td>
+                    <td class="text-center text-sm text-gray-800">{{ $row['overtime'] }}</td>
                     <td class="text-center">
                         <div class="flex items-center gap-2 justify-center">
                             <div class="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                 <div class="h-full rounded-full {{ $row['rate'] >= 90 ? 'bg-emerald-500' : ($row['rate'] >= 75 ? 'bg-amber-500' : 'bg-red-500') }}"
                                      style="width:{{ $row['rate'] }}%"></div>
                             </div>
-                            <span class="text-xs font-bold text-gray-700">{{ $row['rate'] }}%</span>
+                            <span class="text-xs font-bold text-gray-800">{{ $row['rate'] }}%</span>
                         </div>
                     </td>
                 </tr>
@@ -314,7 +314,7 @@
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     @foreach([
         ['Payroll Runs',     $totals['runs'],                          'layers',       'bg-brand-50',  'text-brand-600'],
-        ['Total Gross',      '$'.number_format($totals['gross'],0),    'trending-up',  'bg-gray-100',  'text-gray-700'],
+        ['Total Gross',      '$'.number_format($totals['gross'],0),    'trending-up',  'bg-gray-100',  'text-gray-800'],
         ['Total Taxes',      '$'.number_format($totals['taxes'],0),    'percent',      'bg-red-50',    'text-red-600'],
         ['Total Deductions', '$'.number_format($totals['deductions'],0),'minus-circle','bg-amber-50',  'text-amber-600'],
         ['Net Paid',         '$'.number_format($totals['net'],0),      'dollar-sign',  'bg-emerald-50','text-emerald-600'],
@@ -341,9 +341,9 @@
                 @forelse($monthly as $m)
                 <tr>
                     <td class="font-semibold text-gray-900 text-sm">{{ $m['label'] }}</td>
-                    <td class="text-sm text-gray-700">${{ number_format($m['gross'],0) }}</td>
+                    <td class="text-sm text-gray-800">${{ number_format($m['gross'],0) }}</td>
                     <td class="text-sm font-bold text-emerald-600">${{ number_format($m['net'],0) }}</td>
-                    <td class="text-sm text-gray-600">{{ $m['count'] }}</td>
+                    <td class="text-sm text-gray-800">{{ $m['count'] }}</td>
                 </tr>
                 @empty
                 <tr><td colspan="4" class="text-center py-8 text-gray-800">No payroll runs in period.</td></tr>
@@ -361,8 +361,8 @@
                 @forelse($byDept as $d)
                 <tr>
                     <td class="font-semibold text-gray-900 text-sm">{{ $d['dept'] }}</td>
-                    <td class="text-sm text-gray-600">{{ $d['count'] }}</td>
-                    <td class="text-sm text-gray-600">${{ number_format($d['avg'],0) }}</td>
+                    <td class="text-sm text-gray-800">{{ $d['count'] }}</td>
+                    <td class="text-sm text-gray-800">${{ number_format($d['avg'],0) }}</td>
                     <td class="text-sm font-bold text-emerald-600">${{ number_format($d['total'],0) }}</td>
                 </tr>
                 @empty
@@ -383,7 +383,7 @@
         ['Total Requests', $summary['total'],               'calendar-check','bg-brand-50',  'text-brand-600'],
         ['Total Days',     number_format($summary['total_days'],1), 'calendar','bg-amber-50','text-amber-600'],
         ['Types',          $summary['by_type']->count(),   'tag',           'bg-purple-50', 'text-purple-600'],
-        ['Top Employees',  $topTakers->count(),             'users',         'bg-gray-100',  'text-gray-600'],
+        ['Top Employees',  $topTakers->count(),             'users',         'bg-gray-100',  'text-gray-800'],
     ] as [$label,$value,$icon,$bg,$text])
     <div class="lmt-card flex items-center gap-3 p-4">
         <div class="w-10 h-10 rounded-xl {{ $bg }} {{ $text }} flex items-center justify-center flex-shrink-0">
@@ -406,7 +406,7 @@
             @foreach($summary['by_type'] as $lt)
             <div>
                 <div class="flex justify-between text-xs mb-1">
-                    <span class="font-medium text-gray-700">{{ $lt['name'] }}</span>
+                    <span class="font-medium text-gray-800">{{ $lt['name'] }}</span>
                     <span class="font-bold text-gray-900">{{ $lt['days'] }} days ({{ $lt['count'] }})</span>
                 </div>
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -475,7 +475,7 @@
                 <div class="h-full lmt-gradient-bg rounded-full"
                      style="width:{{ $maxRating > 0 ? round(($ratingDist[$r]??0)/$maxRating*100) : 0 }}%"></div>
             </div>
-            <span class="text-xs font-bold text-gray-700 w-4 text-right">{{ $ratingDist[$r] ?? 0 }}</span>
+            <span class="text-xs font-bold text-gray-800 w-4 text-right">{{ $ratingDist[$r] ?? 0 }}</span>
         </div>
         @endforeach
     </div>
@@ -489,7 +489,7 @@
                 @foreach($byDept as $d)
                 <tr>
                     <td class="text-sm font-semibold text-gray-900">{{ $d['dept'] }}</td>
-                    <td class="text-center text-sm text-gray-700">{{ $d['count'] }}</td>
+                    <td class="text-center text-sm text-gray-800">{{ $d['count'] }}</td>
                     <td class="text-center">
                         <span class="text-sm font-black {{ $d['avg'] >= 4 ? 'text-emerald-600' : ($d['avg'] >= 3 ? 'text-amber-600' : 'text-red-500') }}">
                             {{ $d['avg'] }}
@@ -536,7 +536,7 @@
         @endphp
         @foreach($funnel as $stage => $count)
         <div class="flex items-center gap-3 mb-2.5">
-            <span class="text-xs font-semibold text-gray-600 w-20 capitalize">{{ $stage }}</span>
+            <span class="text-xs font-semibold text-gray-800 w-20 capitalize">{{ $stage }}</span>
             <div class="flex-1 h-6 bg-gray-100 rounded-lg overflow-hidden relative">
                 <div class="h-full rounded-lg flex items-center pl-3 transition-all"
                      style="width:{{ $funnelMax > 0 ? max(8,round($count/$funnelMax*100)) : 8 }}%; background:{{ $funnelColors[$stage] ?? '#94A3B8' }}">
@@ -555,7 +555,7 @@
         <div class="space-y-3">
             @foreach($bySource as $src)
             <div class="flex items-center gap-3">
-                <span class="text-xs font-medium text-gray-700 w-24 truncate">{{ $src['source'] }}</span>
+                <span class="text-xs font-medium text-gray-800 w-24 truncate">{{ $src['source'] }}</span>
                 <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div class="h-full lmt-gradient-bg rounded-full"
                          style="width:{{ round($src['count']/$maxSrc*100) }}%"></div>
@@ -603,7 +603,7 @@
             @foreach($byCategory as $cat)
             <div>
                 <div class="flex justify-between text-xs mb-1">
-                    <span class="font-medium text-gray-700">{{ $cat['name'] }}</span>
+                    <span class="font-medium text-gray-800">{{ $cat['name'] }}</span>
                     <span class="font-black text-gray-900">${{ number_format($cat['total'],0) }} ({{ $cat['count'] }})</span>
                 </div>
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -624,7 +624,7 @@
                 @foreach($byDept as $d)
                 <tr>
                     <td class="text-sm font-semibold text-gray-900">{{ $d['dept'] }}</td>
-                    <td class="text-center text-sm text-gray-600">{{ $d['count'] }}</td>
+                    <td class="text-center text-sm text-gray-800">{{ $d['count'] }}</td>
                     <td class="text-right text-sm font-bold text-brand-600">${{ number_format($d['total'],0) }}</td>
                 </tr>
                 @endforeach
@@ -667,9 +667,9 @@
                 @forelse($byTraining as $t)
                 <tr>
                     <td class="text-sm font-semibold text-gray-900 max-w-48 truncate">{{ $t['title'] }}</td>
-                    <td class="text-center text-sm text-gray-700">{{ $t['enrolled'] }}</td>
+                    <td class="text-center text-sm text-gray-800">{{ $t['enrolled'] }}</td>
                     <td class="text-center text-sm font-bold text-emerald-600">{{ $t['completed'] }}</td>
-                    <td class="text-center text-sm text-gray-700">{{ $t['avg_score'] ? $t['avg_score'].'%' : '—' }}</td>
+                    <td class="text-center text-sm text-gray-800">{{ $t['avg_score'] ? $t['avg_score'].'%' : '—' }}</td>
                 </tr>
                 @empty
                 <tr><td colspan="4" class="text-center py-8 text-gray-800">No training data.</td></tr>
@@ -687,7 +687,7 @@
                 @forelse($byDept as $d)
                 <tr>
                     <td class="text-sm font-semibold text-gray-900">{{ $d['dept'] }}</td>
-                    <td class="text-center text-sm text-gray-700">{{ $d['enrolled'] }}</td>
+                    <td class="text-center text-sm text-gray-800">{{ $d['enrolled'] }}</td>
                     <td class="text-center text-sm font-bold text-emerald-600">{{ $d['completed'] }}</td>
                 </tr>
                 @empty

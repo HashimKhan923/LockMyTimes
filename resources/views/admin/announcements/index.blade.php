@@ -9,7 +9,7 @@
     @foreach([
         ['label'=>'Published',    'value'=>$stats['published'],   'icon'=>'megaphone',   'bg'=>'bg-emerald-50','text'=>'text-emerald-600'],
         ['label'=>'Scheduled',    'value'=>$stats['scheduled'],   'icon'=>'clock',       'bg'=>'bg-amber-50',  'text'=>'text-amber-600'],
-        ['label'=>'Drafts',       'value'=>$stats['drafts'],      'icon'=>'file-pen',    'bg'=>'bg-gray-100',  'text'=>'text-gray-600'],
+        ['label'=>'Drafts',       'value'=>$stats['drafts'],      'icon'=>'file-pen',    'bg'=>'bg-gray-100',  'text'=>'text-gray-800'],
         ['label'=>'Active Polls', 'value'=>$stats['active_polls'],'icon'=>'bar-chart-2', 'bg'=>'bg-brand-50',  'text'=>'text-brand-600'],
     ] as $s)
     <div class="lmt-stat">
@@ -29,7 +29,7 @@
     @foreach(['announcements'=>' Announcements','polls'=>' Polls'] as $t=>$label)
     <a href="{{ route('admin.announcements.index', $tenant) }}?tab={{ $t }}"
        class="px-5 py-2.5 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap
-              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-800 hover:text-gray-700' }}">
+              {{ $tab === $t ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-800 hover:text-gray-800' }}">
         {{ $label }}
     </a>
     @endforeach
@@ -44,7 +44,7 @@
         @foreach(['all'=>'All','published'=>'Published','scheduled'=>'Scheduled','draft'=>'Drafts','archived'=>'Archived'] as $val=>$label)
         <a href="{{ route('admin.announcements.index', $tenant) }}?tab=announcements&status={{ $val }}"
            class="px-3 py-1.5 rounded-lg text-sm font-semibold transition-all
-                  {{ $status === $val ? 'lmt-gradient-bg text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-brand-400' }}">
+                  {{ $status === $val ? 'lmt-gradient-bg text-white' : 'bg-white border border-gray-200 text-gray-800 hover:border-brand-400' }}">
             {{ $label }}
         </a>
         @endforeach
@@ -62,7 +62,7 @@
         'urgent' => ['bar'=>'bg-red-500',   'badge'=>'bg-red-100 text-red-700',     'icon'=>'alert-octagon'],
         'high'   => ['bar'=>'bg-amber-500', 'badge'=>'bg-amber-100 text-amber-700', 'icon'=>'alert-triangle'],
         'normal' => ['bar'=>'bg-brand-500', 'badge'=>'bg-brand-100 text-brand-700', 'icon'=>'megaphone'],
-        'low'    => ['bar'=>'bg-gray-400',  'badge'=>'bg-gray-100 text-gray-600',   'icon'=>'info'],
+        'low'    => ['bar'=>'bg-gray-400',  'badge'=>'bg-gray-100 text-gray-800',   'icon'=>'info'],
     ];
     $pc = $priorityConfig[$ann->priority] ?? $priorityConfig['normal'];
     $statusColors = ['published'=>'lmt-badge-green','scheduled'=>'lmt-badge-amber','draft'=>'lmt-badge-gray','archived'=>'lmt-badge-gray'];
@@ -97,7 +97,7 @@
                         @endif
                     </div>
 
-                    <p class="text-sm text-gray-600 line-clamp-2 mb-3">
+                    <p class="text-sm text-gray-800 line-clamp-2 mb-3">
                         {{ strip_tags($ann->content) }}
                     </p>
 
@@ -121,7 +121,7 @@
                         </span>
                         @endif
                         @if($ann->expires_at)
-                        <span class="flex items-center gap-1 {{ $ann->expires_at->isPast() ? 'text-red-400' : '' }}">
+                        <span class="flex items-center gap-1 {{ $ann->expires_at->isPast() ? 'text-red-600' : '' }}">
                             <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                             Exp {{ $ann->expires_at->format('M j, Y') }}
                         </span>
@@ -237,7 +237,7 @@
             @foreach($results as $result)
             <div>
                 <div class="flex items-center justify-between mb-1">
-                    <span class="text-sm text-gray-700 font-medium truncate flex-1 mr-2">{{ $result['option'] }}</span>
+                    <span class="text-sm text-gray-800 font-medium truncate flex-1 mr-2">{{ $result['option'] }}</span>
                     <span class="text-xs font-bold text-gray-900 flex-shrink-0">
                         {{ $result['votes'] }} ({{ $result['percent'] }}%)
                     </span>
@@ -257,7 +257,7 @@
                 {{ $totalVotes }} vote{{ $totalVotes !== 1 ? 's' : '' }}
             </span>
             @if($poll->ends_at)
-            <span class="flex items-center gap-1 {{ $poll->ends_at->isPast() ? 'text-red-400' : '' }}">
+            <span class="flex items-center gap-1 {{ $poll->ends_at->isPast() ? 'text-red-600' : '' }}">
                 <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                 {{ $poll->ends_at->isPast() ? 'Ended' : 'Ends' }} {{ $poll->ends_at->format('M j, Y') }}
             </span>
@@ -358,11 +358,11 @@
             <div class="grid grid-cols-2 gap-3">
                 <label class="flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                     <input type="checkbox" name="requires_acknowledgment" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-sm font-medium text-gray-700">Requires Acknowledgment</span>
+                    <span class="text-sm font-medium text-gray-800">Requires Acknowledgment</span>
                 </label>
                 <label class="flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                     <input type="checkbox" name="show_on_login" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-sm font-medium text-gray-700">Show Popup on Login</span>
+                    <span class="text-sm font-medium text-gray-800">Show Popup on Login</span>
                 </label>
             </div>
             <div class="flex gap-3 pt-2">
@@ -497,7 +497,7 @@
 
             <label class="flex items-center gap-2.5 cursor-pointer p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
                 <input type="checkbox" name="is_anonymous" value="1" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Anonymous Voting</span>
+                <span class="text-sm font-medium text-gray-800">Anonymous Voting</span>
             </label>
 
             <div class="flex gap-3">
@@ -595,7 +595,7 @@ function openVoteModal(pollId, options, question, type) {
         label.innerHTML = `
             <input type="${inputType}" name="selected_options[]" value="${i}"
                    class="w-4 h-4 rounded"/>
-            <span class="text-sm font-medium text-gray-700">${opt}</span>`;
+            <span class="text-sm font-medium text-gray-800">${opt}</span>`;
         container.appendChild(label);
     });
 

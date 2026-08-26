@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.recruitment.show', [$tenant, $candidate->job_posting_id]) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Pipeline
     </a>
@@ -68,7 +68,7 @@
                 ] as [$k,$v])
                 <div class="flex justify-between py-1.5 border-b border-gray-50 last:border-none">
                     <span class="text-gray-800 font-medium">{{ $k }}</span>
-                    <span class="text-gray-700 font-semibold text-right max-w-36 truncate">{{ $v }}</span>
+                    <span class="text-gray-800 font-semibold text-right max-w-36 truncate">{{ $v }}</span>
                 </div>
                 @endforeach
             </div>
@@ -120,7 +120,7 @@
                     <div class="w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0"></div>
                     <span class="text-gray-800 capitalize">{{ $hist->from_stage ?? 'start' }}</span>
                     <i data-lucide="arrow-right" class="w-3 h-3 text-gray-800 flex-shrink-0"></i>
-                    <span class="font-bold text-gray-700 capitalize">{{ $hist->to_stage }}</span>
+                    <span class="font-bold text-gray-800 capitalize">{{ $hist->to_stage }}</span>
                     <span class="text-gray-800 ml-auto">{{ $hist->created_at->diffForHumans() }}</span>
                 </div>
                 @endforeach
@@ -136,7 +136,7 @@
         @if($candidate->cover_letter_text)
         <div class="lmt-card">
             <h3 class="font-black text-gray-900 mb-3">Cover Letter</h3>
-            <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ $candidate->cover_letter_text }}</p>
+            <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-line">{{ $candidate->cover_letter_text }}</p>
         </div>
         @endif
 
@@ -185,7 +185,7 @@
                         </a>
                         @endif
                         @if($interview->feedback)
-                        <p class="text-xs text-gray-600 mt-2 italic">"{{ $interview->feedback }}"</p>
+                        <p class="text-xs text-gray-800 mt-2 italic">"{{ $interview->feedback }}"</p>
                         @endif
                         @if($interview->recommendation)
                         <span class="text-xs font-bold capitalize {{ $recColors[$interview->recommendation] ?? 'text-gray-800' }} mt-1 block">
@@ -230,7 +230,7 @@
                 <label class="cursor-pointer">
                     <input type="radio" name="stage" value="{{ $val }}" class="sr-only peer"
                            {{ $candidate->stage === $val ? 'checked' : '' }}/>
-                    <div class="p-3 rounded-xl border-2 border-gray-200 text-center text-sm font-semibold text-gray-600
+                    <div class="p-3 rounded-xl border-2 border-gray-200 text-center text-sm font-semibold text-gray-800
                                 peer-checked:border-brand-500 peer-checked:text-brand-700 peer-checked:bg-brand-50
                                 hover:border-gray-300 transition-all">
                         <div class="w-2 h-2 rounded-full mx-auto mb-1" style="background:{{ $color }}"></div>

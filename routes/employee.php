@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Employee\AnnouncementController;
 use App\Http\Controllers\Employee\AttendanceController;
+use App\Http\Controllers\Employee\AttendanceCorrectionController;
 use App\Http\Controllers\Employee\AuthController;
 use App\Http\Controllers\Employee\DashboardController;
 use App\Http\Controllers\Employee\ExpenseController;
@@ -49,6 +50,14 @@ Route::middleware(['tenant', 'subscription.active', 'employee.auth'])->group(fun
         Route::post('/clock-out',   [AttendanceController::class, 'clockOut'])->name('clock-out')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
         Route::post('/break/start', [AttendanceController::class, 'startBreak'])->name('break.start')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
         Route::post('/break/end',   [AttendanceController::class, 'endBreak'])->name('break.end')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
+    });
+
+    /* ─── Attendance correction requests ─── */
+    Route::prefix('attendance-corrections')->name('attendance-corrections.')->middleware('permission:attendance.view')->group(function () {
+        Route::get('/',                    [AttendanceCorrectionController::class, 'index'])->name('index');
+        Route::get('/new',                 [AttendanceCorrectionController::class, 'create'])->name('create')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
+        Route::post('/',                   [AttendanceCorrectionController::class, 'store'])->name('store')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
+        Route::post('/{correction}/cancel',[AttendanceCorrectionController::class, 'cancel'])->name('cancel');
     });
 
     /* ─── Phase 4 — Leaves (LIVE) ─── */
@@ -157,8 +166,11 @@ Route::middleware(['tenant', 'subscription.active', 'employee.auth'])->group(fun
         Route::get('/',                              [TeamController::class, 'index'])->name('index');
         Route::get('/approvals/leaves',              [TeamController::class, 'leaveApprovals'])->name('approvals.leaves');
         Route::get('/approvals/expenses',            [TeamController::class, 'expenseApprovals'])->name('approvals.expenses');
+        Route::get('/approvals/corrections',         [TeamController::class, 'correctionApprovals'])->name('approvals.corrections');
         Route::patch('/leaves/{leave}/approve',      [TeamController::class, 'approveLeave'])->name('leaves.approve');
         Route::patch('/leaves/{leave}/reject',       [TeamController::class, 'rejectLeave'])->name('leaves.reject');
+        Route::patch('/corrections/{correction}/approve', [TeamController::class, 'approveCorrection'])->name('corrections.approve');
+        Route::patch('/corrections/{correction}/reject',  [TeamController::class, 'rejectCorrection'])->name('corrections.reject');
         Route::patch('/expenses/{expense}/approve',  [TeamController::class, 'approveExpense'])->name('expenses.approve');
         Route::patch('/expenses/{expense}/reject',   [TeamController::class, 'rejectExpense'])->name('expenses.reject');
         Route::get('/{employee}',                    [TeamController::class, 'show'])->name('show');

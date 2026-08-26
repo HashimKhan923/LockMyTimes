@@ -102,6 +102,18 @@ class NotificationService
             'leave.rejected', 'x-circle', '#EF4444', $url);
     }
 
+    public static function attendanceCorrectionApproved(User $employee, string $approverName, string $url): void
+    {
+        static::send($employee, "Your attendance correction was approved by {$approverName}",
+            'attendance.correction_approved', 'check-circle', '#10B981', $url);
+    }
+
+    public static function attendanceCorrectionRejected(User $employee, string $approverName, string $url): void
+    {
+        static::send($employee, "Your attendance correction was rejected by {$approverName}",
+            'attendance.correction_rejected', 'x-circle', '#EF4444', $url);
+    }
+
     public static function loanApproved(User $employee, string $amount, string $url): void
     {
         static::send($employee, "Your loan request of {$amount} was approved",

@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.payroll.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Payroll
     </a>
@@ -54,7 +54,7 @@
             <p class="font-bold text-gray-900">Rejected by {{ $payrollRun->rejecter?->name ?? 'an admin' }}
                 @if($payrollRun->rejected_at) on {{ $payrollRun->rejected_at->format('M j, Y g:i A') }} @endif
             </p>
-            <p class="text-sm text-gray-600 mt-1">{{ $payrollRun->rejection_reason }}</p>
+            <p class="text-sm text-gray-800 mt-1">{{ $payrollRun->rejection_reason }}</p>
         </div>
     </div>
 </div>
@@ -95,7 +95,7 @@
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     @foreach([
         ['label'=>'Employees',    'value'=>$payrollRun->total_employees,                            'icon'=>'users',       'color'=>'text-brand-600',  'bg'=>'bg-brand-50'],
-        ['label'=>'Total Gross',  'value'=>'$'.number_format($payrollRun->total_gross, 2),           'icon'=>'trending-up', 'color'=>'text-gray-700',   'bg'=>'bg-gray-100'],
+        ['label'=>'Total Gross',  'value'=>'$'.number_format($payrollRun->total_gross, 2),           'icon'=>'trending-up', 'color'=>'text-gray-800',   'bg'=>'bg-gray-100'],
         ['label'=>'Total Tax',    'value'=>'$'.number_format($payrollRun->total_tax ?? 0, 2),        'icon'=>'percent',     'color'=>'text-red-600',    'bg'=>'bg-red-50'],
         ['label'=>'Total Net',    'value'=>'$'.number_format($payrollRun->total_net, 2),             'icon'=>'dollar-sign', 'color'=>'text-emerald-600','bg'=>'bg-emerald-50'],
     ] as $s)
@@ -145,8 +145,8 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="text-sm text-gray-700">${{ number_format($ps->base_pay, 0) }}</td>
-                        <td class="text-sm text-gray-700">${{ number_format($ps->gross_pay, 0) }}</td>
+                        <td class="text-sm text-gray-800">${{ number_format($ps->base_pay, 0) }}</td>
+                        <td class="text-sm text-gray-800">${{ number_format($ps->gross_pay, 0) }}</td>
                         <td class="text-sm text-red-500">-${{ number_format($ps->tax_amount, 0) }}</td>
                         <td class="text-sm text-red-500">-${{ number_format($ps->total_deductions, 0) }}</td>
                         <td class="text-sm font-black text-emerald-600">${{ number_format($ps->net_pay, 0) }}</td>
@@ -171,7 +171,7 @@
             @foreach($deptBreakdown as $dept => $data)
             <div>
                 <div class="flex items-center justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700 truncate">{{ $dept }}</span>
+                    <span class="text-sm font-medium text-gray-800 truncate">{{ $dept }}</span>
                     <span class="text-sm font-black text-gray-900 ml-2">
                         ${{ number_format($data['net_total'], 0) }}
                     </span>
@@ -191,7 +191,7 @@
         @if($payrollRun->notes)
         <div class="mt-5 pt-5 border-t border-gray-100">
             <p class="text-xs text-gray-800 mb-1">Notes</p>
-            <p class="text-sm text-gray-700">{{ $payrollRun->notes }}</p>
+            <p class="text-sm text-gray-800">{{ $payrollRun->notes }}</p>
         </div>
         @endif
     </div>

@@ -221,7 +221,7 @@
             <div class="flex items-center gap-2">
                 <div class="w-3 h-3 rounded-full" style="background:{{ $list->color ?? '#6C7DF7' }}"></div>
                 <span class="font-bold text-gray-800 text-sm">{{ $list->name }}</span>
-                <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-xs font-bold flex items-center justify-center">
+                <span class="w-5 h-5 rounded-full bg-gray-200 text-gray-800 text-xs font-bold flex items-center justify-center">
                     {{ $list->tasks->count() }}
                 </span>
             </div>
@@ -371,7 +371,7 @@
                         <span id="tmd-you-badge" class="badge-you hidden">YOUR TASK</span>
                     </div>
                     <button onclick="closeTaskModal()"
-                            class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition-colors">
+                            class="w-8 h-8 rounded-lg text-gray-800 hover:text-gray-800 hover:bg-gray-100 flex items-center justify-center transition-colors">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -480,7 +480,7 @@
                                 <input type="range" id="tmd-progress" min="0" max="100" step="5"
                                        class="flex-1 h-2 accent-brand-600"
                                        oninput="document.getElementById('tmd-progress-val').textContent=this.value+'%'"/>
-                                <span id="tmd-progress-val" class="text-xs font-bold text-gray-600 w-8">0%</span>
+                                <span id="tmd-progress-val" class="text-xs font-bold text-gray-800 w-8">0%</span>
                             </div>
                         </div>
 
@@ -552,7 +552,7 @@
                         <div class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-[10px] font-black flex items-center justify-center flex-shrink-0">
                             {{ substr($m->employee->first_name, 0, 1) }}
                         </div>
-                        <span class="text-sm text-gray-700">{{ $m->employee->full_name }}</span>
+                        <span class="text-sm text-gray-800">{{ $m->employee->full_name }}</span>
                         <span class="ml-auto text-[10px] font-bold text-gray-800 uppercase">{{ $m->role }}</span>
                     </label>
                     @endif
@@ -890,7 +890,7 @@ function renderAttachments(attachments) {
         const icon    = isImage ? 'image' : 'paperclip';
         const sizeHuman = a.file_size_human ?? (a.file_size ? (a.file_size / 1024).toFixed(1) + ' KB' : '');
         return `
-        <div class="flex items-center gap-2 text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-2">
+        <div class="flex items-center gap-2 text-sm text-gray-800 bg-gray-50 rounded-lg px-3 py-2">
             <i data-lucide="${icon}" class="w-3.5 h-3.5 text-gray-800 flex-shrink-0"></i>
             <a href="${TASK_BASE}/${currentTaskId}/attachments/${a.id}" target="_blank"
                class="flex-1 truncate hover:text-brand-600 font-medium text-xs">${a.file_name}</a>
@@ -958,7 +958,7 @@ function renderChecklist(items) {
                    ${!currentTaskMine ? 'disabled' : ''}
                    onchange="toggleChecklist(${item.id}, this.checked)"
                    class="w-4 h-4 rounded cursor-pointer"/>
-            <span class="text-sm text-gray-700 flex-1 ${item.is_completed ? 'line-through text-gray-800' : ''}">${item.item}</span>`;
+            <span class="text-sm text-gray-800 flex-1 ${item.is_completed ? 'line-through text-gray-800' : ''}">${item.item}</span>`;
         container.appendChild(div);
     });
 }
@@ -979,10 +979,10 @@ function renderComments(comments) {
             </div>
             <div class="flex-1 bg-gray-50 rounded-xl p-2.5">
                 <div class="flex items-center justify-between mb-1">
-                    <span class="text-xs font-semibold text-gray-700">${c.user?.name ?? 'User'}</span>
+                    <span class="text-xs font-semibold text-gray-800">${c.user?.name ?? 'User'}</span>
                     <span class="text-[10px] text-gray-800">${new Date(c.created_at).toLocaleDateString()}</span>
                 </div>
-                <p class="text-sm text-gray-600">${c.content}</p>
+                <p class="text-sm text-gray-800">${c.content}</p>
             </div>`;
         container.appendChild(div);
     });

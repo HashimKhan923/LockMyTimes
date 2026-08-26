@@ -15,6 +15,7 @@ return [
     /* ── Elementos de navegación ── */
     'nav_home'          => 'Inicio',
     'nav_attendance'    => 'Asistencia',
+    'nav_corrections'   => 'Correcciones',
     'nav_leaves'        => 'Permisos',
     'nav_payslips'      => 'Nóminas',
     'nav_expenses'      => 'Gastos',

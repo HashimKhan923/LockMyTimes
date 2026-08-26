@@ -304,6 +304,29 @@ class EmployeeController extends Controller
     }
 
     /* ================================================================
+     | DESTROY
+     |================================================================*/
+    public function destroy(string $tenant, Employee $employee)
+    {
+        $name = $employee->full_name;
+
+        if ($employee->user) {
+            $employee->user->update(['is_active' => false]);
+        }
+
+        // Soft delete only — Employee uses SoftDeletes, so this just sets
+        // deleted_at and does NOT trigger the cascadeOnDelete() foreign keys
+        // on attendances/payrolls/leave_requests, preserving history intact.
+        $employee->delete();
+
+        \App\Models\Main\Tenant::where('slug', $tenant)->decrement('employees_count');
+
+        return redirect()
+            ->route('admin.employees.index', $tenant)
+            ->with('success', "{$name} has been deleted.");
+    }
+
+    /* ================================================================
      | ORG CHART DATA
      |================================================================*/
     public function orgChart(string $tenant)

@@ -198,7 +198,7 @@
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center transition-all {{ $action['color'] }}">
                     <i data-lucide="{{ $action['icon'] }}" class="w-4 h-4"></i>
                 </div>
-                <span class="text-sm font-semibold text-gray-700 group-hover:text-gray-900">{{ $action['label'] }}</span>
+                <span class="text-sm font-semibold text-gray-800 group-hover:text-gray-900">{{ $action['label'] }}</span>
                 <i data-lucide="chevron-right" class="w-4 h-4 text-gray-800 ml-auto group-hover:text-gray-800 transition-colors"></i>
             </a>
             @else
@@ -206,7 +206,7 @@
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center {{ $action['color'] }}">
                     <i data-lucide="{{ $action['icon'] }}" class="w-4 h-4"></i>
                 </div>
-                <span class="text-sm font-semibold text-gray-700">{{ $action['label'] }}</span>
+                <span class="text-sm font-semibold text-gray-800">{{ $action['label'] }}</span>
             </div>
             @endif
             @endforeach
@@ -315,7 +315,7 @@
             @php $pct = $totalEmployees > 0 ? round(($dept->total / $totalEmployees) * 100) : 0; @endphp
             <div>
                 <div class="flex items-center justify-between mb-1">
-                    <span class="text-sm font-medium text-gray-700 truncate">{{ $dept->name }}</span>
+                    <span class="text-sm font-medium text-gray-800 truncate">{{ $dept->name }}</span>
                     <span class="text-sm font-bold text-gray-900 ml-2">{{ $dept->total }}</span>
                 </div>
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -377,9 +377,9 @@
                 @endif
                 <span class="text-xs text-gray-800 ml-auto">{{ $kudo->created_at->diffForHumans() }}</span>
             </div>
-            <p class="text-sm text-gray-700 italic">"{{ Str::limit($kudo->message, 80) }}"</p>
+            <p class="text-sm text-gray-800 italic">"{{ Str::limit($kudo->message, 80) }}"</p>
             <div class="flex items-center gap-1 mt-2 text-xs text-gray-800">
-                <span class="font-semibold text-gray-700">{{ $kudo->fromEmployee->first_name ?? '?' }}</span>
+                <span class="font-semibold text-gray-800">{{ $kudo->fromEmployee->first_name ?? '?' }}</span>
                 <i data-lucide="arrow-right" class="w-3 h-3"></i>
                 <span class="font-semibold text-brand-600">{{ $kudo->toEmployee->first_name ?? '?' }}</span>
             </div>

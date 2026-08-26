@@ -115,7 +115,7 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','tax'=>
                 @foreach([['is_taxable','Taxable'],['is_mandatory','Mandatory']] as [$n,$l])
                 <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50">
                     <input type="checkbox" name="{{ $n }}" value="1" class="w-4 h-4 rounded"/>
-                    <span class="text-sm font-medium text-gray-700">{{ $l }}</span>
+                    <span class="text-sm font-medium text-gray-800">{{ $l }}</span>
                 </label>
                 @endforeach
             </div>

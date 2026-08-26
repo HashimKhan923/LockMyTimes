@@ -274,7 +274,7 @@
              x-transition:enter-end="opacity-100 scale-100">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">Start a Break</h3>
-                <button @click="breakOpen=false" class="text-gray-800 hover:text-gray-600">
+                <button @click="breakOpen=false" class="text-gray-800 hover:text-gray-800">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>

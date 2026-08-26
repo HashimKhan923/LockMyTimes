@@ -24,7 +24,7 @@
             ] as $key => [$icon, $label])
             <a href="{{ route('admin.settings.index', $tenant) }}?tab={{ $key }}"
                class="flex items-center gap-3 px-4 py-3 text-sm font-semibold border-b border-gray-50 last:border-none transition-colors
-                      {{ $tab === $key ? 'bg-brand-50 text-brand-700 border-l-[3px] border-l-brand-500' : 'text-gray-600 hover:bg-gray-50' }}">
+                      {{ $tab === $key ? 'bg-brand-50 text-brand-700 border-l-[3px] border-l-brand-500' : 'text-gray-800 hover:bg-gray-50' }}">
                 <i data-lucide="{{ $icon }}" class="w-4 h-4 flex-shrink-0"></i>
                 {{ $label }}
             </a>
@@ -255,7 +255,7 @@
                         <input type="checkbox" name="{{ $field }}" value="1" class="w-4 h-4 rounded"
                                {{ ($attendance[$field] ?? false) ? 'checked' : '' }}/>
                         <i data-lucide="{{ $icon }}" class="w-4 h-4 text-gray-800"></i>
-                        <span class="text-sm font-semibold text-gray-700">{{ $label }}</span>
+                        <span class="text-sm font-semibold text-gray-800">{{ $label }}</span>
                     </label>
                     @endforeach
                 </div>
@@ -263,7 +263,7 @@
                 <p class="text-xs font-bold text-gray-800 uppercase tracking-wider pt-2">Verification & Rules</p>
                 <div class="grid grid-cols-2 gap-3">
                     <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
-                        <span class="text-sm font-medium text-gray-700">Strict Geofencing</span>
+                        <span class="text-sm font-medium text-gray-800">Strict Geofencing</span>
                         <input type="checkbox" name="geofence_strict" value="1" class="w-4 h-4 rounded"
                                {{ ($attendance['geofence_strict'] ?? false) ? 'checked' : '' }}/>
                     </label>
@@ -416,9 +416,9 @@
                     @forelse($taxSettings as $tax)
                     <tr>
                         <td class="font-bold text-gray-900 text-sm">{{ $tax->year }}</td>
-                        <td class="text-sm text-gray-700">{{ $tax->tax_type_label }}</td>
+                        <td class="text-sm text-gray-800">{{ $tax->tax_type_label }}</td>
                         <td class="text-sm text-gray-800">{{ $tax->state ?? '—' }}</td>
-                        <td class="text-sm text-gray-700">
+                        <td class="text-sm text-gray-800">
                             @if($tax->flat_rate)
                                 {{ $tax->flat_rate }}%
                             @elseif($tax->brackets)
@@ -427,7 +427,7 @@
                                 —
                             @endif
                         </td>
-                        <td class="text-sm text-gray-600">{{ $tax->wage_base ? '$'.number_format($tax->wage_base,0) : '—' }}</td>
+                        <td class="text-sm text-gray-800">{{ $tax->wage_base ? '$'.number_format($tax->wage_base,0) : '—' }}</td>
                         <td>
                             <span class="{{ $tax->is_active ? 'lmt-badge-green' : 'lmt-badge-gray' }} text-xs">
                                 {{ $tax->is_active ? 'Active' : 'Inactive' }}
@@ -474,7 +474,7 @@
                 </div>
                 <label class="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer">
                     <div>
-                        <p class="text-sm font-semibold text-gray-700">Allow Negative Leave Balance</p>
+                        <p class="text-sm font-semibold text-gray-800">Allow Negative Leave Balance</p>
                         <p class="text-xs text-gray-800 mt-0.5">Employees can request leave even with insufficient balance</p>
                     </div>
                     <input type="checkbox" name="allow_negative_balance" value="1" class="w-4 h-4 rounded"
@@ -515,7 +515,7 @@
                             <i data-lucide="{{ $icon }}" class="w-4 h-4 text-gray-800"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-gray-700">{{ $title }}</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ $title }}</p>
                             <p class="text-xs text-gray-800">{{ $desc }}</p>
                         </div>
                     </div>
@@ -574,7 +574,7 @@
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="is_active" value="1" class="w-4 h-4 rounded"
                                    {{ $template->is_active ? 'checked' : '' }}/>
-                            <span class="text-xs font-medium text-gray-600">Template Active</span>
+                            <span class="text-xs font-medium text-gray-800">Template Active</span>
                         </label>
                         <button type="submit" class="lmt-btn-secondary lmt-btn-sm">
                             <i data-lucide="save" class="w-3.5 h-3.5"></i>

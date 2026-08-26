@@ -31,7 +31,7 @@
         @foreach(['all'=>'All','available'=>'Available','assigned'=>'Assigned','maintenance'=>'Maintenance','retired'=>'Retired'] as $val=>$label)
         <a href="{{ route('admin.assets.index', $tenant) }}?status={{ $val }}"
            class="px-3 py-1.5 rounded-lg text-sm font-semibold transition-all
-                  {{ $status === $val ? 'lmt-gradient-bg text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-brand-400' }}">
+                  {{ $status === $val ? 'lmt-gradient-bg text-white' : 'bg-white border border-gray-200 text-gray-800 hover:border-brand-400' }}">
             {{ $label }}
         </a>
         @endforeach
@@ -70,7 +70,7 @@
         'available'  => ['bg'=>'bg-emerald-100','text'=>'text-emerald-700','dot'=>'bg-emerald-500'],
         'assigned'   => ['bg'=>'bg-amber-100',  'text'=>'text-amber-700',  'dot'=>'bg-amber-500'],
         'maintenance'=> ['bg'=>'bg-red-100',    'text'=>'text-red-700',    'dot'=>'bg-red-500'],
-        'retired'    => ['bg'=>'bg-gray-100',   'text'=>'text-gray-600',   'dot'=>'bg-gray-400'],
+        'retired'    => ['bg'=>'bg-gray-100',   'text'=>'text-gray-800',   'dot'=>'bg-gray-400'],
         'lost'       => ['bg'=>'bg-red-100',    'text'=>'text-red-700',    'dot'=>'bg-red-500'],
     ];
     $sc = $statusColors[$asset->status] ?? $statusColors['available'];
@@ -121,7 +121,7 @@
             {{-- Condition --}}
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs text-gray-800">Condition</span>
-                <span class="text-xs font-bold capitalize {{ $conditionColors[$asset->condition] ?? 'text-gray-600' }}">
+                <span class="text-xs font-bold capitalize {{ $conditionColors[$asset->condition] ?? 'text-gray-800' }}">
                     {{ ucfirst($asset->condition) }}
                 </span>
             </div>
@@ -146,7 +146,7 @@
             {{-- Purchase value --}}
             @if($asset->purchase_cost)
             <p class="text-xs text-gray-800 mb-3">
-                Value: <span class="font-bold text-gray-700">${{ number_format($asset->purchase_cost, 0) }}</span>
+                Value: <span class="font-bold text-gray-800">${{ number_format($asset->purchase_cost, 0) }}</span>
             </p>
             @endif
 

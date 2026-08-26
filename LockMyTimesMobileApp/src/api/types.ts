@@ -215,6 +215,27 @@ export interface LeaveRequestInfo {
   teammates_on_leave_same_week: number | null;
 }
 
+export type CorrectionStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+
+export interface CorrectionRequestInfo {
+  id: number;
+  request_number: string;
+  work_date: string;
+  proposed_clock_in: string | null;
+  proposed_clock_out: string | null;
+  reason: string;
+  status: CorrectionStatus;
+  approver_name: string | null;
+  approved_at: string | null;
+  rejection_reason: string | null;
+  created_at: string;
+}
+
+export interface CorrectionIndexResponse {
+  requests: CorrectionRequestInfo[];
+  pagination: { current_page: number; last_page: number; total: number };
+}
+
 export interface LeaveIndexResponse {
   year: number;
   balances: LeaveBalanceInfo[];

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AttendanceController;
+use App\Http\Controllers\Admin\AttendanceCorrectionController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
@@ -60,6 +61,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::get('/{employee}/edit',        [EmployeeController::class, 'edit'])->name('edit')->middleware('permission:employees.edit');
         Route::put('/{employee}',             [EmployeeController::class, 'update'])->name('update')->middleware('permission:employees.edit');
         Route::patch('/{employee}/terminate', [EmployeeController::class, 'terminate'])->name('terminate')->middleware('permission:employees.delete');
+        Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('destroy')->middleware('permission:employees.delete');
     });
 
     /* ---- Departments ---- */
@@ -92,6 +94,13 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::post('/manual',                   [AttendanceController::class, 'manualEntry'])->name('manual')->middleware('permission:attendance.create');
         Route::get('/export',                    [AttendanceController::class, 'export'])->name('export')->middleware('permission:attendance.export');
         Route::get('/employee/{employee}/sheet', [AttendanceController::class, 'employeeSheet'])->name('employee-sheet')->middleware('permission:attendance.view');
+    });
+
+    /* ---- Attendance corrections ---- */
+    Route::prefix('attendance-corrections')->name('attendance-corrections.')->middleware('module:attendance')->group(function () {
+        Route::get('/',                  [AttendanceCorrectionController::class, 'index'])->name('index')->middleware('permission:attendance.view');
+        Route::patch('/{correction}/approve', [AttendanceCorrectionController::class, 'approve'])->name('approve')->middleware('permission:attendance.approve');
+        Route::patch('/{correction}/reject',  [AttendanceCorrectionController::class, 'reject'])->name('reject')->middleware('permission:attendance.approve');
     });
 
     /* ---- Leave exports ---- */

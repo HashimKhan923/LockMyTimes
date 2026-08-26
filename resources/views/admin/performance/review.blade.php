@@ -7,7 +7,7 @@
 <div class="max-w-3xl mx-auto">
 
     <a href="{{ route('admin.performance.index', $tenant) }}?tab=reviews"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Reviews
     </a>
@@ -34,11 +34,11 @@
                     @if($review->employee->department) · {{ $review->employee->department->name }} @endif
                 </p>
                 <div class="flex flex-wrap gap-4 mt-2 text-xs text-gray-800">
-                    <span>Reviewer: <strong class="text-gray-700">{{ $review->reviewer->full_name ?? 'Self' }}</strong></span>
-                    <span>Type: <strong class="text-gray-700 capitalize">{{ str_replace('_',' ', $review->review_type ?? 'annual') }}</strong></span>
-                    <span>Due: <strong class="text-gray-700">{{ $review->due_date?->format('M j, Y') ?? '—' }}</strong></span>
+                    <span>Reviewer: <strong class="text-gray-800">{{ $review->reviewer->full_name ?? 'Self' }}</strong></span>
+                    <span>Type: <strong class="text-gray-800 capitalize">{{ str_replace('_',' ', $review->review_type ?? 'annual') }}</strong></span>
+                    <span>Due: <strong class="text-gray-800">{{ $review->due_date?->format('M j, Y') ?? '—' }}</strong></span>
                     @if($review->cycle)
-                    <span>Cycle: <strong class="text-gray-700">{{ $review->cycle->name }}</strong></span>
+                    <span>Cycle: <strong class="text-gray-800">{{ $review->cycle->name }}</strong></span>
                     @endif
                 </div>
             </div>
@@ -69,7 +69,7 @@
                 ['label'=>'Strengths',             'value'=>$review->strengths,             'icon'=>'thumbs-up',  'color'=>'text-emerald-600 bg-emerald-50'],
                 ['label'=>'Areas for Improvement', 'value'=>$review->areas_for_improvement, 'icon'=>'trending-up','color'=>'text-brand-600 bg-brand-50'],
                 ['label'=>'Manager Comments',      'value'=>$review->manager_comments,      'icon'=>'message-square','color'=>'text-purple-600 bg-purple-50'],
-                ['label'=>'Employee Comments',     'value'=>$review->employee_comments,     'icon'=>'user',       'color'=>'text-gray-600 bg-gray-50'],
+                ['label'=>'Employee Comments',     'value'=>$review->employee_comments,     'icon'=>'user',       'color'=>'text-gray-800 bg-gray-50'],
             ] as $section)
             @if($section['value'])
             <div class="p-4 rounded-xl bg-gray-50">
@@ -79,7 +79,7 @@
                     </div>
                     <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">{{ $section['label'] }}</span>
                 </div>
-                <p class="text-sm text-gray-700 leading-relaxed">{{ $section['value'] }}</p>
+                <p class="text-sm text-gray-800 leading-relaxed">{{ $section['value'] }}</p>
             </div>
             @endif
             @endforeach

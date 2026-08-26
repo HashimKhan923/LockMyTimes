@@ -145,11 +145,11 @@
                             {{ $run->run_number }}
                         </code>
                     </td>
-                    <td class="text-sm text-gray-700">
+                    <td class="text-sm text-gray-800">
                         {{ Carbon\Carbon::parse($run->period_start)->format('M j') }}
                         – {{ Carbon\Carbon::parse($run->period_end)->format('M j, Y') }}
                     </td>
-                    <td class="text-sm text-gray-700">
+                    <td class="text-sm text-gray-800">
                         {{ $run->pay_date?->format('M j, Y') ?? '—' }}
                     </td>
                     <td>
@@ -158,7 +158,7 @@
                         </span>
                     </td>
                     <td class="text-sm font-bold text-gray-900">{{ $run->total_employees }}</td>
-                    <td class="text-sm text-gray-700">${{ number_format($run->total_gross, 0) }}</td>
+                    <td class="text-sm text-gray-800">${{ number_format($run->total_gross, 0) }}</td>
                     <td class="text-sm font-bold text-emerald-600">${{ number_format($run->total_net, 0) }}</td>
                     <td>
                         <span class="{{ $statusColors[$run->status] ?? 'lmt-badge-gray' }} text-xs capitalize">

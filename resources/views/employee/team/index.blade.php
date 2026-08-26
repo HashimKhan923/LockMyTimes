@@ -14,7 +14,7 @@
             default => $cur.' ',
         };
 
-        $hasPending = ($pendingLeaves + $pendingExpenses) > 0;
+        $hasPending = ($pendingLeaves + $pendingExpenses + $pendingCorrections) > 0;
     @endphp
 
     {{-- ═══════════════════════════════════════════════════════════════
@@ -37,7 +37,7 @@
                     {{ $clockedIn }} clocked in &middot;
                     {{ $onLeaveCount }} on leave today
                     @if($hasPending)
-                        &middot; <span class="text-amber-100">{{ $pendingLeaves + $pendingExpenses }} pending approval{{ ($pendingLeaves + $pendingExpenses) === 1 ? '' : 's' }}</span>
+                        &middot; <span class="text-amber-100">{{ $pendingLeaves + $pendingExpenses + $pendingCorrections }} pending approval{{ ($pendingLeaves + $pendingExpenses + $pendingCorrections) === 1 ? '' : 's' }}</span>
                     @endif
                 </p>
                 <div class="mt-4 flex flex-wrap gap-2">
@@ -56,6 +56,14 @@
                         Expense approvals
                         @if($pendingExpenses > 0)
                             <span class="bg-amber-400 text-amber-900 text-[10px] font-black rounded-full w-5 h-5 inline-flex items-center justify-center">{{ $pendingExpenses }}</span>
+                        @endif
+                    </a>
+                    <a href="{{ route('employee.team.approvals.corrections', $tenantSlug) }}"
+                       class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-white/15 border border-white/25 text-white hover:bg-white/25 transition-all">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        Correction approvals
+                        @if($pendingCorrections > 0)
+                            <span class="bg-amber-400 text-amber-900 text-[10px] font-black rounded-full w-5 h-5 inline-flex items-center justify-center">{{ $pendingCorrections }}</span>
                         @endif
                     </a>
                 </div>
@@ -150,7 +158,7 @@
                                     </span>
                                 @endif
                                 @if($r->_open_tasks > 0)
-                                    <span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-50 text-gray-600 dark:bg-slate-700 dark:text-slate-300" title="Open tasks">
+                                    <span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-50 text-gray-800 dark:bg-slate-700 dark:text-slate-300" title="Open tasks">
                                         <i data-lucide="check-square" class="w-2.5 h-2.5"></i>
                                         {{ $r->_open_tasks }}
                                     </span>
@@ -244,6 +252,48 @@
                                     </p>
                                 </div>
                                 <span class="{{ $eCls }} flex-shrink-0">{{ $eLbl }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            {{-- Recent attendance corrections --}}
+            <div class="lmt-card" data-lmt-anim="fade-up">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-black text-gray-900 dark:text-slate-100 flex items-center gap-1.5">
+                        <i data-lucide="edit-3" class="w-4 h-4 text-gray-800"></i> Recent corrections
+                    </h3>
+                    <a href="{{ route('employee.team.approvals.corrections', ['tenant' => $tenantSlug, 'status' => 'all']) }}"
+                       class="text-[10px] font-bold hover:underline" style="color:var(--brand-500);">View all</a>
+                </div>
+
+                @if($recentCorrections->isEmpty())
+                    <p class="text-xs text-gray-800">No recent correction requests.</p>
+                @else
+                    <div class="space-y-2">
+                        @foreach($recentCorrections as $c)
+                            @php
+                                [$cLbl, $cCls] = match($c->status) {
+                                    'pending'   => ['Pending',   'lmt-badge-amber'],
+                                    'approved'  => ['Approved',  'lmt-badge-green'],
+                                    'rejected'  => ['Rejected',  'lmt-badge-red'],
+                                    'cancelled' => ['Cancelled', 'lmt-badge-gray'],
+                                    default     => [ucfirst($c->status), 'lmt-badge-gray'],
+                                };
+                            @endphp
+                            <div class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors">
+                                @if($c->employee)
+                                    <img src="{{ $c->employee->avatar_url }}" alt="{{ $c->employee->full_name }}"
+                                         class="w-7 h-7 rounded-full object-cover flex-shrink-0"/>
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold text-gray-900 dark:text-slate-100 truncate">{{ $c->employee?->full_name }}</p>
+                                    <p class="text-[10px] text-gray-800 truncate">
+                                        {{ \Carbon\Carbon::parse($c->work_date)->format('M j, Y') }}
+                                    </p>
+                                </div>
+                                <span class="{{ $cCls }} flex-shrink-0">{{ $cLbl }}</span>
                             </div>
                         @endforeach
                     </div>

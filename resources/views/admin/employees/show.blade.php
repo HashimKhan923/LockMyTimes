@@ -8,7 +8,7 @@
 
     {{-- Back --}}
     <a href="{{ route('admin.employees.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 mb-6 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 mb-6 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Employees
     </a>
@@ -66,6 +66,14 @@
                     Terminate
                 </button>
                 @endif
+                <form action="{{ route('admin.employees.destroy', [$tenant, $employee->id]) }}" method="POST"
+                      onsubmit="return confirm('Delete {{ addslashes($employee->full_name) }}? This removes them from all active lists — their attendance, payroll, and leave history is kept. This cannot be undone from here.');">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="lmt-btn-danger lmt-btn-sm">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        Delete
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -88,7 +96,7 @@
                     ] as $row)
                     <div class="flex justify-between py-2 border-b border-gray-50 last:border-none">
                         <span class="text-xs text-gray-800 font-medium">{{ $row['label'] }}</span>
-                        <span class="text-xs font-semibold text-gray-700 text-right">{{ $row['value'] }}</span>
+                        <span class="text-xs font-semibold text-gray-800 text-right">{{ $row['value'] }}</span>
                     </div>
                     @endforeach
                 </div>
@@ -101,7 +109,7 @@
                 <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-none">
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 rounded-full" style="background:{{ $balance->leaveType->color }}"></div>
-                        <span class="text-xs font-medium text-gray-700">{{ $balance->leaveType->name }}</span>
+                        <span class="text-xs font-medium text-gray-800">{{ $balance->leaveType->name }}</span>
                     </div>
                     <div class="text-right">
                         <span class="text-sm font-black text-gray-900">{{ $balance->available }}</span>

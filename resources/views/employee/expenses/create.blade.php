@@ -23,7 +23,7 @@
 
     {{-- Back link --}}
     <a href="{{ route('employee.expenses.index', $tenantSlug) }}"
-       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-700 transition-colors mb-4">
+       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-800 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to expenses
     </a>
@@ -245,7 +245,7 @@
                 <span class="text-red-500" x-show="selectedCategory?.requires_receipt">*</span>
             </label>
             <input type="file" name="receipt" accept=".jpg,.jpeg,.png,.pdf"
-                   class="block w-full text-sm text-gray-600 dark:text-slate-300 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-sm file:cursor-pointer
+                   class="block w-full text-sm text-gray-800 dark:text-slate-300 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-sm file:cursor-pointer
                           file:bg-gray-100 hover:file:bg-gray-200 dark:file:bg-slate-700 dark:hover:file:bg-slate-600 dark:file:text-slate-200"/>
             <p class="lmt-help">JPG, PNG, or PDF. Max 5 MB.</p>
             <p x-show="selectedCategory?.requires_receipt && selectedCategory?.receipt_required_above > 0" x-cloak class="lmt-help mt-1">

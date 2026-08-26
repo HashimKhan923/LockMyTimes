@@ -201,6 +201,7 @@
                 ],
                 'Time & Attendance' => [
                     ['route'=>'admin.attendance.index',  'icon'=>'clock',            'label'=>'Attendance'],
+                    ['route'=>'admin.attendance-corrections.index', 'icon'=>'edit-3', 'label'=>'Corrections'],
                     ['route'=>'admin.qrcodes.index',     'icon'=>'qr-code',          'label'=>'QR Codes'],
                     ['route'=>'admin.shifts.index',      'icon'=>'calendar-days',    'label'=>'Shifts'],
                     ['route'=>'admin.leaves.index',      'icon'=>'calendar-off',     'label'=>'Leaves'],
@@ -439,7 +440,7 @@
                             <div class="flex items-center gap-2">
                                 <span x-show="unread > 0" x-cloak class="lmt-badge-brand text-xs" x-text="unread + ' new'"></span>
                                 <button x-show="unread > 0" x-cloak @click="markAllRead()"
-                                        class="text-xs text-gray-800 hover:text-gray-600 transition-colors">Mark all read</button>
+                                        class="text-xs text-gray-800 hover:text-gray-800 transition-colors">Mark all read</button>
                             </div>
                         </div>
 
@@ -498,7 +499,7 @@
                              style="background:linear-gradient(135deg,#6C7DF7,#4A5BE8);">
                             {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
                         </div>
-                        <span class="hidden md:block text-sm font-semibold text-gray-700">
+                        <span class="hidden md:block text-sm font-semibold text-gray-800">
                             {{ Auth::user()->name ?? 'Admin' }}
                         </span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-800"></i>
@@ -513,12 +514,12 @@
                             <p class="text-xs text-gray-800 truncate">{{ Auth::user()->email ?? '' }}</p>
                         </div>
                         <a href="{{ route('admin.profile', $tenantSlug) }}"
-                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-sm text-gray-700">
+                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-sm text-gray-800">
                             <i data-lucide="user" class="w-4 h-4 text-gray-800"></i>
                             My Profile
                         </a>
                         <a href="{{ route('admin.settings.index', $tenantSlug) }}"
-                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-sm text-gray-700">
+                           class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-sm text-gray-800">
                             <i data-lucide="settings" class="w-4 h-4 text-gray-800"></i>
                             Settings
                         </a>

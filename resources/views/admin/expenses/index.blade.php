@@ -71,12 +71,12 @@
                 <div class="flex items-center gap-3">
                     <div class="w-2.5 h-2.5 rounded-full flex-shrink-0"
                          style="background:{{ $cb->category->color ?? '#6C7DF7' }}"></div>
-                    <span class="text-xs text-gray-600 w-28 truncate">{{ $cb->category->name ?? 'Unknown' }}</span>
+                    <span class="text-xs text-gray-800 w-28 truncate">{{ $cb->category->name ?? 'Unknown' }}</span>
                     <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div class="h-full rounded-full"
                              style="width:{{ $pct }}%; background:{{ $cb->category->color ?? '#6C7DF7' }}"></div>
                     </div>
-                    <span class="text-xs font-bold text-gray-700 w-16 text-right">
+                    <span class="text-xs font-bold text-gray-800 w-16 text-right">
                         ${{ number_format($cb->total,0) }}
                     </span>
                 </div>
@@ -101,7 +101,7 @@
                 <div class="w-8 h-8 rounded-lg {{ $status === $link['status'] ? 'bg-brand-500 text-white' : 'bg-brand-50 text-brand-600' }} group-hover:bg-brand-500 group-hover:text-white flex items-center justify-center transition-all">
                     <i data-lucide="{{ $link['icon'] }}" class="w-4 h-4"></i>
                 </div>
-                <span class="text-sm font-semibold text-gray-700">{{ $link['label'] }}</span>
+                <span class="text-sm font-semibold text-gray-800">{{ $link['label'] }}</span>
                 @if($link['status'] === 'submitted' && $stats['pending'] > 0)
                 <span class="ml-auto lmt-badge-amber text-xs">{{ $stats['pending'] }}</span>
                 @endif
@@ -139,7 +139,7 @@
                class="px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-all rounded-t-lg
                       {{ $status === $val
                           ? 'bg-white border-t border-l border-r border-gray-200 text-brand-600 -mb-px'
-                          : 'text-gray-800 hover:text-gray-700' }}">
+                          : 'text-gray-800 hover:text-gray-800' }}">
                 {{ $label }}
                 @if($val === 'submitted' && $stats['pending'] > 0)
                 <span class="ml-1 px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">{{ $stats['pending'] }}</span>
@@ -225,10 +225,10 @@
                         <div class="flex items-center gap-2">
                             <div class="w-2.5 h-2.5 rounded-full"
                                  style="background:{{ $exp->category->color ?? '#6C7DF7' }}"></div>
-                            <span class="text-sm text-gray-700">{{ $exp->category->name ?? '—' }}</span>
+                            <span class="text-sm text-gray-800">{{ $exp->category->name ?? '—' }}</span>
                         </div>
                     </td>
-                    <td class="text-sm text-gray-600">{{ $exp->expense_date->format('M j, Y') }}</td>
+                    <td class="text-sm text-gray-800">{{ $exp->expense_date->format('M j, Y') }}</td>
                     <td>
                         <span class="text-sm font-black text-gray-900">
                             ${{ number_format($exp->amount, 2) }}
@@ -237,7 +237,7 @@
                         <span class="block lmt-badge-brand text-xs mt-0.5">Billable</span>
                         @endif
                     </td>
-                    <td class="text-sm text-gray-600 max-w-36 truncate">
+                    <td class="text-sm text-gray-800 max-w-36 truncate">
                         {{ $exp->title ?? $exp->description }}
                     </td>
                     <td>
@@ -256,7 +256,7 @@
                             {{ $exp->status }}
                         </span>
                         @if($exp->status === 'rejected' && $exp->rejection_reason)
-                        <p class="text-xs text-red-400 mt-0.5 max-w-24 truncate" title="{{ $exp->rejection_reason }}">
+                        <p class="text-xs text-red-600 mt-0.5 max-w-24 truncate" title="{{ $exp->rejection_reason }}">
                             {{ $exp->rejection_reason }}
                         </p>
                         @endif

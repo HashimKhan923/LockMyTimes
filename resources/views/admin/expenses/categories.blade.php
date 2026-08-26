@@ -114,7 +114,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50">
                 <input type="checkbox" name="requires_receipt" value="1" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Receipt Required</span>
+                <span class="text-sm font-medium text-gray-800">Receipt Required</span>
             </label>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Create</button>
@@ -153,7 +153,7 @@
             </div>
             <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50">
                 <input type="checkbox" name="requires_receipt" value="1" id="edit-cat-receipt" class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Receipt Required</span>
+                <span class="text-sm font-medium text-gray-800">Receipt Required</span>
             </label>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Save</button>

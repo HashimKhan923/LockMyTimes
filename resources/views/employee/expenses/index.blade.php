@@ -117,7 +117,7 @@
                         <div class="flex items-center justify-between mb-1.5">
                             <div class="flex items-center gap-2 min-w-0">
                                 <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:var(--brand-500);"></span>
-                                <span class="text-sm font-bold text-gray-700 dark:text-slate-200 truncate">{{ $cb->category->name ?? 'Uncategorised' }}</span>
+                                <span class="text-sm font-bold text-gray-800 dark:text-slate-200 truncate">{{ $cb->category->name ?? 'Uncategorised' }}</span>
                                 <span class="text-[10px] text-gray-800 font-bold">&middot; {{ $cb->count }} {{ Str::plural('expense', $cb->count) }}</span>
                             </div>
                             <span class="font-mono font-bold text-sm text-gray-900 dark:text-slate-100 ml-2 flex-shrink-0">
@@ -201,7 +201,7 @@
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                     <i data-lucide="wallet" class="w-7 h-7 text-gray-800"></i>
                 </div>
-                <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No expenses found</p>
+                <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No expenses found</p>
                 <p class="text-xs text-gray-800 mt-1">Submit your first expense to get reimbursed.</p>
                 <a href="{{ route('employee.expenses.create', $tenantSlug) }}" class="lmt-btn-primary lmt-btn-sm mt-4 inline-flex">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i> Submit Expense
@@ -255,7 +255,7 @@
                                     </div>
                                 </td>
                                 <td class="hidden md:table-cell">
-                                    <span class="text-xs text-gray-600 dark:text-slate-400">{{ $e->category?->name ?? '—' }}</span>
+                                    <span class="text-xs text-gray-800 dark:text-slate-400">{{ $e->category?->name ?? '—' }}</span>
                                 </td>
                                 <td class="hidden lg:table-cell text-xs text-gray-800">
                                     {{ $e->expense_date?->format('M j, Y') ?? '—' }}

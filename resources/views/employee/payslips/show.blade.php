@@ -143,8 +143,8 @@
                         <p class="text-xs text-gray-800">{{ $payslip->employee->employee_code }}</p>
                     </div>
                 </div>
-                <p class="text-xs text-gray-600 dark:text-slate-400">{{ $payslip->employee->position?->title ?? '—' }}</p>
-                <p class="text-xs text-gray-600 dark:text-slate-400">{{ $payslip->employee->department?->name ?? '—' }}</p>
+                <p class="text-xs text-gray-800 dark:text-slate-400">{{ $payslip->employee->position?->title ?? '—' }}</p>
+                <p class="text-xs text-gray-800 dark:text-slate-400">{{ $payslip->employee->department?->name ?? '—' }}</p>
             </div>
 
             <div>
@@ -173,7 +173,7 @@
             <div class="space-y-1.5">
                 @forelse($earnings as $row)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $row['label'] }}</span>
+                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $row['label'] }}</span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 font-mono">
                             {{ $sym }}{{ number_format($row['amount'], 2) }}
                         </span>
@@ -184,7 +184,7 @@
 
                 @foreach($extraEarnings as $item)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }}</span>
+                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }}</span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 font-mono">
                             {{ $sym }}{{ number_format($item->amount, 2) }}
                         </span>
@@ -192,7 +192,7 @@
                 @endforeach
                 @foreach($extraReimburse as $item)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Reimbursement</span></span>
+                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Reimbursement</span></span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 font-mono">
                             {{ $sym }}{{ number_format($item->amount, 2) }}
                         </span>
@@ -216,7 +216,7 @@
             <div class="space-y-1.5">
                 @forelse($deductions as $row)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $row['label'] }}</span>
+                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $row['label'] }}</span>
                         <span class="text-sm font-semibold text-red-500 font-mono">
                             −{{ $sym }}{{ number_format($row['amount'], 2) }}
                         </span>
@@ -227,13 +227,13 @@
 
                 @foreach($extraTaxes as $item)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Tax</span></span>
+                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Tax</span></span>
                         <span class="text-sm font-semibold text-red-500 font-mono">−{{ $sym }}{{ number_format($item->amount, 2) }}</span>
                     </div>
                 @endforeach
                 @foreach($extraDeductions as $item)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-700 dark:text-slate-300">{{ $item->label }}</span>
+                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }}</span>
                         <span class="text-sm font-semibold text-red-500 font-mono">−{{ $sym }}{{ number_format($item->amount, 2) }}</span>
                     </div>
                 @endforeach

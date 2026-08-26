@@ -23,7 +23,7 @@
 
     {{-- Back link --}}
     <a href="{{ route('employee.loans.index', ['tenant' => $tenantSlug, 'tab' => 'advances']) }}"
-       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-700 transition-colors mb-4">
+       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-800 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to advances
     </a>
@@ -168,7 +168,7 @@
                             {{ $sym }}<span x-text="formatNumber(perInstallment)"></span>
                         </p>
                     </div>
-                    <p class="text-xs text-gray-600 dark:text-slate-300">
+                    <p class="text-xs text-gray-800 dark:text-slate-300">
                         <span class="font-bold" x-text="installmentsCount"></span> ×
                         {{ $sym }}<span x-text="formatNumber(perInstallment)"></span> =
                         {{ $sym }}<span x-text="formatNumber(form.amount)"></span>

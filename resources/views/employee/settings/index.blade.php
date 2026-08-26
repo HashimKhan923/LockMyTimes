@@ -97,7 +97,7 @@
                 {{-- Language --}}
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                     <div>
-                        <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_language') }}</p>
+                        <p class="text-sm font-medium text-gray-800">{{ __('employee.settings_language') }}</p>
                         <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_language_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2">
@@ -113,18 +113,18 @@
                 {{-- Timezone — admin-managed, not employee-editable (set from Admin > Employees) --}}
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                     <div>
-                        <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_timezone') }}</p>
+                        <p class="text-sm font-medium text-gray-800">{{ __('employee.settings_timezone') }}</p>
                         <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_timezone_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2">
                         @php $effectiveTz = $emp->attendanceTimezone(); @endphp
-                        <div class="lmt-input bg-gray-50 text-gray-600 flex items-center justify-between">
+                        <div class="lmt-input bg-gray-50 text-gray-800 flex items-center justify-between">
                             <span>{{ str_replace('_', ' ', $effectiveTz) }}</span>
                             <span class="text-xs text-gray-800">Set by your admin</span>
                         </div>
                         <p class="lmt-help mt-1.5">
                             {{ __('employee.settings_your_time') }}:
-                            <strong class="text-gray-700">{{ now()->setTimezone($effectiveTz)->format('D, d M Y — H:i T') }}</strong>
+                            <strong class="text-gray-800">{{ now()->setTimezone($effectiveTz)->format('D, d M Y — H:i T') }}</strong>
                         </p>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start"
                      x-data="{ val: '{{ $curDateFmt }}' }">
                     <div>
-                        <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_date_format') }}</p>
+                        <p class="text-sm font-medium text-gray-800">{{ __('employee.settings_date_format') }}</p>
                         <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_date_format_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2 flex flex-wrap gap-3">
@@ -150,7 +150,7 @@
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start"
                      x-data="{ val: '{{ $curTimeFmt }}' }">
                     <div>
-                        <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_time_format') }}</p>
+                        <p class="text-sm font-medium text-gray-800">{{ __('employee.settings_time_format') }}</p>
                         <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_time_format_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2 flex flex-wrap gap-3">
@@ -167,7 +167,7 @@
                 <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 items-start"
                      x-data="{ val: '{{ $curTheme }}' }">
                     <div>
-                        <p class="text-sm font-medium text-gray-700">{{ __('employee.settings_theme') }}</p>
+                        <p class="text-sm font-medium text-gray-800">{{ __('employee.settings_theme') }}</p>
                         <p class="text-xs text-gray-800 mt-0.5">{{ __('employee.settings_theme_desc') }}</p>
                     </div>
                     <div class="sm:col-span-2 flex flex-wrap gap-3">
@@ -406,7 +406,7 @@
             </div>
 
             <div class="px-6 py-5">
-                <p class="text-sm text-gray-600 mb-4">
+                <p class="text-sm text-gray-800 mb-4">
                     If you've signed in on another device or browser, you can sign out all those sessions here. You will remain signed in on this device.
                 </p>
                 <button type="button" @click="open = true"

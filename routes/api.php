@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Employee\AnnouncementController;
 use App\Http\Controllers\Api\V1\Employee\AttendanceController;
+use App\Http\Controllers\Api\V1\Employee\AttendanceCorrectionController;
 use App\Http\Controllers\Api\V1\Employee\ExpenseController;
 use App\Http\Controllers\Api\V1\Employee\LeaveController;
 use App\Http\Controllers\Api\V1\Employee\LoanController;
@@ -47,6 +48,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::post('/clock-out', [AttendanceController::class, 'clockOut'])->name('clockOut');
             Route::post('/breaks/start', [AttendanceController::class, 'startBreak'])->name('breaks.start');
             Route::post('/breaks/end', [AttendanceController::class, 'endBreak'])->name('breaks.end');
+        });
+
+        Route::prefix('attendance-corrections')->name('attendance-corrections.')->group(function () {
+            Route::get('/', [AttendanceCorrectionController::class, 'index'])->name('index');
+            Route::post('/', [AttendanceCorrectionController::class, 'store'])->name('store');
+            Route::post('/{correction}/cancel', [AttendanceCorrectionController::class, 'cancel'])->name('cancel')->where('correction', '\d+');
         });
 
         Route::prefix('leaves')->name('leaves.')->group(function () {

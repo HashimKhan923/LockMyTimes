@@ -120,8 +120,8 @@
                         </div>
                     </td>
                     <td><code class="text-xs bg-gray-100 px-2 py-1 rounded font-mono">{{ $emp->employee_code }}</code></td>
-                    <td class="text-sm text-gray-600">{{ $emp->department?->name ?? '—' }}</td>
-                    <td class="text-sm text-gray-600">{{ $emp->position?->title ?? '—' }}</td>
+                    <td class="text-sm text-gray-800">{{ $emp->department?->name ?? '—' }}</td>
+                    <td class="text-sm text-gray-800">{{ $emp->position?->title ?? '—' }}</td>
                     <td>
                         <span class="lmt-badge-gray text-xs capitalize">
                             {{ str_replace('_',' ',$emp->employment_type) }}
@@ -140,9 +140,17 @@
                                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                             </a>
                             <a href="{{ route('admin.employees.edit', [$tenant, $emp->id]) }}"
-                               class="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-500 hover:text-white flex items-center justify-center transition-colors">
+                               class="w-8 h-8 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-500 hover:text-white flex items-center justify-center transition-colors">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                             </a>
+                            <form action="{{ route('admin.employees.destroy', [$tenant, $emp->id]) }}" method="POST"
+                                  onsubmit="return confirm('Delete {{ addslashes($emp->full_name) }}? This removes them from all active lists — their attendance, payroll, and leave history is kept. This cannot be undone from here.');">
+                                @csrf @method('DELETE')
+                                <button type="submit"
+                                        class="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

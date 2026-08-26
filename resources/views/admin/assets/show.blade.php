@@ -6,7 +6,7 @@
 
 <div class="flex items-center justify-between mb-6">
     <a href="{{ route('admin.assets.index', $tenant) }}"
-       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-700 transition-colors">
+       class="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-800 transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to Assets
     </a>
@@ -80,7 +80,7 @@
                     ] as [$k,$v])
                     <div class="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-none">
                         <span class="text-xs text-gray-800">{{ $k }}</span>
-                        <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
+                        <span class="text-xs font-semibold text-gray-800">{{ $v }}</span>
                     </div>
                     @endforeach
                 </div>
@@ -100,7 +100,7 @@
                 ] as [$k,$v])
                 <div class="flex justify-between items-center py-1.5 border-b border-gray-50 last:border-none">
                     <span class="text-xs text-gray-800">{{ $k }}</span>
-                    <span class="text-xs font-semibold text-gray-700">{{ $v }}</span>
+                    <span class="text-xs font-semibold text-gray-800">{{ $v }}</span>
                 </div>
                 @endforeach
             </div>
@@ -198,7 +198,7 @@
         <div class="lmt-card">
             <h3 class="font-black text-gray-900 mb-3">Notes</h3>
             @if($asset->description)
-            <p class="text-sm text-gray-700 mb-2">{{ $asset->description }}</p>
+            <p class="text-sm text-gray-800 mb-2">{{ $asset->description }}</p>
             @endif
             @if($asset->notes)
             <p class="text-sm text-gray-800">{{ $asset->notes }}</p>

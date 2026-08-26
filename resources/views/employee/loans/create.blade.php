@@ -23,7 +23,7 @@
 
     {{-- Back link --}}
     <a href="{{ route('employee.loans.index', $tenantSlug) }}"
-       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-700 transition-colors mb-4">
+       class="inline-flex items-center gap-1.5 text-sm font-bold text-gray-800 hover:text-gray-800 transition-colors mb-4">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         Back to loans
     </a>
@@ -107,17 +107,17 @@
                                     @if($t->default_interest_rate > 0)
                                         <div class="flex justify-between">
                                             <span class="text-gray-800">Interest</span>
-                                            <span class="font-mono font-bold text-gray-700 dark:text-slate-200">{{ number_format($t->default_interest_rate, 2) }}% p.a.</span>
+                                            <span class="font-mono font-bold text-gray-800 dark:text-slate-200">{{ number_format($t->default_interest_rate, 2) }}% p.a.</span>
                                         </div>
                                     @endif
                                     <div class="flex justify-between">
                                         <span class="text-gray-800">Tenure</span>
-                                        <span class="font-mono font-bold text-gray-700 dark:text-slate-200">{{ $t->min_tenure_months }}–{{ $t->max_tenure_months }} months</span>
+                                        <span class="font-mono font-bold text-gray-800 dark:text-slate-200">{{ $t->min_tenure_months }}–{{ $t->max_tenure_months }} months</span>
                                     </div>
                                     @if($t->_effective_max)
                                         <div class="flex justify-between">
                                             <span class="text-gray-800">Max</span>
-                                            <span class="font-mono font-bold text-gray-700 dark:text-slate-200">{{ $sym }}{{ number_format($t->_effective_max, 0) }}</span>
+                                            <span class="font-mono font-bold text-gray-800 dark:text-slate-200">{{ $sym }}{{ number_format($t->_effective_max, 0) }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -190,7 +190,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Total interest</p>
-                    <p class="text-xl font-black font-mono mt-1 text-gray-700 dark:text-slate-200">
+                    <p class="text-xl font-black font-mono mt-1 text-gray-800 dark:text-slate-200">
                         {{ $sym }}<span x-text="formatNumber(emi.total_interest)"></span>
                     </p>
                 </div>

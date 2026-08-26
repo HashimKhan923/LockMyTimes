@@ -46,7 +46,7 @@
                 <form action="{{ route('employee.profile.avatar', $tenantSlug) }}" method="POST"
                       enctype="multipart/form-data" class="absolute -bottom-1.5 -right-1.5">
                     @csrf
-                    <label class="w-9 h-9 rounded-xl bg-white text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center justify-center shadow-lg transition-all hover:scale-105"
+                    <label class="w-9 h-9 rounded-xl bg-white text-gray-800 hover:bg-gray-50 cursor-pointer flex items-center justify-center shadow-lg transition-all hover:scale-105"
                            title="Change photo">
                         <i data-lucide="camera" class="w-4 h-4"></i>
                         <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp"
@@ -131,7 +131,7 @@
         @endphp
         @foreach($tabs as $t)
             <button @click="switchTab('{{ $t['key'] }}')"
-                    :class="tab==='{{ $t['key'] }}' ? 'text-white' : 'text-gray-800 hover:text-gray-700 dark:hover:text-slate-300'"
+                    :class="tab==='{{ $t['key'] }}' ? 'text-white' : 'text-gray-800 hover:text-gray-800 dark:hover:text-slate-300'"
                     class="px-4 py-2.5 text-sm font-bold rounded-t-xl -mb-px transition-all whitespace-nowrap flex items-center gap-2"
                     :style="tab==='{{ $t['key'] }}' ? 'background:var(--brand-500);' : ''">
                 <i data-lucide="{{ $t['icon'] }}" class="w-4 h-4"></i>
@@ -362,7 +362,7 @@
                     <div class="w-14 h-14 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                         <i data-lucide="phone-call" class="w-6 h-6 text-gray-800"></i>
                     </div>
-                    <p class="text-sm font-bold text-gray-700 dark:text-slate-200">No emergency contacts yet</p>
+                    <p class="text-sm font-bold text-gray-800 dark:text-slate-200">No emergency contacts yet</p>
                     <p class="text-xs text-gray-800 mt-1">Add at least one person we can reach in an emergency.</p>
                     <button @click="openAdd()" type="button" class="lmt-btn-primary lmt-btn-sm mt-4 inline-flex">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -388,7 +388,7 @@
                                             @endif
                                         </div>
                                         <p class="text-xs text-gray-800 mt-0.5">{{ ucfirst($c->relationship) }}</p>
-                                        <div class="flex flex-wrap gap-3 mt-2 text-xs text-gray-600 dark:text-slate-300">
+                                        <div class="flex flex-wrap gap-3 mt-2 text-xs text-gray-800 dark:text-slate-300">
                                             <span class="inline-flex items-center gap-1">
                                                 <i data-lucide="phone" class="w-3 h-3 text-gray-800"></i>
                                                 {{ $c->phone }}
@@ -410,7 +410,7 @@
                                 </div>
                                 <div class="flex gap-1 flex-shrink-0">
                                     <button @click='openEdit(@json($c))' type="button"
-                                            class="p-2 rounded-lg text-gray-800 hover:text-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                                            class="p-2 rounded-lg text-gray-800 hover:text-gray-800 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
                                         <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                     </button>
                                     <button @click="openDelete({{ $c->id }}, '{{ addslashes($c->name) }}')" type="button"
@@ -492,7 +492,7 @@
                                x-model="form.is_primary"
                                class="w-4 h-4 rounded cursor-pointer"
                                style="accent-color:var(--brand-500);"/>
-                        <span class="text-sm font-bold text-gray-700 dark:text-slate-300">Make this my primary contact</span>
+                        <span class="text-sm font-bold text-gray-800 dark:text-slate-300">Make this my primary contact</span>
                     </label>
 
                     <div class="flex justify-end gap-2 pt-3 border-t border-gray-100 dark:border-slate-700">
@@ -611,7 +611,7 @@
                                autocomplete="current-password"
                                class="lmt-input pr-10"/>
                         <button type="button" @click="showCurrent = !showCurrent"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-700">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-800">
                             <i :data-lucide="showCurrent ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -626,7 +626,7 @@
                                autocomplete="new-password"
                                class="lmt-input pr-10"/>
                         <button type="button" @click="showNew = !showNew"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-700">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-800">
                             <i :data-lucide="showNew ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -642,7 +642,7 @@
                                autocomplete="new-password"
                                class="lmt-input pr-10"/>
                         <button type="button" @click="showConfirm = !showConfirm"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-700">
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-800">
                             <i :data-lucide="showConfirm ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
                         </button>
                     </div>

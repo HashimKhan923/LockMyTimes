@@ -30,7 +30,7 @@
         @foreach(['all'=>'All','planning'=>'Planning','active'=>'Active','on_hold'=>'On Hold','completed'=>'Completed'] as $val=>$label)
         <a href="{{ route('admin.projects.index', $tenant) }}?status={{ $val }}"
            class="px-3 py-1.5 rounded-lg text-sm font-semibold transition-all
-                  {{ $status === $val ? 'lmt-gradient-bg text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                  {{ $status === $val ? 'lmt-gradient-bg text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200' }}">
             {{ $label }}
         </a>
         @endforeach
@@ -96,7 +96,7 @@
             <div class="mb-3">
                 <div class="flex justify-between text-xs mb-1">
                     <span class="text-gray-800">Progress</span>
-                    <span class="font-bold text-gray-700">{{ $project->progress }}%</span>
+                    <span class="font-bold text-gray-800">{{ $project->progress }}%</span>
                 </div>
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div class="h-full rounded-full transition-all"

@@ -30,7 +30,7 @@
                 @if($subscription->status === 'active') bg-emerald-100 text-emerald-700
                 @elseif($subscription->status === 'trialing') bg-blue-100 text-blue-700
                 @elseif($subscription->status === 'past_due') bg-red-100 text-red-700
-                @elseif($subscription->status === 'cancelled') bg-gray-100 text-gray-700
+                @elseif($subscription->status === 'cancelled') bg-gray-100 text-gray-800
                 @else bg-amber-100 text-amber-700 @endif">
                 {{ ucfirst($subscription->status) }}
             </span>
@@ -323,7 +323,7 @@
                     <span class="text-xs font-semibold px-2 py-0.5 rounded-full
                         @if($invoice->status === 'paid') bg-emerald-100 text-emerald-700
                         @elseif($invoice->status === 'open') bg-amber-100 text-amber-700
-                        @else bg-gray-100 text-gray-600 @endif">
+                        @else bg-gray-100 text-gray-800 @endif">
                         {{ ucfirst($invoice->status) }}
                     </span>
                     @if($invoice->hosted_invoice_url)

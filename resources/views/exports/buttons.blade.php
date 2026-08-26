@@ -13,12 +13,12 @@
     <div x-show="open" @click.outside="open = false" x-cloak
          class="absolute right-0 mt-1 w-40 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-1">
         <a href="{{ route($route, array_merge($params, array_merge($extra, ['format' => 'excel']))) }}"
-           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-50">
             <i data-lucide="table-2" class="w-4 h-4 text-green-600"></i>
             Excel (.xlsx)
         </a>
         <a href="{{ route($route, array_merge($params, array_merge($extra, ['format' => 'pdf']))) }}"
-           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-gray-50">
             <i data-lucide="file-text" class="w-4 h-4 text-red-500"></i>
             PDF
         </a>

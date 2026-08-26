@@ -84,7 +84,7 @@
             <div class="w-16 h-16 mx-auto rounded-2xl bg-gray-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                 <i data-lucide="receipt" class="w-7 h-7 text-gray-800"></i>
             </div>
-            <p class="text-sm font-bold text-gray-700 dark:text-slate-200">
+            <p class="text-sm font-bold text-gray-800 dark:text-slate-200">
                 @if($status === 'submitted') Nothing to approve right now @else No expenses in this view @endif
             </p>
             <p class="text-xs text-gray-800 mt-1">
@@ -172,7 +172,7 @@
                             @if($e->description)
                                 <div class="mt-3">
                                     <p class="text-[10px] text-gray-800 font-bold uppercase tracking-wider">Description</p>
-                                    <p class="text-xs text-gray-700 dark:text-slate-200 mt-1 whitespace-pre-line">{{ $e->description }}</p>
+                                    <p class="text-xs text-gray-800 dark:text-slate-200 mt-1 whitespace-pre-line">{{ $e->description }}</p>
                                 </div>
                             @endif
 

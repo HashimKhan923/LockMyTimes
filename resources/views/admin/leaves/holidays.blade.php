@@ -70,8 +70,8 @@ $typeColors = [
                         </div>
                     </div>
                 </td>
-                <td class="text-sm text-gray-700">{{ $holiday->date->format('F j, Y') }}</td>
-                <td class="text-sm text-gray-700">{{ $holiday->date->format('l') }}</td>
+                <td class="text-sm text-gray-800">{{ $holiday->date->format('F j, Y') }}</td>
+                <td class="text-sm text-gray-800">{{ $holiday->date->format('l') }}</td>
                 <td>
                     <span class="{{ $typeColors[$holiday->type] ?? 'lmt-badge-gray' }} text-xs capitalize">
                         {{ $holiday->type }}
@@ -145,7 +145,7 @@ $typeColors = [
             </div>
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_paid" value="1" checked class="w-4 h-4 rounded"/>
-                <span class="text-sm font-medium text-gray-700">Paid Holiday</span>
+                <span class="text-sm font-medium text-gray-800">Paid Holiday</span>
             </label>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Add Holiday</button>

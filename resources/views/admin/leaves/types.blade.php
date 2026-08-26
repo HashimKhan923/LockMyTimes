@@ -152,7 +152,7 @@
                     <input type="hidden" name="{{ $fname }}" value="0"/>
                     <input type="checkbox" name="{{ $fname }}" value="1" class="w-4 h-4 rounded"
                            {{ in_array($fname, ['requires_approval']) ? 'checked' : '' }}/>
-                    <span class="text-xs font-medium text-gray-700">{{ $flabel }}</span>
+                    <span class="text-xs font-medium text-gray-800">{{ $flabel }}</span>
                 </label>
                 @endforeach
             </div>
@@ -214,7 +214,7 @@
                     <input type="checkbox" name="{{ $fname }}" value="1"
                            class="w-4 h-4 rounded edit-type-cb"
                            data-field="{{ $fname }}"/>
-                    <span class="text-xs font-medium text-gray-700">{{ $flabel }}</span>
+                    <span class="text-xs font-medium text-gray-800">{{ $flabel }}</span>
                 </label>
                 @endforeach
             </div>

@@ -73,7 +73,7 @@
                    class="lmt-input pl-10 pr-10 @error('password') lmt-input-error @enderror"
                    placeholder="••••••••" required/>
             <button type="button" @click="show=!show"
-                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-800 hover:text-gray-600">
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-800 hover:text-gray-800">
                 <i :data-lucide="show ? 'eye-off' : 'eye'" class="w-4 h-4"></i>
             </button>
         </div>
@@ -82,7 +82,7 @@
     <div class="flex items-center justify-between">
         <label class="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"/>
-            <span class="text-sm text-gray-600">Remember me</span>
+            <span class="text-sm text-gray-800">Remember me</span>
         </label>
     </div>
 

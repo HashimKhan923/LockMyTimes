@@ -4,6 +4,8 @@ import { AttendanceHomeScreen } from '../screens/attendance/AttendanceHomeScreen
 import { ClockInScreen } from '../screens/attendance/ClockInScreen';
 import { DayDetailScreen } from '../screens/attendance/DayDetailScreen';
 import { ClockSuccessScreen } from '../screens/attendance/ClockSuccessScreen';
+import { CorrectionListScreen } from '../screens/attendance/CorrectionListScreen';
+import { CorrectionApplyScreen } from '../screens/attendance/CorrectionApplyScreen';
 
 export type AttendanceStackParamList = {
   AttendanceHome: undefined;
@@ -11,6 +13,8 @@ export type AttendanceStackParamList = {
   ClockIn: { mode: 'in' | 'out' };
   DayDetail: { date: string };
   Success: { message: string };
+  CorrectionList: undefined;
+  CorrectionApply: undefined;
 };
 
 const Stack = createNativeStackNavigator<AttendanceStackParamList>();
@@ -30,6 +34,12 @@ export function AttendanceStack() {
         name="Success"
         component={ClockSuccessScreen}
         options={{ presentation: 'transparentModal', animation: 'fade' }}
+      />
+      <Stack.Screen name="CorrectionList" component={CorrectionListScreen} />
+      <Stack.Screen
+        name="CorrectionApply"
+        component={CorrectionApplyScreen}
+        options={{ presentation: 'formSheet' }}
       />
     </Stack.Navigator>
   );
