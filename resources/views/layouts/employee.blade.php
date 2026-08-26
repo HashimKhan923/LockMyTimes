@@ -252,7 +252,7 @@
                     __('employee.nav_section_money') => [
                         ['route'=>'employee.payslips.index',     'icon'=>'receipt',        'label'=>__('employee.nav_payslips'),      'permission'=>'payslips.view'],
                         ['route'=>'employee.expenses.index',     'icon'=>'wallet',         'label'=>__('employee.nav_expenses'),      'permission'=>'expenses.view'],
-                        ['route'=>'employee.loans.index',        'icon'=>'piggy-bank',     'label'=>__('employee.nav_loans'),         'permission'=>'loans.view'],
+                        ['route'=>'employee.loans.index',        'icon'=>'hand-coins',     'label'=>__('employee.nav_loans'),         'permission'=>'loans.view'],
                     ],
                     __('employee.nav_section_work') => [
                         ['route'=>'employee.tasks.index',        'icon'=>'kanban-square',  'label'=>__('employee.nav_tasks'),         'permission'=>'tasks.view'],
