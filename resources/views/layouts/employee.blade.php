@@ -529,7 +529,7 @@
                             class="flex items-center gap-2 pl-1 pr-2 lg:pr-3 py-1 rounded-xl hover:bg-gray-100 transition-colors">
                         <div class="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                              style="background:linear-gradient(135deg,var(--brand-500),var(--brand-600));">
-                            @if($u?->avatar)
+                            @if($u?->avatar || $u?->employee?->avatar)
                                 <img src="{{ $u->avatar_url }}" class="w-full h-full object-cover" alt=""/>
                             @else
                                 {{ strtoupper(substr($u->name ?? 'U', 0, 1)) }}

@@ -26,7 +26,7 @@ class SettingsSeeder extends Seeder
             ['key' => 'attendance.require_selfie',        'value' => '0',           'group' => 'attendance', 'type' => 'boolean'],
             ['key' => 'attendance.geofence_strict',       'value' => '1',           'group' => 'attendance', 'type' => 'boolean'],
             ['key' => 'attendance.late_grace_minutes',    'value' => '10',          'group' => 'attendance', 'type' => 'integer'],
-            ['key' => 'attendance.overtime_threshold',    'value' => '40',          'group' => 'attendance', 'type' => 'integer'],
+            ['key' => 'attendance.overtime_threshold',    'value' => '8',           'group' => 'attendance', 'type' => 'integer'],
 
             // Payroll
             ['key' => 'payroll.pay_schedule',     'value' => 'bi_weekly',           'group' => 'payroll',    'type' => 'string'],
