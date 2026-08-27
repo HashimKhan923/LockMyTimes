@@ -209,7 +209,7 @@
                 'Payroll & Finance' => [
                     ['route'=>'admin.payroll.index',     'icon'=>'dollar-sign',      'label'=>'Payroll'],
                     ['route'=>'admin.expenses.index',    'icon'=>'receipt',          'label'=>'Expenses'],
-                    ['route'=>'admin.loans.index',       'icon'=>'piggy-bank',       'label'=>'Loans & Advances'],
+                    ['route'=>'admin.loans.index',       'icon'=>'hand-coins',       'label'=>'Loans & Advances'],
                 ],
                 'Performance' => [
                     ['route'=>'admin.performance.index', 'icon'=>'trending-up', 'label'=>'Reviews'],
