@@ -40,4 +40,9 @@ class Asset extends TenantModel
         return $this->hasOne(AssetAssignment::class)->whereNull('returned_at')->latestOfMany();
     }
     public function maintenance(): HasMany { return $this->hasMany(AssetMaintenance::class); }
+
+    public function getIsUnderWarrantyAttribute(): bool
+    {
+        return (bool) $this->warranty_until && $this->warranty_until->isFuture();
+    }
 }

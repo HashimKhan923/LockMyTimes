@@ -171,6 +171,39 @@
                 </button>
                 @endif
             </div>
+            <div class="flex items-center gap-2 mt-2">
+                <button onclick="openEditAssetModal({{ Js::from([
+                            'id' => $asset->id,
+                            'name' => $asset->name,
+                            'category_id' => $asset->category_id,
+                            'location_id' => $asset->location_id,
+                            'status' => $asset->status,
+                            'condition' => $asset->condition,
+                            'serial_number' => $asset->serial_number,
+                            'brand' => $asset->brand,
+                            'model' => $asset->model,
+                            'purchase_cost' => $asset->purchase_cost,
+                            'purchase_date' => $asset->purchase_date?->toDateString(),
+                            'warranty_until' => $asset->warranty_until?->toDateString(),
+                            'vendor' => $asset->vendor,
+                            'notes' => $asset->notes,
+                        ]) }})"
+                        class="flex-1 lmt-btn-sm text-center font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5 inline mr-1"></i>
+                    Edit
+                </button>
+                @if($asset->status !== 'assigned')
+                <form action="{{ route('admin.assets.destroy', [$tenant, $asset->id]) }}" method="POST"
+                      class="flex-1" onsubmit="return confirm('Delete {{ addslashes($asset->name) }}? This cannot be undone.');">
+                    @csrf @method('DELETE')
+                    <button type="submit"
+                            class="w-full lmt-btn-sm text-center font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-colors">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5 inline mr-1"></i>
+                        Delete
+                    </button>
+                </form>
+                @endif
+            </div>
         </div>
     </div>
     @empty
@@ -325,6 +358,92 @@
     </div>
 </div>
 
+{{-- Edit Asset Modal --}}
+<div id="edit-asset-modal" class="lmt-modal-backdrop hidden">
+    <div class="lmt-modal max-w-2xl w-full">
+        <h3 class="font-black text-gray-900 mb-5">Edit Asset</h3>
+        <form id="edit-asset-form" method="POST" class="space-y-4">
+            @csrf @method('PUT')
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="lmt-label">Asset Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" id="edit-asset-name" required class="lmt-input"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Category <span class="text-red-500">*</span></label>
+                    <select name="category_id" id="edit-asset-category" required class="lmt-select">
+                        @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="lmt-label">Location</label>
+                    <select name="location_id" id="edit-asset-location" class="lmt-select">
+                        <option value="">— Select —</option>
+                        @foreach($locations as $loc)
+                        <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="lmt-label">Status <span class="text-red-500">*</span></label>
+                    <select name="status" id="edit-asset-status" required class="lmt-select">
+                        @foreach(['available'=>'Available','assigned'=>'Assigned','maintenance'=>'Maintenance','retired'=>'Retired','lost'=>'Lost'] as $v=>$l)
+                        <option value="{{ $v }}">{{ $l }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="lmt-label">Condition <span class="text-red-500">*</span></label>
+                    <select name="condition" id="edit-asset-condition" required class="lmt-select">
+                        @foreach(['new'=>'New','good'=>'Good','fair'=>'Fair','damaged'=>'Damaged','retired'=>'Retired'] as $v=>$l)
+                        <option value="{{ $v }}">{{ $l }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="lmt-label">Brand</label>
+                    <input type="text" name="brand" id="edit-asset-brand" class="lmt-input"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Model</label>
+                    <input type="text" name="model" id="edit-asset-model" class="lmt-input"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Serial Number</label>
+                    <input type="text" name="serial_number" id="edit-asset-serial" class="lmt-input"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Purchase Cost ($)</label>
+                    <input type="number" name="purchase_cost" id="edit-asset-cost" step="0.01" min="0" class="lmt-input"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Purchase Date</label>
+                    <input type="date" name="purchase_date" id="edit-asset-purchase-date" class="lmt-input"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Warranty Until</label>
+                    <input type="date" name="warranty_until" id="edit-asset-warranty" class="lmt-input"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Vendor</label>
+                    <input type="text" name="vendor" id="edit-asset-vendor" class="lmt-input"/>
+                </div>
+                <div class="col-span-2">
+                    <label class="lmt-label">Notes</label>
+                    <textarea name="notes" id="edit-asset-notes" class="lmt-textarea" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="lmt-btn-primary flex-1">Save Changes</button>
+                <button type="button" onclick="closeModal('edit-asset-modal')"
+                        class="lmt-btn-secondary flex-1">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- Return Modal --}}
 <div id="return-modal" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal">
@@ -372,7 +491,24 @@ function openReturnModal(assetId, assetName) {
     document.getElementById('return-asset-name').textContent = assetName;
     openModal('return-modal');
 }
-['add-asset-modal','assign-modal','return-modal'].forEach(id => {
+function openEditAssetModal(asset) {
+    document.getElementById('edit-asset-form').action = `/t/{{ $tenant }}/admin/assets/${asset.id}`;
+    document.getElementById('edit-asset-name').value = asset.name ?? '';
+    document.getElementById('edit-asset-category').value = asset.category_id ?? '';
+    document.getElementById('edit-asset-location').value = asset.location_id ?? '';
+    document.getElementById('edit-asset-status').value = asset.status ?? 'available';
+    document.getElementById('edit-asset-condition').value = asset.condition ?? 'good';
+    document.getElementById('edit-asset-brand').value = asset.brand ?? '';
+    document.getElementById('edit-asset-model').value = asset.model ?? '';
+    document.getElementById('edit-asset-serial').value = asset.serial_number ?? '';
+    document.getElementById('edit-asset-cost').value = asset.purchase_cost ?? '';
+    document.getElementById('edit-asset-purchase-date').value = asset.purchase_date ?? '';
+    document.getElementById('edit-asset-warranty').value = asset.warranty_until ?? '';
+    document.getElementById('edit-asset-vendor').value = asset.vendor ?? '';
+    document.getElementById('edit-asset-notes').value = asset.notes ?? '';
+    openModal('edit-asset-modal');
+}
+['add-asset-modal','assign-modal','return-modal','edit-asset-modal'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', function(e) { if(e.target===this) closeModal(id); });
 });
 </script>

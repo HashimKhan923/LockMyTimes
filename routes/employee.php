@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Employee\AnnouncementController;
+use App\Http\Controllers\Employee\AssetController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\AttendanceCorrectionController;
 use App\Http\Controllers\Employee\AuthController;
@@ -118,9 +119,9 @@ Route::middleware(['tenant', 'subscription.active', 'employee.auth'])->group(fun
         Route::get('/one-on-ones',      [DashboardController::class, 'comingSoon'])->name('one-on-ones');
     });
 
-    /* ─── Phase 10 — My Assets ─── */
+    /* ─── My Assets (LIVE) ─── */
     Route::prefix('assets')->name('assets.')->middleware('permission:assets.view')->group(function () {
-        Route::get('/',                               [DashboardController::class, 'comingSoon'])->name('index');
+        Route::get('/',                               [AssetController::class, 'index'])->name('index');
         Route::post('/{assignment}/return-request',   [DashboardController::class, 'comingSoon'])->name('return');
     });
 

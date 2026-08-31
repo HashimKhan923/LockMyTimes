@@ -85,6 +85,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
             'loans.view', 'loans.create',
             'salary_advances.view', 'salary_advances.create',
+            'assets.view',
         ])->get());
     }
 }

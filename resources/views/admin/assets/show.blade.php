@@ -27,6 +27,16 @@
             Return Asset
         </button>
         @endif
+        @if($asset->status !== 'assigned')
+        <form action="{{ route('admin.assets.destroy', [$tenant, $asset->id]) }}" method="POST"
+              onsubmit="return confirm('Delete {{ addslashes($asset->name) }}? This cannot be undone.');">
+            @csrf @method('DELETE')
+            <button type="submit" class="lmt-btn-danger lmt-btn-sm">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                Delete
+            </button>
+        </form>
+        @endif
     </div>
 </div>
 

@@ -254,7 +254,7 @@ class AssetController extends Controller
         $columns = ['Asset Tag', 'Name', 'Category', 'Brand', 'Model', 'Serial No.', 'Status', 'Assigned To', 'Purchase Date', 'Value'];
 
         $rows = $assets->map(fn($a) => [
-            $a->asset_tag ?? '-',
+            $a->asset_code ?? '-',
             $a->name,
             $a->category?->name ?? '-',
             $a->brand ?? '-',
@@ -263,7 +263,7 @@ class AssetController extends Controller
             ucfirst($a->status),
             $a->currentAssignment?->employee?->full_name ?? 'Unassigned',
             $a->purchase_date?->format('Y-m-d') ?? '-',
-            $a->purchase_price ? number_format($a->purchase_price, 2) : '-',
+            $a->purchase_cost ? number_format($a->purchase_cost, 2) : '-',
         ]);
 
         if ($format === 'pdf') {

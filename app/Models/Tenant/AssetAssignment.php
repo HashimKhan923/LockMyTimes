@@ -26,5 +26,5 @@ class AssetAssignment extends TenantModel
 
     public function asset(): BelongsTo     { return $this->belongsTo(Asset::class); }
     public function employee(): BelongsTo  { return $this->belongsTo(Employee::class); }
-    public function assigner(): BelongsTo  { return $this->belongsTo(User::class, 'assigned_by'); }
+    public function assignedBy(): BelongsTo { return $this->belongsTo(User::class, 'assigned_by'); }
 }
