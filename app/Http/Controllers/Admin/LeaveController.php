@@ -424,6 +424,20 @@ class LeaveController extends Controller
         return back()->with('success', $msg);
     }
 
+    public function destroyType(string $tenant, LeaveType $leaveType)
+    {
+        if ($leaveType->leaveRequests()->count() > 0) {
+            return back()->with('error', 'Cannot delete a leave type that has existing leave requests.');
+        }
+
+        // No leave requests reference it, but delete() still cascades and
+        // wipes any leave_balances rows for this type — that's expected
+        // (balances are just this type's ledger, nothing left to keep).
+        $leaveType->delete();
+
+        return back()->with('success', 'Leave type deleted.');
+    }
+
     /* ================================================================
      | SYNC BALANCES — initialize missing LeaveBalance rows for all
      | active employees × all active leave types for the current year

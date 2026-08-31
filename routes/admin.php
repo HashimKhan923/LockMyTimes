@@ -169,6 +169,7 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::get('/types',                 [\App\Http\Controllers\Admin\LeaveController::class, 'types'])->name('types')->middleware('permission:leave_types.view');
         Route::post('/types',                [\App\Http\Controllers\Admin\LeaveController::class, 'storeType'])->name('types.store')->middleware('permission:leave_types.create');
         Route::put('/types/{leaveType}',     [\App\Http\Controllers\Admin\LeaveController::class, 'updateType'])->name('types.update')->middleware('permission:leave_types.edit');
+    Route::delete('/types/{leaveType}',  [\App\Http\Controllers\Admin\LeaveController::class, 'destroyType'])->name('types.destroy')->middleware('permission:leave_types.delete');
         Route::get('/holidays',              [\App\Http\Controllers\Admin\LeaveController::class, 'holidays'])->name('holidays')->middleware('permission:holidays.view');
         Route::post('/holidays',             [\App\Http\Controllers\Admin\LeaveController::class, 'storeHoliday'])->name('holidays.store')->middleware('permission:holidays.create');
         Route::delete('/holidays/{holiday}', [\App\Http\Controllers\Admin\LeaveController::class, 'destroyHoliday'])->name('holidays.destroy')->middleware('permission:holidays.delete');

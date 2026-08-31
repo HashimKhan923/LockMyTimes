@@ -49,6 +49,21 @@
                         class="w-7 h-7 rounded-lg bg-gray-100 text-gray-800 hover:bg-brand-50 hover:text-brand-600 flex items-center justify-center transition-colors">
                     <i data-lucide="pencil" class="w-3 h-3"></i>
                 </button>
+                @if($type->leave_requests_count === 0)
+                <form action="{{ route('admin.leaves.types.destroy', [$tenant, $type->id]) }}" method="POST"
+                      onsubmit="return confirm('Delete the {{ addslashes($type->name) }} leave type? This cannot be undone.');">
+                    @csrf @method('DELETE')
+                    <button type="submit"
+                            class="w-7 h-7 rounded-lg bg-gray-100 text-gray-800 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                </form>
+                @else
+                <span class="w-7 h-7 rounded-lg bg-gray-50 text-gray-300 flex items-center justify-center"
+                      title="Can't delete — {{ $type->leave_requests_count }} leave request(s) use this type">
+                    <i data-lucide="trash-2" class="w-3 h-3"></i>
+                </span>
+                @endif
             </div>
         </div>
 
