@@ -26,6 +26,10 @@ Route::middleware('tenant')->group(function () {
     Route::post('/login',           [AuthController::class, 'login'])->name('login.post');
     Route::get('/password/change',  [AuthController::class, 'showChangePassword'])->name('password.change');
     Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change.post');
+    Route::get('/password/forgot',        [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+    Route::post('/password/forgot',       [AuthController::class, 'forgotPassword'])->name('password.forgot.post')->middleware('throttle:6,1');
+    Route::get('/password/reset/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/password/reset',        [AuthController::class, 'resetPassword'])->name('password.reset.post')->middleware('throttle:6,1');
 });
 
 /* ===== Protected (tenant + subscription + auth) ===== */

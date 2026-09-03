@@ -73,6 +73,21 @@ class MailService
     }
 
     /* ─────────────────────────────────────────────────────────────────
+     | 0. PASSWORD RESET
+     |────────────────────────────────────────────────────────────────*/
+    public function sendPasswordReset(User $user, string $resetUrl, string $token): void
+    {
+        $ctx = $this->ctx();
+        $this->send($user->email, 'emails.password-reset', array_merge($ctx, [
+            'subject'  => "Reset your {$ctx['companyName']} password",
+            'user'     => $user,
+            'resetUrl' => $resetUrl,
+            'token'    => $token,
+            'expiresInMinutes' => (int) config('auth.passwords.users.expire', 60),
+        ]));
+    }
+
+    /* ─────────────────────────────────────────────────────────────────
      | 1. EMPLOYEE WELCOME
      |────────────────────────────────────────────────────────────────*/
     public function sendEmployeeWelcome(Employee $employee, string $tempPassword): void

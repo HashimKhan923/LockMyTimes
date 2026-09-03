@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\Tenant\User;
+use App\Services\MailService;
+use App\Services\PasswordResetService;
+use App\Services\TenantManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -63,6 +66,54 @@ class AuthController extends Controller
             'user' => new UserResource($user),
             'must_change_password' => (bool) $user->must_change_password,
         ]);
+    }
+
+    /**
+     * Request a password reset. Runs after `tenant.api` has connected the
+     * tenant DB (same pre-auth route group as login — no Sanctum token
+     * required/available at this point). Always returns the same generic
+     * message regardless of whether the email matches an account, so the
+     * response can't be used to enumerate valid emails.
+     */
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $token = PasswordResetService::createToken($data['email']);
+        if ($token) {
+            $user = User::where('email', $data['email'])->first();
+            $tenant = app(TenantManager::class)->current();
+            $resetUrl = $tenant
+                ? url('/t/'.$tenant->slug.'/portal/password/reset/'.$token).'?email='.urlencode($data['email'])
+                : url('/');
+            app(MailService::class)->sendPasswordReset($user, $resetUrl, $token);
+        }
+
+        return response()->json([
+            'message' => 'If an account with that email exists, a password reset code has been sent.',
+        ]);
+    }
+
+    /**
+     * Complete a password reset using the token emailed by forgotPassword().
+     */
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email'    => ['required', 'email'],
+            'token'    => ['required', 'string'],
+            'password' => ['required', 'string', 'confirmed', Password::min(8)],
+        ]);
+
+        if (! PasswordResetService::reset($data['email'], $data['token'], $data['password'])) {
+            throw ValidationException::withMessages([
+                'token' => ['This password reset code is invalid or has expired. Please request a new one.'],
+            ]);
+        }
+
+        return response()->json(['message' => 'Your password has been reset. You can now log in.']);
     }
 
     /**

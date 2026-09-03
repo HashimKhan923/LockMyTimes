@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Main\Tenant;
+use App\Models\Tenant\User;
+use App\Services\MailService;
+use App\Services\PasswordResetService;
 use App\Services\TenantManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -75,6 +78,61 @@ class AuthController extends Controller
         }
 
         return redirect()->route('admin.dashboard', $tenant);
+    }
+
+    public function showForgotPassword(string $tenant)
+    {
+        $tenantModel = Tenant::where('slug', $tenant)->firstOrFail();
+        return view('admin.auth.forgot-password', compact('tenantModel'));
+    }
+
+    public function forgotPassword(Request $request, string $tenant)
+    {
+        $tenantModel = Tenant::where('slug', $tenant)->firstOrFail();
+        $request->validate(['email' => 'required|email']);
+
+        app(TenantManager::class)->connect($tenantModel);
+
+        $token = PasswordResetService::createToken($request->email);
+        if ($token) {
+            $user = User::where('email', $request->email)->first();
+            $resetUrl = route('admin.password.reset', [$tenant, $token]).'?email='.urlencode($request->email);
+            app(MailService::class)->sendPasswordReset($user, $resetUrl, $token);
+        }
+
+        // Same message whether or not the email exists — don't reveal which accounts exist.
+        return back()->with('success', 'If an account with that email exists, a password reset link has been sent.');
+    }
+
+    public function showResetPassword(string $tenant, string $token, Request $request)
+    {
+        $tenantModel = Tenant::where('slug', $tenant)->firstOrFail();
+        $email = $request->query('email', '');
+
+        return view('admin.auth.reset-password', compact('tenantModel', 'token', 'email'));
+    }
+
+    public function resetPassword(Request $request, string $tenant)
+    {
+        $tenantModel = Tenant::where('slug', $tenant)->firstOrFail();
+
+        $request->validate([
+            'token'    => 'required|string',
+            'email'    => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        app(TenantManager::class)->connect($tenantModel);
+
+        if (! PasswordResetService::reset($request->email, $request->token, $request->password)) {
+            return back()
+                ->withInput($request->only('email'))
+                ->with('error', 'This password reset link is invalid or has expired. Please request a new one.');
+        }
+
+        return redirect()
+            ->route('admin.login', $tenant)
+            ->with('success', 'Your password has been reset. You can now log in.');
     }
 
     public function showChangePassword(string $tenant)

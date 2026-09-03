@@ -87,10 +87,16 @@
         </div>
     </div>
 
-    <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300"/>
-        <span class="text-sm text-gray-800">Keep me signed in</span>
-    </label>
+    <div class="flex items-center justify-between">
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300"/>
+            <span class="text-sm text-gray-800">Keep me signed in</span>
+        </label>
+        <a href="{{ route('employee.password.forgot', $tenantModel->slug) }}"
+           class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
+            Forgot password?
+        </a>
+    </div>
 
     <button type="submit" class="lmt-btn-primary w-full lmt-btn-lg" style="background:linear-gradient(135deg,#10B981,#059669);">
         <i data-lucide="log-in" class="w-5 h-5"></i>

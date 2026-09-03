@@ -101,6 +101,10 @@
             <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300"/>
             <span class="text-sm text-gray-800">Keep me signed in</span>
         </label>
+        <a href="{{ route('admin.password.forgot', $tenantModel->slug) }}"
+           class="text-sm font-semibold text-brand-600 hover:text-brand-700 transition-colors">
+            Forgot password?
+        </a>
     </div>
 
     <button type="submit" class="lmt-btn-primary w-full lmt-btn-lg">

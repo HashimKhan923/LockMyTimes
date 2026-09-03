@@ -7,8 +7,8 @@ use App\Models\Tenant\Announcement;
 use App\Models\Tenant\AnnouncementRead;
 use App\Models\Tenant\Poll;
 use App\Models\Tenant\PollVote;
-use App\Models\Tenant\User;
 use App\Services\MailService;
+use App\Services\NotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -58,6 +58,7 @@ class AnnouncementController extends Controller
             'expires_at'              => 'nullable|date',
             'requires_acknowledgment' => 'boolean',
             'show_on_login'           => 'boolean',
+            'audience_filter'         => 'nullable|array',
             'banner_image'            => 'nullable|image|max:4096',
         ]);
 
@@ -78,11 +79,53 @@ class AnnouncementController extends Controller
         $announcement = Announcement::create($data);
 
         if ($announcement->status === 'published') {
-            $emails = User::where('is_active', true)->pluck('email')->filter()->unique()->values()->toArray();
-            app(MailService::class)->sendAnnouncement($announcement, $emails);
+            $this->dispatchAnnouncement($tenant, $announcement);
         }
 
         return back()->with('success', 'Announcement created.');
+    }
+
+    /**
+     * Notify (bell + push, via NotificationService) and email every user
+     * targeted by this announcement's audience/audience_filter. Called once,
+     * the moment an announcement first becomes 'published' — from store()
+     * directly, or from update() when a draft/scheduled announcement is
+     * edited into 'published'.
+     */
+    private function dispatchAnnouncement(string $tenant, Announcement $announcement): void
+    {
+        $targets = $announcement->targetUsers();
+
+        $icon  = match ($announcement->priority) {
+            'urgent' => 'alert-triangle',
+            'high'   => 'alert-circle',
+            default  => 'megaphone',
+        };
+        $color = match ($announcement->priority) {
+            'urgent' => '#EF4444',
+            'high'   => '#F59E0B',
+            default  => '#6C7DF7',
+        };
+        $label = $announcement->priority === 'urgent' ? 'Urgent Announcement' : 'New Announcement';
+
+        foreach ($targets as $user) {
+            try {
+                NotificationService::send(
+                    $user, $announcement->title, $label,
+                    $icon, $color,
+                    route('employee.announcements.show', [$tenant, $announcement->id])
+                );
+            } catch (\Throwable $e) {
+                \Log::error('Announcement notification failed: '.$e->getMessage());
+            }
+        }
+
+        try {
+            $emails = $targets->pluck('email')->filter()->unique()->values()->toArray();
+            app(MailService::class)->sendAnnouncement($announcement, $emails);
+        } catch (\Throwable $e) {
+            \Log::error('Announcement email failed: '.$e->getMessage());
+        }
     }
 
     /* ================================================================
@@ -98,7 +141,20 @@ class AnnouncementController extends Controller
             'expires_at' => 'nullable|date',
         ]);
 
+        $wasPublished = $announcement->status === 'published';
+
+        if ($data['status'] === 'published' && empty($announcement->publish_at)) {
+            $data['publish_at'] = now();
+        }
+
         $announcement->update($data);
+
+        // Only notify the first time it becomes published — editing an
+        // already-published announcement again shouldn't re-notify everyone.
+        if (! $wasPublished && $announcement->status === 'published') {
+            $this->dispatchAnnouncement($tenant, $announcement);
+        }
+
         return back()->with('success', 'Announcement updated.');
     }
 
