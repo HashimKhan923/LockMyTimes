@@ -31,8 +31,8 @@ class EnsureEmployeeApiAuth
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        if (! $user->is_active) {
-            return response()->json(['message' => 'Your account is inactive. Please contact HR.'], 401);
+        if ($reason = $user->loginBlockReason()) {
+            return response()->json(['message' => $reason], 401);
         }
 
         if (! $user->hasRole('Employee')) {

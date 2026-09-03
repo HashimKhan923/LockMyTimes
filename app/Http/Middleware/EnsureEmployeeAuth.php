@@ -28,10 +28,10 @@ class EnsureEmployeeAuth
 
         $user = Auth::guard('web')->user();
 
-        if (! $user->is_active) {
+        if ($reason = $user->loginBlockReason()) {
             Auth::guard('web')->logout();
             return redirect()->route('employee.login', $request->route('tenant'))
-                ->with('error', 'Your account is inactive. Please contact HR.');
+                ->with('error', $reason);
         }
 
         // Only users with the Employee role belong on the employee portal.

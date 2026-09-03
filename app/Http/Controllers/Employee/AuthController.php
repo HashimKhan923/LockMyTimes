@@ -44,9 +44,9 @@ class AuthController extends Controller
 
         $user = Auth::guard('web')->user();
 
-        if (! $user->is_active) {
+        if ($reason = $user->loginBlockReason()) {
             Auth::guard('web')->logout();
-            return back()->with('error', 'Your account is inactive. Please contact HR.');
+            return back()->with('error', $reason);
         }
 
         $user->update([

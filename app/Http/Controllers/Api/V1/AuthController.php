@@ -35,9 +35,9 @@ class AuthController extends Controller
             ]);
         }
 
-        if (! $user->is_active) {
+        if ($reason = $user->loginBlockReason()) {
             throw ValidationException::withMessages([
-                'email' => ['Your account is inactive. Please contact HR.'],
+                'email' => [$reason],
             ]);
         }
 

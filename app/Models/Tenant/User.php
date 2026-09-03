@@ -77,6 +77,28 @@ class User extends Authenticatable
         return (bool) ($prefs[$key][$channel] ?? self::defaultNotificationPreferences()[$key][$channel] ?? false);
     }
 
+    /**
+     * Single source of truth for "should this user be allowed to sign in /
+     * keep an active session" — checked at login AND on every subsequent
+     * authenticated request (EnsureEmployeeAuth / EnsureEmployeeApiAuth),
+     * so an admin suspending or terminating someone via the general Edit
+     * form (which only updates employees.employment_status, not
+     * users.is_active) still cuts off access immediately, not just at
+     * their next login attempt.
+     */
+    public function loginBlockReason(): ?string
+    {
+        if (! $this->is_active) {
+            return 'Your account is inactive. Please contact HR.';
+        }
+
+        return match ($this->employee?->employment_status) {
+            'suspended' => 'Your account has been suspended. Please contact HR.',
+            'terminated' => 'Your employment has ended. Please contact HR.',
+            default => null,
+        };
+    }
+
     public function getAvatarUrlAttribute(): string
     {
         // Employee-facing avatar uploads (admin employee edit, mobile profile
