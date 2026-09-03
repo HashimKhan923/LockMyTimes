@@ -103,7 +103,7 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'email'    => ['required', 'email'],
-            'token'    => ['required', 'string'],
+            'token'    => ['required', 'digits:6'],
             'password' => ['required', 'string', 'confirmed', Password::min(8)],
         ]);
 

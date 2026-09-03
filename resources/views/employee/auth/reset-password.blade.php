@@ -38,7 +38,22 @@
 
 <form action="{{ route('employee.password.reset.post', $tenantModel->slug) }}" method="POST" class="space-y-5">
     @csrf
-    <input type="hidden" name="token" value="{{ $token }}"/>
+
+    <div>
+        <label class="lmt-label">Reset Code</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <i data-lucide="hash" class="w-4 h-4 text-gray-800"></i>
+            </div>
+            <input type="text" name="token" value="{{ old('token', $token) }}"
+                   class="lmt-input pl-10 tracking-[0.3em] font-mono @error('token') lmt-input-error @enderror"
+                   placeholder="123456" inputmode="numeric" pattern="\d{6}" maxlength="6" required/>
+        </div>
+        <p class="lmt-help">The 6-digit code from your email.</p>
+        @error('token')
+        <p class="lmt-err">{{ $message }}</p>
+        @enderror
+    </div>
 
     <div>
         <label class="lmt-label">Email</label>

@@ -28,7 +28,7 @@ Route::middleware('tenant')->group(function () {
     Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change.post');
     Route::get('/password/forgot',        [AuthController::class, 'showForgotPassword'])->name('password.forgot');
     Route::post('/password/forgot',       [AuthController::class, 'forgotPassword'])->name('password.forgot.post')->middleware('throttle:6,1');
-    Route::get('/password/reset/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::get('/password/reset/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset')->where('token', '\d{6}');
     Route::post('/password/reset',        [AuthController::class, 'resetPassword'])->name('password.reset.post')->middleware('throttle:6,1');
 });
 

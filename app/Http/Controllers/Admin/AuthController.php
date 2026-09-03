@@ -117,7 +117,7 @@ class AuthController extends Controller
         $tenantModel = Tenant::where('slug', $tenant)->firstOrFail();
 
         $request->validate([
-            'token'    => 'required|string',
+            'token'    => 'required|digits:6',
             'email'    => 'required|email',
             'password' => 'required|string|min:8|confirmed',
         ]);

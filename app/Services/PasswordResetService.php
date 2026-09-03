@@ -6,7 +6,6 @@ use App\Models\Tenant\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
  * Shared forgot/reset-password logic for the admin portal, employee portal,
@@ -24,8 +23,8 @@ class PasswordResetService
     private const TABLE = 'password_reset_tokens';
 
     /**
-     * Create (or replace) a reset token for this email if a matching user
-     * exists. Returns the plain token to embed in the email link, or null
+     * Create (or replace) a reset code for this email if a matching user
+     * exists. Returns the plain 6-digit code to embed in the email, or null
      * if no such user exists — callers should still report a generic
      * "check your email" success either way, to avoid leaking which emails
      * have an account.
@@ -37,7 +36,7 @@ class PasswordResetService
             return null;
         }
 
-        $token = Str::random(64);
+        $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         DB::connection('tenant')->table(self::TABLE)->updateOrInsert(
             ['email' => $email],

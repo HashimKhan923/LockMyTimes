@@ -12,18 +12,16 @@
 </p>
 <p style="color:#374151;">
   We received a request to reset the password for your <strong>{{ $companyName }}</strong> account.
-  Click the button below to choose a new password. This link expires in {{ $expiresInMinutes }} minutes.
+  Use the code below — on the web or in the app — or click the button to open the reset page directly.
+  This code expires in {{ $expiresInMinutes }} minutes.
 </p>
 
-{{-- Manual code fallback --}}
+{{-- 6-digit code --}}
 <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #EEF2FF, #F5F3FF); border-radius: 12px; padding: 0; margin: 24px 0; border: 1px solid #C7D2FE;">
   <tr>
-    <td style="padding: 20px 24px;">
-      <div style="font-size:12px; font-weight:700; color:#4F46E5; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Or, if the button doesn't work</div>
-      <p style="font-size:13px; color:#374151; margin:0 0 8px;">Copy this link into your browser:</p>
-      <p style="font-size:13px; color:#4F46E5; word-break:break-all; margin:0;">
-        <a href="{{ $resetUrl }}" style="color:#4F46E5;">{{ $resetUrl }}</a>
-      </p>
+    <td style="padding: 24px; text-align:center;">
+      <div style="font-size:12px; font-weight:700; color:#4F46E5; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Your reset code</div>
+      <div style="font-size:36px; font-weight:800; color:#1E1B4B; letter-spacing:10px; font-family: monospace;">{{ $token }}</div>
     </td>
   </tr>
 </table>
