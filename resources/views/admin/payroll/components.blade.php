@@ -64,7 +64,9 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','reimbu
                 <div class="flex items-center gap-1.5 flex-shrink-0">
                     @if($type !== 'tax')
                     <button onclick="openModal('assign-modal-{{ $comp->id }}')"
-                            class="text-xs font-semibold px-2 py-1 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white transition-colors whitespace-nowrap">
+                            title="Click to assign this component to employees"
+                            class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white transition-colors whitespace-nowrap">
+                        <i data-lucide="user-plus" class="w-3 h-3"></i>
                         {{ $comp->employee_salary_components_count }} staff
                     </button>
                     @else

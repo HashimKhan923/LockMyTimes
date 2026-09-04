@@ -179,13 +179,26 @@ class PayslipController extends Controller
             abort(404);
         }
 
-        $companyName = view()->shared('currentTenant')->company_name ?? 'Lockmytimes';
-        $currency    = view()->shared('tenantCurrency') ?? 'USD';
+        $currentTenant = view()->shared('currentTenant');
+        $companyName   = $currentTenant->company_name ?? 'Lockmytimes';
+        $currency      = view()->shared('tenantCurrency') ?? 'USD';
+
+        // DomPDF has remote image fetching disabled (config/dompdf.php isRemoteEnabled=false),
+        // so the logo has to be inlined as a base64 data URI rather than passed as a storage URL.
+        $companyLogo = null;
+        if ($currentTenant && $currentTenant->logo) {
+            $logoPath = storage_path('app/public/'.$currentTenant->logo);
+            if (is_file($logoPath)) {
+                $mime = \Illuminate\Support\Facades\File::mimeType($logoPath);
+                $companyLogo = 'data:'.$mime.';base64,'.base64_encode(file_get_contents($logoPath));
+            }
+        }
 
         $pdf = Pdf::loadView('employee.payslips.pdf', [
                 'payslip'     => $ps,
                 'emp'         => $emp,
                 'companyName' => $companyName,
+                'companyLogo' => $companyLogo,
                 'currency'    => $currency,
             ])
             ->setPaper('a4');

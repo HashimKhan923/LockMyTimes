@@ -240,29 +240,11 @@
             default => $currency.' ',
         };
 
-        $earnings = [
-            ['Base Pay',      (float) $payslip->base_pay],
-            ['Overtime Pay',  (float) $payslip->overtime_pay],
-            ['Bonus',         (float) $payslip->bonus],
-            ['Commission',    (float) $payslip->commission],
-            ['Reimbursement', (float) $payslip->reimbursement],
-        ];
-        $earnings = array_filter($earnings, fn($r) => $r[1] > 0);
-
-        $deductions = [
-            ['Federal Income Tax', (float) $payslip->federal_tax],
-            ['State Tax',          (float) $payslip->state_tax],
-            ['Local Tax',          (float) $payslip->local_tax],
-            ['Social Security',    (float) $payslip->fica_ss],
-            ['Medicare',           (float) $payslip->fica_medicare],
-            ['Health Insurance',   (float) $payslip->health_insurance],
-            ['401(k) Retirement',  (float) $payslip->retirement_401k],
-            ['Other Deductions',   (float) $payslip->other_deductions],
-        ];
-        $deductions = array_filter($deductions, fn($r) => $r[1] > 0);
-
-        $extraEarn = $payslip->items->whereIn('type', ['earning', 'reimbursement']);
-        $extraDed  = $payslip->items->whereIn('type', ['deduction', 'tax']);
+        // Itemized breakdown — the single source of truth (see employee.payslips.show for why
+        // the old aggregate base_pay/bonus/etc columns aren't also rendered here: PayrollService
+        // writes every one of those as its own item too, so showing both double-counts every line).
+        $earnItems = $payslip->items->whereIn('type', ['earning', 'reimbursement']);
+        $dedItems  = $payslip->items->whereIn('type', ['deduction', 'tax']);
 
         $statusClass = $payslip->status === 'paid' ? 'paid'
                      : ($payslip->status === 'cancelled' ? 'cancelled' : '');
@@ -274,6 +256,9 @@
         <table>
             <tr>
                 <td>
+                    @if($companyLogo)
+                    <img src="{{ $companyLogo }}" style="height:22px; max-width:120px; object-fit:contain; margin-bottom:4px;" alt="Logo"/>
+                    @endif
                     <div class="brand">{{ $companyName }}</div>
                     <div class="label">Pay Slip</div>
                 </td>
@@ -326,20 +311,14 @@
     <div class="section">
         <div class="section-head">Earnings</div>
         <table class="line">
-            @forelse($earnings as $row)
-                <tr>
-                    <td>{{ $row[0] }}</td>
-                    <td class="amount">{{ $sym }}{{ number_format($row[1], 2) }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="2" style="color:#9ca3af; font-style:italic;">No earnings on this payslip.</td></tr>
-            @endforelse
-            @foreach($extraEarn as $item)
+            @forelse($earnItems as $item)
                 <tr>
                     <td>{{ $item->label }}</td>
                     <td class="amount">{{ $sym }}{{ number_format($item->amount, 2) }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr><td colspan="2" style="color:#9ca3af; font-style:italic;">No earnings on this payslip.</td></tr>
+            @endforelse
             <tr class="total">
                 <td>Gross Pay</td>
                 <td class="amount">{{ $sym }}{{ number_format($payslip->gross_pay, 2) }}</td>
@@ -351,20 +330,14 @@
     <div class="section">
         <div class="section-head">Deductions</div>
         <table class="line">
-            @forelse($deductions as $row)
-                <tr>
-                    <td>{{ $row[0] }}</td>
-                    <td class="amount ded-amount">−{{ $sym }}{{ number_format($row[1], 2) }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="2" style="color:#9ca3af; font-style:italic;">No deductions on this payslip.</td></tr>
-            @endforelse
-            @foreach($extraDed as $item)
+            @forelse($dedItems as $item)
                 <tr>
                     <td>{{ $item->label }}</td>
                     <td class="amount ded-amount">−{{ $sym }}{{ number_format($item->amount, 2) }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr><td colspan="2" style="color:#9ca3af; font-style:italic;">No deductions on this payslip.</td></tr>
+            @endforelse
             <tr class="total">
                 <td>Total Deductions</td>
                 <td class="amount ded-amount">−{{ $sym }}{{ number_format($payslip->total_deductions, 2) }}</td>

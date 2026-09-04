@@ -31,30 +31,11 @@
             default => $cur.' ',
         };
 
-        $earnings = collect([
-            ['label' => 'Base Pay',      'amount' => (float) $payslip->base_pay],
-            ['label' => 'Overtime Pay',  'amount' => (float) $payslip->overtime_pay],
-            ['label' => 'Bonus',         'amount' => (float) $payslip->bonus],
-            ['label' => 'Commission',    'amount' => (float) $payslip->commission],
-            ['label' => 'Reimbursement', 'amount' => (float) $payslip->reimbursement],
-        ])->filter(fn ($r) => $r['amount'] > 0);
-
-        $deductions = collect([
-            ['label' => 'Federal Income Tax', 'amount' => (float) $payslip->federal_tax],
-            ['label' => 'State Tax',          'amount' => (float) $payslip->state_tax],
-            ['label' => 'Local Tax',          'amount' => (float) $payslip->local_tax],
-            ['label' => 'Social Security',    'amount' => (float) $payslip->fica_ss],
-            ['label' => 'Medicare',           'amount' => (float) $payslip->fica_medicare],
-            ['label' => 'Health Insurance',   'amount' => (float) $payslip->health_insurance],
-            ['label' => '401(k) Retirement',  'amount' => (float) $payslip->retirement_401k],
-            ['label' => 'Other Deductions',   'amount' => (float) $payslip->other_deductions],
-        ])->filter(fn ($r) => $r['amount'] > 0);
-
-        // Extra line items (component-based) that aren't already covered by the columns above
-        $extraEarnings   = $payslip->items->where('type', 'earning');
-        $extraReimburse  = $payslip->items->where('type', 'reimbursement');
-        $extraDeductions = $payslip->items->where('type', 'deduction');
-        $extraTaxes      = $payslip->items->where('type', 'tax');
+        // Itemized breakdown — the single source of truth for what's shown below.
+        // (Don't also render the aggregate base_pay/bonus/etc columns here: PayrollService
+        // writes every one of those as its own item too, so showing both would double-count
+        // every line on screen against the real gross_pay/total_deductions totals.)
+        $itemsByType = $payslip->items->groupBy('type');
     @endphp
 
     {{-- ═══════════════════════════════════════════════════════════════
@@ -107,7 +88,11 @@
             <div class="relative flex items-start justify-between">
                 <div>
                     <div class="flex items-center gap-2 mb-1">
+                        @if(isset($currentTenant) && $currentTenant->logo)
+                        <img src="{{ $currentTenant->logo_url }}" class="w-8 h-8 rounded-lg object-cover bg-white/10" alt="Logo"/>
+                        @else
                         <i data-lucide="clock" class="w-5 h-5 text-white/80"></i>
+                        @endif
                         <span class="font-black text-lg">{{ $currentTenant->company_name ?? 'Lockmytimes' }}</span>
                     </div>
                     <p class="text-white/70 text-sm">Pay Slip</p>
@@ -171,30 +156,21 @@
                 <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-500"></i> Earnings
             </h4>
             <div class="space-y-1.5">
-                @forelse($earnings as $row)
-                    <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $row['label'] }}</span>
-                        <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 font-mono">
-                            {{ $sym }}{{ number_format($row['amount'], 2) }}
-                        </span>
-                    </div>
-                @empty
-                    <p class="text-xs text-gray-800 italic">No earnings on this payslip.</p>
-                @endforelse
-
-                @foreach($extraEarnings as $item)
+                @forelse($itemsByType->get('earning', collect()) as $item)
                     <div class="flex items-center justify-between py-1.5">
                         <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }}</span>
                         <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 font-mono">
                             {{ $sym }}{{ number_format($item->amount, 2) }}
                         </span>
                     </div>
-                @endforeach
-                @foreach($extraReimburse as $item)
+                @empty
+                    <p class="text-xs text-gray-800 italic">No earnings on this payslip.</p>
+                @endforelse
+                @foreach($itemsByType->get('reimbursement', collect()) as $item)
                     <div class="flex items-center justify-between py-1.5">
                         <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Reimbursement</span></span>
-                        <span class="text-sm font-semibold text-gray-900 dark:text-slate-100 font-mono">
-                            {{ $sym }}{{ number_format($item->amount, 2) }}
+                        <span class="text-sm font-semibold text-emerald-600 font-mono">
+                            +{{ $sym }}{{ number_format($item->amount, 2) }}
                         </span>
                     </div>
                 @endforeach
@@ -214,29 +190,20 @@
                 <i data-lucide="trending-down" class="w-3.5 h-3.5 text-red-500"></i> Deductions
             </h4>
             <div class="space-y-1.5">
-                @forelse($deductions as $row)
+                @php $taxAndDeductionItems = $itemsByType->get('tax', collect())->merge($itemsByType->get('deduction', collect())); @endphp
+                @forelse($taxAndDeductionItems as $item)
                     <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $row['label'] }}</span>
-                        <span class="text-sm font-semibold text-red-500 font-mono">
-                            −{{ $sym }}{{ number_format($row['amount'], 2) }}
+                        <span class="text-sm text-gray-800 dark:text-slate-300">
+                            {{ $item->label }}
+                            @if($item->type === 'tax')
+                            <span class="text-[10px] text-gray-800 font-bold uppercase">Tax</span>
+                            @endif
                         </span>
+                        <span class="text-sm font-semibold text-red-500 font-mono">−{{ $sym }}{{ number_format($item->amount, 2) }}</span>
                     </div>
                 @empty
                     <p class="text-xs text-gray-800 italic">No deductions on this payslip.</p>
                 @endforelse
-
-                @foreach($extraTaxes as $item)
-                    <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }} <span class="text-[10px] text-gray-800 font-bold uppercase">Tax</span></span>
-                        <span class="text-sm font-semibold text-red-500 font-mono">−{{ $sym }}{{ number_format($item->amount, 2) }}</span>
-                    </div>
-                @endforeach
-                @foreach($extraDeductions as $item)
-                    <div class="flex items-center justify-between py-1.5">
-                        <span class="text-sm text-gray-800 dark:text-slate-300">{{ $item->label }}</span>
-                        <span class="text-sm font-semibold text-red-500 font-mono">−{{ $sym }}{{ number_format($item->amount, 2) }}</span>
-                    </div>
-                @endforeach
 
                 <div class="flex items-center justify-between py-2 border-t border-gray-100 dark:border-slate-700">
                     <span class="text-sm font-bold text-gray-900 dark:text-slate-100">Total Deductions</span>
