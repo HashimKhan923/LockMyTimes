@@ -191,6 +191,10 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::get('/payslip/{payslip}',         [\App\Http\Controllers\Admin\PayrollController::class, 'payslip'])->name('payslip')->middleware('permission:payslips.view');
         Route::get('/settings/components',       [\App\Http\Controllers\Admin\PayrollController::class, 'components'])->name('components')->middleware('permission:salary_components.view');
         Route::post('/settings/components',      [\App\Http\Controllers\Admin\PayrollController::class, 'storeComponent'])->name('components.store')->middleware('permission:salary_components.create');
+        Route::put('/settings/components/{salaryComponent}',    [\App\Http\Controllers\Admin\PayrollController::class, 'updateComponent'])->name('components.update')->middleware('permission:salary_components.edit');
+        Route::delete('/settings/components/{salaryComponent}', [\App\Http\Controllers\Admin\PayrollController::class, 'destroyComponent'])->name('components.destroy')->middleware('permission:salary_components.delete');
+        Route::post('/settings/components/{salaryComponent}/assign',                [\App\Http\Controllers\Admin\PayrollController::class, 'assignComponent'])->name('components.assign')->middleware('permission:salary_components.edit');
+        Route::delete('/settings/components/{salaryComponent}/assign/{assignment}', [\App\Http\Controllers\Admin\PayrollController::class, 'unassignComponent'])->name('components.unassign')->middleware('permission:salary_components.edit');
     });
 
     /* ---- Expenses ---- */

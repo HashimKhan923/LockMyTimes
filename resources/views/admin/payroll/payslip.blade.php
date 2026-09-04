@@ -74,24 +74,22 @@
             </div>
         </div>
 
-        {{-- Earnings --}}
+        @php
+            $itemsByType = $payslip->items->groupBy('type');
+        @endphp
+
+        {{-- Earnings — itemized: Base Pay, Overtime Pay, plus every assigned earning component --}}
         <div class="mb-5">
             <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Earnings</h4>
             <div class="space-y-2">
-                @foreach([
-                    ['Base Pay',        $payslip->base_pay],
-                    ['Overtime Pay',    $payslip->overtime_pay],
-                    ['Bonus',           $payslip->bonus],
-                    ['Commission',      $payslip->commission],
-                    ['Reimbursement',   $payslip->reimbursement],
-                ] as [$label, $amount])
-                @if($amount > 0)
+                @forelse($itemsByType->get('earning', collect()) as $item)
                 <div class="flex items-center justify-between py-1.5">
-                    <span class="text-sm text-gray-800">{{ $label }}</span>
-                    <span class="text-sm font-semibold text-gray-900">${{ number_format($amount, 2) }}</span>
+                    <span class="text-sm text-gray-800">{{ $item->label }}</span>
+                    <span class="text-sm font-semibold text-gray-900">${{ number_format($item->amount, 2) }}</span>
                 </div>
-                @endif
-                @endforeach
+                @empty
+                <p class="text-sm text-gray-800">No earnings recorded.</p>
+                @endforelse
                 <div class="flex items-center justify-between py-2 border-t border-gray-100">
                     <span class="text-sm font-bold text-gray-900">Gross Pay</span>
                     <span class="font-black text-gray-900">${{ number_format($payslip->gross_pay, 2) }}</span>
@@ -99,26 +97,48 @@
             </div>
         </div>
 
-        {{-- Deductions --}}
+        {{-- Reimbursements — non-taxable, added at the net-pay stage --}}
+        @if($itemsByType->has('reimbursement'))
+        <div class="mb-5">
+            <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Reimbursements</h4>
+            <div class="space-y-2">
+                @foreach($itemsByType->get('reimbursement') as $item)
+                <div class="flex items-center justify-between py-1.5">
+                    <span class="text-sm text-gray-800">{{ $item->label }}</span>
+                    <span class="text-sm font-semibold text-emerald-600">+${{ number_format($item->amount, 2) }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        {{-- Taxes --}}
+        <div class="mb-5">
+            <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Taxes</h4>
+            <div class="space-y-2">
+                @forelse($itemsByType->get('tax', collect()) as $item)
+                <div class="flex items-center justify-between py-1.5">
+                    <span class="text-sm text-gray-800">{{ $item->label }}</span>
+                    <span class="text-sm font-semibold text-red-500">-${{ number_format($item->amount, 2) }}</span>
+                </div>
+                @empty
+                <p class="text-sm text-gray-800">No taxes withheld.</p>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- Deductions — itemized: Absence, Loan/Advance repayment, plus every assigned deduction component --}}
         <div class="mb-5">
             <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">Deductions</h4>
             <div class="space-y-2">
-                @foreach([
-                    ['Federal Income Tax',  $payslip->federal_tax],
-                    ['State Tax',           $payslip->state_tax],
-                    ['Social Security',     $payslip->fica_ss],
-                    ['Medicare',            $payslip->fica_medicare],
-                    ['Health Insurance',    $payslip->health_insurance],
-                    ['401(k)',              $payslip->retirement_401k],
-                    ['Other Deductions',    $payslip->other_deductions],
-                ] as [$label, $amount])
-                @if($amount > 0)
+                @forelse($itemsByType->get('deduction', collect()) as $item)
                 <div class="flex items-center justify-between py-1.5">
-                    <span class="text-sm text-gray-800">{{ $label }}</span>
-                    <span class="text-sm font-semibold text-red-500">-${{ number_format($amount, 2) }}</span>
+                    <span class="text-sm text-gray-800">{{ $item->label }}</span>
+                    <span class="text-sm font-semibold text-red-500">-${{ number_format($item->amount, 2) }}</span>
                 </div>
-                @endif
-                @endforeach
+                @empty
+                <p class="text-sm text-gray-800">No deductions.</p>
+                @endforelse
                 <div class="flex items-center justify-between py-2 border-t border-gray-100">
                     <span class="text-sm font-bold text-gray-900">Total Deductions</span>
                     <span class="font-black text-red-500">-${{ number_format($payslip->total_deductions, 2) }}</span>

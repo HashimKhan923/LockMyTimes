@@ -61,11 +61,21 @@ class PayrollService
         $dailyRate      = $workingDays > 0 ? round($basePay / $workingDays, 4) : 0;
         $absentDeduct   = round($dailyRate * $att['absent_days'], 2);
 
-        // Earnings
-        $bonus          = $this->sumComponents($employee, 'earning');
-        $otPay          = $att['overtime_pay'];
+        // Assigned salary components (earning/deduction/reimbursement) — 'tax' type
+        // components are catalog-only and deliberately excluded here; real tax is
+        // computed below from Tax Settings so an assigned "Federal Income Tax" row
+        // never double-counts against the actual bracket-based calculation.
+        $components            = $this->assignedComponents($employee);
+        $earningComponents     = $components->filter(fn ($ec) => $ec->component->type === 'earning');
+        $deductionComponents   = $components->filter(fn ($ec) => $ec->component->type === 'deduction');
+        $reimbursementComponents = $components->filter(fn ($ec) => $ec->component->type === 'reimbursement');
 
-        // Gross
+        // Earnings
+        $bonus          = (float) $earningComponents->sum('amount');
+        $otPay          = $att['overtime_pay'];
+        $reimbursement  = (float) $reimbursementComponents->sum('amount');
+
+        // Gross (reimbursements are non-taxable — added at the net stage below, not here)
         $grossPay = round($basePay - $absentDeduct + $bonus + $otPay, 2);
 
         // Taxes — rates from settings, fallback to statutory defaults
@@ -79,7 +89,7 @@ class PayrollService
         $ficaMedicare    = round($grossPay * $ficaMedRate, 2);
 
         // Other deductions (health, 401k, loans, etc.)
-        $otherDeduct   = $this->sumComponents($employee, 'deduction');
+        $otherDeduct   = (float) $deductionComponents->sum('amount');
         $loanDeduct    = $this->loanDeductions($employee);
 
         $totalDeductions = round(
@@ -88,7 +98,7 @@ class PayrollService
             2
         );
 
-        $netPay = round($grossPay - $totalDeductions, 2);
+        $netPay = round($grossPay - $totalDeductions + $reimbursement, 2);
 
         $payslip = Payslip::updateOrCreate(
             [
@@ -109,7 +119,7 @@ class PayrollService
                 'overtime_pay'    => $otPay,
                 'bonus'           => $bonus,
                 'commission'      => 0,
-                'reimbursement'   => 0,
+                'reimbursement'   => $reimbursement,
                 'gross_pay'       => $grossPay,
                 'federal_tax'     => $federalTax,
                 'state_tax'       => $stateTax,
@@ -129,24 +139,44 @@ class PayrollService
             ]
         );
 
-        $this->writePayslipItems($payslip, [
-            'earnings' => array_filter([
-                'Base Pay' => $basePay,
-                'Overtime Pay' => $otPay,
-                'Bonus' => $bonus,
-            ]),
-            'taxes' => array_filter([
-                'Federal Income Tax' => $federalTax,
-                'State Tax' => $stateTax,
-                'Social Security' => $ficaSS,
-                'Medicare' => $ficaMedicare,
-            ]),
-            'deductions' => array_filter([
-                'Absence Deduction' => $absentDeduct,
-                'Loan / Advance Repayment' => $loanDeduct,
-                'Other Deductions' => $otherDeduct,
-            ]),
-        ]);
+        $lines = [];
+        // Computed lines — not tied to a salary_component_id since they're derived
+        // (base salary, attendance, tax brackets), not read from the catalog.
+        foreach (['Base Pay' => $basePay, 'Overtime Pay' => $otPay] as $label => $amount) {
+            if ($amount > 0) $lines[] = ['label' => $label, 'type' => 'earning', 'amount' => $amount];
+        }
+        // One line per assigned earning component — the real breakdown, e.g. "Bonus",
+        // "Commission", "Holiday Pay" each shown separately instead of lumped together.
+        foreach ($earningComponents as $ec) {
+            if ((float) $ec->amount > 0) {
+                $lines[] = ['label' => $ec->component->name, 'type' => 'earning', 'amount' => (float) $ec->amount, 'salary_component_id' => $ec->salary_component_id];
+            }
+        }
+        foreach ($reimbursementComponents as $ec) {
+            if ((float) $ec->amount > 0) {
+                $lines[] = ['label' => $ec->component->name, 'type' => 'reimbursement', 'amount' => (float) $ec->amount, 'salary_component_id' => $ec->salary_component_id];
+            }
+        }
+        foreach ([
+            'Federal Income Tax' => $federalTax,
+            'State Tax' => $stateTax,
+            'Social Security' => $ficaSS,
+            'Medicare' => $ficaMedicare,
+        ] as $label => $amount) {
+            if ($amount > 0) $lines[] = ['label' => $label, 'type' => 'tax', 'amount' => $amount];
+        }
+        foreach (['Absence Deduction' => $absentDeduct, 'Loan / Advance Repayment' => $loanDeduct] as $label => $amount) {
+            if ($amount > 0) $lines[] = ['label' => $label, 'type' => 'deduction', 'amount' => $amount];
+        }
+        // One line per assigned deduction component — e.g. "Health Insurance", "401(k)
+        // Contribution", "Vision Insurance" each shown separately.
+        foreach ($deductionComponents as $ec) {
+            if ((float) $ec->amount > 0) {
+                $lines[] = ['label' => $ec->component->name, 'type' => 'deduction', 'amount' => (float) $ec->amount, 'salary_component_id' => $ec->salary_component_id];
+            }
+        }
+
+        $this->writePayslipItems($payslip, $lines);
 
         return $payslip;
     }
@@ -156,25 +186,22 @@ class PayrollService
      * PayrollSyncService already writes for third-party-imported payslips (see its own loop over
      * $row['items']) so a payslip looks the same regardless of source. Clears any prior items
      * first since generatePayslip() can be called again for the same run (regenerate).
+     *
+     * @param array<int, array{label: string, type: string, amount: float, salary_component_id?: int}> $lines
      */
-    private function writePayslipItems(Payslip $payslip, array $groups): void
+    private function writePayslipItems(Payslip $payslip, array $lines): void
     {
         $payslip->items()->delete();
 
-        $sortOrder = 0;
-        foreach (['earnings' => 'earning', 'taxes' => 'tax', 'deductions' => 'deduction'] as $group => $type) {
-            foreach ($groups[$group] as $label => $amount) {
-                if ($amount <= 0) {
-                    continue;
-                }
-                PayslipItem::create([
-                    'payslip_id' => $payslip->id,
-                    'label' => $label,
-                    'type' => $type,
-                    'amount' => $amount,
-                    'sort_order' => $sortOrder++,
-                ]);
-            }
+        foreach ($lines as $sortOrder => $line) {
+            PayslipItem::create([
+                'payslip_id'           => $payslip->id,
+                'salary_component_id'  => $line['salary_component_id'] ?? null,
+                'label'                => $line['label'],
+                'type'                 => $line['type'],
+                'amount'               => $line['amount'],
+                'sort_order'           => $sortOrder,
+            ]);
         }
     }
 
@@ -225,11 +252,28 @@ class PayrollService
         return $days;
     }
 
-    private function sumComponents(Employee $employee, string $type): float
+    /**
+     * This employee's currently-in-effect assigned salary components — active,
+     * and (if set) within their effective_from/effective_to date window.
+     * Filtered in-memory since Employee::salaryComponents is already eager-loaded
+     * by generateRun(), avoiding an N+1 query per employee.
+     */
+    private function assignedComponents(Employee $employee)
     {
-        return (float) $employee->salaryComponents
-            ->filter(fn($ec) => ($ec->component->type ?? '') === $type && $ec->is_active)
-            ->sum('amount');
+        $today = now()->toDateString();
+
+        return $employee->salaryComponents->filter(function ($ec) use ($today) {
+            if (! $ec->is_active || ! $ec->component) {
+                return false;
+            }
+            if ($ec->effective_from && $ec->effective_from->toDateString() > $today) {
+                return false;
+            }
+            if ($ec->effective_to && $ec->effective_to->toDateString() < $today) {
+                return false;
+            }
+            return true;
+        });
     }
 
     private function loanDeductions(Employee $employee): float

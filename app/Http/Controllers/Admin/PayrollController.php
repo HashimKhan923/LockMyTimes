@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\AuditLog;
 use App\Models\Tenant\Employee;
+use App\Models\Tenant\EmployeeSalaryComponent;
 use App\Models\Tenant\Payslip;
 use App\Models\Tenant\PayrollRun;
 use App\Models\Tenant\SalaryComponent;
@@ -236,25 +237,102 @@ public function createRun(string $tenant, Request $request)
      |================================================================*/
     public function components(string $tenant)
     {
-        $components = SalaryComponent::withCount('employeeSalaryComponents')->orderBy('type')->get();
-        return view('admin.payroll.components', compact('components', 'tenant'));
+        $components = SalaryComponent::withCount('employeeSalaryComponents')
+            ->with(['employeeSalaryComponents' => fn ($q) => $q->where('is_active', true)->with('employee'), ])
+            ->orderBy('type')->orderBy('name')->get();
+        $employees = Employee::active()->orderBy('first_name')->get();
+
+        return view('admin.payroll.components', compact('components', 'employees', 'tenant'));
+    }
+
+    private function componentValidationRules(): array
+    {
+        return [
+            'name'              => 'required|string|max:100',
+            'type'              => 'required|in:earning,deduction,reimbursement,tax',
+            'calculation'       => 'required|in:fixed,percentage,formula,hours_x_rate',
+            'default_value'     => 'nullable|numeric|min:0',
+            'is_taxable'        => 'boolean',
+            'is_recurring'      => 'boolean',
+            'shows_on_payslip'  => 'boolean',
+        ];
     }
 
     public function storeComponent(string $tenant, Request $request)
     {
+        $data = $request->validate(array_merge($this->componentValidationRules(), [
+            'code' => 'required|string|max:20|unique:salary_components,code',
+        ]));
+
+        $data['is_taxable']       = $request->boolean('is_taxable');
+        $data['is_recurring']     = $request->boolean('is_recurring', true);
+        $data['shows_on_payslip'] = $request->boolean('shows_on_payslip', true);
+        $data['is_active']        = true;
+
+        SalaryComponent::create($data);
+        return back()->with('success', 'Salary component created.');
+    }
+
+    public function updateComponent(string $tenant, Request $request, SalaryComponent $salaryComponent)
+    {
+        $data = $request->validate($this->componentValidationRules());
+
+        $data['is_taxable']       = $request->boolean('is_taxable');
+        $data['is_recurring']     = $request->boolean('is_recurring');
+        $data['shows_on_payslip'] = $request->boolean('shows_on_payslip');
+        $data['is_active']        = $request->boolean('is_active');
+
+        $salaryComponent->update($data);
+        return back()->with('success', 'Salary component updated.');
+    }
+
+    public function destroyComponent(string $tenant, SalaryComponent $salaryComponent)
+    {
+        if ($salaryComponent->employeeSalaryComponents()->count() > 0) {
+            return back()->with('error', 'Cannot delete a component that is assigned to employees. Unassign it first.');
+        }
+
+        $salaryComponent->delete();
+        return back()->with('success', 'Salary component deleted.');
+    }
+
+    /* ================================================================
+     | SALARY COMPONENTS — ASSIGN / UNASSIGN
+     |================================================================*/
+    public function assignComponent(string $tenant, Request $request, SalaryComponent $salaryComponent)
+    {
+        if ($salaryComponent->type === 'tax') {
+            return back()->with('error', 'Tax components are computed automatically from Tax Settings and cannot be assigned directly.');
+        }
+
         $data = $request->validate([
-            'name'          => 'required|string|max:100',
-            'code'          => 'required|string|max:20|unique:salary_components,code',
-            'type'          => 'required|in:earning,deduction,tax,benefit',
-            'calculation'   => 'required|in:fixed,percentage,formula',
-            'default_amount'=> 'nullable|numeric|min:0',
-            'is_taxable'    => 'boolean',
-            'is_mandatory'  => 'boolean',
-            'description'   => 'nullable|string',
+            'employee_id'     => 'required|exists:employees,id',
+            'amount'          => 'required|numeric|min:0',
+            'effective_from'  => 'required|date',
+            'effective_to'    => 'nullable|date|after_or_equal:effective_from',
         ]);
 
-        SalaryComponent::create(array_merge($data, ['is_active' => true]));
-        return back()->with('success', 'Salary component created.');
+        EmployeeSalaryComponent::updateOrCreate(
+            ['employee_id' => $data['employee_id'], 'salary_component_id' => $salaryComponent->id],
+            [
+                'amount'         => $data['amount'],
+                'effective_from' => $data['effective_from'],
+                'effective_to'   => $data['effective_to'] ?? null,
+                'is_active'      => true,
+            ]
+        );
+
+        $employee = Employee::find($data['employee_id']);
+        return back()->with('success', "{$salaryComponent->name} assigned to {$employee->full_name}.");
+    }
+
+    public function unassignComponent(string $tenant, SalaryComponent $salaryComponent, EmployeeSalaryComponent $assignment)
+    {
+        abort_unless($assignment->salary_component_id === $salaryComponent->id, 404);
+
+        $assignment->update(['is_active' => false, 'effective_to' => now()->toDateString()]);
+
+        return back()->with('success', 'Component unassigned.');
     }
 
     /* ================================================================
