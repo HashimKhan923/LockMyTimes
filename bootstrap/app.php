@@ -4,6 +4,12 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
+// Loaded with a plain require, not via composer.json's autoload "files" array —
+// this file always runs on every request regardless of whether `composer
+// dump-autoload` has been run after a deploy, so a helper defined here can
+// never go missing in production the way a composer-autoloaded file can.
+require_once __DIR__.'/../app/Support/helpers.php';
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
