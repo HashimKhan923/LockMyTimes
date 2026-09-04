@@ -149,7 +149,7 @@
                 ['lbl'=>'Late',     'val'=>$summary->late_count,    'icon'=>'alert-circle','color'=>'bg-amber-50 text-amber-600'],
                 ['lbl'=>'Absent',   'val'=>$summary->absent_days,   'icon'=>'x-circle',    'color'=>'bg-red-50 text-red-600'],
                 ['lbl'=>'On Leave', 'val'=>$summary->leave_days,    'icon'=>'palmtree',    'color'=>'bg-violet-50 text-violet-600'],
-                ['lbl'=>'Hours',    'val'=>number_format($summary->total_hours, 1).'h', 'icon'=>'clock','color'=>'bg-brand-50 text-brand-600'],
+                ['lbl'=>'Hours',    'val'=>format_hours($summary->total_hours, '0h'), 'icon'=>'clock','color'=>'bg-brand-50 text-brand-600'],
             ];
         @endphp
         @foreach($cards as $i => $c)

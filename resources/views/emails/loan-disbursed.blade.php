@@ -22,8 +22,8 @@
         @foreach([
           ['Loan Type',       $loan->loanType->name ?? '-'],
           ['Disbursed On',    now()->format('D, M j, Y')],
-          ['Monthly EMI',     '$' . number_format($loan->monthly_installment ?? 0, 2)],
-          ['Total Months',    ($loan->installments ?? '-') . ' months'],
+          ['Monthly EMI',     '$' . number_format($loan->emi_amount ?? 0, 2)],
+          ['Total Months',    ($loan->tenure_months ?? '-') . ' months'],
         ] as [$label, $value])
         <tr>
           <td style="padding:7px 0; width:140px; font-size:13px; color:#9CA3AF; font-weight:500;">{{ $label }}</td>
@@ -37,7 +37,7 @@
     <td style="padding:0 24px 20px;">
       <div style="background:linear-gradient(135deg,#4F46E5,#7C3AED); border-radius:10px; padding:16px 20px; text-align:center;">
         <div style="font-size:12px; color:rgba(255,255,255,0.75); text-transform:uppercase; letter-spacing:1px;">Amount Disbursed</div>
-        <div style="font-size:32px; font-weight:800; color:#fff; margin-top:4px;">${{ number_format($loan->amount, 2) }}</div>
+        <div style="font-size:32px; font-weight:800; color:#fff; margin-top:4px;">${{ number_format($loan->principal_amount, 2) }}</div>
       </div>
     </td>
   </tr>

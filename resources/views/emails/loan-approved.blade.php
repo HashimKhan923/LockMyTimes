@@ -21,9 +21,9 @@
       <table width="100%" cellpadding="0" cellspacing="0">
         @foreach([
           ['Loan Type',        $loan->loanType->name ?? '-'],
-          ['Loan Amount',      '$' . number_format($loan->amount, 2)],
-          ['Monthly EMI',      '$' . number_format($loan->monthly_installment ?? 0, 2)],
-          ['Repayment Period', ($loan->installments ?? '-') . ' months'],
+          ['Loan Amount',      '$' . number_format($loan->principal_amount, 2)],
+          ['Monthly EMI',      '$' . number_format($loan->emi_amount ?? 0, 2)],
+          ['Repayment Period', ($loan->tenure_months ?? '-') . ' months'],
           ['Interest Rate',    ($loan->interest_rate ?? '0') . '%'],
         ] as [$label, $value])
         <tr>

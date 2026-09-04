@@ -192,6 +192,15 @@
 
             @php
             $tenantSlug = $currentTenant->slug ?? request()->route('tenant');
+
+            // Pending-request counts for the sidebar badges below — each is a lightweight
+            // count on an already-indexed status column, one query per queue.
+            $pendingLeaves      = \App\Models\Tenant\LeaveRequest::where('status', 'pending')->count();
+            $pendingCorrections = \App\Models\Tenant\AttendanceCorrectionRequest::where('status', 'pending')->count();
+            $pendingExpenses    = \App\Models\Tenant\Expense::where('status', 'submitted')->count();
+            $pendingLoans       = \App\Models\Tenant\Loan::where('status', 'pending')->count()
+                                 + \App\Models\Tenant\SalaryAdvance::where('status', 'pending')->count();
+
             $navGroups = [
                 'Main' => [
                     ['route'=>'admin.dashboard',         'icon'=>'layout-dashboard', 'label'=>'Dashboard'],
@@ -204,15 +213,15 @@
                 ],
                 'Time & Attendance' => [
                     ['route'=>'admin.attendance.index',  'icon'=>'clock',            'label'=>'Attendance'],
-                    ['route'=>'admin.attendance-corrections.index', 'icon'=>'edit-3', 'label'=>'Corrections'],
+                    ['route'=>'admin.attendance-corrections.index', 'icon'=>'edit-3', 'label'=>'Corrections', 'badge'=>$pendingCorrections],
                     ['route'=>'admin.qrcodes.index',     'icon'=>'qr-code',          'label'=>'QR Codes'],
                     ['route'=>'admin.shifts.index',      'icon'=>'calendar-days',    'label'=>'Shifts'],
-                    ['route'=>'admin.leaves.index',      'icon'=>'calendar-off',     'label'=>'Leaves'],
+                    ['route'=>'admin.leaves.index',      'icon'=>'calendar-off',     'label'=>'Leaves', 'badge'=>$pendingLeaves],
                 ],
                 'Payroll & Finance' => [
                     ['route'=>'admin.payroll.index',     'icon'=>'dollar-sign',      'label'=>'Payroll'],
-                    ['route'=>'admin.expenses.index',    'icon'=>'receipt',          'label'=>'Expenses'],
-                    ['route'=>'admin.loans.index',       'icon'=>'hand-coins',       'label'=>'Loans & Advances'],
+                    ['route'=>'admin.expenses.index',    'icon'=>'receipt',          'label'=>'Expenses', 'badge'=>$pendingExpenses],
+                    ['route'=>'admin.loans.index',       'icon'=>'hand-coins',       'label'=>'Loans & Advances', 'badge'=>$pendingLoans],
                 ],
                 'Performance' => [
                     ['route'=>'admin.performance.index', 'icon'=>'trending-up', 'label'=>'Reviews'],
@@ -254,7 +263,10 @@
                    class="adm-nav-link {{ $active ? 'active' : '' }}">
                     <i data-lucide="{{ $item['icon'] }}" class="nav-icon"></i>
                     <span class="nav-label flex-1">{{ $item['label'] }}</span>
-                    <span class="nav-tooltip">{{ $item['label'] }}</span>
+                    @if(($item['badge'] ?? 0) > 0)
+                    <span class="nav-badge">{{ $item['badge'] }}</span>
+                    @endif
+                    <span class="nav-tooltip">{{ $item['label'] }}{{ ($item['badge'] ?? 0) > 0 ? ' ('.$item['badge'].')' : '' }}</span>
                 </a>
                 @else
                 <div class="adm-nav-link opacity-50 cursor-not-allowed select-none">

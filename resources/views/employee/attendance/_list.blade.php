@@ -73,17 +73,17 @@
                                 {{ $att?->clock_out_at ? \Carbon\Carbon::parse($att->clock_out_at)->format('h:i A') : '—' }}
                             </td>
                             <td class="font-mono text-sm font-bold">
-                                {{ $att && $att->total_hours ? number_format((float) $att->total_hours, 2).'h' : '—' }}
+                                {{ format_hours($att?->total_hours) }}
                             </td>
                             <td class="hidden lg:table-cell font-mono text-sm">
                                 @if($att?->overtime_hours)
-                                    <span class="text-emerald-600 font-bold">+{{ number_format((float) $att->overtime_hours, 2) }}h</span>
+                                    <span class="text-emerald-600 font-bold">+{{ format_hours($att->overtime_hours) }}</span>
                                 @else
                                     —
                                 @endif
                             </td>
                             <td class="hidden lg:table-cell font-mono text-sm">
-                                {{ $att?->break_hours ? number_format((float) $att->break_hours, 2).'h' : '—' }}
+                                {{ format_hours($att?->break_hours) }}
                             </td>
                             <td class="hidden md:table-cell text-sm text-gray-800">
                                 {{ $att?->location?->name ?? '—' }}

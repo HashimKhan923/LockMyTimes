@@ -90,17 +90,17 @@
             <div class="p-4 rounded-2xl bg-brand-50 dark:bg-slate-800" style="background:var(--brand-50);">
                 <p class="text-[10px] font-bold uppercase tracking-wider" style="color:var(--brand-700);">Total Hours</p>
                 <p class="font-mono text-lg font-black mt-1" style="color:var(--brand-700);">
-                    {{ number_format((float) ($att->total_hours ?? 0), 2) }}h
+                    {{ format_hours($att->total_hours ?? 0, '0h') }}
                 </p>
                 <p class="text-[10px] mt-1 uppercase tracking-wide" style="color:var(--brand-700);">
-                    Regular {{ number_format((float) ($att->regular_hours ?? 0), 1) }}h
-                    @if($att->overtime_hours > 0) · OT +{{ number_format((float) $att->overtime_hours, 1) }}h @endif
+                    Regular {{ format_hours($att->regular_hours ?? 0, '0h') }}
+                    @if($att->overtime_hours > 0) · OT +{{ format_hours($att->overtime_hours) }} @endif
                 </p>
             </div>
             <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10">
                 <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Break Time</p>
                 <p class="font-mono text-lg font-black text-amber-700 mt-1">
-                    {{ number_format((float) ($att->break_hours ?? 0), 2) }}h
+                    {{ format_hours($att->break_hours ?? 0, '0h') }}
                 </p>
                 <p class="text-[10px] text-amber-700 mt-1 uppercase tracking-wide">
                     {{ $att->breaks->count() }} session{{ $att->breaks->count() === 1 ? '' : 's' }}

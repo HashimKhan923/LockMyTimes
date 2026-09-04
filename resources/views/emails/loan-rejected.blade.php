@@ -21,7 +21,7 @@
       <table width="100%" cellpadding="0" cellspacing="0">
         @foreach([
           ['Loan Type',   $loan->loanType->name ?? '-'],
-          ['Requested',   '$' . number_format($loan->amount, 2)],
+          ['Requested',   '$' . number_format($loan->principal_amount, 2)],
         ] as [$label, $value])
         <tr>
           <td style="padding:7px 0; width:130px; font-size:13px; color:#9CA3AF; font-weight:500;">{{ $label }}</td>

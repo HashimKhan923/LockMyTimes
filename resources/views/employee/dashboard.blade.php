@@ -219,10 +219,10 @@
     <div class="lmt-stat" data-lmt-anim="fade-up" data-lmt-delay="0.15">
         <div class="flex-1">
             <p class="lmt-stat-label">Month Hours</p>
-            <p class="lmt-stat-value font-mono">{{ number_format((float) ($monthStats->total_hours ?? 0), 1) }}h</p>
+            <p class="lmt-stat-value font-mono">{{ format_hours($monthStats->total_hours ?? 0, '0h') }}</p>
             @if(($monthStats->overtime_hours ?? 0) > 0)
                 <p class="text-xs text-emerald-500 font-semibold mt-1">
-                    +{{ number_format($monthStats->overtime_hours, 1) }}h overtime
+                    +{{ format_hours($monthStats->overtime_hours) }} overtime
                 </p>
             @else
                 <p class="text-xs text-gray-800 mt-1">No overtime</p>
@@ -287,7 +287,7 @@
                         </p>
                         <div class="w-2 h-2 rounded-full mx-auto mt-2" style="{{ $dotStyle }}"></div>
                         @if($day->hours > 0)
-                            <p class="text-[9px] text-gray-800 font-mono mt-1">{{ number_format($day->hours, 1) }}h</p>
+                            <p class="text-[9px] text-gray-800 font-mono mt-1 whitespace-nowrap">{{ format_hours($day->hours) }}</p>
                         @endif
                     </div>
                 @endforeach

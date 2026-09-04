@@ -179,12 +179,12 @@
                     </td>
                     <td>
                         <span class="text-sm font-bold {{ $rec->total_hours >= 8 ? 'text-emerald-600' : 'text-gray-900' }}">
-                            {{ $rec->total_hours ? number_format($rec->total_hours,1).'h' : '—' }}
+                            {{ format_hours($rec->total_hours) }}
                         </span>
                     </td>
                     <td>
                         @if($rec->overtime_hours > 0)
-                        <span class="lmt-badge-amber text-xs">{{ number_format($rec->overtime_hours,1) }}h OT</span>
+                        <span class="lmt-badge-amber text-xs">{{ format_hours($rec->overtime_hours) }} OT</span>
                         @else
                         <span class="text-gray-800 text-sm">—</span>
                         @endif

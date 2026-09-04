@@ -36,8 +36,8 @@
                 ['label'=>'Days Present','value'=>$summary['present'],'color'=>'text-emerald-600'],
                 ['label'=>'Total Days','value'=>$summary['total_days'],'color'=>'text-gray-900'],
                 ['label'=>'Late Days','value'=>$summary['late'],'color'=>'text-amber-600'],
-                ['label'=>'Total Hours','value'=>$summary['total_hours'].'h','color'=>'text-brand-600'],
-                ['label'=>'Overtime','value'=>$summary['overtime_hours'].'h','color'=>'text-purple-600'],
+                ['label'=>'Total Hours','value'=>format_hours($summary['total_hours'], '0h'),'color'=>'text-brand-600'],
+                ['label'=>'Overtime','value'=>format_hours($summary['overtime_hours'], '0h'),'color'=>'text-purple-600'],
             ] as $s)
             <div class="text-center">
                 <p class="text-2xl font-black {{ $s['color'] }}">{{ $s['value'] }}</p>
@@ -97,7 +97,7 @@
                     {{ $rec->clock_in_at?->format('h:ia') ?? strtoupper(substr($rec->status,0,3)) }}
                 </span>
                 @if($rec->total_hours > 0)
-                <span class="text-[10px] text-gray-800">{{ number_format($rec->total_hours,1) }}h</span>
+                <span class="text-[10px] text-gray-800">{{ format_hours($rec->total_hours) }}</span>
                 @endif
                 @elseif(!$isWeekend && $dateKey < now()->toDateString())
                 <span class="text-[10px] text-red-600 mt-auto">Absent</span>

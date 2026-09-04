@@ -41,7 +41,7 @@
                 {{-- Hours --}}
                 @if($att && $att->total_hours > 0)
                     <div class="mt-1.5 font-mono text-[11px] font-bold text-gray-800 dark:text-slate-200">
-                        {{ number_format((float) $att->total_hours, 1) }}h
+                        {{ format_hours($att->total_hours) }}
                     </div>
                 @endif
 
