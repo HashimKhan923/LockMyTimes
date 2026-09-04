@@ -27,7 +27,7 @@
                 <div>
                     <div class="flex items-center gap-2 mb-1">
                         @if(isset($currentTenant) && $currentTenant->logo)
-                        <img src="{{ $currentTenant->logo_url }}" class="w-8 h-8 rounded-lg object-cover bg-white/10" alt="Logo"/>
+                        <img src="{{ $currentTenant->logo_url }}" class="h-9 max-w-[140px] w-auto object-contain" alt="Logo"/>
                         @else
                         <i data-lucide="clock" class="w-5 h-5 text-white/80"></i>
                         @endif
