@@ -15,6 +15,7 @@ use App\Services\NotificationService;
 use App\Services\PayrollService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PayrollController extends Controller
 {
@@ -301,28 +302,43 @@ public function createRun(string $tenant, Request $request)
      |================================================================*/
     public function assignComponent(string $tenant, Request $request, SalaryComponent $salaryComponent)
     {
+        $applyToAll = $request->boolean('apply_to_all');
+
         $data = $request->validate([
-            'employee_id'     => 'required|exists:employees,id',
+            'employee_id'     => $applyToAll ? 'nullable' : 'required|exists:employees,id',
             'amount'          => 'required|numeric|min:0',
             'effective_from'  => 'required|date',
             'effective_to'    => 'nullable|date|after_or_equal:effective_from',
         ]);
 
-        EmployeeSalaryComponent::updateOrCreate(
-            ['employee_id' => $data['employee_id'], 'salary_component_id' => $salaryComponent->id],
-            [
-                'amount'         => $data['amount'],
-                'effective_from' => $data['effective_from'],
-                'effective_to'   => $data['effective_to'] ?? null,
-                'is_active'      => true,
-            ]
-        );
+        $values = [
+            'amount'         => $data['amount'],
+            'effective_from' => $data['effective_from'],
+            'effective_to'   => $data['effective_to'] ?? null,
+            'is_active'      => true,
+        ];
 
-        $employee = Employee::find($data['employee_id']);
+        if ($applyToAll) {
+            $employees = Employee::where('employment_status', 'active')->get(['id']);
 
-        $message = "{$salaryComponent->name} assigned to {$employee->full_name}.";
-        if ($salaryComponent->type === 'tax') {
-            $message .= ' This fixed amount will override the automatic tax calculation for this employee.';
+            DB::transaction(function () use ($employees, $salaryComponent, $values) {
+                foreach ($employees as $employee) {
+                    EmployeeSalaryComponent::updateOrCreate(
+                        ['employee_id' => $employee->id, 'salary_component_id' => $salaryComponent->id],
+                        $values
+                    );
+                }
+            });
+
+            $message = "{$salaryComponent->name} assigned to all {$employees->count()} active employees.";
+        } else {
+            EmployeeSalaryComponent::updateOrCreate(
+                ['employee_id' => $data['employee_id'], 'salary_component_id' => $salaryComponent->id],
+                $values
+            );
+
+            $employee = Employee::find($data['employee_id']);
+            $message  = "{$salaryComponent->name} assigned to {$employee->full_name}.";
         }
 
         return back()->with('success', $message);

@@ -16,7 +16,6 @@
                 'branding'     => ['palette',    'Branding'],
                 'attendance'   => ['clock',      'Attendance'],
                 'payroll'      => ['dollar-sign','Payroll'],
-                'tax'          => ['percent',    'Tax Settings'],
                 'leaves'       => ['calendar-off','Leave Policy'],
                 'notifications'=> ['bell',       'Notifications'],
                 'email'        => ['mail',       'Email Templates'],
@@ -322,8 +321,13 @@
                 </div>
                 <div>
                     <h2 class="font-black text-gray-900">Payroll Configuration</h2>
-                    <p class="text-xs text-gray-800">Pay schedule, overtime, FICA, and mileage rates</p>
+                    <p class="text-xs text-gray-800">Pay schedule, overtime, and mileage rates</p>
                 </div>
+            </div>
+
+            <div class="mb-5 p-3 rounded-lg bg-brand-50 text-brand-700 text-xs flex items-start gap-2">
+                <i data-lucide="info" class="w-3.5 h-3.5 flex-shrink-0 mt-0.5"></i>
+                <span>Taxes (Federal, State, Social Security, Medicare) are no longer auto-calculated here — set them up under <a href="{{ route('admin.payroll.components', $tenant) }}" class="font-bold underline">Payroll &rarr; Salary Components &rarr; Taxes</a> and assign an amount to each employee.</span>
             </div>
 
             <form action="{{ route('admin.settings.update', [$tenant, 'payroll']) }}" method="POST" class="space-y-5">
@@ -343,29 +347,6 @@
                             <input type="text" name="overtime_rate" class="lmt-input" value="{{ $payroll['overtime_rate'] ?? '1.5' }}"/>
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-800">×</span>
                         </div>
-                    </div>
-
-                    <div class="col-span-2 pt-2">
-                        <p class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-3">FICA Rates (US)</p>
-                    </div>
-                    <div>
-                        <label class="lmt-label">Social Security Rate</label>
-                        <div class="relative">
-                            <input type="text" name="fica_ss_rate" class="lmt-input" value="{{ $payroll['fica_ss_rate'] ?? '6.2' }}"/>
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-800">%</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="lmt-label">Medicare Rate</label>
-                        <div class="relative">
-                            <input type="text" name="fica_medicare_rate" class="lmt-input" value="{{ $payroll['fica_medicare_rate'] ?? '1.45' }}"/>
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-800">%</span>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="lmt-label">Social Security Wage Base ($)</label>
-                        <input type="text" name="ss_wage_base" class="lmt-input" value="{{ $payroll['ss_wage_base'] ?? '168600' }}"/>
-                        <p class="lmt-help">Annual income cap above which SS tax no longer applies.</p>
                     </div>
                     <div>
                         <label class="lmt-label">Mileage Reimbursement Rate ($/mile)</label>

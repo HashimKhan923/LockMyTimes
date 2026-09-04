@@ -118,9 +118,6 @@ class SettingController extends Controller
             'payroll' => [
                 'pay_schedule'        => 'string',
                 'overtime_rate'       => 'string',
-                'fica_ss_rate'        => 'string',
-                'fica_medicare_rate'  => 'string',
-                'ss_wage_base'        => 'string',
                 'mileage_rate'        => 'string',
             ],
             'leaves' => [

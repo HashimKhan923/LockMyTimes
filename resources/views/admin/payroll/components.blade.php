@@ -233,7 +233,7 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','reimbu
         @if($comp->type === 'tax')
         <div class="mb-4 p-3 rounded-lg bg-amber-50 text-amber-700 text-xs flex items-start gap-2">
             <i data-lucide="info" class="w-3.5 h-3.5 flex-shrink-0 mt-0.5"></i>
-            <span>Assigning a fixed amount here overrides the automatic tax calculation for that employee on every future payslip — it doesn't add on top of it.</span>
+            <span>Nothing is deducted for this tax unless it's assigned here — there's no automatic calculation running in the background.</span>
         </div>
         @endif
 
@@ -264,11 +264,17 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','reimbu
         </div>
 
         {{-- Add assignment --}}
-        <form action="{{ route('admin.payroll.components.assign', [$tenant, $comp->id]) }}" method="POST" class="space-y-3 pt-4 border-t border-gray-100">
+        <form action="{{ route('admin.payroll.components.assign', [$tenant, $comp->id]) }}" method="POST" class="space-y-3 pt-4 border-t border-gray-100"
+              onsubmit="return !document.getElementById('apply-all-{{ $comp->id }}').checked || confirm('Assign {{ addslashes($comp->name) }} to ALL active employees? This will overwrite any existing assignment of this component for every employee.');">
             @csrf
+            <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50">
+                <input type="checkbox" id="apply-all-{{ $comp->id }}" name="apply_to_all" value="1" class="w-4 h-4 rounded"
+                       onchange="document.getElementById('emp-select-{{ $comp->id }}').disabled = this.checked; document.getElementById('emp-select-{{ $comp->id }}').required = !this.checked;">
+                <span class="text-xs font-semibold text-gray-800">Apply to all active employees instead of one</span>
+            </label>
             <div>
                 <label class="lmt-label">Assign To <span class="text-red-500">*</span></label>
-                <select name="employee_id" required class="lmt-select">
+                <select name="employee_id" id="emp-select-{{ $comp->id }}" required class="lmt-select">
                     <option value="">— Select Employee —</option>
                     @foreach($employees as $emp)
                     <option value="{{ $emp->id }}">{{ $emp->full_name }}</option>

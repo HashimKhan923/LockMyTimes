@@ -61,12 +61,9 @@ class PayrollService
         $dailyRate      = $workingDays > 0 ? round($basePay / $workingDays, 4) : 0;
         $absentDeduct   = round($dailyRate * $att['absent_days'], 2);
 
-        // Assigned salary components. 'tax' type components are an explicit per-employee
-        // override, keyed by their catalog code (FED_TAX / STATE_TAX / FICA_SS / FICA_MED):
-        // when an admin assigns one to an employee, that fixed amount REPLACES the
-        // automatic bracket/rate calculation for that tax line on that employee's
-        // payslip — it never adds on top of it. Employees with nothing assigned keep
-        // getting the automatic calculation as before.
+        // Assigned salary components, including 'tax' type ones (keyed by their catalog
+        // code: FED_TAX / STATE_TAX / FICA_SS / FICA_MED) — see the Taxes block below,
+        // which reads straight from this collection with no automatic calculation.
         $components            = $this->assignedComponents($employee);
         $earningComponents     = $components->filter(fn ($ec) => $ec->component->type === 'earning');
         $deductionComponents   = $components->filter(fn ($ec) => $ec->component->type === 'deduction');
@@ -82,25 +79,14 @@ class PayrollService
         // Gross (reimbursements are non-taxable — added at the net stage below, not here)
         $grossPay = round($basePay - $absentDeduct + $bonus + $otPay, 2);
 
-        // Taxes — an assigned tax component overrides the automatic figure for that
-        // employee; otherwise fall back to rates/brackets from Settings / Tax Settings.
-        $ficaSsRate      = (float) Setting::get('payroll.fica_ss_rate',       6.2)  / 100;
-        $ficaMedRate     = (float) Setting::get('payroll.fica_medicare_rate',  1.45) / 100;
-        $annualGross     = $grossPay * 12;
-        $year            = Carbon::parse($run->pay_date)->year;
-
-        $federalTax   = $taxComponents->has('FED_TAX')
-            ? (float) $taxComponents['FED_TAX']->amount
-            : round($this->federalTax($annualGross, $year) / 12, 2);
-        $stateTax     = $taxComponents->has('STATE_TAX')
-            ? (float) $taxComponents['STATE_TAX']->amount
-            : round($this->stateTax($annualGross, $employee->state, $year) / 12, 2);
-        $ficaSS       = $taxComponents->has('FICA_SS')
-            ? (float) $taxComponents['FICA_SS']->amount
-            : round($grossPay * $ficaSsRate, 2);
-        $ficaMedicare = $taxComponents->has('FICA_MED')
-            ? (float) $taxComponents['FICA_MED']->amount
-            : round($grossPay * $ficaMedRate, 2);
+        // Taxes — driven entirely by what's assigned in Salary Components, same as
+        // earning/deduction/reimbursement. Nothing is deducted for a tax line unless
+        // the admin has explicitly assigned that Tax component to this employee; there
+        // is no automatic bracket/rate calculation running in the background.
+        $federalTax   = (float) ($taxComponents['FED_TAX']->amount ?? 0);
+        $stateTax     = (float) ($taxComponents['STATE_TAX']->amount ?? 0);
+        $ficaSS       = (float) ($taxComponents['FICA_SS']->amount ?? 0);
+        $ficaMedicare = (float) ($taxComponents['FICA_MED']->amount ?? 0);
 
         // Other deductions (health, 401k, loans, etc.)
         $otherDeduct   = (float) $deductionComponents->sum('amount');
