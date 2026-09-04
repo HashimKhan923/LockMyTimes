@@ -128,7 +128,10 @@
                 </p>
                 @forelse($earnings as $item)
                     <div class="ps-line">
-                        <span>{{ $item->label }}</span>
+                        <span>
+                            {{ $item->label }}
+                            @if($item->note)<span class="ps-note">{{ $item->note }}</span>@endif
+                        </span>
                         <span class="ps-amt">{{ $sym }}{{ number_format($item->amount, 2) }}</span>
                     </div>
                 @empty
@@ -145,7 +148,10 @@
                 </p>
                 @forelse($deductions as $item)
                     <div class="ps-line">
-                        <span>{{ $item->label }}</span>
+                        <span>
+                            {{ $item->label }}
+                            @if($item->note)<span class="ps-note">{{ $item->note }}</span>@endif
+                        </span>
                         <span class="ps-amt neg">−{{ $sym }}{{ number_format($item->amount, 2) }}</span>
                     </div>
                 @empty
@@ -187,9 +193,9 @@
                 ['YTD Gross', $sym . number_format($payslip->ytd_gross, 0)],
                 ['YTD Taxes', $sym . number_format($payslip->ytd_taxes, 0)],
                 ['YTD Net',   $sym . number_format($payslip->ytd_net, 0)],
-                ['Regular Hrs',  number_format($payslip->regular_hours, 1)],
-                ['Overtime Hrs', number_format($payslip->overtime_hours, 1)],
-                ['Leave Hrs',    number_format($payslip->leave_hours, 1)],
+                ['Regular Hrs',  format_hours($payslip->regular_hours, '0h')],
+                ['Overtime Hrs', format_hours($payslip->overtime_hours, '0h')],
+                ['Days Absent',  (string) $payslip->days_absent],
             ] as [$label, $value])
                 <div class="ps-stat">
                     <p class="ps-stat-v">{{ $value }}</p>
@@ -227,8 +233,9 @@
     .ps-col-head { display:flex; align-items:center; gap:6px; font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; padding-bottom:10px; margin-bottom:10px; border-bottom:2px solid; }
     .ps-col-head.earn { color:#059669; border-color:#d1fae5; }
     .ps-col-head.ded { color:#dc2626; border-color:#fee2e2; }
-    .ps-line { display:flex; justify-content:space-between; gap:10px; font-size:.85rem; color:#374151; padding:5px 0; }
-    .ps-amt { font-weight:600; color:#111827; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .ps-line { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; font-size:.85rem; color:#374151; padding:5px 0; }
+    .ps-note { display:block; font-size:.68rem; color:#9ca3af; font-weight:400; margin-top:1px; }
+    .ps-amt { font-weight:600; color:#111827; white-space:nowrap; font-variant-numeric:tabular-nums; flex-shrink:0; }
     .ps-amt.neg { color:#dc2626; }
     .ps-subtotal { margin-top:6px; padding-top:10px; border-top:1px solid #f1f5f9; font-weight:800; color:#111827; }
     .ps-subtotal .ps-amt { font-weight:900; }

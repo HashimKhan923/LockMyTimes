@@ -53,7 +53,8 @@ class PayrollService
         $periodEnd   = Carbon::parse($run->period_end);
 
         // Base pay
-        $basePay = $this->getBasePay($employee, $run->pay_schedule ?? 'monthly');
+        $schedule = $run->pay_schedule ?? 'monthly';
+        $basePay  = $this->getBasePay($employee, $schedule);
 
         // Attendance
         $att         = $this->getAttendance($employee, $periodStart, $periodEnd);
@@ -62,6 +63,18 @@ class PayrollService
         // Absent deduction
         $dailyRate      = $workingDays > 0 ? round($basePay / $workingDays, 4) : 0;
         $absentDeduct   = round($dailyRate * $att['absent_days'], 2);
+
+        // Plain-English "how this was calculated" notes shown under each line on the
+        // payslip — the whole point being an employee never has to ask HR what a
+        // number means, since the math that produced it is right there.
+        $scheduleLabel = ['monthly' => 'monthly', 'bi_weekly' => 'bi-weekly', 'semi_monthly' => 'semi-monthly', 'weekly' => 'weekly'][$schedule] ?? $schedule;
+        $basePayNote   = '$' . number_format((float) ($employee->base_salary ?? 0), 2) . '/yr salary, ' . $scheduleLabel . ' schedule';
+        $otPayNote     = $att['overtime_hours'] > 0
+            ? number_format($att['overtime_hours'], 2) . ' hrs × $' . number_format($att['hourly_rate'], 2) . '/hr × ' . rtrim(rtrim(number_format($att['ot_rate'], 2), '0'), '.')
+            : null;
+        $absentNote    = $att['absent_days'] > 0
+            ? $att['absent_days'] . ' absent day(s) × $' . number_format($dailyRate, 2) . '/day (' . $workingDays . ' working days this period)'
+            : null;
 
         // Assigned salary components, including 'tax' type ones (keyed by their catalog
         // code: FED_TAX / STATE_TAX / FICA_SS / FICA_MED) — see the Taxes block below,
@@ -113,6 +126,12 @@ class PayrollService
                 'overtime_hours'  => $att['overtime_hours'],
                 'holiday_hours'   => 0,
                 'leave_hours'     => 0,
+                'working_days'    => $workingDays,
+                'days_present'    => $att['days_worked'],
+                'days_absent'     => $att['absent_days'],
+                'days_late'       => $att['late_days'],
+                'daily_rate'      => $dailyRate,
+                'hourly_rate'     => $att['hourly_rate'],
                 'base_pay'        => $basePay,
                 'overtime_pay'    => $otPay,
                 'bonus'           => $bonus,
@@ -160,9 +179,13 @@ class PayrollService
 
         $lines = [];
         // Computed lines — not tied to a salary_component_id since they're derived
-        // (base salary, attendance, tax brackets), not read from the catalog.
-        foreach (['Base Pay' => $basePay, 'Overtime Pay' => $otPay] as $label => $amount) {
-            if ($amount > 0) $lines[] = ['label' => $label, 'type' => 'earning', 'amount' => $amount];
+        // (base salary, attendance, tax brackets), not read from the catalog. Each
+        // carries a 'note' explaining exactly how the figure was calculated.
+        if ($basePay > 0) {
+            $lines[] = ['label' => 'Base Pay', 'type' => 'earning', 'amount' => $basePay, 'note' => $basePayNote];
+        }
+        if ($otPay > 0) {
+            $lines[] = ['label' => 'Overtime Pay', 'type' => 'earning', 'amount' => $otPay, 'note' => $otPayNote];
         }
         // One line per assigned earning component — the real breakdown, e.g. "Bonus",
         // "Commission", "Holiday Pay" each shown separately instead of lumped together.
@@ -192,7 +215,7 @@ class PayrollService
             }
         }
         if ($absentDeduct > 0) {
-            $lines[] = ['label' => 'Absence Deduction', 'type' => 'deduction', 'amount' => $absentDeduct];
+            $lines[] = ['label' => 'Absence Deduction', 'type' => 'deduction', 'amount' => $absentDeduct, 'note' => $absentNote];
         }
         // One line per loan / advance installment actually deducted this period — e.g.
         // "Loan Repayment — LN-2026-000003" — instead of one lumped generic figure.
@@ -221,7 +244,7 @@ class PayrollService
      * $row['items']) so a payslip looks the same regardless of source. Clears any prior items
      * first since generatePayslip() can be called again for the same run (regenerate).
      *
-     * @param array<int, array{label: string, type: string, amount: float, salary_component_id?: int}> $lines
+     * @param array<int, array{label: string, type: string, amount: float, salary_component_id?: int, note?: string|null}> $lines
      */
     private function writePayslipItems(Payslip $payslip, array $lines): void
     {
@@ -234,6 +257,7 @@ class PayrollService
                 'label'                => $line['label'],
                 'type'                 => $line['type'],
                 'amount'               => $line['amount'],
+                'note'                 => $line['note'] ?? null,
                 'sort_order'           => $sortOrder,
             ]);
         }
@@ -272,6 +296,8 @@ class PayrollService
             'late_days'      => $records->where('is_late', true)->count(),
             'overtime_hours' => round($otHours, 2),
             'overtime_pay'   => round($otHours * $hourlyRate * $otRate, 2),
+            'hourly_rate'    => $hourlyRate,
+            'ot_rate'        => $otRate,
         ];
     }
 

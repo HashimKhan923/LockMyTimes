@@ -53,7 +53,8 @@
         .col-head.ded { color: #dc2626; border-color: #fee2e2; }
         .line { width: 100%; border-collapse: collapse; }
         .line td { padding: 3.5px 0; font-size: 9pt; }
-        .line td.amount { text-align: right; font-weight: 600; white-space: nowrap; }
+        .line td.amount { text-align: right; font-weight: 600; white-space: nowrap; vertical-align: top; }
+        .line-note { font-size: 7pt; color: #9ca3af; margin-top: 1px; }
         .line tr.total td { border-top: 1px solid #e5e7eb; padding-top: 6px; margin-top: 3px; font-weight: 800; font-size: 9.5pt; }
         .ded-amount { color: #dc2626; }
 
@@ -166,37 +167,43 @@
     {{-- ════════ EARNINGS | DEDUCTIONS ════════ --}}
     <table class="columns">
         <tr>
-            <td>
+            <td valign="top">
                 <div class="col-head earn">Earnings</div>
                 <table class="line">
                     @forelse($earnItems as $item)
                         <tr>
-                            <td>{{ $item->label }}</td>
-                            <td class="amount">{{ $sym }}{{ number_format($item->amount, 2) }}</td>
+                            <td valign="top">
+                                {{ $item->label }}
+                                @if($item->note)<br><span class="line-note">{{ $item->note }}</span>@endif
+                            </td>
+                            <td class="amount" valign="top">{{ $sym }}{{ number_format($item->amount, 2) }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="2" style="color:#9ca3af; font-style:italic;">No earnings.</td></tr>
                     @endforelse
                     <tr class="total">
-                        <td>Gross Pay</td>
-                        <td class="amount">{{ $sym }}{{ number_format($payslip->gross_pay, 2) }}</td>
+                        <td valign="top">Gross Pay</td>
+                        <td class="amount" valign="top">{{ $sym }}{{ number_format($payslip->gross_pay, 2) }}</td>
                     </tr>
                 </table>
             </td>
-            <td>
+            <td valign="top">
                 <div class="col-head ded">Deductions</div>
                 <table class="line">
                     @forelse($dedItems as $item)
                         <tr>
-                            <td>{{ $item->label }}</td>
-                            <td class="amount ded-amount">-{{ $sym }}{{ number_format($item->amount, 2) }}</td>
+                            <td valign="top">
+                                {{ $item->label }}
+                                @if($item->note)<br><span class="line-note">{{ $item->note }}</span>@endif
+                            </td>
+                            <td class="amount ded-amount" valign="top">-{{ $sym }}{{ number_format($item->amount, 2) }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="2" style="color:#9ca3af; font-style:italic;">No deductions.</td></tr>
                     @endforelse
                     <tr class="total">
-                        <td>Total Deductions</td>
-                        <td class="amount ded-amount">-{{ $sym }}{{ number_format($payslip->total_deductions, 2) }}</td>
+                        <td valign="top">Total Deductions</td>
+                        <td class="amount ded-amount" valign="top">-{{ $sym }}{{ number_format($payslip->total_deductions, 2) }}</td>
                     </tr>
                 </table>
             </td>
@@ -245,16 +252,16 @@
                 <div class="l">YTD Net</div>
             </td>
             <td>
-                <div class="v">{{ number_format($payslip->regular_hours, 1) }}</div>
+                <div class="v">{{ format_hours($payslip->regular_hours, '0h') }}</div>
                 <div class="l">Regular Hrs</div>
             </td>
             <td>
-                <div class="v" style="color:#6C7DF7;">{{ number_format($payslip->overtime_hours, 1) }}</div>
+                <div class="v" style="color:#6C7DF7;">{{ format_hours($payslip->overtime_hours, '0h') }}</div>
                 <div class="l">Overtime Hrs</div>
             </td>
             <td>
-                <div class="v" style="color:#7c3aed;">{{ number_format($payslip->leave_hours, 1) }}</div>
-                <div class="l">Leave Hrs</div>
+                <div class="v" style="color:#7c3aed;">{{ $payslip->days_absent }}</div>
+                <div class="l">Days Absent</div>
             </td>
         </tr>
     </table>

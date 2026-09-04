@@ -8,7 +8,7 @@ class PayslipItem extends TenantModel
 {
     protected $fillable = [
         'payslip_id', 'salary_component_id',
-        'label', 'type', 'amount', 'sort_order',
+        'label', 'type', 'amount', 'note', 'sort_order',
     ];
 
     protected function casts(): array

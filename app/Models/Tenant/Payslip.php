@@ -9,6 +9,7 @@ class Payslip extends TenantModel
         'external_source', 'external_id',
         'period_start', 'period_end', 'pay_date',
         'regular_hours', 'overtime_hours', 'holiday_hours', 'leave_hours',
+        'working_days', 'days_present', 'days_absent', 'days_late', 'daily_rate', 'hourly_rate',
         'base_pay', 'overtime_pay', 'bonus', 'commission', 'reimbursement',
         'gross_pay',
         'federal_tax', 'state_tax', 'local_tax', 'fica_ss', 'fica_medicare',
@@ -33,6 +34,8 @@ class Payslip extends TenantModel
         'total_deductions' => 'float',
         'overtime_pay' => 'float',
         'overtime_hours'=> 'float',
+        'daily_rate'   => 'float',
+        'hourly_rate'  => 'float',
     ];
 
     public function payrollRun()
