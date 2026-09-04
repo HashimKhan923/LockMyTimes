@@ -301,10 +301,6 @@ public function createRun(string $tenant, Request $request)
      |================================================================*/
     public function assignComponent(string $tenant, Request $request, SalaryComponent $salaryComponent)
     {
-        if ($salaryComponent->type === 'tax') {
-            return back()->with('error', 'Tax components are computed automatically from Tax Settings and cannot be assigned directly.');
-        }
-
         $data = $request->validate([
             'employee_id'     => 'required|exists:employees,id',
             'amount'          => 'required|numeric|min:0',
@@ -323,7 +319,13 @@ public function createRun(string $tenant, Request $request)
         );
 
         $employee = Employee::find($data['employee_id']);
-        return back()->with('success', "{$salaryComponent->name} assigned to {$employee->full_name}.");
+
+        $message = "{$salaryComponent->name} assigned to {$employee->full_name}.";
+        if ($salaryComponent->type === 'tax') {
+            $message .= ' This fixed amount will override the automatic tax calculation for this employee.';
+        }
+
+        return back()->with('success', $message);
     }
 
     public function unassignComponent(string $tenant, SalaryComponent $salaryComponent, EmployeeSalaryComponent $assignment)

@@ -68,6 +68,7 @@
         .nav-label  { transition:opacity .15s, width .15s; white-space:nowrap; overflow:hidden; }
         .adm-sidebar.collapsed .nav-label  { opacity:0; width:0; }
         .adm-sidebar.collapsed .brand-text { opacity:0; width:0; overflow:hidden; }
+        .adm-sidebar.collapsed .sidebar-brand-icon { width:36px; height:36px; }
 
         .adm-nav-link {
             position:relative; display:flex; align-items:center; gap:12px;
@@ -169,11 +170,11 @@
         {{-- Brand --}}
         <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-100 flex-shrink-0">
             @if(isset($currentTenant) && $currentTenant->logo)
-            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden bg-white border border-gray-100 p-1">
+            <div class="sidebar-brand-icon w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden bg-white border border-gray-100 p-1.5 shadow-sm">
                 <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-contain" alt="{{ $currentTenant->company_name }} logo"/>
             </div>
             @else
-            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-white text-sm"
+            <div class="sidebar-brand-icon w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-white text-base"
                  style="background:linear-gradient(135deg,#6C7DF7,#4A5BE8);box-shadow:0 4px 12px rgba(108,125,247,.4);">
                 {{ substr($currentTenant->company_name ?? 'L', 0, 1) }}
             </div>

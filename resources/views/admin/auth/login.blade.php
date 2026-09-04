@@ -5,7 +5,7 @@
 @section('auth-panel')
 <div class="text-white">
     @if($tenantModel->logo)
-    <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-6 overflow-hidden p-2 shadow-sm">
+    <div class="w-24 h-24 rounded-2xl bg-white flex items-center justify-center mb-6 overflow-hidden p-3 shadow-md">
         <img src="{{ $tenantModel->logo_url }}" alt="{{ $tenantModel->company_name }}" class="w-full h-full object-contain"/>
     </div>
     @else

@@ -61,14 +61,18 @@ class PayrollService
         $dailyRate      = $workingDays > 0 ? round($basePay / $workingDays, 4) : 0;
         $absentDeduct   = round($dailyRate * $att['absent_days'], 2);
 
-        // Assigned salary components (earning/deduction/reimbursement) — 'tax' type
-        // components are catalog-only and deliberately excluded here; real tax is
-        // computed below from Tax Settings so an assigned "Federal Income Tax" row
-        // never double-counts against the actual bracket-based calculation.
+        // Assigned salary components. 'tax' type components are an explicit per-employee
+        // override, keyed by their catalog code (FED_TAX / STATE_TAX / FICA_SS / FICA_MED):
+        // when an admin assigns one to an employee, that fixed amount REPLACES the
+        // automatic bracket/rate calculation for that tax line on that employee's
+        // payslip — it never adds on top of it. Employees with nothing assigned keep
+        // getting the automatic calculation as before.
         $components            = $this->assignedComponents($employee);
         $earningComponents     = $components->filter(fn ($ec) => $ec->component->type === 'earning');
         $deductionComponents   = $components->filter(fn ($ec) => $ec->component->type === 'deduction');
         $reimbursementComponents = $components->filter(fn ($ec) => $ec->component->type === 'reimbursement');
+        $taxComponents          = $components->filter(fn ($ec) => $ec->component->type === 'tax')
+            ->keyBy(fn ($ec) => $ec->component->code);
 
         // Earnings
         $bonus          = (float) $earningComponents->sum('amount');
@@ -78,15 +82,25 @@ class PayrollService
         // Gross (reimbursements are non-taxable — added at the net stage below, not here)
         $grossPay = round($basePay - $absentDeduct + $bonus + $otPay, 2);
 
-        // Taxes — rates from settings, fallback to statutory defaults
+        // Taxes — an assigned tax component overrides the automatic figure for that
+        // employee; otherwise fall back to rates/brackets from Settings / Tax Settings.
         $ficaSsRate      = (float) Setting::get('payroll.fica_ss_rate',       6.2)  / 100;
         $ficaMedRate     = (float) Setting::get('payroll.fica_medicare_rate',  1.45) / 100;
         $annualGross     = $grossPay * 12;
         $year            = Carbon::parse($run->pay_date)->year;
-        $federalTax      = round($this->federalTax($annualGross, $year) / 12, 2);
-        $stateTax        = round($this->stateTax($annualGross, $employee->state, $year) / 12, 2);
-        $ficaSS          = round($grossPay * $ficaSsRate, 2);
-        $ficaMedicare    = round($grossPay * $ficaMedRate, 2);
+
+        $federalTax   = $taxComponents->has('FED_TAX')
+            ? (float) $taxComponents['FED_TAX']->amount
+            : round($this->federalTax($annualGross, $year) / 12, 2);
+        $stateTax     = $taxComponents->has('STATE_TAX')
+            ? (float) $taxComponents['STATE_TAX']->amount
+            : round($this->stateTax($annualGross, $employee->state, $year) / 12, 2);
+        $ficaSS       = $taxComponents->has('FICA_SS')
+            ? (float) $taxComponents['FICA_SS']->amount
+            : round($grossPay * $ficaSsRate, 2);
+        $ficaMedicare = $taxComponents->has('FICA_MED')
+            ? (float) $taxComponents['FICA_MED']->amount
+            : round($grossPay * $ficaMedRate, 2);
 
         // Other deductions (health, 401k, loans, etc.)
         $otherDeduct   = (float) $deductionComponents->sum('amount');
@@ -158,12 +172,19 @@ class PayrollService
             }
         }
         foreach ([
-            'Federal Income Tax' => $federalTax,
-            'State Tax' => $stateTax,
-            'Social Security' => $ficaSS,
-            'Medicare' => $ficaMedicare,
-        ] as $label => $amount) {
-            if ($amount > 0) $lines[] = ['label' => $label, 'type' => 'tax', 'amount' => $amount];
+            'FED_TAX'   => ['Federal Income Tax', $federalTax],
+            'STATE_TAX' => ['State Tax', $stateTax],
+            'FICA_SS'   => ['Social Security', $ficaSS],
+            'FICA_MED'  => ['Medicare', $ficaMedicare],
+        ] as $code => [$label, $amount]) {
+            if ($amount > 0) {
+                $lines[] = [
+                    'label' => $label,
+                    'type' => 'tax',
+                    'amount' => $amount,
+                    'salary_component_id' => $taxComponents[$code]->salary_component_id ?? null,
+                ];
+            }
         }
         foreach (['Absence Deduction' => $absentDeduct, 'Loan / Advance Repayment' => $loanDeduct] as $label => $amount) {
             if ($amount > 0) $lines[] = ['label' => $label, 'type' => 'deduction', 'amount' => $amount];

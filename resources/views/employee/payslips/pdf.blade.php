@@ -257,8 +257,8 @@
             <tr>
                 <td>
                     @if($companyLogo)
-                    <div style="display:inline-block; background:#ffffff; border-radius:8px; padding:6px 10px; margin-bottom:6px;">
-                        <img src="{{ $companyLogo }}" style="height:20px; max-width:110px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
+                    <div style="display:inline-block; background:#ffffff; border-radius:8px; padding:10px 14px; margin-bottom:8px;">
+                        <img src="{{ $companyLogo }}" style="height:38px; max-width:180px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
                     </div>
                     @else
                     <div class="brand">{{ $companyName }}</div>

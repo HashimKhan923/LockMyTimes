@@ -62,18 +62,12 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','reimbu
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5 flex-shrink-0">
-                    @if($type !== 'tax')
                     <button onclick="openModal('assign-modal-{{ $comp->id }}')"
-                            title="Click to assign this component to employees"
+                            title="{{ $type === 'tax' ? 'Click to assign a fixed amount that overrides the automatic calculation for this employee' : 'Click to assign this component to employees' }}"
                             class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white transition-colors whitespace-nowrap">
                         <i data-lucide="user-plus" class="w-3 h-3"></i>
                         {{ $comp->employee_salary_components_count }} staff
                     </button>
-                    @else
-                    <span class="text-xs text-gray-800 px-2" title="Tax components are computed automatically, not assigned">
-                        {{ $comp->employee_salary_components_count }} staff
-                    </span>
-                    @endif
                     <button onclick="openEditCompModal({{ Js::from([
                                 'id' => $comp->id,
                                 'name' => $comp->name,
@@ -230,12 +224,18 @@ $typeColors = ['earning'=>'lmt-badge-green','deduction'=>'lmt-badge-red','reimbu
     </div>
 </div>
 
-{{-- Assign Modals (one per assignable component) --}}
-@foreach($components->where('type', '!=', 'tax') as $comp)
+{{-- Assign Modals (one per component) --}}
+@foreach($components as $comp)
 <div id="assign-modal-{{ $comp->id }}" class="lmt-modal-backdrop hidden">
     <div class="lmt-modal max-w-lg">
         <h3 class="font-black text-gray-900 mb-1">{{ $comp->name }}</h3>
         <p class="text-sm text-gray-800 mb-5">Manage which employees have this component assigned.</p>
+        @if($comp->type === 'tax')
+        <div class="mb-4 p-3 rounded-lg bg-amber-50 text-amber-700 text-xs flex items-start gap-2">
+            <i data-lucide="info" class="w-3.5 h-3.5 flex-shrink-0 mt-0.5"></i>
+            <span>Assigning a fixed amount here overrides the automatic tax calculation for that employee on every future payslip — it doesn't add on top of it.</span>
+        </div>
+        @endif
 
         {{-- Current assignees --}}
         <div class="mb-5 max-h-56 overflow-y-auto space-y-2">

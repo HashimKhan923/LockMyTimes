@@ -140,14 +140,14 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   companyLogoWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
+    width: 64,
+    height: 64,
+    borderRadius: 14,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    padding: 4,
+    padding: 6,
   },
   companyLogo: { width: '100%', height: '100%' },
 });

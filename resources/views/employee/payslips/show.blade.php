@@ -87,10 +87,10 @@
             <div class="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
             <div class="relative flex items-start justify-between">
                 <div>
-                    <div class="mb-1.5">
+                    <div class="mb-2">
                         @if(isset($currentTenant) && $currentTenant->logo)
-                        <div class="inline-flex items-center bg-white rounded-xl px-2.5 py-1.5 shadow-sm">
-                            <img src="{{ $currentTenant->logo_url }}" class="h-6 w-auto max-w-[110px] object-contain" alt="{{ $currentTenant->company_name }}"/>
+                        <div class="inline-flex items-center bg-white rounded-xl px-4 py-3 shadow-md">
+                            <img src="{{ $currentTenant->logo_url }}" class="h-14 w-auto max-w-[220px] object-contain" alt="{{ $currentTenant->company_name }}"/>
                         </div>
                         @else
                         <div class="flex items-center gap-2">
