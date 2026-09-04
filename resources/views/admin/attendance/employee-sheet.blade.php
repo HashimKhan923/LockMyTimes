@@ -24,10 +24,22 @@
                     <p class="text-sm text-gray-800">{{ $employee->position?->title }} · {{ $employee->department?->name }}</p>
                 </div>
             </div>
-            <form method="GET" action="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}">
-                <input type="month" name="month" value="{{ $month }}"
-                       class="lmt-input w-auto" onchange="this.form.submit()"/>
-            </form>
+            <div class="flex flex-col sm:items-end gap-2">
+                <form method="GET" action="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}">
+                    <input type="month" name="month" value="{{ $month }}"
+                           class="lmt-input w-auto" onchange="this.form.submit()"/>
+                </form>
+                <form method="GET" action="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}"
+                      class="flex items-center gap-2">
+                    <span class="text-xs text-gray-800 font-semibold">or custom range:</span>
+                    <input type="date" name="from" value="{{ request('from') }}" title="From date" class="lmt-input py-1.5 text-sm w-auto"/>
+                    <input type="date" name="to" value="{{ request('to') }}" title="To date" class="lmt-input py-1.5 text-sm w-auto"/>
+                    <button type="submit" class="lmt-btn-primary lmt-btn-sm">Go</button>
+                    @if($isCustomRange)
+                    <a href="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}" class="lmt-btn-ghost lmt-btn-sm">Back to month view</a>
+                    @endif
+                </form>
+            </div>
         </div>
 
         {{-- Summary --}}
@@ -47,6 +59,65 @@
         </div>
     </div>
 
+    @if($isCustomRange)
+    {{-- Custom range — a day-by-day table, since an arbitrary range (e.g. 10
+         days, or spanning two months) doesn't fit a single-month calendar grid. --}}
+    <div class="lmt-card p-0 overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="font-black text-gray-900">{{ $start->format('M j, Y') }} – {{ $end->format('M j, Y') }}</h3>
+            <span class="lmt-badge-gray text-xs">{{ $start->diffInDays($end) + 1 }} days</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="lmt-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Clock In</th>
+                        <th>Clock Out</th>
+                        <th>Hours</th>
+                        <th>Overtime</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $cursor = $start->copy(); @endphp
+                    @while($cursor->lte($end))
+                    @php
+                        $dateKey = $cursor->format('Y-m-d');
+                        $rec = $records->get($dateKey);
+                        $isWeekend = in_array($cursor->dayOfWeek, [0,6]);
+                    @endphp
+                    <tr>
+                        <td class="text-sm font-semibold text-gray-900">
+                            {{ $cursor->format('D, M j') }}
+                            @if($cursor->isToday())<span class="lmt-badge-brand text-xs ml-1">Today</span>@endif
+                        </td>
+                        <td>
+                            @if($rec)
+                                @php
+                                $sc = ['present' => $rec->is_late ? 'lmt-badge-amber' : 'lmt-badge-green', 'absent' => 'lmt-badge-red', 'on_leave' => 'lmt-badge-brand', 'holiday' => 'lmt-badge-gray'];
+                                @endphp
+                                <span class="{{ $sc[$rec->status] ?? 'lmt-badge-gray' }} text-xs">{{ $rec->is_late ? 'Late' : ucfirst(str_replace('_',' ',$rec->status)) }}</span>
+                            @elseif($isWeekend)
+                                <span class="text-xs text-gray-800">Weekend</span>
+                            @elseif($dateKey < now()->toDateString())
+                                <span class="lmt-badge-red text-xs">Absent</span>
+                            @else
+                                <span class="text-xs text-gray-800">—</span>
+                            @endif
+                        </td>
+                        <td class="text-sm text-gray-800">{{ $rec?->clock_in_at?->format('h:i A') ?? '—' }}</td>
+                        <td class="text-sm text-gray-800">{{ $rec?->clock_out_at?->format('h:i A') ?? '—' }}</td>
+                        <td class="text-sm font-semibold text-gray-900">{{ format_hours($rec?->total_hours) }}</td>
+                        <td class="text-sm text-amber-600">{{ $rec?->overtime_hours > 0 ? format_hours($rec->overtime_hours) : '—' }}</td>
+                    </tr>
+                    @php $cursor->addDay(); @endphp
+                    @endwhile
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @else
     {{-- Calendar grid --}}
     <div class="lmt-card">
         {{-- Day headers --}}
@@ -122,6 +193,7 @@
             @endforeach
         </div>
     </div>
+    @endif
 </div>
 @endsection
 @push('scripts')

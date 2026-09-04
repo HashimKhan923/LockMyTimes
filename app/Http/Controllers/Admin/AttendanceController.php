@@ -122,8 +122,22 @@ class AttendanceController extends Controller
     public function employeeSheet(string $tenant, Request $request, Employee $employee)
     {
         $month = $request->get('month', now()->format('Y-m'));
-        $start = Carbon::parse($month.'-01')->startOfMonth();
-        $end   = $start->copy()->endOfMonth();
+
+        // A custom From/To range (e.g. "last 10 days", or a range spanning two
+        // months) overrides the month picker — used for the table view below.
+        // Otherwise fall back to the selected calendar month for the grid view.
+        $isCustomRange = $request->filled('from') && $request->filled('to');
+
+        if ($isCustomRange) {
+            $start = Carbon::parse($request->get('from'))->startOfDay();
+            $end   = Carbon::parse($request->get('to'))->startOfDay();
+            if ($end->lt($start)) {
+                [$start, $end] = [$end, $start];
+            }
+        } else {
+            $start = Carbon::parse($month.'-01')->startOfMonth();
+            $end   = $start->copy()->endOfMonth();
+        }
 
         $records = Attendance::where('employee_id', $employee->id)
             ->whereBetween('work_date', [$start->toDateString(), $end->toDateString()])
@@ -140,7 +154,7 @@ class AttendanceController extends Controller
         ];
 
         return view('admin.attendance.employee-sheet',
-            compact('employee', 'records', 'summary', 'start', 'end', 'month', 'tenant'));
+            compact('employee', 'records', 'summary', 'start', 'end', 'month', 'tenant', 'isCustomRange'));
     }
 
     /* ================================================================
