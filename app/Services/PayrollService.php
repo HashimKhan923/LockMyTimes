@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Models\Tenant\Attendance;
 use App\Models\Tenant\AuditLog;
 use App\Models\Tenant\Employee;
+use App\Models\Tenant\Loan;
 use App\Models\Tenant\PayrollRun;
 use App\Models\Tenant\Payslip;
 use App\Models\Tenant\PayslipItem;
+use App\Models\Tenant\SalaryAdvance;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\TaxSetting;
 use Carbon\Carbon;
@@ -17,12 +19,12 @@ class PayrollService
 {
     public function generateRun(PayrollRun $run): void
     {
+        // Loans/salary advances are deliberately NOT eager-loaded here — resolveLoanRepayments()
+        // and resolveAdvanceDeductions() below query them directly per employee, since which
+        // ones are relevant depends on the specific payslip being (re)generated, not just the
+        // employee's current status.
         $employees = Employee::where('employment_status', 'active')
-            ->with([
-                'salaryComponents.component',
-                'loans'          => fn($q) => $q->where('status', 'active'),
-                'salaryAdvances' => fn($q) => $q->where('status', 'active'),
-            ])
+            ->with(['salaryComponents.component'])
             ->get();
 
         DB::transaction(function () use ($run, $employees) {
@@ -88,16 +90,12 @@ class PayrollService
         $ficaSS       = (float) ($taxComponents['FICA_SS']->amount ?? 0);
         $ficaMedicare = (float) ($taxComponents['FICA_MED']->amount ?? 0);
 
-        // Other deductions (health, 401k, loans, etc.)
-        $otherDeduct   = (float) $deductionComponents->sum('amount');
-        $loanDeduct    = $this->loanDeductions($employee);
+        // Other deductions (health, 401k, etc. — loans/advances are resolved further down,
+        // once the payslip exists, since each is tied to a specific due installment)
+        $otherDeduct = (float) $deductionComponents->sum('amount');
 
-        $totalDeductions = round(
-            $federalTax + $stateTax + $ficaSS + $ficaMedicare
-            + $otherDeduct + $loanDeduct + $absentDeduct,
-            2
-        );
-
+        // Placeholder totals — recomputed below once loan/advance deductions are known.
+        $totalDeductions = round($federalTax + $stateTax + $ficaSS + $ficaMedicare + $otherDeduct + $absentDeduct, 2);
         $netPay = round($grossPay - $totalDeductions + $reimbursement, 2);
 
         $payslip = Payslip::updateOrCreate(
@@ -128,7 +126,7 @@ class PayrollService
                 'fica_medicare'   => $ficaMedicare,
                 'health_insurance'=> 0,
                 'retirement_401k' => 0,
-                'other_deductions'=> round($otherDeduct + $loanDeduct + $absentDeduct, 2),
+                'other_deductions'=> round($otherDeduct + $absentDeduct, 2),
                 'total_deductions'=> $totalDeductions,
                 'net_pay'         => $netPay,
                 'ytd_gross'       => $grossPay,
@@ -138,6 +136,27 @@ class PayrollService
                 'payment_method'  => 'direct_deposit',
             ]
         );
+
+        // Loans and salary advances — resolved now that the payslip has a real ID, since
+        // each deduction is linked back to the specific loan_repayments/advance_deductions
+        // row it paid off (full traceability), and that link is what makes this idempotent:
+        // regenerating the same payslip reuses the already-linked amount instead of taking
+        // a second installment.
+        $loanResult    = $this->resolveLoanRepayments($employee, $payslip);
+        $advanceResult = $this->resolveAdvanceDeductions($employee, $payslip);
+        $loanDeduct    = round($loanResult['total'] + $advanceResult['total'], 2);
+
+        if ($loanDeduct > 0) {
+            $totalDeductions = round($totalDeductions + $loanDeduct, 2);
+            $netPay          = round($netPay - $loanDeduct, 2);
+
+            $payslip->update([
+                'other_deductions' => round($payslip->other_deductions + $loanDeduct, 2),
+                'total_deductions' => $totalDeductions,
+                'net_pay'          => $netPay,
+                'ytd_net'          => $netPay,
+            ]);
+        }
 
         $lines = [];
         // Computed lines — not tied to a salary_component_id since they're derived
@@ -172,8 +191,16 @@ class PayrollService
                 ];
             }
         }
-        foreach (['Absence Deduction' => $absentDeduct, 'Loan / Advance Repayment' => $loanDeduct] as $label => $amount) {
-            if ($amount > 0) $lines[] = ['label' => $label, 'type' => 'deduction', 'amount' => $amount];
+        if ($absentDeduct > 0) {
+            $lines[] = ['label' => 'Absence Deduction', 'type' => 'deduction', 'amount' => $absentDeduct];
+        }
+        // One line per loan / advance installment actually deducted this period — e.g.
+        // "Loan Repayment — LN-2026-000003" — instead of one lumped generic figure.
+        foreach ($loanResult['lines'] as $line) {
+            $lines[] = $line;
+        }
+        foreach ($advanceResult['lines'] as $line) {
+            $lines[] = $line;
         }
         // One line per assigned deduction component — e.g. "Health Insurance", "401(k)
         // Contribution", "Vision Insurance" each shown separately.
@@ -283,17 +310,131 @@ class PayrollService
         });
     }
 
-    private function loanDeductions(Employee $employee): float
+    /**
+     * Deducts this period's due loan installment(s) for every loan this employee has
+     * disbursed/active, marking the correct loan_repayments row 'paid' and linking it to
+     * this payslip. Idempotent: if this payslip already has a repayment linked to it for a
+     * given loan (a regenerate), that existing amount is reused rather than taking another
+     * installment or touching the loan's totals a second time.
+     *
+     * @return array{total: float, lines: array<int, array{label: string, type: string, amount: float}>}
+     */
+    private function resolveLoanRepayments(Employee $employee, Payslip $payslip): array
     {
-        $loans = $employee->loans
-            ->where('status', 'active')
-            ->sum('monthly_installment');
+        $total = 0.0;
+        $lines = [];
 
-        $advances = $employee->salaryAdvances
-            ->where('status', 'active')
-            ->sum('deduction_per_month');
+        // Queried directly rather than relying on Employee::loans() as eager-loaded by the
+        // caller: that relation is filtered to disbursed/active only (so a brand-new loan is
+        // picked up for its first deduction), but a loan that completed on an earlier payslip
+        // still needs to be found here when that payslip is regenerated — otherwise its
+        // already-linked repayment would silently vanish from the recalculated totals.
+        $loans = Loan::where('employee_id', $employee->id)
+            ->where(function ($q) use ($payslip) {
+                $q->whereIn('status', ['disbursed', 'active'])
+                  ->orWhereHas('repayments', fn ($r) => $r->where('payslip_id', $payslip->id));
+            })
+            ->get();
 
-        return round((float)$loans + (float)$advances, 2);
+        foreach ($loans as $loan) {
+            $existing = $loan->repayments()->where('payslip_id', $payslip->id)->first();
+
+            if ($existing) {
+                $amount = (float) $existing->amount_paid;
+            } elseif ($loan->auto_deduct_from_payroll && $loan->isActive()) {
+                // The next unpaid installment that's actually due by this payslip's pay date —
+                // if the loan's schedule doesn't line up with this pay period, nothing is due
+                // yet and this loan is simply skipped for this run.
+                $installment = $loan->repayments()
+                    ->where('status', 'pending')
+                    ->where('due_date', '<=', $payslip->pay_date)
+                    ->orderBy('installment_number')
+                    ->first();
+
+                if (! $installment) {
+                    continue;
+                }
+
+                $amount = min((float) $installment->emi_amount, (float) $loan->amount_remaining);
+
+                $installment->update([
+                    'status'         => 'paid',
+                    'paid_date'      => $payslip->pay_date,
+                    'amount_paid'    => $amount,
+                    'payment_source' => 'payroll_deduction',
+                    'payslip_id'     => $payslip->id,
+                ]);
+
+                $loan->recalculateTotals();
+            } else {
+                continue;
+            }
+
+            if ($amount > 0) {
+                $total += $amount;
+                $lines[] = ['label' => "Loan Repayment — {$loan->loan_number}", 'type' => 'deduction', 'amount' => round($amount, 2)];
+            }
+        }
+
+        return ['total' => round($total, 2), 'lines' => $lines];
+    }
+
+    /**
+     * Same idea as resolveLoanRepayments() but for salary advances / advance_deductions.
+     *
+     * @return array{total: float, lines: array<int, array{label: string, type: string, amount: float}>}
+     */
+    private function resolveAdvanceDeductions(Employee $employee, Payslip $payslip): array
+    {
+        $total = 0.0;
+        $lines = [];
+
+        // See the matching comment in resolveLoanRepayments() — queried directly for the
+        // same reason: a completed advance must still be found when re-generating a payslip
+        // that already deducted its final installment.
+        $advances = SalaryAdvance::where('employee_id', $employee->id)
+            ->where(function ($q) use ($payslip) {
+                $q->whereIn('status', ['disbursed', 'active'])
+                  ->orWhereHas('deductions', fn ($d) => $d->where('payslip_id', $payslip->id));
+            })
+            ->get();
+
+        foreach ($advances as $advance) {
+            $existing = $advance->deductions()->where('payslip_id', $payslip->id)->first();
+
+            if ($existing) {
+                $amount = (float) $existing->amount;
+            } elseif ($advance->auto_deduct_from_payroll && $advance->isActive()) {
+                $deduction = $advance->deductions()
+                    ->where('status', 'pending')
+                    ->where('deduction_date', '<=', $payslip->pay_date)
+                    ->orderBy('deduction_number')
+                    ->first();
+
+                if (! $deduction) {
+                    continue;
+                }
+
+                $amount = min((float) $deduction->amount, (float) $advance->amount_remaining);
+
+                $deduction->update([
+                    'status'     => 'deducted',
+                    'amount'     => $amount,
+                    'payslip_id' => $payslip->id,
+                ]);
+
+                $advance->recalculateTotals();
+            } else {
+                continue;
+            }
+
+            if ($amount > 0) {
+                $total += $amount;
+                $lines[] = ['label' => "Salary Advance — {$advance->advance_number}", 'type' => 'deduction', 'amount' => round($amount, 2)];
+            }
+        }
+
+        return ['total' => round($total, 2), 'lines' => $lines];
     }
 
     /**

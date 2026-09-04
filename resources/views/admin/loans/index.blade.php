@@ -70,6 +70,11 @@
                 </option>
                 @endforeach
             </select>
+            <input type="date" name="from" value="{{ request('from') }}" title="Requested from" class="lmt-input py-2 text-sm w-auto" onchange="this.form.submit()"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Requested to" class="lmt-input py-2 text-sm w-auto" onchange="this.form.submit()"/>
+            @if(request()->hasAny(['status','employee','from','to']))
+            <a href="{{ route('admin.loans.index', $tenant) }}?tab=loans" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
         </form>
     </div>
 
@@ -203,6 +208,23 @@
 </div>
 
 <div class="lmt-card p-0 overflow-hidden">
+    {{-- Filter --}}
+    <div class="p-4 bg-gray-50 border-b border-gray-100 flex flex-wrap gap-3">
+        <form action="{{ route('admin.loans.index', $tenant) }}" method="GET" class="flex gap-3 flex-wrap">
+            <input type="hidden" name="tab" value="advances"/>
+            <select name="adv_status" class="lmt-select py-2 text-sm w-auto" onchange="this.form.submit()">
+                <option value="">All Status</option>
+                @foreach(['pending'=>'Pending','approved'=>'Approved','disbursed'=>'Disbursed','active'=>'Active','completed'=>'Completed','rejected'=>'Rejected'] as $v=>$l)
+                <option value="{{ $v }}" {{ request('adv_status') === $v ? 'selected' : '' }}>{{ $l }}</option>
+                @endforeach
+            </select>
+            <input type="date" name="adv_from" value="{{ request('adv_from') }}" title="Requested from" class="lmt-input py-2 text-sm w-auto" onchange="this.form.submit()"/>
+            <input type="date" name="adv_to" value="{{ request('adv_to') }}" title="Requested to" class="lmt-input py-2 text-sm w-auto" onchange="this.form.submit()"/>
+            @if(request()->hasAny(['adv_status','adv_from','adv_to']))
+            <a href="{{ route('admin.loans.index', $tenant) }}?tab=advances" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
+    </div>
     <div class="overflow-x-auto">
         <table class="lmt-table">
             <thead>
@@ -240,7 +262,12 @@
                             </div>
                         </div>
                     </td>
-                    <td><code class="text-xs bg-gray-100 px-2 py-1 rounded font-mono">{{ $adv->advance_number }}</code></td>
+                    <td>
+                        <a href="{{ route('admin.loans.advance.show', [$tenant, $adv->id]) }}"
+                           class="text-xs font-mono text-brand-600 hover:underline">
+                            {{ $adv->advance_number }}
+                        </a>
+                    </td>
                     <td class="text-sm font-bold text-gray-900">${{ number_format($adv->amount, 0) }}</td>
                     <td class="text-sm text-gray-800">${{ number_format($adv->per_installment_amount, 0) }}/mo</td>
                     <td class="text-sm text-gray-800">{{ $adv->installments_count }} months</td>
@@ -256,6 +283,10 @@
                     </td>
                     <td>
                         <div class="flex items-center gap-1.5">
+                            <a href="{{ route('admin.loans.advance.show', [$tenant, $adv->id]) }}"
+                               class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white flex items-center justify-center transition-colors">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            </a>
                             @if($adv->status === 'pending')
                             <form action="{{ route('admin.loans.advance.approve', [$tenant, $adv->id]) }}" method="POST">
                                 @csrf @method('PATCH')
@@ -268,6 +299,17 @@
                                     class="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors">
                                 <i data-lucide="x" class="w-3.5 h-3.5"></i>
                             </button>
+                            @endif
+                            @if($adv->status === 'approved')
+                            <form action="{{ route('admin.loans.advance.disburse', [$tenant, $adv->id]) }}" method="POST"
+                                  onsubmit="return confirm('Disburse {{ $adv->advance_number }}? This generates the payroll deduction schedule and cannot be undone.');">
+                                @csrf @method('PATCH')
+                                <button type="submit"
+                                        class="lmt-btn-primary lmt-btn-sm">
+                                    <i data-lucide="banknote" class="w-3.5 h-3.5"></i>
+                                    Disburse
+                                </button>
+                            </form>
                             @endif
                         </div>
                     </td>
@@ -388,6 +430,20 @@
                     <label class="lmt-label">Purpose</label>
                     <textarea name="purpose" class="lmt-textarea" rows="2" placeholder="Reason for loan…"></textarea>
                 </div>
+                <div class="col-span-2">
+                    <label class="lmt-label">Repayment <span class="text-red-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border border-gray-100 hover:bg-gray-50 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
+                            <input type="radio" name="repayment_method" value="payroll" checked class="w-4 h-4"/>
+                            <span class="text-xs font-medium text-gray-800">Deduct from salary</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border border-gray-100 hover:bg-gray-50 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
+                            <input type="radio" name="repayment_method" value="separate" class="w-4 h-4"/>
+                            <span class="text-xs font-medium text-gray-800">Employee pays separately</span>
+                        </label>
+                    </div>
+                    <p class="lmt-help">"Employee pays separately" skips automatic payroll deduction — you'll record each repayment manually.</p>
+                </div>
             </div>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Create Loan</button>
@@ -429,6 +485,20 @@
             <div>
                 <label class="lmt-label">Reason</label>
                 <textarea name="reason" class="lmt-textarea" rows="2" placeholder="Why is this advance needed?"></textarea>
+            </div>
+            <div>
+                <label class="lmt-label">Repayment <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border border-gray-100 hover:bg-gray-50 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
+                        <input type="radio" name="repayment_method" value="payroll" checked class="w-4 h-4"/>
+                        <span class="text-xs font-medium text-gray-800">Deduct from salary</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border border-gray-100 hover:bg-gray-50 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50">
+                        <input type="radio" name="repayment_method" value="separate" class="w-4 h-4"/>
+                        <span class="text-xs font-medium text-gray-800">Employee pays separately</span>
+                    </label>
+                </div>
+                <p class="lmt-help">"Employee pays separately" skips automatic payroll deduction — you'll record each repayment manually.</p>
             </div>
             <div class="flex gap-3">
                 <button type="submit" class="lmt-btn-primary flex-1">Submit</button>

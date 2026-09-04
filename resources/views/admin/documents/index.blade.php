@@ -131,7 +131,7 @@
 
             {{-- Search + Upload --}}
             <div class="flex items-center gap-2 flex-shrink-0">
-                <form action="{{ route('admin.documents.index', $tenant) }}" method="GET">
+                <form action="{{ route('admin.documents.index', $tenant) }}" method="GET" class="flex items-center gap-2">
                     @if($folderId)<input type="hidden" name="folder" value="{{ $folderId }}"/>@endif
                     <div class="relative">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-gray-800 absolute left-3 top-1/2 -translate-y-1/2"></i>
@@ -139,6 +139,9 @@
                                placeholder="Search…"
                                class="lmt-input pl-8 py-2 text-sm w-40"/>
                     </div>
+                    <input type="date" name="from" value="{{ request('from') }}" title="Uploaded from" class="lmt-input py-2 text-sm w-auto"/>
+                    <input type="date" name="to" value="{{ request('to') }}" title="Uploaded to" class="lmt-input py-2 text-sm w-auto"/>
+                    <button type="submit" class="lmt-btn-secondary lmt-btn-sm">Filter</button>
                 </form>
                 <button onclick="openModal('upload-modal')" class="lmt-btn-primary lmt-btn-sm flex-shrink-0">
                     <i data-lucide="upload" class="w-4 h-4"></i>

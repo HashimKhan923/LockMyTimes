@@ -190,6 +190,17 @@
 @elseif($tab === 'enrollments')
 
 <div class="lmt-card p-0 overflow-hidden">
+    <div class="p-4 bg-gray-50 border-b border-gray-100 flex flex-wrap items-center gap-3">
+        <form action="{{ route('admin.training.index', $tenant) }}" method="GET" class="flex items-center gap-2">
+            <input type="hidden" name="tab" value="enrollments"/>
+            <input type="date" name="enroll_from" value="{{ request('enroll_from') }}" title="Enrolled from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="enroll_to" value="{{ request('enroll_to') }}" title="Enrolled to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['enroll_from','enroll_to']))
+            <a href="{{ route('admin.training.index', $tenant) }}?tab=enrollments" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
+    </div>
     <div class="overflow-x-auto">
         <table class="lmt-table">
             <thead>
@@ -301,6 +312,17 @@
 </div>
 
 <div class="lmt-card p-0 overflow-hidden">
+    <div class="p-4 bg-gray-50 border-b border-gray-100 flex flex-wrap items-center gap-3">
+        <form action="{{ route('admin.training.index', $tenant) }}" method="GET" class="flex items-center gap-2">
+            <input type="hidden" name="tab" value="certifications"/>
+            <input type="date" name="cert_from" value="{{ request('cert_from') }}" title="Issued from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="cert_to" value="{{ request('cert_to') }}" title="Issued to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['cert_from','cert_to']))
+            <a href="{{ route('admin.training.index', $tenant) }}?tab=certifications" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
+    </div>
     <div class="overflow-x-auto">
         <table class="lmt-table">
             <thead>

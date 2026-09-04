@@ -220,8 +220,11 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::patch('/{loan}/disburse',            [\App\Http\Controllers\Admin\LoanController::class, 'disburse'])->name('disburse')->middleware('permission:loans.approve');
         Route::patch('/{loan}/repayment',           [\App\Http\Controllers\Admin\LoanController::class, 'recordRepayment'])->name('repayment')->middleware('permission:loans.edit');
         Route::post('/advances',                    [\App\Http\Controllers\Admin\LoanController::class, 'storeAdvance'])->name('advance.store')->middleware('permission:salary_advances.create');
+        Route::get('/advances/{advance}',           [\App\Http\Controllers\Admin\LoanController::class, 'showAdvance'])->name('advance.show')->middleware('permission:salary_advances.view');
         Route::patch('/advances/{advance}/approve', [\App\Http\Controllers\Admin\LoanController::class, 'approveAdvance'])->name('advance.approve')->middleware('permission:salary_advances.approve');
         Route::patch('/advances/{advance}/reject',  [\App\Http\Controllers\Admin\LoanController::class, 'rejectAdvance'])->name('advance.reject')->middleware('permission:salary_advances.approve');
+        Route::patch('/advances/{advance}/disburse',[\App\Http\Controllers\Admin\LoanController::class, 'disburseAdvance'])->name('advance.disburse')->middleware('permission:salary_advances.approve');
+        Route::patch('/advances/{advance}/deduction',[\App\Http\Controllers\Admin\LoanController::class, 'recordAdvanceDeduction'])->name('advance.deduction')->middleware('permission:salary_advances.approve');
         Route::get('/settings/types',               [\App\Http\Controllers\Admin\LoanController::class, 'types'])->name('types')->middleware('permission:loans.view');
         Route::post('/settings/types',              [\App\Http\Controllers\Admin\LoanController::class, 'storeType'])->name('types.store')->middleware('permission:loans.create');
     });

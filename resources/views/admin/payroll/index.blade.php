@@ -111,8 +111,16 @@
 
 {{-- Payroll Runs Table --}}
 <div class="lmt-card p-0 overflow-hidden">
-    <div class="flex items-center justify-between p-4 border-b border-gray-100">
+    <div class="flex items-center justify-between p-4 border-b border-gray-100 flex-wrap gap-3">
         <h3 class="font-black text-gray-900">Payroll History</h3>
+        <form action="{{ route('admin.payroll.index', $tenant) }}" method="GET" class="flex items-center gap-2">
+            <input type="date" name="from" value="{{ request('from') }}" title="Pay date from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Pay date to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['from','to']))
+            <a href="{{ route('admin.payroll.index', $tenant) }}" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
     </div>
     <div class="overflow-x-auto">
         <table class="lmt-table">

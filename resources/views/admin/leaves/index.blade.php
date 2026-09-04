@@ -69,7 +69,12 @@
                         </option>
                         @endforeach
                     </select>
+                    <input type="date" name="from" value="{{ request('from') }}" title="Start date from" class="lmt-input py-2 text-sm w-auto"/>
+                    <input type="date" name="to" value="{{ request('to') }}" title="Start date to" class="lmt-input py-2 text-sm w-auto"/>
                     <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+                    @if(request()->hasAny(['employee','type','from','to']))
+                    <a href="{{ route('admin.leaves.index', $tenant) }}?status={{ $status }}" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+                    @endif
                     <button type="button"
                             onclick="openModal('add-leave-modal')"
                             class="lmt-btn-secondary lmt-btn-sm ml-auto">

@@ -39,6 +39,15 @@
         @endforeach
     </div>
     <div class="flex items-center gap-2">
+        <form action="{{ route('admin.recruitment.index', $tenant) }}" method="GET" class="flex items-center gap-2">
+            <input type="hidden" name="status" value="{{ $status }}"/>
+            <input type="date" name="from" value="{{ request('from') }}" title="Posted from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Posted to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-secondary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['from','to']))
+            <a href="{{ route('admin.recruitment.index', $tenant) }}?status={{ $status }}" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
         @include('exports.buttons', ['route' => 'admin.recruitment.export', 'params' => [$tenant]])
         <button onclick="openModal('add-job-modal')" class="lmt-btn-primary lmt-btn-sm">
             <i data-lucide="plus" class="w-4 h-4"></i>

@@ -31,10 +31,24 @@ class TrainingController extends Controller
         if ($search)   $query->where('title', 'like', "%$search%");
 
         $trainings    = $query->paginate(12)->withQueryString();
-        $enrollments  = TrainingEnrollment::with(['employee.department', 'training'])
-            ->latest()->paginate(20, ['*'], 'enroll_page')->withQueryString();
-        $certifications = Certification::with('employee')
-            ->latest()->paginate(20, ['*'], 'cert_page')->withQueryString();
+
+        $enrollQuery = TrainingEnrollment::with(['employee.department', 'training'])->latest();
+        if ($enrollFrom = $request->get('enroll_from')) {
+            $enrollQuery->whereDate('created_at', '>=', $enrollFrom);
+        }
+        if ($enrollTo = $request->get('enroll_to')) {
+            $enrollQuery->whereDate('created_at', '<=', $enrollTo);
+        }
+        $enrollments = $enrollQuery->paginate(20, ['*'], 'enroll_page')->withQueryString();
+
+        $certQuery = Certification::with('employee')->latest();
+        if ($certFrom = $request->get('cert_from')) {
+            $certQuery->where('issue_date', '>=', $certFrom);
+        }
+        if ($certTo = $request->get('cert_to')) {
+            $certQuery->where('issue_date', '<=', $certTo);
+        }
+        $certifications = $certQuery->paginate(20, ['*'], 'cert_page')->withQueryString();
         $employees = Employee::active()->orderBy('first_name')->get();
 
         $stats = [

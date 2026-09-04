@@ -49,6 +49,9 @@
             </select>
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Search assets…" class="lmt-input py-2 text-sm w-44"/>
+            <input type="date" name="from" value="{{ request('from') }}" title="Purchased from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Purchased to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-secondary lmt-btn-sm">Filter</button>
         </form>
         @include('exports.buttons', ['route' => 'admin.assets.export', 'params' => [$tenant]])
         <a href="{{ route('admin.assets.categories', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">

@@ -43,6 +43,12 @@ class AssetController extends Controller
                 ->orWhere('brand', 'like', "%$search%")
             );
         }
+        if ($from = $request->get('from')) {
+            $query->where('purchase_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->where('purchase_date', '<=', $to);
+        }
 
         $assets     = $query->paginate(16)->withQueryString();
         $categories = AssetCategory::where('is_active', true)->orderBy('name')->get();

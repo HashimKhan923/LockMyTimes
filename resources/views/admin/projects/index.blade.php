@@ -40,6 +40,9 @@
             <input type="hidden" name="status" value="{{ $status }}"/>
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Search projects…" class="lmt-input py-2 text-sm w-48"/>
+            <input type="date" name="from" value="{{ request('from') }}" title="Due date from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Due date to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-secondary lmt-btn-sm">Filter</button>
         </form>
         <button onclick="openModal('add-project-modal')" class="lmt-btn-primary lmt-btn-sm">
             <i data-lucide="plus" class="w-4 h-4"></i>

@@ -32,6 +32,13 @@ class ProjectController extends Controller
                 ->orWhere('code','like',"%$search%"));
         }
 
+        if ($from = $request->get('from')) {
+            $query->where('due_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->where('due_date', '<=', $to);
+        }
+
         $projects    = $query->paginate(12)->withQueryString();
         $employees   = Employee::active()->orderBy('first_name')->get();
         $departments = Department::where('is_active', true)->orderBy('name')->get();

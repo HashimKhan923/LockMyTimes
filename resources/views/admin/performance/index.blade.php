@@ -56,6 +56,17 @@
 </div>
 
 <div class="lmt-card p-0 overflow-hidden">
+    <div class="p-4 bg-gray-50 border-b border-gray-100 flex flex-wrap items-center gap-3">
+        <form action="{{ route('admin.performance.index', $tenant) }}" method="GET" class="flex items-center gap-2">
+            <input type="hidden" name="tab" value="reviews"/>
+            <input type="date" name="from" value="{{ request('from') }}" title="Due date from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Due date to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['from','to']))
+            <a href="{{ route('admin.performance.index', $tenant) }}?tab=reviews" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
+    </div>
     <div class="overflow-x-auto">
         <table class="lmt-table">
             <thead>
@@ -157,6 +168,17 @@
 </div>
 
 <div class="lmt-card p-0 overflow-hidden">
+    <div class="p-4 bg-gray-50 border-b border-gray-100 flex flex-wrap items-center gap-3">
+        <form action="{{ route('admin.performance.index', $tenant) }}" method="GET" class="flex items-center gap-2">
+            <input type="hidden" name="tab" value="goals"/>
+            <input type="date" name="goals_from" value="{{ request('goals_from') }}" title="Target date from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="goals_to" value="{{ request('goals_to') }}" title="Target date to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['goals_from','goals_to']))
+            <a href="{{ route('admin.performance.index', $tenant) }}?tab=goals" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
+    </div>
     <div class="overflow-x-auto">
         <table class="lmt-table">
             <thead>

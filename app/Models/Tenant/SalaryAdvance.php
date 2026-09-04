@@ -16,7 +16,7 @@ class SalaryAdvance extends TenantModel
         'employee_id', 'advance_number',
         'amount', 'reason', 'supporting_document',
         'repayment_type', 'installments_count',
-        'per_installment_amount', 'first_deduction_date',
+        'per_installment_amount', 'first_deduction_date', 'auto_deduct_from_payroll',
         'amount_repaid', 'amount_remaining', 'installments_paid',
         'status',
         'approved_by', 'approved_at',
@@ -33,6 +33,7 @@ class SalaryAdvance extends TenantModel
             'amount_repaid'          => 'decimal:2',
             'amount_remaining'       => 'decimal:2',
             'first_deduction_date'   => 'date',
+            'auto_deduct_from_payroll' => 'boolean',
             'approved_at'            => 'datetime',
             'disbursed_at'           => 'datetime',
             'completed_at'           => 'datetime',
@@ -43,6 +44,30 @@ class SalaryAdvance extends TenantModel
     public function approver(): BelongsTo  { return $this->belongsTo(User::class, 'approved_by'); }
     public function disburser(): BelongsTo { return $this->belongsTo(User::class, 'disbursed_by'); }
     public function deductions(): HasMany  { return $this->hasMany(AdvanceDeduction::class); }
+
+    public function isActive(): bool
+    {
+        return in_array($this->status, ['disbursed', 'active']);
+    }
+
+    /**
+     * Recompute amount_repaid / amount_remaining / installments_paid / status purely from
+     * the advance_deductions rows actually marked 'deducted' — mirrors Loan::recalculateTotals().
+     */
+    public function recalculateTotals(): void
+    {
+        $totalRepaid = $this->deductions()->where('status', 'deducted')->sum('amount');
+        $paidCount   = $this->deductions()->where('status', 'deducted')->count();
+        $remaining   = max(0, round((float) $this->amount - (float) $totalRepaid, 2));
+
+        $this->update([
+            'amount_repaid'     => $totalRepaid,
+            'amount_remaining'  => $remaining,
+            'installments_paid' => $paidCount,
+            'status'            => $remaining <= 0 ? 'completed' : 'active',
+            'completed_at'      => $remaining <= 0 ? now() : null,
+        ]);
+    }
 
     public static function generateNumber(): string
     {

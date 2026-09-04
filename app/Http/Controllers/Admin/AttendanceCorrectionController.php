@@ -27,6 +27,13 @@ class AttendanceCorrectionController extends Controller
             $query->where('employee_id', $empId);
         }
 
+        if ($from = $request->get('from')) {
+            $query->where('work_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->where('work_date', '<=', $to);
+        }
+
         $requests = $query->paginate(20)->withQueryString();
 
         $stats = [

@@ -10,11 +10,18 @@ use Illuminate\Http\Request;
 class NotificationController extends Controller
 {
     /** GET /notifications — paginated list (for full page) */
-    public function index(string $tenant)
+    public function index(string $tenant, Request $request)
     {
-        $notifications = Notification::forUser(auth()->id())
-            ->latest()
-            ->paginate(20);
+        $query = Notification::forUser(auth()->id())->latest();
+
+        if ($from = $request->get('from')) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        $notifications = $query->paginate(20)->withQueryString();
 
         return view('admin.notifications.index', compact('notifications', 'tenant'));
     }

@@ -32,11 +32,23 @@ class PerformanceController extends Controller
         $employees = Employee::active()->with('department')->orderBy('first_name')->get();
         $cycles    = ReviewCycle::latest()->get();
 
-        $reviews = PerformanceReview::with(['employee.department','reviewer','cycle'])
-            ->latest()->paginate(15)->withQueryString();
+        $reviewsQuery = PerformanceReview::with(['employee.department','reviewer','cycle'])->latest();
+        if ($from = $request->get('from')) {
+            $reviewsQuery->where('due_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $reviewsQuery->where('due_date', '<=', $to);
+        }
+        $reviews = $reviewsQuery->paginate(15)->withQueryString();
 
-        $goals = Goal::with(['employee.department'])
-            ->latest()->paginate(15, ['*'], 'goals_page')->withQueryString();
+        $goalsQuery = Goal::with(['employee.department'])->latest();
+        if ($goalsFrom = $request->get('goals_from')) {
+            $goalsQuery->where('end_date', '>=', $goalsFrom);
+        }
+        if ($goalsTo = $request->get('goals_to')) {
+            $goalsQuery->where('end_date', '<=', $goalsTo);
+        }
+        $goals = $goalsQuery->paginate(15, ['*'], 'goals_page')->withQueryString();
 
         $kudos = Kudo::with(['fromEmployee','toEmployee'])
             ->where('is_public', true)

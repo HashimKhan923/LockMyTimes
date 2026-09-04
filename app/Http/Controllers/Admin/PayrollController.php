@@ -24,9 +24,18 @@ class PayrollController extends Controller
     /* ================================================================
      | INDEX — payroll dashboard
      |================================================================*/
-    public function index(string $tenant)
+    public function index(string $tenant, Request $request)
     {
-        $runs = PayrollRun::latest()->paginate(12);
+        $runsQuery = PayrollRun::latest();
+
+        if ($from = $request->get('from')) {
+            $runsQuery->where('pay_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $runsQuery->where('pay_date', '<=', $to);
+        }
+
+        $runs = $runsQuery->paginate(12)->withQueryString();
 
         $stats = [
             'total_runs'        => PayrollRun::count(),

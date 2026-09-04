@@ -32,6 +32,12 @@ class RecruitmentController extends Controller
             ->latest();
 
         if ($status !== 'all') $query->where('status', $status);
+        if ($from = $request->get('from')) {
+            $query->where('posted_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->where('posted_date', '<=', $to);
+        }
 
         $jobs       = $query->paginate(12)->withQueryString();
         $departments= Department::where('is_active', true)->orderBy('name')->get();

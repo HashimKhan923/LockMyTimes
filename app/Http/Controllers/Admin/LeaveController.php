@@ -44,6 +44,13 @@ class LeaveController extends Controller
             $query->where('leave_type_id', $typeId);
         }
 
+        if ($from = $request->get('from')) {
+            $query->where('start_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->where('start_date', '<=', $to);
+        }
+
         $requests   = $query->paginate(20)->withQueryString();
         $leaveTypes = LeaveType::where('is_active', true)->orderBy('name')->get();
         $employees  = Employee::active()->orderBy('first_name')->get();

@@ -72,6 +72,27 @@ class Loan extends TenantModel
         return in_array($this->status, ['disbursed', 'active']);
     }
 
+    /**
+     * Recompute amount_paid / amount_remaining / installments_paid / status purely from
+     * the loan_repayments rows actually marked 'paid' — the single source of truth, used
+     * both when an admin manually records a repayment and when payroll auto-deducts one.
+     */
+    public function recalculateTotals(): void
+    {
+        $totalPaid = $this->repayments()->where('status', 'paid')->sum('amount_paid');
+        $paidCount = $this->repayments()->where('status', 'paid')->count();
+        $remaining = max(0, round((float) $this->total_amount - (float) $totalPaid, 2));
+
+        $this->update([
+            'amount_paid'            => $totalPaid,
+            'amount_remaining'       => $remaining,
+            'installments_paid'      => $paidCount,
+            'installments_remaining' => max(0, $this->tenure_months - $paidCount),
+            'status'                 => $remaining <= 0 ? 'completed' : 'active',
+            'completed_at'           => $remaining <= 0 ? now() : null,
+        ]);
+    }
+
     public static function generateNumber(): string
     {
         $year = date('Y');

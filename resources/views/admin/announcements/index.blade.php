@@ -49,10 +49,22 @@
         </a>
         @endforeach
     </div>
-    <button onclick="openModal('add-announcement-modal')" class="lmt-btn-primary lmt-btn-sm">
-        <i data-lucide="plus" class="w-4 h-4"></i>
-        New Announcement
-    </button>
+    <div class="flex items-center gap-2">
+        <form action="{{ route('admin.announcements.index', $tenant) }}" method="GET" class="flex items-center gap-2">
+            <input type="hidden" name="tab" value="announcements"/>
+            <input type="hidden" name="status" value="{{ $status }}"/>
+            <input type="date" name="from" value="{{ request('from') }}" title="Published from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Published to" class="lmt-input py-2 text-sm w-auto"/>
+            <button type="submit" class="lmt-btn-secondary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['from','to']))
+            <a href="{{ route('admin.announcements.index', $tenant) }}?tab=announcements&status={{ $status }}" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
+        </form>
+        <button onclick="openModal('add-announcement-modal')" class="lmt-btn-primary lmt-btn-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            New Announcement
+        </button>
+    </div>
 </div>
 
 <div class="space-y-4">

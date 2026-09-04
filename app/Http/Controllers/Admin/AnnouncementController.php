@@ -25,6 +25,12 @@ class AnnouncementController extends Controller
 
         $query = Announcement::with('creator')->latest();
         if ($status !== 'all') $query->where('status', $status);
+        if ($from = $request->get('from')) {
+            $query->whereDate('publish_at', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->whereDate('publish_at', '<=', $to);
+        }
 
         $announcements = $query->paginate(12)->withQueryString();
 

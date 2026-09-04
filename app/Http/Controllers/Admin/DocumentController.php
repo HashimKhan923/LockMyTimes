@@ -42,6 +42,13 @@ class DocumentController extends Controller
             ->orWhere('file_name', 'like', "%$search%")
         );
 
+        if ($from = $request->get('from')) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
         $documents = $query->paginate(20)->withQueryString();
 
         // Breadcrumb

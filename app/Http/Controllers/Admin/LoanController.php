@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Tenant\AdvanceDeduction;
 use App\Models\Tenant\Employee;
 use App\Models\Tenant\Loan;
 use App\Models\Tenant\LoanRepayment;
@@ -33,6 +34,12 @@ class LoanController extends Controller
         if ($emp = $request->get('employee')) {
             $loanQuery->where('employee_id', $emp);
         }
+        if ($from = $request->get('from')) {
+            $loanQuery->whereDate('requested_at', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $loanQuery->whereDate('requested_at', '<=', $to);
+        }
 
         $loans = $loanQuery->paginate(15, ['*'], 'loans_page')->withQueryString();
 
@@ -42,6 +49,12 @@ class LoanController extends Controller
 
         if ($advStatus = $request->get('adv_status')) {
             $advanceQuery->where('status', $advStatus);
+        }
+        if ($advFrom = $request->get('adv_from')) {
+            $advanceQuery->whereDate('created_at', '>=', $advFrom);
+        }
+        if ($advTo = $request->get('adv_to')) {
+            $advanceQuery->whereDate('created_at', '<=', $advTo);
         }
 
         $advances = $advanceQuery->paginate(15, ['*'], 'adv_page')->withQueryString();
@@ -85,6 +98,7 @@ class LoanController extends Controller
             'tenure_months' => 'required|integer|min:1|max:120',
             'purpose'       => 'nullable|string|max:500',
             'first_emi_date'=> 'required|date',
+            'repayment_method' => 'nullable|in:payroll,separate',
         ]);
 
         $loanType    = LoanType::findOrFail($data['loan_type_id']);
@@ -128,7 +142,7 @@ class LoanController extends Controller
             'status'               => 'pending',
             'requested_by'         => auth()->id(),
             'requested_at'         => now(),
-            'auto_deduct_from_payroll' => true,
+            'auto_deduct_from_payroll' => ($data['repayment_method'] ?? 'payroll') !== 'separate',
         ]);
 
         return redirect()
@@ -246,19 +260,7 @@ class LoanController extends Controller
             'recorded_by'    => auth()->id(),
         ]);
 
-        // Update loan totals
-        $totalPaid = $loan->repayments()->where('status', 'paid')->sum('amount_paid');
-        $remaining = max(0, (float)$loan->total_amount - (float)$totalPaid);
-        $paidCount = $loan->repayments()->where('status', 'paid')->count();
-
-        $loan->update([
-            'amount_paid'            => $totalPaid,
-            'amount_remaining'       => $remaining,
-            'installments_paid'      => $paidCount,
-            'installments_remaining' => $loan->tenure_months - $paidCount,
-            'status'                 => $remaining <= 0 ? 'completed' : 'active',
-            'completed_at'           => $remaining <= 0 ? now() : null,
-        ]);
+        $loan->recalculateTotals();
 
         return back()->with('success', 'Repayment recorded.');
     }
@@ -274,6 +276,7 @@ public function storeAdvance(string $tenant, Request $request)
         'reason'           => 'nullable|string|max:500',
         'repayment_months' => 'required|integer|min:1|max:12',
         'requested_date'   => 'required|date',
+        'repayment_method' => 'nullable|in:payroll,separate',
     ]);
 
     $amount   = (float) $data['amount'];
@@ -291,6 +294,7 @@ public function storeAdvance(string $tenant, Request $request)
         'installments_paid'      => 0,
         'first_deduction_date'   => Carbon::parse($data['requested_date'])
                                         ->addMonth()->startOfMonth(),
+        'auto_deduct_from_payroll' => ($data['repayment_method'] ?? 'payroll') !== 'separate',
         'reason'                 => $data['reason'] ?? null,
         'status'                 => 'pending',
     ]);
@@ -319,6 +323,61 @@ public function storeAdvance(string $tenant, Request $request)
         ]);
 
         return back()->with('success', 'Salary advance rejected.');
+    }
+
+    /* ================================================================
+     | DISBURSE ADVANCE
+     |================================================================*/
+    public function disburseAdvance(string $tenant, SalaryAdvance $advance)
+    {
+        if ($advance->status !== 'approved') {
+            return back()->with('error', 'Only approved advances can be disbursed.');
+        }
+
+        $advance->update([
+            'status'       => 'disbursed',
+            'disbursed_by' => auth()->id(),
+            'disbursed_at' => now(),
+        ]);
+
+        // Generate the per-installment deduction schedule — same idea as a loan's
+        // repayment schedule, so payroll has something concrete to deduct each period.
+        $this->generateAdvanceDeductionSchedule($advance);
+
+        return back()->with('success', "Advance {$advance->advance_number} disbursed. Deduction schedule generated.");
+    }
+
+    /* ================================================================
+     | SHOW ADVANCE
+     |================================================================*/
+    public function showAdvance(string $tenant, SalaryAdvance $advance)
+    {
+        $advance->load(['employee.department', 'deductions', 'approver']);
+        return view('admin.loans.advance-show', compact('advance', 'tenant'));
+    }
+
+    /* ================================================================
+     | RECORD ADVANCE DEDUCTION — manual, for advances marked "pay separately"
+     | (i.e. not auto-deducted from payroll) or to catch up a missed period.
+     |================================================================*/
+    public function recordAdvanceDeduction(string $tenant, Request $request, SalaryAdvance $advance)
+    {
+        $request->validate([
+            'deduction_id' => 'required|exists:advance_deductions,id',
+            'amount'       => 'required|numeric|min:0.01',
+            'deduction_date' => 'required|date',
+        ]);
+
+        $deduction = AdvanceDeduction::findOrFail($request->deduction_id);
+        $deduction->update([
+            'amount'         => $request->amount,
+            'deduction_date' => $request->deduction_date,
+            'status'         => 'deducted',
+        ]);
+
+        $advance->recalculateTotals();
+
+        return back()->with('success', 'Deduction recorded.');
     }
 
     /* ================================================================
@@ -382,6 +441,27 @@ public function storeAdvance(string $tenant, Request $request)
         }
     }
 
+    /**
+     * Builds the per-installment advance_deductions schedule when an advance is disbursed —
+     * mirrors generateRepaymentSchedule() above. A one-time advance is just a 1-row schedule.
+     */
+    protected function generateAdvanceDeductionSchedule(SalaryAdvance $advance): void
+    {
+        $date = Carbon::parse($advance->first_deduction_date ?? now());
+
+        for ($i = 1; $i <= $advance->installments_count; $i++) {
+            AdvanceDeduction::create([
+                'salary_advance_id' => $advance->id,
+                'deduction_number'  => $i,
+                'deduction_date'    => $date->copy()->toDateString(),
+                'amount'            => $advance->per_installment_amount,
+                'status'            => 'pending',
+            ]);
+
+            $date->addMonth();
+        }
+    }
+
     /* ================================================================
      | EXPORT
      |================================================================*/
@@ -396,11 +476,11 @@ public function storeAdvance(string $tenant, Request $request)
         $rows = $loans->map(fn($l) => [
             $l->employee->full_name ?? '-',
             $l->loanType->name ?? '-',
-            number_format($l->amount, 2),
-            number_format($l->balance ?? $l->amount, 2),
-            number_format($l->installment_amount ?? 0, 2),
-            $l->start_date?->format('Y-m-d') ?? '-',
-            $l->end_date?->format('Y-m-d') ?? '-',
+            number_format($l->total_amount, 2),
+            number_format($l->amount_remaining, 2),
+            number_format($l->emi_amount, 2),
+            $l->first_emi_date?->format('Y-m-d') ?? '-',
+            $l->first_emi_date?->copy()->addMonths(max(0, $l->tenure_months - 1))->format('Y-m-d') ?? '-',
             ucfirst($l->status),
         ]);
 

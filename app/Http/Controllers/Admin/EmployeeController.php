@@ -49,6 +49,13 @@ class EmployeeController extends Controller
             $query->where('employment_type', $type);
         }
 
+        if ($from = $request->get('from')) {
+            $query->where('hire_date', '>=', $from);
+        }
+        if ($to = $request->get('to')) {
+            $query->where('hire_date', '<=', $to);
+        }
+
         $employees   = $query->paginate(20)->withQueryString();
         $departments = Department::where('is_active', true)->orderBy('name')->get();
 

@@ -55,7 +55,12 @@
                 </option>
                 @endforeach
             </select>
+            <input type="date" name="from" value="{{ request('from') }}" title="Work date from" class="lmt-input py-2 text-sm w-auto"/>
+            <input type="date" name="to" value="{{ request('to') }}" title="Work date to" class="lmt-input py-2 text-sm w-auto"/>
             <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+            @if(request()->hasAny(['employee','from','to']))
+            <a href="{{ route('admin.attendance-corrections.index', $tenant) }}?status={{ $status }}" class="lmt-btn-ghost lmt-btn-sm">Clear</a>
+            @endif
         </form>
     </div>
 
