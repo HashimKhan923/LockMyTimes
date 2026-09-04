@@ -257,9 +257,12 @@
             <tr>
                 <td>
                     @if($companyLogo)
-                    <img src="{{ $companyLogo }}" style="height:22px; max-width:120px; object-fit:contain; margin-bottom:4px;" alt="Logo"/>
-                    @endif
+                    <div style="display:inline-block; background:#ffffff; border-radius:8px; padding:6px 10px; margin-bottom:6px;">
+                        <img src="{{ $companyLogo }}" style="height:20px; max-width:110px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
+                    </div>
+                    @else
                     <div class="brand">{{ $companyName }}</div>
+                    @endif
                     <div class="label">Pay Slip</div>
                 </td>
                 <td>

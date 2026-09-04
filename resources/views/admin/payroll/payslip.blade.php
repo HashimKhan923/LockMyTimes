@@ -25,13 +25,17 @@
             <div class="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/2"></div>
             <div class="relative flex items-start justify-between">
                 <div>
-                    <div class="flex items-center gap-2 mb-1">
+                    <div class="mb-1.5">
                         @if(isset($currentTenant) && $currentTenant->logo)
-                        <img src="{{ $currentTenant->logo_url }}" class="h-9 max-w-[140px] w-auto object-contain" alt="Logo"/>
+                        <div class="inline-flex items-center bg-white rounded-xl px-2.5 py-1.5 shadow-sm">
+                            <img src="{{ $currentTenant->logo_url }}" class="h-6 w-auto max-w-[110px] object-contain" alt="{{ $currentTenant->company_name }}"/>
+                        </div>
                         @else
-                        <i data-lucide="clock" class="w-5 h-5 text-white/80"></i>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="clock" class="w-5 h-5 text-white/80"></i>
+                            <span class="font-black text-lg">{{ $currentTenant->company_name ?? 'Lockmytimes' }}</span>
+                        </div>
                         @endif
-                        <span class="font-black text-lg">{{ $currentTenant->company_name ?? 'Lockmytimes' }}</span>
                     </div>
                     <p class="text-white/70 text-sm">Pay Slip</p>
                 </div>

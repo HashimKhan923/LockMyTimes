@@ -97,7 +97,9 @@ export function CompanyCodeScreen() {
             Platform.OS === 'ios' ? elevatedShadow.ios : elevatedShadow.android,
           ]}
         >
-          <Image source={{ uri: confirmed.logo_url }} style={styles.companyLogo} />
+          <View style={styles.companyLogoWrap}>
+            <Image source={{ uri: confirmed.logo_url }} style={styles.companyLogo} resizeMode="contain" />
+          </View>
           <View style={{ flex: 1 }}>
             <Text style={[typography.subheading, { color: theme.text }]}>{confirmed.company_name}</Text>
             <View style={{ marginTop: 4, alignSelf: 'flex-start' }}>
@@ -137,5 +139,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     gap: spacing.md,
   },
-  companyLogo: { width: 44, height: 44, borderRadius: 10 },
+  companyLogoWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    padding: 4,
+  },
+  companyLogo: { width: '100%', height: '100%' },
 });

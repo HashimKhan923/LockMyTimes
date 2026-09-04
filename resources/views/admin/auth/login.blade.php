@@ -4,13 +4,15 @@
 
 @section('auth-panel')
 <div class="text-white">
-    <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6 overflow-hidden">
-        @if($tenantModel->logo)
-            <img src="{{ $tenantModel->logo_url }}" alt="{{ $tenantModel->company_name }}" class="w-full h-full object-cover"/>
-        @else
-            <span class="text-2xl font-black text-white">{{ substr($tenantModel->company_name,0,1) }}</span>
-        @endif
+    @if($tenantModel->logo)
+    <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-6 overflow-hidden p-2 shadow-sm">
+        <img src="{{ $tenantModel->logo_url }}" alt="{{ $tenantModel->company_name }}" class="w-full h-full object-contain"/>
     </div>
+    @else
+    <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6">
+        <span class="text-2xl font-black text-white">{{ substr($tenantModel->company_name,0,1) }}</span>
+    </div>
+    @endif
 
     <h2 class="text-3xl font-black mb-3 leading-tight" style="font-family:'Nunito',sans-serif">
         {{ $tenantModel->company_name }}

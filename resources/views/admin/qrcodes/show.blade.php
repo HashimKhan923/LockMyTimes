@@ -16,7 +16,9 @@
         <div class="lmt-gradient-bg rounded-xl p-4 mb-5 mx-auto w-fit">
             <div class="flex items-center gap-2 text-white">
                 @if(isset($currentTenant) && $currentTenant->logo)
-                    <img src="{{ $currentTenant->logo_url }}" class="w-6 h-6 rounded-lg object-cover flex-shrink-0" alt="{{ $currentTenant->company_name }} logo"/>
+                    <div class="w-6 h-6 rounded-md bg-white flex items-center justify-center flex-shrink-0 overflow-hidden p-0.5">
+                        <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-contain" alt="{{ $currentTenant->company_name }} logo"/>
+                    </div>
                 @else
                     <i data-lucide="building-2" class="w-5 h-5"></i>
                 @endif

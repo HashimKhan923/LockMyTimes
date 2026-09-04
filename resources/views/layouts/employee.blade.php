@@ -220,14 +220,16 @@
 
         {{-- Brand --}}
         <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-100 flex-shrink-0">
-            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-white text-sm overflow-hidden"
-                 style="background:linear-gradient(135deg,var(--brand-500),var(--brand-600));box-shadow:0 4px 12px var(--brand-shadow-35);">
-                @if(isset($currentTenant) && $currentTenant->logo)
-                    <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-cover" alt="Logo"/>
-                @else
-                    {{ substr($currentTenant->company_name ?? 'L', 0, 1) }}
-                @endif
+            @if(isset($currentTenant) && $currentTenant->logo)
+            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden bg-white border border-gray-100 p-1">
+                <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-contain" alt="{{ $currentTenant->company_name }} logo"/>
             </div>
+            @else
+            <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-white text-sm"
+                 style="background:linear-gradient(135deg,var(--brand-500),var(--brand-600));box-shadow:0 4px 12px var(--brand-shadow-35);">
+                {{ substr($currentTenant->company_name ?? 'L', 0, 1) }}
+            </div>
+            @endif
             <div class="brand-text overflow-hidden flex-1 min-w-0">
                 <p class="font-black text-gray-900 text-sm leading-none truncate">
                     {{ $currentTenant->company_name ?? 'Employee Portal' }}
