@@ -95,7 +95,10 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'first_name'        => 'required|string|max:100',
             'last_name'         => 'required|string|max:100',
-            'email'             => 'required|email|unique:employees,email',
+            // Employee and User are separate tables with independent email columns — an
+            // address can be free on one but already taken on the other (e.g. a leftover
+            // user record), so both need checking or the insert fails after this passes.
+            'email'             => 'required|email|unique:employees,email|unique:users,email',
             'employee_code'     => 'nullable|string|max:30|unique:employees,employee_code',
             'phone'             => 'nullable|string|max:30',
             'date_of_birth'     => 'nullable|date|before:today',
@@ -158,6 +161,10 @@ class EmployeeController extends Controller
                 'is_active'            => true,
                 'email_verified_at'    => now(),
                 'timezone'             => $timezone,
+                // Explicit, rather than relying on the users.theme column's DB default
+                // ('system') — a brand-new employee should land on light mode, not
+                // whatever their browser/OS happens to prefer on first login.
+                'theme'                => 'light',
             ]);
             $user->assignRole('Employee');
 
@@ -187,7 +194,7 @@ class EmployeeController extends Controller
 
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Failed to create employee: '.$e->getMessage());
+            return back()->withInput()->with('error', $this->friendlyEmployeeSaveError($e, 'create'));
         }
     }
 
@@ -233,7 +240,10 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'first_name'        => 'required|string|max:100',
             'last_name'         => 'required|string|max:100',
-            'email'             => 'required|email|unique:employees,email,'.$employee->id,
+            // Same two-table check as store() — exclude this employee's OWN linked user
+            // row (if any) so re-saving their unchanged email doesn't flag itself.
+            'email'             => 'required|email|unique:employees,email,'.$employee->id
+                                  .'|unique:users,email,'.($employee->user_id ?? 'NULL'),
             'employee_code'     => 'required|string|max:30|unique:employees,employee_code,'.$employee->id,
             'phone'             => 'nullable|string|max:30',
             'date_of_birth'     => 'nullable|date|before:today',
@@ -267,22 +277,51 @@ class EmployeeController extends Controller
             $validated['avatar'] = $request->file('avatar')->store('employees/avatars','public');
         }
 
-        $employee->update($validated);
-        $this->syncLocations($employee, $locationIds);
+        DB::beginTransaction();
+        try {
+            $employee->update($validated);
+            $this->syncLocations($employee, $locationIds);
 
-        // Sync user record — timezone is admin-only (employees cannot set their own; see
-        // Employee\SettingsController, which no longer accepts a timezone field at all).
-        if ($employee->user) {
-            $employee->user->update([
-                'name'     => $employee->full_name,
-                'email'    => $employee->email,
-                'timezone' => $timezone,
-            ]);
+            // Sync user record — timezone is admin-only (employees cannot set their own; see
+            // Employee\SettingsController, which no longer accepts a timezone field at all).
+            if ($employee->user) {
+                $employee->user->update([
+                    'name'     => $employee->full_name,
+                    'email'    => $employee->email,
+                    'timezone' => $timezone,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.employees.show', [$tenant, $employee->id])
+                ->with('success', 'Employee updated successfully.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->withInput()->with('error', $this->friendlyEmployeeSaveError($e, 'update'));
+        }
+    }
+
+    /**
+     * Turns a raw save-time exception into something an admin can actually act on,
+     * instead of a bare SQL dump. The specific case this exists for: validation can
+     * pass (employees.email / users.email both clear) and the insert/update can still
+     * collide on a unique constraint we didn't explicitly check for.
+     */
+    private function friendlyEmployeeSaveError(\Throwable $e, string $action): string
+    {
+        $message = $e->getMessage();
+
+        if (str_contains($message, 'users_email_unique') || str_contains($message, 'employees_email_unique')) {
+            return 'This email address is already in use by another account. Please use a different email.';
         }
 
-        return redirect()
-            ->route('admin.employees.show', [$tenant, $employee->id])
-            ->with('success', 'Employee updated successfully.');
+        if (str_contains($message, 'employees_employee_code_unique')) {
+            return 'This Employee ID is already in use. Please choose a different one.';
+        }
+
+        return ($action === 'update' ? 'Failed to update employee: ' : 'Failed to create employee: ') . $message;
     }
 
     /* ================================================================

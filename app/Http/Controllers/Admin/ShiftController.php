@@ -57,26 +57,31 @@ class ShiftController extends Controller
     public function store(string $tenant, Request $request)
     {
         $data = $request->validate([
-            'name'                 => 'required|string|max:100',
-            'code'                 => 'nullable|string|max:20',
-            'start_time'           => 'required|date_format:H:i',
-            'end_time'             => 'required|date_format:H:i',
-            'break_duration_minutes' => 'nullable|integer|min:0|max:120',
-            'working_days'         => 'required|array|min:1',
-            'working_days.*'       => 'in:0,1,2,3,4,5,6',
-            'color'                => 'nullable|string|max:7',
-            'description'          => 'nullable|string',
-            'is_overnight'         => 'boolean',
-            'grace_period_minutes' => 'nullable|integer|min:0|max:60',
+            'name'                     => 'required|string|max:100',
+            'code'                     => 'nullable|string|max:20',
+            'start_time'               => 'required|date_format:H:i',
+            'end_time'                 => 'required|date_format:H:i',
+            'break_minutes'            => 'nullable|integer|min:0|max:120',
+            'working_days'             => 'required|array|min:1',
+            'working_days.*'           => 'in:0,1,2,3,4,5,6',
+            'color'                    => 'nullable|string|max:7',
+            'description'              => 'nullable|string',
+            'crosses_midnight'         => 'boolean',
+            'late_grace_minutes'       => 'nullable|integer|min:0|max:60',
+            'early_out_grace_minutes'  => 'nullable|integer|min:0|max:60',
         ]);
 
-        $data['working_days'] = $request->input('working_days', []);
+        // Checkbox values submit as strings ("0".."6") — normalize to real integers so
+        // strict-equality comparisons elsewhere (the edit-modal JS in particular) work
+        // regardless of how this record is later read back.
+        $data['working_days'] = array_map('intval', $request->input('working_days', []));
+        $data['crosses_midnight'] = $request->boolean('crosses_midnight');
         $data['is_active']    = true;
 
         // Calculate shift duration
         $start    = Carbon::createFromFormat('H:i', $data['start_time']);
         $end      = Carbon::createFromFormat('H:i', $data['end_time']);
-        $minutes  = $data['is_overnight'] ?? false
+        $minutes  = $data['crosses_midnight']
             ? $start->diffInMinutes($end->copy()->addDay())
             : $start->diffInMinutes($end);
         $data['total_hours'] = round($minutes / 60, 2);
@@ -92,21 +97,26 @@ class ShiftController extends Controller
     public function update(string $tenant, Request $request, Shift $shift)
     {
         $data = $request->validate([
-            'name'                   => 'required|string|max:100',
-            'start_time'             => 'required|date_format:H:i',
-            'end_time'               => 'required|date_format:H:i',
-            'break_duration_minutes' => 'nullable|integer|min:0|max:120',
-            'working_days'           => 'required|array|min:1',
-            'color'                  => 'nullable|string|max:7',
-            'grace_period_minutes'   => 'nullable|integer|min:0|max:60',
-            'is_active'              => 'boolean',
+            'name'                     => 'required|string|max:100',
+            'start_time'               => 'required|date_format:H:i',
+            'end_time'                 => 'required|date_format:H:i',
+            'break_minutes'            => 'nullable|integer|min:0|max:120',
+            'working_days'             => 'required|array|min:1',
+            'color'                    => 'nullable|string|max:7',
+            'late_grace_minutes'       => 'nullable|integer|min:0|max:60',
+            'early_out_grace_minutes'  => 'nullable|integer|min:0|max:60',
+            'crosses_midnight'         => 'boolean',
+            'is_active'                => 'boolean',
         ]);
 
-        $data['working_days'] = $request->input('working_days', []);
+        $data['working_days'] = array_map('intval', $request->input('working_days', []));
+        $data['crosses_midnight'] = $request->boolean('crosses_midnight');
 
         $start   = Carbon::createFromFormat('H:i', $data['start_time']);
         $end     = Carbon::createFromFormat('H:i', $data['end_time']);
-        $minutes = $start->diffInMinutes($end);
+        $minutes = $data['crosses_midnight']
+            ? $start->diffInMinutes($end->copy()->addDay())
+            : $start->diffInMinutes($end);
         $data['total_hours'] = round($minutes / 60, 2);
 
         $shift->update($data);

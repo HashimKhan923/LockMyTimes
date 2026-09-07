@@ -98,6 +98,14 @@
                 <input type="text" name="search" value="{{ request('search') }}"
                        class="lmt-input pl-10 py-2 text-sm" placeholder="Search employees…"/>
             </div>
+            <select name="employee" class="lmt-select py-2 text-sm w-auto min-w-40">
+                <option value="">All Employees</option>
+                @foreach($employees as $emp)
+                <option value="{{ $emp->id }}" {{ request('employee') == $emp->id ? 'selected' : '' }}>
+                    {{ $emp->full_name }}
+                </option>
+                @endforeach
+            </select>
             <select name="department" class="lmt-select py-2 text-sm w-auto min-w-40">
                 <option value="">All Departments</option>
                 @foreach($departments as $dept)
@@ -118,7 +126,15 @@
                 <input type="checkbox" name="remote" value="1" {{ request('remote') ? 'checked' : '' }} onchange="this.form.submit()">
                 Remote only
             </label>
+            <div class="flex items-center gap-2 w-full pt-1 border-t border-gray-100 mt-1">
+                <span class="text-xs font-semibold text-gray-800 whitespace-nowrap">Or a date range (e.g. whole month for one employee):</span>
+                <input type="date" name="from" value="{{ request('from') }}" title="From date" class="lmt-input py-2 text-sm w-auto"/>
+                <input type="date" name="to" value="{{ request('to') }}" title="To date" class="lmt-input py-2 text-sm w-auto"/>
+            </div>
             <button type="submit" class="lmt-btn-primary lmt-btn-sm">Filter</button>
+            @if($isRange)
+            <a href="{{ route('admin.attendance.index', $tenant) }}" class="lmt-btn-ghost lmt-btn-sm">Back to single day</a>
+            @endif
         </form>
     </div>
 
@@ -127,6 +143,9 @@
             <thead>
                 <tr>
                     <th>Employee</th>
+                    @if($isRange)
+                    <th>Date</th>
+                    @endif
                     <th>Clock In</th>
                     <th>Clock Out</th>
                     <th>Total Hours</th>
@@ -159,6 +178,9 @@
                             </div>
                         </div>
                     </td>
+                    @if($isRange)
+                    <td class="text-sm text-gray-800 whitespace-nowrap">{{ $rec->work_date->format('M j, Y') }}</td>
+                    @endif
                     <td>
                         <div>
                             <span class="text-sm font-semibold {{ $rec->is_late ? 'text-amber-600' : 'text-gray-900' }}">
@@ -225,9 +247,15 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" class="text-center py-16">
+                    <td colspan="{{ $isRange ? 10 : 9 }}" class="text-center py-16">
                         <i data-lucide="clock" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
-                        <p class="font-semibold text-gray-800">No attendance records for {{ $date->format('M j, Y') }}</p>
+                        <p class="font-semibold text-gray-800">
+                            @if($isRange)
+                                No attendance records for {{ request('from') }} – {{ request('to') }}
+                            @else
+                                No attendance records for {{ $date->format('M j, Y') }}
+                            @endif
+                        </p>
                     </td>
                 </tr>
                 @endforelse

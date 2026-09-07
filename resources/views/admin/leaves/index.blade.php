@@ -219,79 +219,8 @@
         </div>
     </div>
 
-    {{-- Calendar + Quick Actions --}}
-    <div class="space-y-5">
-
-        {{-- Month picker + Calendar --}}
-        <div class="lmt-card p-0 overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-gray-100">
-                <h3 class="font-black text-gray-900">Leave Calendar</h3>
-                <form method="GET" action="{{ route('admin.leaves.index', $tenant) }}">
-                    <input type="hidden" name="status" value="{{ $status }}"/>
-                    <input type="month" name="month" value="{{ $month }}"
-                           class="lmt-input py-1.5 text-xs w-32" onchange="this.form.submit()"/>
-                </form>
-            </div>
-
-            <div class="p-4">
-                {{-- Day labels --}}
-                <div class="grid grid-cols-7 mb-1">
-                    @foreach(['S','M','T','W','T','F','S'] as $d)
-                    <div class="text-center text-xs font-bold text-gray-800 py-1">{{ $d }}</div>
-                    @endforeach
-                </div>
-
-                @php
-                $firstDay    = $start->copy()->startOfMonth();
-                $startBlanks = $firstDay->dayOfWeek;
-                $daysInMonth = $start->daysInMonth;
-                @endphp
-
-                <div class="grid grid-cols-7 gap-0.5">
-                    @for($i = 0; $i < $startBlanks; $i++)
-                    <div></div>
-                    @endfor
-
-                    @for($d = 1; $d <= $daysInMonth; $d++)
-                    @php
-                    $date       = $start->copy()->setDay($d);
-                    $dateStr    = $date->toDateString();
-                    $isToday    = $dateStr === today()->toDateString();
-                    $isWeekend  = $date->isWeekend();
-                    $leavesOnDay = $calendarLeaves->filter(fn($l)
-                        => $l->start_date->lte($date) && $l->end_date->gte($date));
-                    @endphp
-                    <div class="relative rounded-lg min-h-8 flex flex-col items-center py-1 {{ $isToday ? 'ring-2 ring-brand-500 bg-brand-50' : ($isWeekend ? 'bg-gray-50' : '') }}">
-                        <span class="text-xs {{ $isToday ? 'font-black text-brand-600' : 'text-gray-800' }}">{{ $d }}</span>
-                        @if($leavesOnDay->count() > 0)
-                        <div class="flex flex-col gap-0.5 w-full px-0.5 mt-0.5">
-                            @foreach($leavesOnDay->take(2) as $lv)
-                            <div class="w-full h-1.5 rounded-full"
-                                 style="background:{{ $lv->leaveType->color ?? '#6C7DF7' }}"
-                                 title="{{ $lv->employee->full_name }} - {{ $lv->leaveType->name }}">
-                            </div>
-                            @endforeach
-                            @if($leavesOnDay->count() > 2)
-                            <span class="text-[9px] text-gray-800 text-center">+{{ $leavesOnDay->count() - 2 }}</span>
-                            @endif
-                        </div>
-                        @endif
-                    </div>
-                    @endfor
-                </div>
-
-                {{-- Legend --}}
-                <div class="mt-3 pt-3 border-t border-gray-100 space-y-1.5">
-                    @foreach($leaveTypes->take(5) as $lt)
-                    <div class="flex items-center gap-2 text-xs">
-                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background:{{ $lt->color ?? '#6C7DF7' }}"></div>
-                        <span class="text-gray-800 truncate">{{ $lt->name }}</span>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
+    {{-- Quick Actions --}}
+    <div>
         {{-- Quick links --}}
         <div class="lmt-card">
             <h3 class="font-black text-gray-900 mb-3">Manage</h3>
@@ -324,6 +253,76 @@
                     </button>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+{{-- Leave Calendar — full width, below the requests table + Manage row --}}
+<div class="lmt-card p-0 overflow-hidden mt-6">
+    <div class="flex items-center justify-between p-4 border-b border-gray-100">
+        <h3 class="font-black text-gray-900">Leave Calendar</h3>
+        <form method="GET" action="{{ route('admin.leaves.index', $tenant) }}">
+            <input type="hidden" name="status" value="{{ $status }}"/>
+            <input type="month" name="month" value="{{ $month }}"
+                   class="lmt-input py-1.5 text-xs w-32" onchange="this.form.submit()"/>
+        </form>
+    </div>
+
+    <div class="p-4">
+        {{-- Day labels --}}
+        <div class="grid grid-cols-7 mb-1">
+            @foreach(['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $d)
+            <div class="text-center text-xs font-bold text-gray-800 py-1">{{ $d }}</div>
+            @endforeach
+        </div>
+
+        @php
+        $firstDay    = $start->copy()->startOfMonth();
+        $startBlanks = $firstDay->dayOfWeek;
+        $daysInMonth = $start->daysInMonth;
+        @endphp
+
+        <div class="grid grid-cols-7 gap-1">
+            @for($i = 0; $i < $startBlanks; $i++)
+            <div></div>
+            @endfor
+
+            @for($d = 1; $d <= $daysInMonth; $d++)
+            @php
+            $date       = $start->copy()->setDay($d);
+            $dateStr    = $date->toDateString();
+            $isToday    = $dateStr === today()->toDateString();
+            $isWeekend  = $date->isWeekend();
+            $leavesOnDay = $calendarLeaves->filter(fn($l)
+                => $l->start_date->lte($date) && $l->end_date->gte($date));
+            @endphp
+            <div class="relative rounded-lg min-h-16 flex flex-col items-center py-1.5 {{ $isToday ? 'ring-2 ring-brand-500 bg-brand-50' : ($isWeekend ? 'bg-gray-50' : '') }}">
+                <span class="text-xs {{ $isToday ? 'font-black text-brand-600' : 'text-gray-800' }}">{{ $d }}</span>
+                @if($leavesOnDay->count() > 0)
+                <div class="flex flex-col gap-0.5 w-full px-1 mt-1">
+                    @foreach($leavesOnDay->take(3) as $lv)
+                    <div class="w-full h-1.5 rounded-full"
+                         style="background:{{ $lv->leaveType->color ?? '#6C7DF7' }}"
+                         title="{{ $lv->employee->full_name }} - {{ $lv->leaveType->name }}">
+                    </div>
+                    @endforeach
+                    @if($leavesOnDay->count() > 3)
+                    <span class="text-[9px] text-gray-800 text-center">+{{ $leavesOnDay->count() - 3 }}</span>
+                    @endif
+                </div>
+                @endif
+            </div>
+            @endfor
+        </div>
+
+        {{-- Legend --}}
+        <div class="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-x-5 gap-y-1.5">
+            @foreach($leaveTypes->take(8) as $lt)
+            <div class="flex items-center gap-2 text-xs">
+                <div class="w-3 h-3 rounded-full flex-shrink-0" style="background:{{ $lt->color ?? '#6C7DF7' }}"></div>
+                <span class="text-gray-800 truncate">{{ $lt->name }}</span>
+            </div>
+            @endforeach
         </div>
     </div>
 </div>

@@ -54,7 +54,7 @@
                 <div class="grid grid-cols-2 gap-5">
                     <div class="col-span-2">
                         <label class="lmt-label">Organization Name</label>
-                        <input type="text" name="name" class="lmt-input" value="{{ $general['name'] ?? '' }}"/>
+                        <input type="text" name="name" class="lmt-input" value="{{ old('name', $currentTenant->company_name ?? '') }}"/>
                     </div>
                     <div>
                         <label class="lmt-label">Currency</label>

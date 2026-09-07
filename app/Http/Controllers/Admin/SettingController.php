@@ -84,6 +84,16 @@ class SettingController extends Controller
             }
         }
 
+        // Special: "Organization Name" isn't a tenant Setting at all — the real value
+        // lives on the main-DB tenant record (company_name), which is what every other
+        // part of the app (sidebar, payslips, login pages, emails) already reads.
+        if ($group === 'general' && $request->filled('name')) {
+            $mainTenant = \App\Models\Main\Tenant::where('slug', $tenant)->first();
+            if ($mainTenant) {
+                $mainTenant->update(['company_name' => $request->input('name')]);
+            }
+        }
+
         return back()->with('success', ucfirst($group) . ' settings updated successfully.');
     }
 
@@ -94,7 +104,8 @@ class SettingController extends Controller
     {
         return match($group) {
             'general' => [
-                'name'              => 'string',
+                // 'name' (Organization Name) is deliberately absent here — it's synced
+                // straight to the main-DB tenant record below, not stored as a Setting.
                 'currency'          => 'string',
                 'timezone'          => 'string',
                 'date_format'       => 'string',

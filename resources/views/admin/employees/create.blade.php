@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', isset($employee) ? 'Edit Employee' : 'Add Employee')
-@section('page-title', isset($employee) ? 'Edit Employee' : 'Add Employee')
+@section('title', $employee->exists ? 'Edit Employee' : 'Add Employee')
+@section('page-title', $employee->exists ? 'Edit Employee' : 'Add Employee')
 
 @section('content')
 
@@ -32,11 +32,11 @@
                 <div class="md:col-span-2 flex items-center gap-5">
                     <div class="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-gray-100"
                          id="avatar-preview-wrapper">
-                        @if(isset($employee) && $employee->avatar)
+                        @if($employee->exists && $employee->avatar)
                         <img src="{{ $employee->avatar_url }}" class="w-full h-full object-cover" id="avatar-preview"/>
                         @else
                         <div class="w-full h-full lmt-gradient-bg flex items-center justify-center text-white text-xl font-black" id="avatar-placeholder">
-                            {{ isset($employee) ? substr($employee->first_name,0,1) : '?' }}
+                            {{ $employee->exists ? substr($employee->first_name,0,1) : '?' }}
                         </div>
                         @endif
                     </div>
@@ -278,8 +278,8 @@
         <div class="flex items-center justify-end gap-3">
             <a href="{{ route('admin.employees.index', $tenant) }}" class="lmt-btn-secondary">Cancel</a>
             <button type="submit" class="lmt-btn-primary">
-                <i data-lucide="{{ isset($employee) ? 'save' : 'user-plus' }}" class="w-4 h-4"></i>
-                {{ isset($employee) ? 'Save Changes' : 'Add Employee' }}
+                <i data-lucide="{{ $employee->exists ? 'save' : 'user-plus' }}" class="w-4 h-4"></i>
+                {{ $employee->exists ? 'Save Changes' : 'Add Employee' }}
             </button>
         </div>
     </form>

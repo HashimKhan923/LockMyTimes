@@ -23,9 +23,28 @@ class AttendanceController extends Controller
             : Carbon::today();
 
         $departments = Department::where('is_active', true)->orderBy('name')->get();
+        $employees   = Employee::active()->orderBy('first_name')->get();
 
-        $query = Attendance::with(['employee.department', 'employee.position', 'location'])
-            ->where('work_date', $date->toDateString());
+        // A From/To range (e.g. one employee's whole month) overrides the single-day
+        // picker — the table then shows every matching day instead of just $date.
+        $isRange = $request->filled('from') && $request->filled('to');
+
+        $query = Attendance::with(['employee.department', 'employee.position', 'location']);
+
+        if ($isRange) {
+            $from = Carbon::parse($request->get('from'))->toDateString();
+            $to   = Carbon::parse($request->get('to'))->toDateString();
+            if ($to < $from) {
+                [$from, $to] = [$to, $from];
+            }
+            $query->whereBetween('work_date', [$from, $to]);
+        } else {
+            $query->where('work_date', $date->toDateString());
+        }
+
+        if ($empId = $request->get('employee')) {
+            $query->where('employee_id', $empId);
+        }
 
         if ($dept = $request->get('department')) {
             $query->whereHas('employee', fn($q) => $q->where('department_id', $dept));
@@ -47,7 +66,7 @@ class AttendanceController extends Controller
             });
         }
 
-        $records = $query->orderBy('clock_in_at', 'desc')->paginate(30)->withQueryString();
+        $records = $query->orderBy('work_date', 'desc')->orderBy('clock_in_at', 'desc')->paginate(30)->withQueryString();
 
         // Summary stats for the day
         $totalActive  = Employee::active()->count();
@@ -68,7 +87,7 @@ class AttendanceController extends Controller
         })->reverse()->values();
 
         return view('admin.attendance.index', compact(
-            'records', 'date', 'departments',
+            'records', 'date', 'departments', 'employees', 'isRange',
             'totalActive', 'presentCount', 'absentCount', 'lateCount', 'onLeaveCount',
             'monthlyStats', 'tenant'
         ));

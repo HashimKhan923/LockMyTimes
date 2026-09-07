@@ -16,3 +16,6 @@ Schedule::command('leave:carry-over')->yearlyOn(12, 31, '23:30');
 
 // Notify super admins about trial tenants expiring in 3 days / 1 day.
 Schedule::command('tenants:check-expiring-trials')->dailyAt('08:00');
+
+// Delete in-app notifications older than 30 days across every tenant database.
+Schedule::command('notifications:prune')->dailyAt('03:00');

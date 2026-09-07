@@ -276,11 +276,17 @@
                 </div>
                 <div>
                     <label class="lmt-label">Break (minutes)</label>
-                    <input type="number" name="break_duration_minutes" class="lmt-input" value="60" min="0" max="120"/>
+                    <input type="number" name="break_minutes" class="lmt-input" value="60" min="0" max="120"/>
                 </div>
                 <div>
                     <label class="lmt-label">Late Grace (minutes)</label>
-                    <input type="number" name="grace_period_minutes" class="lmt-input" value="10" min="0" max="60"/>
+                    <input type="number" name="late_grace_minutes" class="lmt-input" value="10" min="0" max="60"/>
+                    <p class="lmt-help">Minutes an employee can clock in after start time without being marked late.</p>
+                </div>
+                <div>
+                    <label class="lmt-label">Early-Out Grace (minutes)</label>
+                    <input type="number" name="early_out_grace_minutes" class="lmt-input" value="10" min="0" max="60"/>
+                    <p class="lmt-help">Minutes an employee can clock out before end time without being flagged.</p>
                 </div>
                 <div>
                     <label class="lmt-label">Color</label>
@@ -289,7 +295,7 @@
                 <div>
                     <label class="lmt-label">Overnight Shift?</label>
                     <label class="flex items-center gap-2 mt-2 cursor-pointer">
-                        <input type="checkbox" name="is_overnight" value="1" class="w-4 h-4 rounded"/>
+                        <input type="checkbox" name="crosses_midnight" value="1" class="w-4 h-4 rounded"/>
                         <span class="text-sm text-gray-800">Crosses midnight</span>
                     </label>
                 </div>
@@ -351,14 +357,28 @@
                 </div>
                 <div>
                     <label class="lmt-label">Break (minutes)</label>
-                    <input type="number" name="break_duration_minutes" id="edit-shift-break" class="lmt-input" min="0" max="120"/>
+                    <input type="number" name="break_minutes" id="edit-shift-break" class="lmt-input" min="0" max="120"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Late Grace (minutes)</label>
+                    <input type="number" name="late_grace_minutes" id="edit-shift-late-grace" class="lmt-input" min="0" max="60"/>
+                </div>
+                <div>
+                    <label class="lmt-label">Early-Out Grace (minutes)</label>
+                    <input type="number" name="early_out_grace_minutes" id="edit-shift-early-grace" class="lmt-input" min="0" max="60"/>
                 </div>
                 <div>
                     <label class="lmt-label">Status</label>
-                    <select name="is_active" class="lmt-select">
+                    <select name="is_active" id="edit-shift-status" class="lmt-select">
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
                     </select>
+                </div>
+                <div class="col-span-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="crosses_midnight" id="edit-shift-overnight" value="1" class="w-4 h-4 rounded"/>
+                        <span class="text-sm text-gray-800">Crosses midnight</span>
+                    </label>
                 </div>
             </div>
             <div>
@@ -461,10 +481,15 @@ function openEditShift(shiftId, shift) {
     document.getElementById('edit-shift-color').value = shift.color || '#6C7DF7';
     document.getElementById('edit-shift-start').value = shift.start_time?.substring(0,5);
     document.getElementById('edit-shift-end').value   = shift.end_time?.substring(0,5);
-    document.getElementById('edit-shift-break').value = shift.break_duration_minutes || 60;
+    document.getElementById('edit-shift-break').value = shift.break_minutes ?? 60;
+    document.getElementById('edit-shift-late-grace').value  = shift.late_grace_minutes ?? 10;
+    document.getElementById('edit-shift-early-grace').value = shift.early_out_grace_minutes ?? 10;
+    document.getElementById('edit-shift-status').value      = shift.is_active ? '1' : '0';
+    document.getElementById('edit-shift-overnight').checked = !!shift.crosses_midnight;
 
-    // Set working days checkboxes
-    const workingDays = shift.working_days || [1,2,3,4,5];
+    // Set working days checkboxes — coerce both sides to Number since working_days may
+    // come back as either ints or numeric strings depending on how the row was saved.
+    const workingDays = (shift.working_days && shift.working_days.length ? shift.working_days : [1,2,3,4,5]).map(Number);
     document.querySelectorAll('.edit-day-cb').forEach(cb => {
         cb.checked = workingDays.includes(parseInt(cb.dataset.day));
     });
