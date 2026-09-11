@@ -227,7 +227,10 @@ class AttendanceController extends Controller
             ->keyBy(fn($r) => $r->work_date->format('Y-m-d'));
 
         $summary = [
-            'total_days'     => $records->count(),
+            // The actual number of calendar days in the selected period — not just how many
+            // have an attendance row, since an unlogged absence never gets one (the list/calendar
+            // views infer "Absent" for a missing weekday purely at render time).
+            'total_days'     => $start->copy()->startOfDay()->diffInDays($end->copy()->startOfDay()) + 1,
             'present'        => $records->where('status','present')->count(),
             'late'           => $records->where('is_late', true)->count(),
             'total_hours'    => round($records->sum('total_hours'), 2),
