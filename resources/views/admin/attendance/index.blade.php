@@ -19,11 +19,11 @@
         </form>
         <div class="inline-flex p-1 bg-gray-100 rounded-xl text-xs font-bold">
             <a href="{{ route('admin.attendance.index', $tenant) }}"
-               class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition bg-white shadow text-gray-900">
+               class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition {{ ($view ?? 'list') === 'list' ? 'bg-white shadow text-gray-900' : 'text-gray-800' }}">
                 <i data-lucide="list" class="w-3.5 h-3.5"></i> List
             </a>
             <a href="{{ route('admin.attendance.index', [$tenant, 'view' => 'calendar']) }}"
-               class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition text-gray-800">
+               class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition {{ ($view ?? 'list') === 'calendar' ? 'bg-white shadow text-gray-900' : 'text-gray-800' }}">
                 <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> Calendar
             </a>
         </div>

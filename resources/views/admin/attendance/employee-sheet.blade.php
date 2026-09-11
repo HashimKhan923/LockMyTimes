@@ -59,9 +59,24 @@
         </div>
     </div>
 
-    @if($isCustomRange)
-    {{-- Custom range — a day-by-day table, since an arbitrary range (e.g. 10
-         days, or spanning two months) doesn't fit a single-month calendar grid. --}}
+    {{-- View switcher — hidden for a custom range, which only ever renders as a list --}}
+    @unless($isCustomRange)
+    <div class="flex justify-end mb-4">
+        <div class="inline-flex p-1 bg-gray-100 rounded-xl text-xs font-bold">
+            <a href="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id, 'view' => 'list', 'month' => $month]) }}"
+               class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition {{ $view === 'list' ? 'bg-white shadow text-gray-900' : 'text-gray-800' }}">
+                <i data-lucide="list" class="w-3.5 h-3.5"></i> List
+            </a>
+            <a href="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id, 'view' => 'calendar', 'month' => $month]) }}"
+               class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition {{ $view === 'calendar' ? 'bg-white shadow text-gray-900' : 'text-gray-800' }}">
+                <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> Calendar
+            </a>
+        </div>
+    </div>
+    @endunless
+
+    @if($view === 'list')
+    {{-- List — a day-by-day table, for the selected month or a custom range. --}}
     <div class="lmt-card p-0 overflow-hidden">
         <div class="p-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="font-black text-gray-900">{{ $start->format('M j, Y') }} – {{ $end->format('M j, Y') }}</h3>
@@ -77,6 +92,8 @@
                         <th>Clock Out</th>
                         <th>Hours</th>
                         <th>Overtime</th>
+                        <th>Break</th>
+                        <th>Location</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -110,6 +127,8 @@
                         <td class="text-sm text-gray-800">{{ $rec?->clock_out_at?->format('h:i A') ?? '—' }}</td>
                         <td class="text-sm font-semibold text-gray-900">{{ format_hours($rec?->total_hours) }}</td>
                         <td class="text-sm text-amber-600">{{ $rec?->overtime_hours > 0 ? format_hours($rec->overtime_hours) : '—' }}</td>
+                        <td class="text-sm text-gray-800">{{ $rec?->break_hours > 0 ? format_hours($rec->break_hours) : '—' }}</td>
+                        <td class="text-sm text-gray-800">{{ $rec?->location?->name ?? '—' }}</td>
                     </tr>
                     @php $cursor->addDay(); @endphp
                     @endwhile

@@ -219,7 +219,8 @@ class AttendanceController extends Controller
             $end   = $start->copy()->endOfMonth();
         }
 
-        $records = Attendance::where('employee_id', $employee->id)
+        $records = Attendance::with('location')
+            ->where('employee_id', $employee->id)
             ->whereBetween('work_date', [$start->toDateString(), $end->toDateString()])
             ->orderBy('work_date')
             ->get()
@@ -233,8 +234,13 @@ class AttendanceController extends Controller
             'overtime_hours' => round($records->sum('overtime_hours'), 2),
         ];
 
+        // A custom range only ever makes sense as a day-by-day table (it can span
+        // multiple months, which the single-month calendar grid can't represent).
+        // Otherwise, list vs. calendar is the admin's own choice via the toggle.
+        $view = $isCustomRange ? 'list' : $request->get('view', 'calendar');
+
         return view('admin.attendance.employee-sheet',
-            compact('employee', 'records', 'summary', 'start', 'end', 'month', 'tenant', 'isCustomRange'));
+            compact('employee', 'records', 'summary', 'start', 'end', 'month', 'tenant', 'isCustomRange', 'view'));
     }
 
     /* ================================================================
