@@ -25,10 +25,17 @@
                 </div>
             </div>
             <div class="flex flex-col sm:items-end gap-2">
-                <form method="GET" action="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}">
-                    <input type="month" name="month" value="{{ $month }}"
-                           class="lmt-input w-auto" onchange="this.form.submit()"/>
-                </form>
+                <div class="flex items-center gap-2">
+                    <form method="GET" action="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}">
+                        <input type="month" name="month" value="{{ $month }}"
+                               class="lmt-input w-auto" onchange="this.form.submit()"/>
+                    </form>
+                    @include('exports.buttons', [
+                        'route'  => 'admin.attendance.export',
+                        'params' => [$tenant],
+                        'extra'  => ['employee_id' => $employee->id, 'from' => $start->toDateString(), 'to' => $end->toDateString()],
+                    ])
+                </div>
                 <form method="GET" action="{{ route('admin.attendance.employee-sheet', [$tenant, $employee->id]) }}"
                       class="flex items-center gap-2">
                     <span class="text-xs text-gray-800 font-semibold">or custom range:</span>

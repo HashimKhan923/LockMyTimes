@@ -255,6 +255,10 @@ class AttendanceController extends Controller
         $to     = $request->get('to', now()->toDateString());
         $format = $request->get('format', 'excel');
 
+        if ($employeeId = $request->get('employee_id')) {
+            return $this->exportForEmployee($employeeId, $from, $to, $format, $exporter);
+        }
+
         $records = Attendance::with(['employee.department'])
             ->whereBetween('work_date', [$from, $to])
             ->orderBy('work_date')->orderBy('employee_id')
@@ -278,6 +282,60 @@ class AttendanceController extends Controller
 
         if ($format === 'pdf') {
             return $exporter->pdf("Attendance Report ({$from} to {$to})", $columns, $rows, $filename.'.pdf', 'landscape');
+        }
+
+        return $exporter->excel($columns, $rows, $filename.'.xlsx');
+    }
+
+    /**
+     * Per-employee timesheet export — one row per calendar day in the range (not just days
+     * with a DB record), so the file matches exactly what the admin sees on the employee-sheet
+     * list view: unlogged weekdays render as "Absent", weekends as "Weekend".
+     */
+    private function exportForEmployee(int $employeeId, string $from, string $to, string $format, ExportService $exporter)
+    {
+        $employee = Employee::findOrFail($employeeId);
+        $start = Carbon::parse($from)->startOfDay();
+        $end   = Carbon::parse($to)->startOfDay();
+
+        $records = Attendance::with('location')
+            ->where('employee_id', $employee->id)
+            ->whereBetween('work_date', [$start->toDateString(), $end->toDateString()])
+            ->get()
+            ->keyBy(fn ($r) => $r->work_date->format('Y-m-d'));
+
+        $columns = ['Date', 'Status', 'Clock In', 'Clock Out', 'Hours', 'Overtime', 'Break', 'Location'];
+        $rows = [];
+
+        for ($cursor = $start->copy(); $cursor->lte($end); $cursor->addDay()) {
+            $dateKey   = $cursor->format('Y-m-d');
+            $rec       = $records->get($dateKey);
+            $isWeekend = in_array($cursor->dayOfWeek, [0, 6]);
+
+            $status = match (true) {
+                (bool) $rec => $rec->is_late ? 'Late' : ucfirst(str_replace('_', ' ', $rec->status)),
+                $isWeekend => 'Weekend',
+                $dateKey < now()->toDateString() => 'Absent',
+                default => '-',
+            };
+
+            $rows[] = [
+                $cursor->format('Y-m-d'),
+                $status,
+                $rec?->clock_in_at?->format('H:i') ?? '-',
+                $rec?->clock_out_at?->format('H:i') ?? '-',
+                $rec?->total_hours ?? '0',
+                $rec?->overtime_hours > 0 ? $rec->overtime_hours : '0',
+                $rec?->break_hours > 0 ? $rec->break_hours : '0',
+                $rec?->location?->name ?? '-',
+            ];
+        }
+
+        $filename = "attendance-{$employee->employee_code}-{$from}-{$to}";
+        $title    = "{$employee->full_name} — Attendance ({$from} to {$to})";
+
+        if ($format === 'pdf') {
+            return $exporter->pdf($title, $columns, $rows, $filename.'.pdf', 'landscape');
         }
 
         return $exporter->excel($columns, $rows, $filename.'.xlsx');
