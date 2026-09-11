@@ -80,7 +80,7 @@
     <div class="lmt-card p-0 overflow-hidden">
         <div class="p-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="font-black text-gray-900">{{ $start->format('M j, Y') }} – {{ $end->format('M j, Y') }}</h3>
-            <span class="lmt-badge-gray text-xs">{{ $start->diffInDays($end) + 1 }} days</span>
+            <span class="lmt-badge-gray text-xs">{{ $start->copy()->startOfDay()->diffInDays($end->copy()->startOfDay()) + 1 }} days</span>
         </div>
         <div class="overflow-x-auto">
             <table class="lmt-table">
