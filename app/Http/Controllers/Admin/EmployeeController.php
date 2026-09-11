@@ -119,6 +119,7 @@ class EmployeeController extends Controller
             // Empty/omitted = inherit the company's General Settings timezone dynamically (see
             // Employee::attendanceTimezone()) rather than freezing a snapshot at hire time.
             'timezone'          => 'nullable|timezone',
+            'overtime_rate_multiplier' => 'nullable|numeric|min:1|max:9.99',
         ]);
 
         $locationIds = $validated['location_ids'] ?? [];
@@ -127,6 +128,8 @@ class EmployeeController extends Controller
         $validated['employee_code'] = ($validated['employee_code'] ?? null) ?: null;
         $timezone = $validated['timezone'] ?? null;
         unset($validated['timezone']);
+        // Unchecked checkbox = absent from the request, not "false" — read it explicitly.
+        $validated['overtime_allowed'] = $request->boolean('overtime_allowed');
 
         // Enforce plan employee limit
         $currentTenant = \App\Models\Main\Tenant::where('slug', $tenant)->first();
@@ -264,6 +267,7 @@ class EmployeeController extends Controller
             // Empty/omitted = inherit the company's General Settings timezone dynamically (see
             // Employee::attendanceTimezone()) rather than freezing a snapshot at hire time.
             'timezone'          => 'nullable|timezone',
+            'overtime_rate_multiplier' => 'nullable|numeric|min:1|max:9.99',
         ]);
 
         $locationIds = $validated['location_ids'] ?? [];
@@ -271,6 +275,8 @@ class EmployeeController extends Controller
         $validated['base_salary'] = $validated['base_salary'] ?? 0;
         $timezone = $validated['timezone'] ?? null;
         unset($validated['timezone']);
+        // Unchecked checkbox = absent from the request, not "false" — read it explicitly.
+        $validated['overtime_allowed'] = $request->boolean('overtime_allowed');
 
         if ($request->hasFile('avatar')) {
             if ($employee->avatar) Storage::disk('public')->delete($employee->avatar);

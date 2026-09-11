@@ -341,15 +341,47 @@ class AttendanceController extends Controller
             $worked = max(0, $total - $done - $ongoing);
         }
 
+        $status = $this->clockStatusFor($att, $active);
+
+        // Eligible to see the "Start Overtime" button: admin-approved, currently clocked in,
+        // not already started, and (if a shift is assigned) the shift has actually ended.
+        $overtimeEligible = false;
+        if ($emp->overtime_allowed && $status === 'clocked_in' && ! $att?->overtime_started_at) {
+            $shift = $this->resolveShiftForDate($emp, $emp->localToday());
+            $overtimeEligible = ! $shift || now()->gte($shift->end);
+        }
+
         return response()->json([
-            'status'        => $this->clockStatusFor($att, $active),
-            'clock_in_at'   => $att?->clock_in_at?->toIso8601String(),
-            'clock_out_at'  => $att?->clock_out_at?->toIso8601String(),
-            'is_late'       => (bool) $att?->is_late,
-            'late_minutes'  => (int)  $att?->late_minutes,
-            'worked_minutes'=> $worked,
-            'break_started' => $active?->start_at?->toIso8601String(),
+            'status'              => $status,
+            'clock_in_at'         => $att?->clock_in_at?->toIso8601String(),
+            'clock_out_at'        => $att?->clock_out_at?->toIso8601String(),
+            'is_late'             => (bool) $att?->is_late,
+            'late_minutes'        => (int)  $att?->late_minutes,
+            'worked_minutes'      => $worked,
+            'break_started'       => $active?->start_at?->toIso8601String(),
+            'overtime_allowed'    => (bool) $emp->overtime_allowed,
+            'overtime_started_at' => $att?->overtime_started_at?->toIso8601String(),
+            'overtime_eligible'   => $overtimeEligible,
         ]);
+    }
+
+    /* ================================================================
+     | OVERTIME
+     |================================================================*/
+    public function startOvertime(string $tenant, Request $request)
+    {
+        $emp = auth()->user()->employee;
+        abort_unless($emp, 403);
+
+        $result = $this->attendance->startOvertime($emp);
+
+        if (! $result['success']) {
+            return $this->fail($result['message']);
+        }
+
+        return $request->wantsJson()
+            ? response()->json($result)
+            : back()->with('success', $result['message']);
     }
 
     /* ================================================================
@@ -525,7 +557,7 @@ class AttendanceController extends Controller
      * picker entirely when there's exactly one, and show a real picker only when there's genuinely
      * more than one to choose from.
      */
-    protected function resolveAssignedLocations($emp)
+    public function resolveAssignedLocations($emp)
     {
         $ids = $this->assignedLocationIds($emp);
 

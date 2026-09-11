@@ -9,7 +9,7 @@ class Attendance extends TenantModel
 {
     protected $fillable = [
         'employee_id', 'location_id', 'qr_code_id',
-        'work_date', 'clock_in_at', 'clock_out_at',
+        'work_date', 'clock_in_at', 'clock_out_at', 'overtime_started_at',
         'clock_in_lat', 'clock_in_lng', 'clock_out_lat', 'clock_out_lng',
         'clock_in_distance_meters', 'clock_out_distance_meters',
         'clock_in_selfie', 'clock_out_selfie',
@@ -29,6 +29,7 @@ class Attendance extends TenantModel
             'work_date'          => 'date',
             'clock_in_at'        => 'datetime',
             'clock_out_at'       => 'datetime',
+            'overtime_started_at' => 'datetime',
             'clock_in_lat'       => 'decimal:7',
             'clock_in_lng'       => 'decimal:7',
             'clock_out_lat'      => 'decimal:7',

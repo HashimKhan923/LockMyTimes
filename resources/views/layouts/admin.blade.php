@@ -200,6 +200,7 @@
             $pendingExpenses    = \App\Models\Tenant\Expense::where('status', 'submitted')->count();
             $pendingLoans       = \App\Models\Tenant\Loan::where('status', 'pending')->count()
                                  + \App\Models\Tenant\SalaryAdvance::where('status', 'pending')->count();
+            $pendingDeviceReqs  = \App\Models\Tenant\DeviceChangeRequest::where('status', 'pending')->count();
 
             $navGroups = [
                 'Main' => [
@@ -210,6 +211,7 @@
                     ['route'=>'admin.departments.index', 'icon'=>'git-branch',       'label'=>'Departments'],
                     ['route'=>'admin.positions.index',   'icon'=>'briefcase',        'label'=>'Positions'],
                     ['route'=>'admin.locations.index',   'icon'=>'map-pin',          'label'=>'Locations'],
+                    ['route'=>'admin.device-change-requests.index', 'icon'=>'smartphone', 'label'=>'Device Requests', 'badge'=>$pendingDeviceReqs],
                 ],
                 'Time & Attendance' => [
                     ['route'=>'admin.attendance.index',  'icon'=>'clock',            'label'=>'Attendance'],

@@ -55,6 +55,7 @@ Route::middleware(['tenant', 'subscription.active', 'employee.auth'])->group(fun
         Route::post('/clock-out',   [AttendanceController::class, 'clockOut'])->name('clock-out')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
         Route::post('/break/start', [AttendanceController::class, 'startBreak'])->name('break.start')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
         Route::post('/break/end',   [AttendanceController::class, 'endBreak'])->name('break.end')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
+        Route::post('/overtime/start', [AttendanceController::class, 'startOvertime'])->name('overtime.start')->withoutMiddleware('permission:attendance.view')->middleware('permission:attendance.create');
     });
 
     /* ─── Attendance correction requests ─── */

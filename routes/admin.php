@@ -68,6 +68,13 @@ Route::middleware(['tenant', 'subscription.active', 'admin.auth'])->group(functi
         Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('destroy')->middleware('permission:employees.delete');
     });
 
+    /* ---- Device Change Requests (mobile device-lock approval queue) ---- */
+    Route::prefix('device-change-requests')->name('device-change-requests.')->middleware('permission:employees.edit')->group(function () {
+        Route::get('/',                              [\App\Http\Controllers\Admin\DeviceChangeRequestController::class, 'index'])->name('index');
+        Route::patch('/{deviceChangeRequest}/approve', [\App\Http\Controllers\Admin\DeviceChangeRequestController::class, 'approve'])->name('approve');
+        Route::patch('/{deviceChangeRequest}/reject',  [\App\Http\Controllers\Admin\DeviceChangeRequestController::class, 'reject'])->name('reject');
+    });
+
     /* ---- Departments ---- */
     Route::prefix('departments')->name('departments.')->group(function () {
         Route::get('/',               [DepartmentController::class, 'index'])->name('index')->middleware('permission:departments.view');

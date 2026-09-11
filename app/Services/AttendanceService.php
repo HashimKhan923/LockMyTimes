@@ -163,10 +163,16 @@ class AttendanceService
         $workedMins = max(0, $totalMins - $breakMins);
         $totalHours = round($workedMins / 60, 2);
 
-        // Overtime threshold from settings (default 8h/day)
-        $dailyOtThreshold = (float) Setting::get('attendance.overtime_threshold', 8);
-        $regularHours     = min($totalHours, $dailyOtThreshold);
-        $overtimeHours    = max(0, $totalHours - $dailyOtThreshold);
+        // Overtime only accrues for the window the employee explicitly started via
+        // "Start Overtime" (requires admin's overtime_allowed on their profile) — never
+        // automatically just because the shift/day threshold has passed.
+        $overtimeHours = 0.0;
+        if ($attendance->overtime_started_at) {
+            $otStart       = Carbon::parse($attendance->overtime_started_at);
+            $otMins        = max(0, $otStart->diffInMinutes($now));
+            $overtimeHours = round($otMins / 60, 2);
+        }
+        $regularHours = max(0, round($totalHours - $overtimeHours, 2));
 
         // Early-out check
         $isEarlyOut   = false;
@@ -201,6 +207,54 @@ class AttendanceService
             'message'     => "Clocked out at {$now->format('h:i A')}. Total: {$totalHours}h",
             'attendance'  => $attendance->fresh(),
             'total_hours' => $totalHours,
+        ];
+    }
+
+    /* ================================================================
+     | OVERTIME
+     |================================================================*/
+
+    /**
+     * Employee explicitly opts in to overtime for today, once their shift has ended.
+     * Never automatic — requires the admin to have allowed overtime for this employee.
+     */
+    public function startOvertime(Employee $employee): array
+    {
+        if (! $employee->overtime_allowed) {
+            return ['success' => false, 'message' => 'You are not approved for overtime. Please contact your admin.'];
+        }
+
+        $today = $employee->localToday();
+        $now   = Carbon::now();
+
+        $attendance = Attendance::where('employee_id', $employee->id)
+            ->where('work_date', $today->toDateString())
+            ->whereNotNull('clock_in_at')
+            ->whereNull('clock_out_at')
+            ->first();
+
+        if (! $attendance) {
+            return ['success' => false, 'message' => 'You must be clocked in to start overtime.'];
+        }
+
+        if ($attendance->overtime_started_at) {
+            return ['success' => false, 'message' => 'Overtime has already been started for today.'];
+        }
+
+        $shiftEnd = $this->getShiftTime($employee, $today, 'end');
+        if ($shiftEnd && $now->lt($shiftEnd)) {
+            return [
+                'success' => false,
+                'message' => "Your shift doesn't end until {$shiftEnd->format('h:i A')}. Overtime can start once your shift ends.",
+            ];
+        }
+
+        $attendance->update(['overtime_started_at' => $now]);
+
+        return [
+            'success'    => true,
+            'message'    => "Overtime started at {$now->format('h:i A')}.",
+            'attendance' => $attendance->fresh(),
         ];
     }
 

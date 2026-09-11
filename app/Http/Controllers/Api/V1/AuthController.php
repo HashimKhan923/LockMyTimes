@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\Tenant\DeviceChangeRequest;
 use App\Models\Tenant\User;
+use App\Services\NotificationService;
 use App\Services\MailService;
 use App\Services\PasswordResetService;
 use App\Services\TenantManager;
@@ -27,6 +29,7 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
             'device_name' => ['required', 'string', 'max:255'],
+            'device_id' => ['required', 'string', 'max:255'],
             'device_token' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -50,9 +53,22 @@ class AuthController extends Controller
             ]);
         }
 
+        // Device lock — an employee may only sign in from the device they first
+        // logged in with. A brand-new account (device_id still null) binds to
+        // whichever device logs in first. A mismatch is a distinct, structured
+        // error (not a plain validation failure) so the app can show a
+        // "Request Device Change" action instead of "wrong password".
+        if ($user->device_id && $user->device_id !== $data['device_id']) {
+            return response()->json([
+                'error'   => 'device_mismatch',
+                'message' => 'This account is locked to another device. Ask your admin to approve a device change, or request one below.',
+            ], 403);
+        }
+
         $user->update([
             'last_login_at' => now(),
             'last_login_ip' => $request->ip(),
+            'device_id'     => $user->device_id ?? $data['device_id'],
         ]);
 
         if (! empty($data['device_token'])) {
@@ -184,5 +200,57 @@ class AuthController extends Controller
         $user->tokens()->where('id', '!=', $currentTokenId)->delete();
 
         return response()->json(['message' => 'All other sessions have been signed out.']);
+    }
+
+    /**
+     * An employee who got a new device (and is therefore locked out by the
+     * device check in login()) proves their identity with their normal
+     * credentials and asks an admin to clear the lock. No session is issued
+     * here — the employee still has to log in again, normally, once approved.
+     */
+    public function requestDeviceChange(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'device_id' => ['required', 'string', 'max:255'],
+            'device_name' => ['nullable', 'string', 'max:255'],
+            'reason' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        if (! $user || ! Hash::check($data['password'], $user->password) || ! $user->hasRole('Employee')) {
+            throw ValidationException::withMessages([
+                'email' => ['Invalid email or password.'],
+            ]);
+        }
+
+        if (! $user->device_id || $user->device_id === $data['device_id']) {
+            return response()->json([
+                'message' => 'This device is already authorized — no change request needed.',
+            ], 422);
+        }
+
+        $existing = DeviceChangeRequest::where('user_id', $user->id)->where('status', 'pending')->first();
+        $requestRow = $existing ?? new DeviceChangeRequest(['user_id' => $user->id]);
+        $requestRow->fill([
+            'requested_device_id'   => $data['device_id'],
+            'requested_device_name' => $data['device_name'] ?? null,
+            'reason'                => $data['reason'] ?? null,
+            'status'                => 'pending',
+        ])->save();
+
+        $tenant = app(TenantManager::class)->current();
+        NotificationService::notifyAdmins(
+            "{$user->name} requested a device change (their account is locked to a previous device).",
+            'device_change.requested', 'smartphone', '#F59E0B',
+            $tenant ? route('admin.device-change-requests.index', $tenant->slug) : null,
+            [], null
+        );
+
+        return response()->json([
+            'message' => 'Your request has been sent to your admin. You will be able to log in from this device once approved.',
+        ]);
     }
 }

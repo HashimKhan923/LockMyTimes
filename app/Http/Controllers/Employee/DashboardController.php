@@ -14,12 +14,15 @@ use App\Models\Tenant\LeaveRequest;
 use App\Models\Tenant\ShiftAssignment;
 use App\Models\Tenant\Task;
 use App\Models\Tenant\TaskAssignee;
+use App\Http\Controllers\Employee\AttendanceController;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
+    public function __construct(protected AttendanceController $attendanceController) {}
+
     /* ================================================================
      | DASHBOARD
      |================================================================*/
@@ -89,6 +92,9 @@ class DashboardController extends Controller
 
         /* ───────── Today's shift (for progress bar / expected times) ───────── */
         $shift = $this->resolveShiftForDate($emp, $today);
+
+        /* ───────── Assigned locations, for the clock-in widget's location picker ───────── */
+        $assignedLocs = $this->attendanceController->resolveAssignedLocations($emp);
 
         /* ───────── This month's stats ───────── */
         $monthAttendance = Attendance::where('employee_id', $emp->id)
@@ -219,6 +225,7 @@ class DashboardController extends Controller
             'clockStatus'        => $clockStatus,
             'liveWorkedMinutes'  => $liveWorkedMinutes,
             'shift'              => $shift,
+            'assignedLocs'       => $assignedLocs,
             'monthStats'         => $monthAttendance,
             'workingDaysElapsed' => $workingDaysElapsed,
             'workingDaysInMonth' => $workingDaysInMonth,

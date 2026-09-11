@@ -224,6 +224,23 @@
                 </div>
 
                 <div>
+                    <label class="lmt-label flex items-center gap-2">
+                        <input type="checkbox" name="overtime_allowed" value="1"
+                               {{ old('overtime_allowed', $employee->overtime_allowed ?? false) ? 'checked' : '' }}>
+                        Allow Overtime
+                    </label>
+                    <p class="lmt-help">Lets this employee start overtime once their shift ends. Off by default.</p>
+                </div>
+
+                <div>
+                    <label class="lmt-label">Overtime Rate Multiplier <span class="text-gray-800 font-normal">(optional)</span></label>
+                    <input type="number" step="0.1" min="1" name="overtime_rate_multiplier"
+                           value="{{ old('overtime_rate_multiplier', $employee->overtime_rate_multiplier ?? '') }}"
+                           class="lmt-input" placeholder="Company default ({{ number_format((float) \App\Models\Tenant\Setting::get('payroll.overtime_rate', 1.5), 2) }}×)"/>
+                    <p class="lmt-help">Leave blank to use the company-wide overtime rate.</p>
+                </div>
+
+                <div>
                     <label class="lmt-label">Direct Manager</label>
                     <select name="manager_id" class="lmt-select">
                         <option value="">— No Manager —</option>

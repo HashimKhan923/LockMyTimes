@@ -30,7 +30,7 @@ class User extends Authenticatable
         'must_change_password',
         'locale',
         'timezone',
-        'device_token',
+        'device_token', 'device_id',
         'notification_preferences',
         'date_format',
         'time_format',

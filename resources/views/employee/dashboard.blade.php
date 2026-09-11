@@ -18,6 +18,8 @@
     </div>
 @else
 
+<div x-data="attendancePage()" x-init="init()">
+
 @php
     $hour      = now()->hour;
     $greeting  = $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good evening');
@@ -74,7 +76,7 @@
             <div class="flex items-center gap-2 flex-wrap mt-4">
                 <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border bg-white/10 border-white/20 text-white">
                     <span class="w-2 h-2 rounded-full animate-pulse" style="background:{{ $statusMeta['dot'] }};"></span>
-                    {{ $statusMeta['label'] }}
+                    <span x-text="statusLabel || @js($statusMeta['label'])"></span>
                 </span>
                 @if($shift)
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-white/10 border border-white/20 text-white">
@@ -126,21 +128,47 @@
                 </div>
             @endif
 
-            {{-- Action CTA --}}
-            <a href="{{ \Route::has('employee.attendance.index') ? route('employee.attendance.index', $tenantSlug) : '#' }}"
-               class="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all
-                      bg-white text-gray-900 hover:bg-white/95 hover:scale-[1.02]"
-               style="box-shadow:0 8px 24px rgba(0,0,0,.18);">
-                @if($clockStatus === 'not_clocked_in')
+            {{-- Action CTA — direct clock in/out/break, no extra navigation --}}
+            @php
+                $ctaClasses = 'mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all bg-white text-gray-900 hover:bg-white/95 hover:scale-[1.02]';
+                $ctaStyle   = 'box-shadow:0 8px 24px rgba(0,0,0,.18);';
+            @endphp
+            <template x-if="status === 'not_clocked_in'">
+                <button @click="openClockModal('in')" class="{{ $ctaClasses }}" style="{{ $ctaStyle }}">
                     <i data-lucide="fingerprint" class="w-4 h-4"></i> Clock In Now
-                @elseif($clockStatus === 'clocked_in')
+                </button>
+            </template>
+            <template x-if="status === 'clocked_in'">
+                <button @click="openClockModal('out')" class="{{ $ctaClasses }}" style="{{ $ctaStyle }}">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Clock Out
-                @elseif($clockStatus === 'on_break')
+                </button>
+            </template>
+            <template x-if="status === 'on_break'">
+                <button @click="endBreak()" class="{{ $ctaClasses }}" style="{{ $ctaStyle }}">
                     <i data-lucide="play" class="w-4 h-4"></i> End Break
-                @else
+                </button>
+            </template>
+            <template x-if="status === 'clocked_out'">
+                <a href="{{ \Route::has('employee.attendance.index') ? route('employee.attendance.index', $tenantSlug) : '#' }}" class="{{ $ctaClasses }}" style="{{ $ctaStyle }}">
                     <i data-lucide="check-circle" class="w-4 h-4"></i> View Today's Record
-                @endif
-            </a>
+                </a>
+            </template>
+            <template x-if="status === 'clocked_in'">
+                <button @click="openBreakModal()" class="mt-2 w-full text-center text-white/70 hover:text-white text-xs font-bold transition-colors">
+                    <i data-lucide="coffee" class="w-3 h-3 inline -mt-0.5"></i> Take a Break
+                </button>
+            </template>
+            <template x-if="status === 'clocked_in' && overtimeEligible">
+                <button @click="startOvertime()" :disabled="overtimeSubmitting" class="mt-2 w-full text-center text-white/70 hover:text-white text-xs font-bold transition-colors">
+                    <i data-lucide="timer" class="w-3 h-3 inline -mt-0.5"></i>
+                    <span x-text="overtimeSubmitting ? 'Starting…' : 'Start Overtime'"></span>
+                </button>
+            </template>
+            <template x-if="status === 'clocked_in' && overtimeStartedAt">
+                <p class="mt-2 w-full text-center text-white/60 text-xs font-bold">
+                    <i data-lucide="timer" class="w-3 h-3 inline -mt-0.5"></i> Overtime running
+                </p>
+            </template>
         </div>
     </div>
 
@@ -562,6 +590,12 @@
         </div>
     </div>
 </div>
+
+@include('employee.attendance._clockin_modal')
+@include('employee.attendance._break_modal')
+@include('employee.attendance._clock_scripts')
+
+</div>{{-- /attendancePage --}}
 
 @endif {{-- end !noEmployee --}}
 

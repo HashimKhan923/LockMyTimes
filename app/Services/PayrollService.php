@@ -286,7 +286,7 @@ class PayrollService
             ->get();
 
         $otHours    = (float) $records->sum('overtime_hours');
-        $otRate     = (float) Setting::get('payroll.overtime_rate', 1.5);
+        $otRate     = $employee->effectiveOvertimeRate();
         $hourlyRate = $employee->base_salary > 0
             ? round((float)$employee->base_salary / 52 / 40, 4) : 0;
 

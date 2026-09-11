@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Public\HomeController;
+use App\Http\Controllers\Public\LoginRedirectController;
 use App\Http\Controllers\Public\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 
 // Marketing home page
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// "Login" on the marketing site — routes a visitor to their own company's
+// portal/admin login (or asks which company, once) rather than living here.
+Route::get('/login/employee', [LoginRedirectController::class, 'employee'])->name('login.employee');
+Route::get('/login/admin',    [LoginRedirectController::class, 'admin'])->name('login.admin');
+Route::post('/login/resolve', [LoginRedirectController::class, 'resolve'])->name('login.resolve');
 
 // Policy pages
 Route::view('/terms', 'public.terms')->name('terms');

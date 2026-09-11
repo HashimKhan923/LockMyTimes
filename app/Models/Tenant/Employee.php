@@ -21,6 +21,7 @@ class Employee extends TenantModel
         'ssn_encrypted', 'employee_type', 'i9_verified', 'i9_verified_date',
         'address_line1', 'address_line2', 'city', 'state', 'postal_code', 'country',
         'department_id', 'position_id', 'location_id', 'employment_mode', 'manager_id',
+        'overtime_allowed', 'overtime_rate_multiplier',
         'employment_status', 'employment_type',
         'hire_date', 'probation_end_date', 'confirmation_date',
         'termination_date', 'termination_reason',
@@ -48,6 +49,8 @@ class Employee extends TenantModel
             'i9_verified_date'               => 'date',
             'i9_verified'                    => 'boolean',
             'is_exempt'                      => 'boolean',
+            'overtime_allowed'               => 'boolean',
+            'overtime_rate_multiplier'       => 'decimal:2',
             'base_salary'                    => 'decimal:2',
             'hourly_rate'                    => 'decimal:2',
             'additional_federal_withholding' => 'decimal:2',
@@ -95,6 +98,19 @@ class Employee extends TenantModel
     {
         $settings = $this->privacy_settings ?? [];
         return (bool) ($settings[$key] ?? self::defaultPrivacySettings()[$key] ?? false);
+    }
+
+    /* ============ Overtime helpers ============ */
+
+    /**
+     * The overtime pay multiplier to use for this employee — their own override if set,
+     * else the tenant-wide default from Settings.
+     */
+    public function effectiveOvertimeRate(): float
+    {
+        return $this->overtime_rate_multiplier !== null
+            ? (float) $this->overtime_rate_multiplier
+            : (float) Setting::get('payroll.overtime_rate', 1.5);
     }
 
     /* ============ Remote/hybrid attendance helpers ============ */

@@ -8,6 +8,7 @@ use App\Services\TenantManager;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 class IdentifyTenant
@@ -51,6 +52,11 @@ class IdentifyTenant
         view()->share('currentTenant', $tenant);
         view()->share('tenantCurrency', $currency);
         view()->share('tenantTimezone', $timezone);
+
+        // Remember which company this browser last visited — lets the marketing
+        // site's "Login" link (see Public\LoginRedirectController) send a returning
+        // visitor straight back here instead of asking for their workspace again.
+        Cookie::queue('lmt_last_tenant', $tenant->slug, 60 * 24 * 365);
 
         $response = $next($request);
 

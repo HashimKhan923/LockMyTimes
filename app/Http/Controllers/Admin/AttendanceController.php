@@ -18,12 +18,18 @@ class AttendanceController extends Controller
      |================================================================*/
     public function index(string $tenant, Request $request)
     {
+        $view = $request->get('view', 'list'); // 'list' | 'calendar'
+
         $date = $request->get('date')
             ? Carbon::parse($request->get('date'))
             : Carbon::today();
 
         $departments = Department::where('is_active', true)->orderBy('name')->get();
         $employees   = Employee::active()->orderBy('first_name')->get();
+
+        if ($view === 'calendar') {
+            return $this->calendarView($tenant, $request, $date, $departments, $employees);
+        }
 
         // A From/To range (e.g. one employee's whole month) overrides the single-day
         // picker — the table then shows every matching day instead of just $date.
@@ -87,10 +93,65 @@ class AttendanceController extends Controller
         })->reverse()->values();
 
         return view('admin.attendance.index', compact(
-            'records', 'date', 'departments', 'employees', 'isRange',
+            'records', 'date', 'departments', 'employees', 'isRange', 'view',
             'totalActive', 'presentCount', 'absentCount', 'lateCount', 'onLeaveCount',
             'monthlyStats', 'tenant'
         ));
+    }
+
+    /* ================================================================
+     | CALENDAR VIEW — company-wide month heatmap (Present/Absent/Late per day)
+     |================================================================*/
+    private function calendarView(string $tenant, Request $request, Carbon $date, $departments, $employees)
+    {
+        $month = $request->get('month')
+            ? Carbon::parse($request->get('month').'-01')
+            : $date->copy()->startOfMonth();
+
+        $from = $month->copy()->startOfMonth();
+        $to   = $month->copy()->endOfMonth();
+
+        $empQuery = Employee::query();
+        if ($empId = $request->get('employee')) {
+            $empQuery->where('id', $empId);
+        }
+        if ($dept = $request->get('department')) {
+            $empQuery->where('department_id', $dept);
+        }
+        $scopedEmployeeIds = ($request->filled('employee') || $request->filled('department'))
+            ? $empQuery->pluck('id')
+            : null; // null = no employee/department filter, count everyone
+
+        $totalActive = $scopedEmployeeIds !== null ? $scopedEmployeeIds->count() : Employee::active()->count();
+
+        $recordsByDay = Attendance::whereBetween('work_date', [$from->toDateString(), $to->toDateString()])
+            ->when($scopedEmployeeIds !== null, fn ($q) => $q->whereIn('employee_id', $scopedEmployeeIds))
+            ->get()
+            ->groupBy(fn ($r) => $r->work_date->toDateString());
+
+        $weekStart = $from->copy()->startOfWeek(Carbon::SUNDAY);
+        $weekEnd   = $to->copy()->endOfWeek(Carbon::SATURDAY);
+
+        $calendarCells = collect();
+        for ($d = $weekStart->copy(); $d->lte($weekEnd); $d->addDay()) {
+            $dayRecords = $recordsByDay->get($d->toDateString(), collect());
+            $calendarCells->push((object) [
+                'date'      => $d->copy(),
+                'in_month'  => $d->month === $month->month,
+                'is_today'  => $d->isToday(),
+                'is_future' => $d->isFuture(),
+                'is_weekend'=> $d->isWeekend(),
+                'present'   => $dayRecords->where('status', 'present')->count(),
+                'absent'    => $dayRecords->where('status', 'absent')->count(),
+                'late'      => $dayRecords->where('is_late', true)->count(),
+                'on_leave'  => $dayRecords->where('status', 'on_leave')->count(),
+            ]);
+        }
+
+        return view('admin.attendance.calendar', compact(
+            'calendarCells', 'month', 'date', 'departments', 'employees',
+            'totalActive', 'tenant'
+        ) + ['view' => 'calendar']);
     }
 
     /* ================================================================

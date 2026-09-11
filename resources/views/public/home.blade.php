@@ -27,8 +27,23 @@
             </div>
 
             {{-- CTA --}}
-            <div class="hidden md:flex items-center gap-3">
-                <!-- <a href="{{ url('/superadmin') }}" class="text-sm font-medium text-ink-soft hover:text-brand-500 transition-colors">Sign In</a> -->
+            <div class="hidden md:flex items-center gap-3" x-data="{ loginOpen: false }">
+                <div class="relative">
+                    <button @click="loginOpen = !loginOpen" @click.outside="loginOpen = false"
+                            class="text-sm font-medium text-ink-soft hover:text-brand-500 transition-colors flex items-center gap-1">
+                        Sign In
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <div x-show="loginOpen" x-cloak x-transition
+                         class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-soft border border-gray-100 py-1.5 z-50">
+                        <a href="{{ route('login.employee') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink hover:bg-gray-50">
+                            <i data-lucide="user" class="w-4 h-4 text-ink-soft"></i> Employee Login
+                        </a>
+                        <a href="{{ route('login.admin') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink hover:bg-gray-50">
+                            <i data-lucide="shield" class="w-4 h-4 text-ink-soft"></i> Admin Login
+                        </a>
+                    </div>
+                </div>
                 <a href="#pricing" class="lmt-btn-primary lmt-btn-md">Start Free Trial</a>
             </div>
 
@@ -46,6 +61,10 @@
             <a href="#pricing" @click="open=false" class="text-sm font-medium text-ink-soft">Pricing</a>
             <a href="#faq" @click="open=false" class="text-sm font-medium text-ink-soft">FAQ</a>
             <a href="#contact" @click="open=false" class="text-sm font-medium text-ink-soft">Contact</a>
+            <div class="flex gap-2 pt-2 border-t border-gray-100">
+                <a href="{{ route('login.employee') }}" class="flex-1 text-center text-sm font-semibold text-ink-soft border border-gray-200 rounded-xl py-2.5">Employee Login</a>
+                <a href="{{ route('login.admin') }}" class="flex-1 text-center text-sm font-semibold text-ink-soft border border-gray-200 rounded-xl py-2.5">Admin Login</a>
+            </div>
             <a href="#pricing" class="lmt-btn-primary w-full text-center">Start Free Trial</a>
         </div>
     </div>

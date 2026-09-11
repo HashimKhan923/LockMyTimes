@@ -32,6 +32,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
         Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->name('auth.forgotPassword')->middleware('throttle:6,1');
         Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->name('auth.resetPassword')->middleware('throttle:6,1');
+        Route::post('/auth/device-change-request', [AuthController::class, 'requestDeviceChange'])->name('auth.deviceChangeRequest')->middleware('throttle:6,1');
     });
 
     // Authenticated employee routes.
