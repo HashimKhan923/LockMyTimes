@@ -22,10 +22,30 @@ class ExportService
             'columns'     => $columns,
             'rows'        => collect($rows),
             'companyName' => $tenant?->company_name ?? 'Your Company',
-            'companyLogo' => $tenant?->logo ? asset('storage/' . $tenant->logo) : null,
+            'companyLogo' => $this->inlineLogo($tenant),
         ])->setPaper('a4', $orientation);
 
         return $pdf->download($filename);
+    }
+
+    /**
+     * DomPDF has remote image fetching disabled (config/dompdf.php isRemoteEnabled=false), so
+     * the logo must be inlined as a base64 data URI rather than passed as a storage URL — the
+     * same approach already used by the payslip PDF (see Employee\PayslipController::pdf()).
+     */
+    private function inlineLogo(?\App\Models\Main\Tenant $tenant): ?string
+    {
+        if (! $tenant?->logo) {
+            return null;
+        }
+
+        $logoPath = storage_path('app/public/' . $tenant->logo);
+        if (! is_file($logoPath)) {
+            return null;
+        }
+
+        $mime = \Illuminate\Support\Facades\File::mimeType($logoPath);
+        return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($logoPath));
     }
 
     /**

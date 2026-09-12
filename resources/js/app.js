@@ -85,6 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
             delay,
             ease: 'power3.out',
             scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+            // Without this, GSAP leaves a lingering identity `transform` on the element once the
+            // tween finishes — and any transform (even a no-op one) creates a new CSS stacking
+            // context, which traps dropdowns/menus inside the card behind later siblings on the
+            // page no matter how high their z-index is. Clearing it once the animation completes
+            // restores normal stacking.
+            clearProps: 'transform',
         });
     });
 
