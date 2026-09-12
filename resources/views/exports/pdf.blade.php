@@ -80,9 +80,18 @@
             <tr>
                 <td>
                     @if($companyLogo)
-                    <div style="display:inline-block; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:8px 12px; margin-bottom:6px;">
-                        <img src="{{ $companyLogo }}" style="height:30px; max-width:150px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
-                    </div>
+                    <table style="border-collapse:collapse; margin-bottom:6px;">
+                        <tr>
+                            <td style="padding:0;">
+                                <div style="display:inline-block; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:8px;">
+                                    <img src="{{ $companyLogo }}" style="height:48px; max-width:180px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
+                                </div>
+                            </td>
+                            <td style="padding:0 0 0 12px; vertical-align:middle;">
+                                <div class="brand">{{ $companyName }}</div>
+                            </td>
+                        </tr>
+                    </table>
                     @else
                     <div class="brand">{{ $companyName }}</div>
                     @endif

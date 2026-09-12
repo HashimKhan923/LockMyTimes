@@ -67,8 +67,11 @@
 
     {{-- ═══════════════════════════════════════════════════════════════
          TOOLBAR — month picker + view switcher + export
+         No data-lmt-anim here deliberately: the GSAP entrance animation leaves a residual
+         transform on the card that creates a new CSS stacking context, trapping the Export
+         dropdown's z-index behind the list/calendar card below regardless of its value.
     ═══════════════════════════════════════════════════════════════ --}}
-    <div class="lmt-card mb-6" data-lmt-anim="fade-up">
+    <div class="lmt-card mb-6">
         <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
 
             {{-- Month nav --}}
