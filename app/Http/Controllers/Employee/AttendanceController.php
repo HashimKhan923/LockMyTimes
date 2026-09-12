@@ -11,10 +11,12 @@ use App\Models\Tenant\QrCode;
 use App\Models\Tenant\Setting;
 use App\Models\Tenant\ShiftAssignment;
 use App\Services\AttendanceService;
+use App\Services\ExportService;
 use App\Services\GeofenceService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceController extends Controller
@@ -387,7 +389,7 @@ class AttendanceController extends Controller
     /* ================================================================
      | EXPORT — CSV for the visible month
      |================================================================*/
-    public function export(string $tenant, Request $request): StreamedResponse
+    public function export(string $tenant, Request $request, ExportService $exporter): Response
     {
         $emp = auth()->user()->employee;
         abort_unless($emp, 403);
@@ -395,6 +397,10 @@ class AttendanceController extends Controller
         $month = $request->get('month')
             ? Carbon::parse($request->get('month').'-01')
             : $emp->localToday()->startOfMonth();
+
+        if ($request->get('format') === 'pdf') {
+            return $this->exportPdf($emp, $month, $exporter);
+        }
 
         $records = Attendance::with('location')
             ->where('employee_id', $emp->id)
@@ -443,6 +449,54 @@ class AttendanceController extends Controller
         }, $filename, [
             'Content-Type' => 'text/csv',
         ]);
+    }
+
+    /**
+     * PDF version of the monthly attendance export — one row per calendar day (not just days
+     * with a record), so it matches exactly what the List view shows: unlogged weekdays render
+     * as "Absent", weekends as "Weekend".
+     */
+    private function exportPdf($emp, Carbon $month, ExportService $exporter): Response
+    {
+        $start = $month->copy()->startOfMonth();
+        $end   = $month->copy()->endOfMonth();
+
+        $records = Attendance::with('location')
+            ->where('employee_id', $emp->id)
+            ->whereBetween('work_date', [$start->toDateString(), $end->toDateString()])
+            ->get()
+            ->keyBy(fn ($r) => $r->work_date->format('Y-m-d'));
+
+        $columns = ['Date', 'Status', 'Clock In', 'Clock Out', 'Hours', 'Overtime', 'Break', 'Location'];
+        $rows = [];
+
+        for ($cursor = $start->copy(); $cursor->lte($end); $cursor->addDay()) {
+            $dateKey   = $cursor->format('Y-m-d');
+            $rec       = $records->get($dateKey);
+            $isWeekend = $cursor->isWeekend();
+
+            $status = match (true) {
+                (bool) $rec => $rec->is_late ? 'Late' : ucfirst(str_replace('_', ' ', $rec->status)),
+                $isWeekend => 'Weekend',
+                $dateKey < now()->toDateString() => 'Absent',
+                default => '-',
+            };
+
+            $rows[] = [
+                $cursor->format('D, M j'),
+                $status,
+                $rec?->clock_in_at?->format('h:i A') ?? '-',
+                $rec?->clock_out_at?->format('h:i A') ?? '-',
+                format_hours($rec?->total_hours),
+                $rec?->overtime_hours > 0 ? format_hours($rec->overtime_hours) : '-',
+                $rec?->break_hours > 0 ? format_hours($rec->break_hours) : '-',
+                $rec?->location?->name ?? '-',
+            ];
+        }
+
+        $filename = sprintf('attendance-%s-%s.pdf', Str::slug($emp->employee_code ?: $emp->id), $month->format('Y-m'));
+
+        return $exporter->pdf("{$emp->full_name} — Attendance ({$month->format('F Y')})", $columns, $rows, $filename, 'landscape');
     }
 
     /* ================================================================

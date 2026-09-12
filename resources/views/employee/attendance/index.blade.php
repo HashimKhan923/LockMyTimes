@@ -108,11 +108,26 @@
                     </a>
                 </div>
 
-                <a href="{{ route('employee.attendance.export', [$tenantSlug, 'month' => $month->format('Y-m')]) }}"
-                   class="lmt-btn-secondary lmt-btn-sm">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                    Export CSV
-                </a>
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="lmt-btn-secondary lmt-btn-sm flex items-center gap-1.5">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        Export
+                        <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </button>
+                    <div x-show="open" @click.outside="open = false" x-cloak
+                         class="absolute right-0 mt-1 w-40 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl shadow-lg z-50 py-1">
+                        <a href="{{ route('employee.attendance.export', [$tenantSlug, 'month' => $month->format('Y-m')]) }}"
+                           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800">
+                            <i data-lucide="table-2" class="w-4 h-4 text-green-600"></i>
+                            CSV
+                        </a>
+                        <a href="{{ route('employee.attendance.export', [$tenantSlug, 'month' => $month->format('Y-m'), 'format' => 'pdf']) }}"
+                           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-800 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800">
+                            <i data-lucide="file-text" class="w-4 h-4 text-red-500"></i>
+                            PDF
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

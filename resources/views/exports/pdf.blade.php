@@ -3,35 +3,71 @@
 <head>
 <meta charset="UTF-8"/>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: DejaVu Sans, sans-serif; font-size: 11px; color: #1f2937; background: #fff; }
-    .header { background: #4F46E5; color: #fff; padding: 18px 24px; margin-bottom: 20px; }
-    .header h1 { font-size: 18px; font-weight: bold; letter-spacing: 0.5px; }
-    .header p { font-size: 10px; opacity: 0.8; margin-top: 3px; }
-    table { width: 100%; border-collapse: collapse; }
-    thead tr { background: #f3f4f6; }
-    thead th { padding: 8px 10px; text-align: left; font-size: 10px; font-weight: bold;
-               text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;
-               border-bottom: 2px solid #e5e7eb; }
-    tbody tr:nth-child(even) { background: #f9fafb; }
-    tbody td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; font-size: 10.5px; }
-    .footer { margin-top: 16px; font-size: 9px; color: #9ca3af; text-align: right; }
-    .badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 9px; font-weight: bold; }
+    @page { margin: 16mm 14mm; }
+    * { box-sizing: border-box; }
+    body { font-family: 'DejaVu Sans', sans-serif; font-size: 9.5pt; color: #1f2937; margin: 0; padding: 0; line-height: 1.4; }
+    h1, h2, h3 { margin: 0; padding: 0; }
+
+    /* Letterhead — mirrors the payslip PDF's letterhead for a consistent brand feel */
+    .letterhead table { width: 100%; border-collapse: collapse; }
+    .letterhead td { vertical-align: top; padding: 0; }
+    .brand { font-size: 15pt; font-weight: 800; color: #111827; }
+    .doctype { font-size: 8pt; font-weight: 700; color: #6C7DF7; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+    .report-title { font-size: 12pt; font-weight: 800; text-align: right; color: #111827; }
+    .gen-date { font-size: 8.5pt; color: #6b7280; text-align: right; margin-top: 2px; }
+    .rule { height: 3px; border-radius: 2px; margin: 14px 0 18px; background: #6C7DF7; }
+
+    /* Table */
+    table.data { width: 100%; border-collapse: collapse; }
+    table.data thead tr { background: #f5f5fb; }
+    table.data thead th {
+        padding: 8px 10px; text-align: left; font-size: 8pt; font-weight: 800;
+        text-transform: uppercase; letter-spacing: .5px; color: #6C7DF7;
+        border-bottom: 2px solid #e0e0f5;
+    }
+    table.data tbody tr:nth-child(even) { background: #fafafa; }
+    table.data tbody td { padding: 7px 10px; border-bottom: 1px solid #f1f1f6; font-size: 9pt; color: #374151; }
+    table.data tbody tr:last-child td { border-bottom: none; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 8pt; font-weight: 700; }
     .badge-green  { background: #d1fae5; color: #065f46; }
     .badge-red    { background: #fee2e2; color: #991b1b; }
     .badge-yellow { background: #fef3c7; color: #92400e; }
-    .badge-blue   { background: #dbeafe; color: #1e40af; }
+    .badge-blue   { background: #e0e7ff; color: #3730a3; }
     .badge-gray   { background: #f3f4f6; color: #374151; }
+
+    .footer { margin-top: 18px; padding-top: 10px; border-top: 1px solid #f1f1f6; font-size: 8pt; color: #9ca3af; }
+    .footer table { width: 100%; }
+    .footer td.right { text-align: right; }
 </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>{{ $title }}</h1>
-    <p>Generated on {{ now()->format('F j, Y \a\t g:i A') }}</p>
+{{-- ════════ LETTERHEAD ════════ --}}
+<div class="letterhead">
+    <table>
+        <tr>
+            <td>
+                @if($companyLogo)
+                <div style="display:inline-block; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:8px 12px; margin-bottom:6px;">
+                    <img src="{{ $companyLogo }}" style="height:30px; max-width:150px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
+                </div>
+                @else
+                <div class="brand">{{ $companyName }}</div>
+                @endif
+                <div class="doctype">Report</div>
+            </td>
+            <td>
+                <div class="report-title">{{ $title }}</div>
+                <div class="gen-date">Generated {{ now()->format('F j, Y \a\t g:i A') }}</div>
+            </td>
+        </tr>
+    </table>
 </div>
+<div class="rule"></div>
 
-<table>
+{{-- ════════ TABLE ════════ --}}
+<table class="data">
     <thead>
         <tr>
             @foreach($columns as $col)
@@ -48,7 +84,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="{{ count($columns) }}" style="text-align:center;padding:20px;color:#9ca3af;">
+                <td colspan="{{ count($columns) }}" style="text-align:center;padding:24px;color:#9ca3af;">
                     No records found.
                 </td>
             </tr>
@@ -56,8 +92,14 @@
     </tbody>
 </table>
 
+{{-- ════════ FOOTER ════════ --}}
 <div class="footer">
-    Total records: {{ $rows->count() }} &nbsp;|&nbsp; Lockmytimes &copy; {{ date('Y') }}
+    <table>
+        <tr>
+            <td>{{ $companyName }} &nbsp;&middot;&nbsp; {{ $rows->count() }} {{ \Illuminate\Support\Str::plural('record', $rows->count()) }}</td>
+            <td class="right">Generated by {{ $companyName }}</td>
+        </tr>
+    </table>
 </div>
 
 </body>
