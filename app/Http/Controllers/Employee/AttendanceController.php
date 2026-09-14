@@ -496,7 +496,18 @@ class AttendanceController extends Controller
 
         $filename = sprintf('attendance-%s-%s.pdf', Str::slug($emp->employee_code ?: $emp->id), $month->format('Y-m'));
 
-        return $exporter->pdf("{$emp->full_name} — Attendance ({$month->format('F Y')})", $columns, $rows, $filename, 'landscape');
+        $employeeDetails = [
+            'name'            => $emp->full_name,
+            'code'            => $emp->employee_code,
+            'department'      => $emp->department?->name,
+            'position'        => $emp->position?->title,
+            'email'           => $emp->email,
+            'phone'           => $emp->phone,
+            'employment_type' => $emp->employment_type ? ucfirst(str_replace('_', ' ', $emp->employment_type)) : null,
+            'hire_date'       => $emp->hire_date?->format('M j, Y'),
+        ];
+
+        return $exporter->pdf("{$emp->full_name} — Attendance ({$month->format('F Y')})", $columns, $rows, $filename, 'landscape', $employeeDetails);
     }
 
     /* ================================================================

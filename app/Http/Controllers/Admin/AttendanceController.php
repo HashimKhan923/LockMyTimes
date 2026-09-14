@@ -294,7 +294,7 @@ class AttendanceController extends Controller
      */
     private function exportForEmployee(int $employeeId, string $from, string $to, string $format, ExportService $exporter)
     {
-        $employee = Employee::findOrFail($employeeId);
+        $employee = Employee::with(['department', 'position'])->findOrFail($employeeId);
         $start = Carbon::parse($from)->startOfDay();
         $end   = Carbon::parse($to)->startOfDay();
 
@@ -335,7 +335,17 @@ class AttendanceController extends Controller
         $title    = "{$employee->full_name} — Attendance ({$from} to {$to})";
 
         if ($format === 'pdf') {
-            return $exporter->pdf($title, $columns, $rows, $filename.'.pdf', 'landscape');
+            $employeeDetails = [
+                'name'            => $employee->full_name,
+                'code'            => $employee->employee_code,
+                'department'      => $employee->department?->name,
+                'position'        => $employee->position?->title,
+                'email'           => $employee->email,
+                'phone'           => $employee->phone,
+                'employment_type' => $employee->employment_type ? ucfirst(str_replace('_', ' ', $employee->employment_type)) : null,
+                'hire_date'       => $employee->hire_date?->format('M j, Y'),
+            ];
+            return $exporter->pdf($title, $columns, $rows, $filename.'.pdf', 'landscape', $employeeDetails);
         }
 
         return $exporter->excel($columns, $rows, $filename.'.xlsx');

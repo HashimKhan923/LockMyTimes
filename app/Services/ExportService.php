@@ -13,16 +13,17 @@ class ExportService
      * own branding (company name + logo) into the letterhead, same as outbound email —
      * see MailService::ctx() for the identical pattern.
      */
-    public function pdf(string $title, array $columns, Collection|array $rows, string $filename, string $orientation = 'portrait'): Response
+    public function pdf(string $title, array $columns, Collection|array $rows, string $filename, string $orientation = 'portrait', ?array $employeeDetails = null): Response
     {
         $tenant = TenantManager::current();
 
         $pdf = Pdf::loadView('exports.pdf', [
-            'title'       => $title,
-            'columns'     => $columns,
-            'rows'        => collect($rows),
-            'companyName' => $tenant?->company_name ?? 'Your Company',
-            'companyLogo' => $this->inlineLogo($tenant),
+            'title'           => $title,
+            'columns'         => $columns,
+            'rows'            => collect($rows),
+            'companyName'     => $tenant?->company_name ?? 'Your Company',
+            'companyLogo'     => $this->inlineLogo($tenant),
+            'employeeDetails' => $employeeDetails,
         ])->setPaper('a4', $orientation);
 
         return $pdf->download($filename);

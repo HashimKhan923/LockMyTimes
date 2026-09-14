@@ -21,6 +21,15 @@
     .gen-date { font-size: 8.5pt; color: #6b7280; text-align: right; margin-top: 2px; }
     .rule { height: 3px; border-radius: 2px; margin: 14px 0 18px; background: #6C7DF7; }
 
+    /* Employee details */
+    .emp-box { background: #f8f8fd; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+    .emp-box table { width: 100%; border-collapse: collapse; }
+    .emp-box td { vertical-align: top; padding: 0; }
+    .emp-name { font-size: 12pt; font-weight: 800; color: #111827; }
+    .emp-meta { font-size: 8.5pt; color: #6b7280; margin-top: 1px; }
+    .emp-field-label { font-size: 7pt; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: .5px; }
+    .emp-field-value { font-size: 8.5pt; font-weight: 600; color: #111827; margin-top: 1px; margin-bottom: 7px; }
+
     /* Summary strip */
     .summary { width: 100%; border-collapse: separate; border-spacing: 6px 0; margin-bottom: 16px; }
     .summary td { background: #f8f8fd; border-radius: 8px; padding: 9px 6px; text-align: center; }
@@ -83,8 +92,8 @@
                     <table style="border-collapse:collapse; margin-bottom:6px;">
                         <tr>
                             <td style="padding:0;">
-                                <div style="display:inline-block; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:8px;">
-                                    <img src="{{ $companyLogo }}" style="height:48px; max-width:180px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
+                                <div style="display:inline-block; background:#ffffff; border:1px solid #f1f5f9; border-radius:8px; padding:10px;">
+                                    <img src="{{ $companyLogo }}" style="height:64px; max-width:220px; object-fit:contain; display:block;" alt="{{ $companyName }}"/>
                                 </div>
                             </td>
                             <td style="padding:0 0 0 12px; vertical-align:middle;">
@@ -105,6 +114,37 @@
         </table>
     </div>
     <div class="rule"></div>
+
+    {{-- ════════ EMPLOYEE DETAILS (only for employee-scoped reports) ════════ --}}
+    @isset($employeeDetails)
+    <div class="emp-box">
+        <table>
+            <tr>
+                <td style="width:45%;">
+                    <div class="emp-name">{{ $employeeDetails['name'] ?? '—' }}</div>
+                    <div class="emp-meta">{{ $employeeDetails['code'] ?? '—' }}</div>
+                    @if(!empty($employeeDetails['position']) || !empty($employeeDetails['department']))
+                    <div class="emp-meta" style="margin-top:4px;">
+                        {{ $employeeDetails['position'] ?? '—' }} &middot; {{ $employeeDetails['department'] ?? '—' }}
+                    </div>
+                    @endif
+                </td>
+                <td style="width:27.5%;">
+                    <div class="emp-field-label">Email</div>
+                    <div class="emp-field-value">{{ $employeeDetails['email'] ?? '—' }}</div>
+                    <div class="emp-field-label">Phone</div>
+                    <div class="emp-field-value" style="margin-bottom:0;">{{ $employeeDetails['phone'] ?? '—' }}</div>
+                </td>
+                <td style="width:27.5%;">
+                    <div class="emp-field-label">Employment Type</div>
+                    <div class="emp-field-value">{{ $employeeDetails['employment_type'] ?? '—' }}</div>
+                    <div class="emp-field-label">Hire Date</div>
+                    <div class="emp-field-value" style="margin-bottom:0;">{{ $employeeDetails['hire_date'] ?? '—' }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    @endisset
 
     {{-- ════════ SUMMARY STRIP ════════ --}}
     <table class="summary">

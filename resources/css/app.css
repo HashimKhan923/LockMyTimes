@@ -42,6 +42,30 @@
     form {
         margin: 0;
     }
+
+    /* Re-color every "plain/neutral" icon to the brand blue. Scoped to icons that already carry
+       one of Tailwind's neutral gray text utilities (the convention used throughout this app
+       for default, non-semantic icons — nav arrows, toggles, menu icons, etc.). The compound
+       selector (.lucide + a gray utility) is MORE specific than the bare gray utility class
+       alone, so it wins regardless of source order — while icons using a semantic color utility
+       (text-red-500 for delete, text-emerald-600 for success, text-amber-500 for warnings, etc.)
+       don't match this selector at all and keep their meaningful color untouched. Icons that
+       inherit color from a colored container (e.g. white icons on a solid brand-blue button)
+       are also untouched, since inheritance only applies when nothing more specific is set. */
+    .lucide.text-gray-900,
+    .lucide.text-gray-800,
+    .lucide.text-gray-700,
+    .lucide.text-gray-600,
+    .lucide.text-gray-500,
+    .lucide.text-gray-400,
+    .lucide.text-slate-900,
+    .lucide.text-slate-800,
+    .lucide.text-slate-700,
+    .lucide.text-slate-600,
+    .lucide.text-slate-500,
+    .lucide.text-slate-400 {
+        color: var(--brand-500);
+    }
 }
 
 @layer components {
@@ -98,12 +122,12 @@
         text-decoration: none;
         cursor: pointer;
         background: #fff;
-        color: #1f2937;
+        color: var(--brand-600);
         border: 1px solid #e5e7eb;
     }
     .lmt-btn-secondary:hover {
         border-color: var(--brand-500);
-        color: var(--brand-600);
+        color: var(--brand-700);
     }
     .lmt-btn-secondary:active {
         transform: scale(0.95);
@@ -176,12 +200,12 @@
         transition: all 0.2s;
         cursor: pointer;
         background: transparent;
-        color: #6b7280;
+        color: var(--brand-500);
         border: none;
     }
     .lmt-btn-ghost:hover {
         background: #f3f4f6;
-        color: #1f2937;
+        color: var(--brand-700);
     }
     .lmt-btn-lg {
         padding: 0.875rem 1.75rem !important;
@@ -951,19 +975,19 @@
 /* Buttons */
 .dark .lmt-btn-secondary {
     background: #1e293b;
-    color: #cbd5e1;
+    color: #a5b4fc;
     border-color: #475569;
 }
 .dark .lmt-btn-secondary:hover {
     border-color: #6c7df7;
-    color: #818cf8;
+    color: #c7d2fe;
 }
 .dark .lmt-btn-ghost {
-    color: #94a3b8;
+    color: #818cf8;
 }
 .dark .lmt-btn-ghost:hover {
     background: #334155;
-    color: #e2e8f0;
+    color: #c7d2fe;
 }
 
 /* Tables */
