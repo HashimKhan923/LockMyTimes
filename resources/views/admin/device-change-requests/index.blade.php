@@ -35,8 +35,14 @@
                         <p class="text-xs text-gray-800">{{ $req->user->email }}</p>
                     </td>
                     <td class="text-sm">
-                        {{ $req->requested_device_name ?: 'Unnamed device' }}
-                        <p class="text-xs text-gray-800 font-mono">{{ \Illuminate\Support\Str::limit($req->requested_device_id, 24) }}</p>
+                        @if($req->requested_device_name || $req->requested_device_id)
+                            {{ $req->requested_device_name ?: 'Unnamed device' }}
+                            @if($req->requested_device_id)
+                                <p class="text-xs text-gray-800 font-mono">{{ \Illuminate\Support\Str::limit($req->requested_device_id, 24) }}</p>
+                            @endif
+                        @else
+                            <span class="text-gray-800">—</span>
+                        @endif
                     </td>
                     <td class="text-sm text-gray-800">{{ $req->reason ?: '—' }}</td>
                     <td>

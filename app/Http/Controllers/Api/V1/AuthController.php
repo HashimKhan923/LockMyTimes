@@ -205,16 +205,17 @@ class AuthController extends Controller
     /**
      * An employee who got a new device (and is therefore locked out by the
      * device check in login()) proves their identity with their normal
-     * credentials and asks an admin to clear the lock. No session is issued
-     * here — the employee still has to log in again, normally, once approved.
+     * credentials and asks an admin to clear the lock — just a reason, no
+     * device details needed. No session is issued here — the employee still
+     * has to log in again, normally, once approved; that later login call
+     * already carries its own device_id and binds it automatically, exactly
+     * like a first-ever login (see login() above).
      */
     public function requestDeviceChange(Request $request): JsonResponse
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'device_id' => ['required', 'string', 'max:255'],
-            'device_name' => ['nullable', 'string', 'max:255'],
             'reason' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -226,7 +227,7 @@ class AuthController extends Controller
             ]);
         }
 
-        if (! $user->device_id || $user->device_id === $data['device_id']) {
+        if (! $user->device_id) {
             return response()->json([
                 'message' => 'This device is already authorized — no change request needed.',
             ], 422);
@@ -235,10 +236,8 @@ class AuthController extends Controller
         $existing = DeviceChangeRequest::where('user_id', $user->id)->where('status', 'pending')->first();
         $requestRow = $existing ?? new DeviceChangeRequest(['user_id' => $user->id]);
         $requestRow->fill([
-            'requested_device_id'   => $data['device_id'],
-            'requested_device_name' => $data['device_name'] ?? null,
-            'reason'                => $data['reason'] ?? null,
-            'status'                => 'pending',
+            'reason' => $data['reason'] ?? null,
+            'status' => 'pending',
         ])->save();
 
         $tenant = app(TenantManager::class)->current();
