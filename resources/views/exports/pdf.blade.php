@@ -30,12 +30,6 @@
     .emp-field-label { font-size: 7pt; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: .5px; }
     .emp-field-value { font-size: 8.5pt; font-weight: 600; color: #111827; margin-top: 1px; margin-bottom: 7px; }
 
-    /* Summary strip */
-    .summary { width: 100%; border-collapse: separate; border-spacing: 6px 0; margin-bottom: 16px; }
-    .summary td { background: #f8f8fd; border-radius: 8px; padding: 9px 6px; text-align: center; }
-    .summary .v { font-size: 13pt; font-weight: 800; color: #111827; }
-    .summary .l { font-size: 6.5pt; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: .4px; margin-top: 1px; }
-
     /* Table */
     table.data { width: 100%; border-collapse: collapse; }
     table.data thead tr { background: #f0f0fb; }
@@ -145,20 +139,6 @@
         </table>
     </div>
     @endisset
-
-    {{-- ════════ SUMMARY STRIP ════════ --}}
-    <table class="summary">
-        <tr>
-            <td style="width:50%;">
-                <div class="v">{{ $rows->count() }}</div>
-                <div class="l">{{ \Illuminate\Support\Str::plural('Record', $rows->count()) }}</div>
-            </td>
-            <td style="width:50%;">
-                <div class="v">{{ count($columns) }}</div>
-                <div class="l">{{ \Illuminate\Support\Str::plural('Column', count($columns)) }}</div>
-            </td>
-        </tr>
-    </table>
 
     {{-- ════════ TABLE ════════ --}}
     <table class="data">

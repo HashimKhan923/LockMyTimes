@@ -52,6 +52,18 @@
        don't match this selector at all and keep their meaningful color untouched. Icons that
        inherit color from a colored container (e.g. white icons on a solid brand-blue button)
        are also untouched, since inheritance only applies when nothing more specific is set. */
+    /* The little calendar/clock glyph inside <input type="date/time/datetime-local"> is a
+       native browser icon, not a Lucide SVG — .lucide rules below can never reach it. Chromium
+       (Chrome/Edge) exposes it as a pseudo-element that only accepts `filter`, not `color`, so
+       recoloring it to the brand blue needs this filter approximation instead. */
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    input[type="month"]::-webkit-calendar-picker-indicator {
+        filter: invert(35%) sepia(94%) saturate(1922%) hue-rotate(226deg) brightness(101%) contrast(96%);
+        cursor: pointer;
+    }
+
     .lucide.text-gray-900,
     .lucide.text-gray-800,
     .lucide.text-gray-700,
