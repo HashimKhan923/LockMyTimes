@@ -26,7 +26,7 @@ class EmployeeController extends Controller
     public function index(string $tenant, Request $request)
     {
         $query = Employee::with(['department', 'position', 'location', 'manager'])
-            ->orderBy('first_name');
+            ->orderBy('employee_code');
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
