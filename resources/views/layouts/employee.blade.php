@@ -262,6 +262,7 @@
                         ['route'=>'employee.projects.index',     'icon'=>'folder-kanban',  'label'=>__('employee.nav_projects'),      'permission'=>'projects.view'],
                         ['route'=>'employee.performance.index',  'icon'=>'target',         'label'=>__('employee.nav_performance'),   'permission'=>'performance.view'],
                         ['route'=>'employee.training.index',     'icon'=>'graduation-cap', 'label'=>__('employee.nav_training'),      'permission'=>'training.view'],
+                        ['route'=>'employee.certifications.index','icon'=>'award',          'label'=>__('employee.nav_certifications'),'permission'=>'certifications.view'],
                     ],
                     __('employee.nav_section_resources') => [
                         ['route'=>'employee.assets.index',       'icon'=>'package',        'label'=>__('employee.nav_assets'),        'permission'=>'assets.view'],

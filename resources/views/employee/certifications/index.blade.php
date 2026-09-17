@@ -1,0 +1,90 @@
+@extends('layouts.employee')
+
+@section('title', 'My Certifications')
+@section('page-title', 'My Certifications')
+
+@section('content')
+<div class="max-w-4xl mx-auto">
+
+    <div class="mb-6">
+        <h1 class="text-2xl lg:text-3xl font-black text-gray-900" style="font-family:'Plus Jakarta Sans',sans-serif">
+            My Certifications
+        </h1>
+        <p class="text-sm text-gray-800 mt-1">Certifications your admin has recorded against your profile.</p>
+    </div>
+
+    <div class="lmt-card p-0 overflow-hidden">
+        @if($certifications->isEmpty())
+            <div class="text-center py-14">
+                <i data-lucide="award" class="w-10 h-10 text-gray-200 mx-auto mb-3"></i>
+                <p class="text-sm text-gray-800">No certifications recorded yet.</p>
+            </div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="lmt-table">
+                    <thead>
+                        <tr>
+                            <th>Certification</th>
+                            <th>Issuer</th>
+                            <th>Issued</th>
+                            <th>Expires</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($certifications as $cert)
+                        @php
+                            $isExpired      = $cert->expiry_date && $cert->expiry_date->isPast();
+                            $isExpiringSoon = !$isExpired && $cert->expiry_date && $cert->expiry_date->diffInDays(now()) <= 30;
+                        @endphp
+                        <tr class="{{ $isExpired ? 'bg-red-50/20' : ($isExpiringSoon ? 'bg-amber-50/20' : '') }}">
+                            <td>
+                                <p class="font-semibold text-gray-900 text-sm">{{ $cert->name }}</p>
+                                @if($cert->credential_id)
+                                <p class="text-xs text-gray-800 font-mono">{{ $cert->credential_id }}</p>
+                                @endif
+                            </td>
+                            <td class="text-sm text-gray-800">{{ $cert->issuer ?: '—' }}</td>
+                            <td class="text-sm text-gray-800">{{ $cert->issue_date?->format('M j, Y') ?? '—' }}</td>
+                            <td>
+                                @if($cert->expiry_date)
+                                <span class="text-sm {{ $isExpired ? 'text-red-600 font-bold' : ($isExpiringSoon ? 'text-amber-600 font-semibold' : 'text-gray-800') }}">
+                                    {{ $cert->expiry_date->format('M j, Y') }}
+                                </span>
+                                @if($isExpiringSoon)
+                                <span class="block text-xs text-amber-500">Expires in {{ now()->diffInDays($cert->expiry_date) }}d</span>
+                                @endif
+                                @else
+                                <span class="text-gray-800 text-sm">No expiry</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($isExpired)
+                                <span class="lmt-badge-red text-xs">Expired</span>
+                                @elseif($isExpiringSoon)
+                                <span class="lmt-badge-amber text-xs">Expiring Soon</span>
+                                @else
+                                <span class="lmt-badge-green text-xs">Active</span>
+                                @endif
+                                @if($cert->is_verified)
+                                <span class="block lmt-badge-brand text-xs mt-0.5">Verified</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($cert->credential_url)
+                                <a href="{{ $cert->credential_url }}" target="_blank"
+                                   class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white flex items-center justify-center transition-colors">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                </a>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+</div>
+@endsection

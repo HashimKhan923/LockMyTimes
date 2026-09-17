@@ -5,6 +5,7 @@ use App\Http\Controllers\Employee\AssetController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\AttendanceCorrectionController;
 use App\Http\Controllers\Employee\AuthController;
+use App\Http\Controllers\Employee\CertificationController;
 use App\Http\Controllers\Employee\DashboardController;
 use App\Http\Controllers\Employee\ExpenseController;
 use App\Http\Controllers\Employee\LeaveController;
@@ -130,12 +131,17 @@ Route::middleware(['tenant', 'subscription.active', 'employee.auth'])->group(fun
         Route::post('/{assignment}/return-request',   [DashboardController::class, 'comingSoon'])->name('return');
     });
 
-    /* ─── Phase 11 — Training & Certifications ─── */
+    /* ─── Phase 11 — Training ─── */
     Route::prefix('training')->name('training.')->middleware('permission:training.view')->group(function () {
         Route::get('/',                  [DashboardController::class, 'comingSoon'])->name('index');
         Route::get('/{enrollment}',      [DashboardController::class, 'comingSoon'])->name('show');
         Route::post('/{training}/enrol', [DashboardController::class, 'comingSoon'])->name('enrol');
-        Route::get('/certifications',    [DashboardController::class, 'comingSoon'])->name('certifications');
+    });
+
+    /* ─── Certifications (LIVE) — separate permission from Training, so an admin can grant
+         an employee visibility into their own certifications without granting Training ─── */
+    Route::prefix('certifications')->name('certifications.')->middleware('permission:certifications.view')->group(function () {
+        Route::get('/', [CertificationController::class, 'index'])->name('index');
     });
 
     /* ─── Phase 12 — Expenses (LIVE) ─── */

@@ -24,6 +24,7 @@ return [
     'nav_projects'      => 'Projets',
     'nav_performance'   => 'Performance',
     'nav_training'      => 'Formation',
+    'nav_certifications'=> 'Certifications',
     'nav_assets'        => 'Mes Actifs',
     'nav_directory'     => 'Annuaire',
     'nav_announcements' => 'Annonces',

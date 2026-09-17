@@ -24,6 +24,7 @@ return [
     'nav_projects'      => 'المشاريع',
     'nav_performance'   => 'الأداء',
     'nav_training'      => 'التدريب',
+    'nav_certifications'=> 'الشهادات',
     'nav_assets'        => 'أصولي',
     'nav_directory'     => 'الدليل',
     'nav_announcements' => 'الإعلانات',
