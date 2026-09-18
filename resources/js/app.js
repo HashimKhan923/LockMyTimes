@@ -4,6 +4,7 @@ import Collapse from '@alpinejs/collapse';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Chart from 'chart.js/auto';
+import intlTelInput from 'intl-tel-input/intlTelInputWithUtils';
 
 Alpine.plugin(Collapse);
 
@@ -12,6 +13,7 @@ window.Alpine = Alpine;
 window.gsap = gsap;
 window.ScrollTrigger = ScrollTrigger;
 window.Chart = Chart;
+window.intlTelInput = intlTelInput;
 
 gsap.registerPlugin(ScrollTrigger);
 

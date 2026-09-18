@@ -27,6 +27,13 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
             <h2 class="text-xl font-black text-ink" style="font-family:'Nunito',sans-serif">{{ $tenant->company_name }}</h2>
             <div class="flex items-center gap-2 mt-1 flex-wrap">
                 <code class="text-xs bg-gray-100 px-2 py-0.5 rounded font-mono">{{ $tenant->slug }}</code>
+                @if($tenant->database_provisioned)
+                <a href="{{ $tenant->adminUrl() }}" target="_blank"
+                   class="text-xs text-brand-600 hover:text-brand-700 font-semibold flex items-center gap-1">
+                    <i data-lucide="external-link" class="w-3 h-3"></i>
+                    {{ $tenant->adminUrl() }}
+                </a>
+                @endif
                 <span class="{{ $statusMap[$tenant->status] ?? 'lmt-badge-gray' }} text-xs">
                     {{ ucfirst(str_replace('_',' ',$tenant->status)) }}
                 </span>

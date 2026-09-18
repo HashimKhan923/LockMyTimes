@@ -80,14 +80,16 @@
 
                 <div>
                     <label class="lmt-label">Phone</label>
-                    <input type="tel" name="phone" value="{{ old('phone', $employee->phone ?? '') }}"
-                           class="lmt-input" placeholder="+1 (555) 000-0000"/>
+                    <input type="tel" id="phone" value="{{ old('phone', $employee->phone ?? '') }}"
+                           class="lmt-input" placeholder="000-0000"/>
                 </div>
 
                 <div>
                     <label class="lmt-label">Date of Birth</label>
                     <input type="date" name="date_of_birth"
                            value="{{ old('date_of_birth', $employee->date_of_birth?->format('Y-m-d') ?? '') }}"
+                           min="{{ now()->subYears(100)->format('Y-m-d') }}"
+                           max="{{ now()->format('Y-m-d') }}"
                            class="lmt-input"/>
                 </div>
 
@@ -118,6 +120,8 @@
                     <label class="lmt-label">Hire Date <span class="text-red-500">*</span></label>
                     <input type="date" name="hire_date"
                            value="{{ old('hire_date', $employee->hire_date?->format('Y-m-d') ?? '') }}"
+                           min="{{ now()->subYears(75)->format('Y-m-d') }}"
+                           max="{{ now()->addYear()->format('Y-m-d') }}"
                            class="lmt-input @error('hire_date') lmt-input-error @enderror" required/>
                     @error('hire_date')<p class="lmt-err">{{ $message }}</p>@enderror
                 </div>
@@ -257,6 +261,8 @@
                     <label class="lmt-label">Probation End Date</label>
                     <input type="date" name="probation_end_date"
                            value="{{ old('probation_end_date', $employee->probation_end_date?->format('Y-m-d') ?? '') }}"
+                           min="{{ now()->subYears(75)->format('Y-m-d') }}"
+                           max="{{ now()->addYears(5)->format('Y-m-d') }}"
                            class="lmt-input"/>
                 </div>
             </div>
@@ -306,7 +312,21 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded',()=>{ if(window.lucide) lucide.createIcons(); });
+document.addEventListener('DOMContentLoaded',()=>{
+    if(window.lucide) lucide.createIcons();
+
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput && window.intlTelInput) {
+        window.intlTelInput(phoneInput, {
+            initialCountry: {!! json_encode(strtolower($currentTenant->country ?? 'us')) !!},
+            separateDialCode: true,
+            // The visible input has no `name` of its own — this creates the real
+            // `name="phone"` hidden input the form actually submits, always kept
+            // in sync with the full, correctly-formatted international number.
+            hiddenInputs: () => ({ phone: 'phone' }),
+        });
+    }
+});
 
 function previewAvatar(input) {
     if (input.files && input.files[0]) {

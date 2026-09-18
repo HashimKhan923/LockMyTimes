@@ -556,18 +556,20 @@
 
         {{-- Flash Messages --}}
         @if(session('success'))
-        <div class="px-6 pt-4">
+        <div class="px-6 pt-4" x-data="{ show: true }" x-show="show">
             <div class="lmt-alert lmt-alert-success animate-slide-down">
-                <i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i>
-                {{ session('success') }}
+                <div class="lmt-alert-icon"><i data-lucide="check-circle" class="w-4.5 h-4.5"></i></div>
+                <span>{{ session('success') }}</span>
+                <button type="button" class="lmt-alert-close" @click="show = false"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
         </div>
         @endif
         @if(session('error'))
-        <div class="px-6 pt-4">
+        <div class="px-6 pt-4" x-data="{ show: true }" x-show="show">
             <div class="lmt-alert lmt-alert-error animate-slide-down">
-                <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
-                {{ session('error') }}
+                <div class="lmt-alert-icon"><i data-lucide="alert-circle" class="w-4.5 h-4.5"></i></div>
+                <span>{{ session('error') }}</span>
+                <button type="button" class="lmt-alert-close" @click="show = false"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
         </div>
         @endif

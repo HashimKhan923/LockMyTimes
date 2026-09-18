@@ -101,9 +101,9 @@ class EmployeeController extends Controller
             'email'             => 'required|email|unique:employees,email|unique:users,email',
             'employee_code'     => 'nullable|string|max:30|unique:employees,employee_code',
             'phone'             => 'nullable|string|max:30',
-            'date_of_birth'     => 'nullable|date|before:today',
+            'date_of_birth'     => 'nullable|date|after:1900-01-01|before:today',
             'gender'            => 'nullable|in:male,female,non_binary,prefer_not_to_say',
-            'hire_date'         => 'required|date',
+            'hire_date'         => 'required|date|after:1950-01-01|before:'.now()->addYear()->toDateString(),
             'department_id'     => 'nullable|exists:departments,id',
             'position_id'       => 'nullable|exists:positions,id',
             'location_id'       => 'nullable|exists:locations,id',
@@ -249,9 +249,9 @@ class EmployeeController extends Controller
                                   .'|unique:users,email,'.($employee->user_id ?? 'NULL'),
             'employee_code'     => 'required|string|max:30|unique:employees,employee_code,'.$employee->id,
             'phone'             => 'nullable|string|max:30',
-            'date_of_birth'     => 'nullable|date|before:today',
+            'date_of_birth'     => 'nullable|date|after:1900-01-01|before:today',
             'gender'            => 'nullable|in:male,female,non_binary,prefer_not_to_say',
-            'hire_date'         => 'required|date',
+            'hire_date'         => 'required|date|after:1950-01-01|before:'.now()->addYear()->toDateString(),
             'department_id'     => 'nullable|exists:departments,id',
             'position_id'       => 'nullable|exists:positions,id',
             'location_id'       => 'nullable|exists:locations,id',
@@ -336,7 +336,7 @@ class EmployeeController extends Controller
     public function terminate(string $tenant, Request $request, Employee $employee)
     {
         $request->validate([
-            'termination_date'   => 'required|date',
+            'termination_date'   => 'required|date|after:1950-01-01|before:'.now()->addYear()->toDateString(),
             'termination_reason' => 'required|string|max:255',
         ]);
 

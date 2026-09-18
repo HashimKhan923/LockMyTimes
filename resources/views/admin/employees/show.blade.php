@@ -227,6 +227,8 @@
             <div class="mb-4">
                 <label class="lmt-label">Termination Date <span class="text-red-500">*</span></label>
                 <input type="date" name="termination_date" value="{{ today()->format('Y-m-d') }}"
+                       min="{{ now()->subYears(75)->format('Y-m-d') }}"
+                       max="{{ now()->addYear()->format('Y-m-d') }}"
                        required class="lmt-input"/>
             </div>
             <div class="mb-4">
