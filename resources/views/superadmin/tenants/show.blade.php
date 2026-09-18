@@ -20,9 +20,15 @@ $notes      = $tenant->settings['admin_notes'] ?? [];
            class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4 text-gray-800"></i>
         </a>
+        @if($tenant->logo)
+        <div class="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 border border-gray-200 bg-white">
+            <img src="{{ asset('storage/'.$tenant->logo) }}" alt="{{ $tenant->company_name }}" class="w-full h-full object-contain p-1.5"/>
+        </div>
+        @else
         <div class="w-14 h-14 rounded-2xl lmt-gradient-bg flex items-center justify-center text-white text-xl font-black flex-shrink-0">
             {{ substr($tenant->company_name, 0, 1) }}
         </div>
+        @endif
         <div>
             <h2 class="text-xl font-black text-ink" style="font-family:'Nunito',sans-serif">{{ $tenant->company_name }}</h2>
             <div class="flex items-center gap-2 mt-1 flex-wrap">

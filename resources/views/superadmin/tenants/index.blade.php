@@ -88,9 +88,15 @@
                 <tr>
                     <td>
                         <div class="flex items-center gap-3">
+                            @if($tenant->logo)
+                            <div class="lmt-avatar-sm flex-shrink-0 overflow-hidden border border-gray-200 bg-white">
+                                <img src="{{ asset('storage/'.$tenant->logo) }}" alt="{{ $tenant->company_name }}" class="w-full h-full object-contain p-1"/>
+                            </div>
+                            @else
                             <div class="lmt-avatar-sm font-bold text-xs flex-shrink-0">
                                 {{ substr($tenant->company_name, 0, 1) }}
                             </div>
+                            @endif
                             <div>
                                 <p class="font-semibold text-ink text-sm">{{ $tenant->company_name }}</p>
                                 <p class="text-xs text-ink-soft">{{ $tenant->contact_email }}</p>
