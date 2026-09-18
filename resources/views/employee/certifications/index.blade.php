@@ -6,11 +6,20 @@
 @section('content')
 <div class="max-w-4xl mx-auto">
 
-    <div class="mb-6">
-        <h1 class="text-2xl lg:text-3xl font-black text-gray-900" style="font-family:'Plus Jakarta Sans',sans-serif">
-            My Certifications
-        </h1>
-        <p class="text-sm text-gray-800 mt-1">Certifications your admin has recorded against your profile.</p>
+    <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+            <h1 class="text-2xl lg:text-3xl font-black text-gray-900" style="font-family:'Plus Jakarta Sans',sans-serif">
+                My Certifications
+            </h1>
+            <p class="text-sm text-gray-800 mt-1">Certifications your admin has recorded against your profile.</p>
+        </div>
+        @can('certifications.export')
+        @if($certifications->isNotEmpty())
+        <a href="{{ route('employee.certifications.export', $tenant) }}" class="lmt-btn-secondary lmt-btn-sm">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Export PDF
+        </a>
+        @endif
+        @endcan
     </div>
 
     <div class="lmt-card p-0 overflow-hidden">
@@ -35,8 +44,17 @@
                     <tbody>
                         @foreach($certifications as $cert)
                         @php
-                            $isExpired      = $cert->expiry_date && $cert->expiry_date->isPast();
-                            $isExpiringSoon = !$isExpired && $cert->expiry_date && $cert->expiry_date->diffInDays(now()) <= 30;
+                            // diffInDays() is direction-sensitive (negative when the argument is in
+                            // the future relative to the caller) unless both sides are asked to give
+                            // an absolute value — comparing that raw signed number to "<= 30" made any
+                            // future expiry date (however far off) satisfy the check. Normalizing both
+                            // sides to startOfDay and taking a signed diff the other way round (today
+                            // -> expiry) gives a clean "days remaining" number: negative means expired.
+                            $daysUntilExpiry = $cert->expiry_date
+                                ? now()->startOfDay()->diffInDays($cert->expiry_date->copy()->startOfDay(), false)
+                                : null;
+                            $isExpired      = $daysUntilExpiry !== null && $daysUntilExpiry < 0;
+                            $isExpiringSoon = $daysUntilExpiry !== null && $daysUntilExpiry >= 0 && $daysUntilExpiry <= 30;
                         @endphp
                         <tr class="{{ $isExpired ? 'bg-red-50/20' : ($isExpiringSoon ? 'bg-amber-50/20' : '') }}">
                             <td>
@@ -53,7 +71,7 @@
                                     {{ $cert->expiry_date->format('M j, Y') }}
                                 </span>
                                 @if($isExpiringSoon)
-                                <span class="block text-xs text-amber-500">Expires in {{ now()->diffInDays($cert->expiry_date) }}d</span>
+                                <span class="block text-xs text-amber-500">Expires in {{ $daysUntilExpiry }}d</span>
                                 @endif
                                 @else
                                 <span class="text-gray-800 text-sm">No expiry</span>

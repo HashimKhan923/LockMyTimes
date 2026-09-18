@@ -339,8 +339,17 @@
             <tbody>
                 @forelse($certifications as $cert)
                 @php
-                $isExpired      = $cert->expiry_date && $cert->expiry_date->isPast();
-                $isExpiringSoon = !$isExpired && $cert->expiry_date && $cert->expiry_date->diffInDays(now()) <= 30;
+                // diffInDays() without explicit `false` is direction-sensitive in this Carbon
+                // version (negative when the argument is in the future relative to the caller),
+                // so comparing that raw signed number to "<= 30" made any future expiry date,
+                // however far off, satisfy the check. Normalizing both sides to startOfDay and
+                // diffing today -> expiry with an explicit direction gives a clean, correctly
+                // signed "days remaining" number: negative means already expired.
+                $daysUntilExpiry = $cert->expiry_date
+                    ? now()->startOfDay()->diffInDays($cert->expiry_date->copy()->startOfDay(), false)
+                    : null;
+                $isExpired      = $daysUntilExpiry !== null && $daysUntilExpiry < 0;
+                $isExpiringSoon = $daysUntilExpiry !== null && $daysUntilExpiry >= 0 && $daysUntilExpiry <= 30;
                 @endphp
                 <tr class="{{ $isExpired ? 'bg-red-50/20' : ($isExpiringSoon ? 'bg-amber-50/20' : '') }}">
                     <td>
@@ -363,7 +372,7 @@
                             {{ $cert->expiry_date->format('M j, Y') }}
                         </span>
                         @if($isExpiringSoon)
-                        <span class="block text-xs text-amber-500">Expires in {{ now()->diffInDays($cert->expiry_date) }}d</span>
+                        <span class="block text-xs text-amber-500">Expires in {{ $daysUntilExpiry }}d</span>
                         @endif
                         @else
                         <span class="text-gray-800 text-sm">No expiry</span>

@@ -78,6 +78,11 @@ class Subscription extends Model
 
     public function daysUntilRenewal(): ?int
     {
-        return $this->current_period_ends_at?->diffInDays(now()) ?? null;
+        // diffInDays() is direction-sensitive in this Carbon version — the receiver being the
+        // later date here would silently return a negative number. Diff the other way round
+        // (now -> period end) so a future renewal date correctly comes back positive.
+        return $this->current_period_ends_at
+            ? now()->startOfDay()->diffInDays($this->current_period_ends_at->copy()->startOfDay(), false)
+            : null;
     }
 }

@@ -142,6 +142,7 @@ Route::middleware(['tenant', 'subscription.active', 'employee.auth'])->group(fun
          an employee visibility into their own certifications without granting Training ─── */
     Route::prefix('certifications')->name('certifications.')->middleware('permission:certifications.view')->group(function () {
         Route::get('/', [CertificationController::class, 'index'])->name('index');
+        Route::get('/export', [CertificationController::class, 'export'])->name('export')->withoutMiddleware('permission:certifications.view')->middleware('permission:certifications.export');
     });
 
     /* ─── Phase 12 — Expenses (LIVE) ─── */

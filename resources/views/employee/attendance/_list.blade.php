@@ -26,6 +26,7 @@
                         <th class="text-left hidden lg:table-cell">Overtime</th>
                         <th class="text-left hidden lg:table-cell">Break</th>
                         <th class="text-left hidden md:table-cell">Location</th>
+                        <th class="text-left hidden md:table-cell">Source</th>
                         <th class="text-right"></th>
                     </tr>
                 </thead>
@@ -87,6 +88,29 @@
                             </td>
                             <td class="hidden md:table-cell text-sm text-gray-800">
                                 {{ $att?->location?->name ?? '—' }}
+                            </td>
+                            <td class="hidden md:table-cell">
+                                @if($att)
+                                    @php
+                                        $sourceColors = ['qr'=>'lmt-badge-brand','web'=>'lmt-badge-gray','manual'=>'lmt-badge-amber','mobile'=>'lmt-badge-green'];
+                                    @endphp
+                                    <span class="{{ $sourceColors[$att->source] ?? 'lmt-badge-gray' }} text-xs uppercase">
+                                        {{ $att->source }}
+                                    </span>
+                                    @if($att->is_manual_entry)
+                                    <span class="block text-xs text-gray-800 mt-0.5">Manual</span>
+                                    @endif
+                                    @if($att->is_remote_clockin)
+                                    <span class="block lmt-badge-brand text-xs mt-1">
+                                        <i data-lucide="globe" class="w-3 h-3 inline"></i> Remote
+                                        @if($att->clock_in_city || $att->clock_in_country)
+                                            · {{ collect([$att->clock_in_city, $att->clock_in_country])->filter()->implode(', ') }}
+                                        @endif
+                                    </span>
+                                    @endif
+                                @else
+                                    —
+                                @endif
                             </td>
                             <td class="text-right">
                                 <button @click="openDay(@js($d->toDateString()))"

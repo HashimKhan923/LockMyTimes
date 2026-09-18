@@ -114,7 +114,13 @@
                     <td class="text-sm text-ink-soft">{{ $tenant->created_at->format('M j, Y') }}</td>
                     <td class="text-sm text-ink-soft">
                         @if($tenant->trial_ends_at)
-                            <span class="{{ $tenant->trial_ends_at->isPast() ? 'text-red-500' : ($tenant->trial_ends_at->diffInDays() <= 3 ? 'text-amber-600' : '') }}">
+                            @php
+                                // diffInDays() with no args diffs against now() but is still
+                                // direction-sensitive (negative for a future date) in this Carbon
+                                // version, so this always satisfied "<= 3" for any future trial end.
+                                $daysLeft = now()->startOfDay()->diffInDays($tenant->trial_ends_at->copy()->startOfDay(), false);
+                            @endphp
+                            <span class="{{ $tenant->trial_ends_at->isPast() ? 'text-red-500' : ($daysLeft <= 3 ? 'text-amber-600' : '') }}">
                                 {{ $tenant->trial_ends_at->format('M j, Y') }}
                             </span>
                         @else
