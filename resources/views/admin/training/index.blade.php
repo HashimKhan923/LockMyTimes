@@ -392,8 +392,21 @@
                     </td>
                     <td>
                         <div class="flex items-center gap-1.5">
+                            @if($cert->certificate_file)
+                            <a href="{{ asset('storage/'.$cert->certificate_file) }}" target="_blank"
+                               title="View certificate file"
+                               class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white flex items-center justify-center transition-colors">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            </a>
+                            <a href="{{ asset('storage/'.$cert->certificate_file) }}" download
+                               title="Download certificate file"
+                               class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white flex items-center justify-center transition-colors">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            </a>
+                            @endif
                             @if($cert->credential_url)
                             <a href="{{ $cert->credential_url }}" target="_blank"
+                               title="View credential"
                                class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-500 hover:text-white flex items-center justify-center transition-colors">
                                 <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                             </a>
