@@ -58,12 +58,14 @@ class AuthController extends Controller
         // whichever device logs in first. A mismatch is a distinct, structured
         // error (not a plain validation failure) so the app can show a
         // "Request Device Change" action instead of "wrong password".
-        if ($user->device_id && $user->device_id !== $data['device_id']) {
-            return response()->json([
-                'error'   => 'device_mismatch',
-                'message' => 'This account is locked to another device. Ask your admin to approve a device change, or request one below.',
-            ], 403);
-        }
+
+        
+        // if ($user->device_id && $user->device_id !== $data['device_id']) {
+        //     return response()->json([
+        //         'error'   => 'device_mismatch',
+        //         'message' => 'This account is locked to another device. Ask your admin to approve a device change, or request one below.',
+        //     ], 403);
+        // }
 
         $user->update([
             'last_login_at' => now(),
