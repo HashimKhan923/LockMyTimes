@@ -175,4 +175,15 @@
             </div>
         @endif
     @endif
+
+    {{-- Time correction — only for today or a past day, matching the request form's own limit --}}
+    @can('attendance.create')
+    @if(! $date->isFuture())
+        <a href="{{ route('employee.attendance-corrections.create', [$tenantSlug, 'date' => $date->toDateString()]) }}"
+           class="lmt-btn-secondary w-full justify-center mt-2">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+            Request Time Correction
+        </a>
+    @endif
+    @endcan
 </div>

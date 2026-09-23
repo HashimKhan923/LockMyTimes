@@ -37,7 +37,7 @@
         <div>
             <label class="lmt-label">Date <span class="text-red-500">*</span></label>
             <input type="date" name="work_date" required max="{{ today()->format('Y-m-d') }}"
-                   class="lmt-input" value="{{ old('work_date') }}"/>
+                   class="lmt-input" value="{{ old('work_date', request('date')) }}"/>
             @error('work_date') <p class="lmt-err">{{ $message }}</p> @enderror
         </div>
 

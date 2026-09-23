@@ -193,7 +193,7 @@
                     @endif
                     <td>
                         <div>
-                            <span class="text-sm font-semibold {{ $rec->is_late ? 'text-amber-600' : 'text-gray-900' }}">
+                            <span class="text-sm font-bold {{ $rec->is_late ? 'text-amber-600' : 'text-gray-900' }}">
                                 {{ $rec->clock_in_at?->format('h:i A') ?? '—' }}
                             </span>
                             @if($rec->is_late)
@@ -202,7 +202,7 @@
                         </div>
                     </td>
                     <td>
-                        <span class="text-sm {{ $rec->is_early_out ? 'text-amber-600' : 'text-gray-900' }}">
+                        <span class="text-sm font-bold {{ $rec->is_early_out ? 'text-amber-600' : 'text-gray-900' }}">
                             {{ $rec->clock_out_at?->format('h:i A') ?? '—' }}
                         </span>
                         @if($rec->is_early_out)
@@ -233,14 +233,14 @@
                         <span class="{{ $sourceColors[$rec->source] ?? 'lmt-badge-gray' }} text-xs uppercase">
                             {{ $rec->source }}
                         </span>
-                        @if($rec->is_manual_entry)
+                        @if($rec->is_manual_entry && $rec->source !== 'manual')
                         <span class="block text-xs text-gray-800 mt-0.5">Manual</span>
                         @endif
                         @if($rec->is_remote_clockin)
-                        <span class="block lmt-badge-brand text-xs mt-1">
+                        <span class="block text-xs text-gray-800 mt-1">
                             <i data-lucide="globe" class="w-3 h-3 inline"></i> Remote
-                            @if($rec->clock_in_city || $rec->clock_in_country)
-                                · {{ collect([$rec->clock_in_city, $rec->clock_in_country])->filter()->implode(', ') }}
+                            @if($rec->clock_in_city)
+                                · {{ $rec->clock_in_city }}
                             @endif
                         </span>
                         @endif

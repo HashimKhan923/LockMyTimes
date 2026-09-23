@@ -67,10 +67,10 @@
                                 @endif
                             </td>
 
-                            <td class="font-mono text-sm">
+                            <td class="font-mono text-sm font-bold">
                                 {{ $att?->clock_in_at ? \Carbon\Carbon::parse($att->clock_in_at)->format('h:i A') : '—' }}
                             </td>
-                            <td class="font-mono text-sm">
+                            <td class="font-mono text-sm font-bold">
                                 {{ $att?->clock_out_at ? \Carbon\Carbon::parse($att->clock_out_at)->format('h:i A') : '—' }}
                             </td>
                             <td class="font-mono text-sm font-bold">
@@ -97,14 +97,14 @@
                                     <span class="{{ $sourceColors[$att->source] ?? 'lmt-badge-gray' }} text-xs uppercase">
                                         {{ $att->source }}
                                     </span>
-                                    @if($att->is_manual_entry)
+                                    @if($att->is_manual_entry && $att->source !== 'manual')
                                     <span class="block text-xs text-gray-800 mt-0.5">Manual</span>
                                     @endif
                                     @if($att->is_remote_clockin)
-                                    <span class="block lmt-badge-brand text-xs mt-1">
+                                    <span class="block text-xs text-gray-800 mt-1">
                                         <i data-lucide="globe" class="w-3 h-3 inline"></i> Remote
-                                        @if($att->clock_in_city || $att->clock_in_country)
-                                            · {{ collect([$att->clock_in_city, $att->clock_in_country])->filter()->implode(', ') }}
+                                        @if($att->clock_in_city)
+                                            · {{ $att->clock_in_city }}
                                         @endif
                                     </span>
                                     @endif

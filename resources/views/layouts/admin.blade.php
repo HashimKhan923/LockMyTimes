@@ -170,11 +170,11 @@
         {{-- Brand --}}
         <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-100 flex-shrink-0">
             @if(isset($currentTenant) && $currentTenant->logo)
-            <div class="sidebar-brand-icon w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden bg-white border border-gray-100 p-1.5 shadow-sm">
+            <div class="sidebar-brand-icon w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden bg-white border border-gray-100 p-1 shadow-sm">
                 <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-contain" alt="{{ $currentTenant->company_name }} logo"/>
             </div>
             @else
-            <div class="sidebar-brand-icon w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-white text-base"
+            <div class="sidebar-brand-icon w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center font-black text-white text-xl"
                  style="background:linear-gradient(135deg,#6C7DF7,#4A5BE8);box-shadow:0 4px 12px rgba(108,125,247,.4);">
                 {{ substr($currentTenant->company_name ?? 'L', 0, 1) }}
             </div>

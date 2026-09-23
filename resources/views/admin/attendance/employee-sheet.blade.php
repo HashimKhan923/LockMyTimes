@@ -130,8 +130,8 @@
                                 <span class="text-xs text-gray-800">—</span>
                             @endif
                         </td>
-                        <td class="text-sm text-gray-800">{{ $rec?->clock_in_at?->format('h:i A') ?? '—' }}</td>
-                        <td class="text-sm text-gray-800">{{ $rec?->clock_out_at?->format('h:i A') ?? '—' }}</td>
+                        <td class="text-sm font-bold text-gray-900">{{ $rec?->clock_in_at?->format('h:i A') ?? '—' }}</td>
+                        <td class="text-sm font-bold text-gray-900">{{ $rec?->clock_out_at?->format('h:i A') ?? '—' }}</td>
                         <td class="text-sm font-semibold text-gray-900">{{ format_hours($rec?->total_hours) }}</td>
                         <td class="text-sm text-amber-600">{{ $rec?->overtime_hours > 0 ? format_hours($rec->overtime_hours) : '—' }}</td>
                         <td class="text-sm text-gray-800">{{ $rec?->break_hours > 0 ? format_hours($rec->break_hours) : '—' }}</td>
