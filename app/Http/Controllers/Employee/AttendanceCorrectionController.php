@@ -24,7 +24,13 @@ class AttendanceCorrectionController extends Controller
 
     public function create(string $tenant)
     {
-        return view('employee.attendance-corrections.create', compact('tenant'));
+        $emp = auth()->user()->employee;
+        abort_unless($emp, 403);
+
+        // The employee's own calendar day, not the server's — see store() for why.
+        $maxDate = $emp->localToday()->toDateString();
+
+        return view('employee.attendance-corrections.create', compact('tenant', 'maxDate'));
     }
 
     public function store(string $tenant, Request $request)
@@ -32,8 +38,11 @@ class AttendanceCorrectionController extends Controller
         $emp = auth()->user()->employee;
         abort_unless($emp, 403);
 
+        // Compare against the employee's local today, not the server's: `before_or_equal:today`
+        // uses the app timezone (UTC), so an employee in a timezone behind it could still pick a
+        // date that is already "tomorrow" for them, and one ahead of it couldn't pick their own today.
         $data = $request->validate([
-            'work_date' => ['required', 'date', 'before_or_equal:today'],
+            'work_date' => ['required', 'date', 'before_or_equal:'.$emp->localToday()->toDateString()],
             'clock_in'  => ['nullable', 'date_format:H:i', 'required_without:clock_out'],
             'clock_out' => ['nullable', 'date_format:H:i', 'required_without:clock_in', 'after:clock_in'],
             'reason'    => ['required', 'string', 'min:5', 'max:1000'],

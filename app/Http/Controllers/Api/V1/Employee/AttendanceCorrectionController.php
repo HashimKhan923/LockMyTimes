@@ -36,8 +36,9 @@ class AttendanceCorrectionController extends Controller
         $emp = $request->user()->employee;
         abort_unless($emp, 403);
 
+        // Employee's own local "today", not the server's — same reasoning as the web controller.
         $data = $request->validate([
-            'work_date' => ['required', 'date', 'before_or_equal:today'],
+            'work_date' => ['required', 'date', 'before_or_equal:'.$emp->localToday()->toDateString()],
             'clock_in'  => ['nullable', 'date_format:H:i', 'required_without:clock_out'],
             'clock_out' => ['nullable', 'date_format:H:i', 'required_without:clock_in', 'after:clock_in'],
             'reason'    => ['required', 'string', 'min:5', 'max:1000'],

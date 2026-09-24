@@ -36,8 +36,15 @@
 
         <div>
             <label class="lmt-label">Date <span class="text-red-500">*</span></label>
-            <input type="date" name="work_date" required max="{{ today()->format('Y-m-d') }}"
-                   class="lmt-input" value="{{ old('work_date', request('date')) }}"/>
+            @php
+                // A hand-edited ?date= in the URL must not pre-fill a future day either.
+                $prefillDate = request('date');
+                if ($prefillDate && $prefillDate > $maxDate) $prefillDate = null;
+            @endphp
+            <input type="date" name="work_date" required max="{{ $maxDate }}"
+                   class="lmt-input" value="{{ old('work_date', $prefillDate) }}"
+                   onchange="if (this.value > this.max) { this.value = this.max; }"/>
+            <p class="lmt-help">You can only request a correction for today or an earlier date.</p>
             @error('work_date') <p class="lmt-err">{{ $message }}</p> @enderror
         </div>
 
